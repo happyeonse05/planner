@@ -896,7 +896,7 @@ function examBar(){
 }
 function alldayFor(d){
   var k=dkey(d),w=dow(d);
-  return S.allday.filter(function(a){return a.days?a.days.indexOf(w)>=0:a.date===k;});
+  return S.allday.filter(function(a){return a.days?(a.days.indexOf(w)>=0&&(!a.from||k>=a.from)&&(!a.to||k<=a.to)):(k>=a.date&&k<=(a.end||a.date));});
 }
 function adChip(a){return '<button class="adchip" style="--c:'+a.color+'" data-act="edit-ad" data-id="'+a.id+'">'+esc(a.title)+'</button>';}
 function trk(id){return S.trackers.find(function(t){return t.id===id;});}
@@ -1347,7 +1347,7 @@ function viewMonth(){
     var evs=S.events.filter(function(e){return e.date===k;}).sort(function(a,b){return a.start<b.start?-1:1;});
     var tds=sortTodos(S.todos.filter(function(t){return t.scope==='day'&&t.key===k;}));var tdn=tds.filter(function(t){return t.done;}).length;
     var dues=S.todos.filter(function(t){return t.due===k&&!t.done;});
-    var ads=S.allday.filter(function(a){return !a.days&&a.date===k;});
+    var ads=S.allday.filter(function(a){return !a.days&&k>=a.date&&k<=(a.end||a.date);});
     var chips=ddOn(k).map(function(x){return '<span class="chip ev" style="--c:'+x.color+'">★ '+esc(x.title)+'</span>';}).concat(dues.map(function(t){return '<span class="chip due">'+esc(t.text)+'</span>';})).concat(ads.map(function(a){return '<span class="chip ev" style="--c:'+a.color+'">'+esc(a.title)+'</span>';})).concat(evs.map(function(e){return '<span class="chip ev" style="--c:'+e.color+'">'+esc(e.title)+'</span>';}))
       .concat(tds.map(function(t){return '<span class="chip td'+(t.done?' cdone':'')+'">'+esc(t.text)+'</span>';}));
     var shown=chips.slice(0,2).join('')+(chips.length>2?'<span class="more">+'+(chips.length-2)+'</span>':'');
@@ -1523,7 +1523,7 @@ function viewTable(){
       :'<div class="empty">중요한 날은 디데이로 설정할 수 있어요. 남은 날(D-)이나 지난 날(D+)로 셀 수 있어요</div>')+'</section>';
   var adl=S.allday.slice().sort(function(a,b){return (a.days?0:1)-(b.days?0:1)||((a.date||'')<(b.date||'')?-1:1);});
   var adHTML='<section class="card"><div class="card-h"><h3>종일 일정</h3><button class="tbtn" data-act="add-ad" data-mode="rep">+ 추가</button></div>'+
-    (adl.length?adl.map(function(a){var when=a.days?daysText(a.days):(function(x){return (x.getMonth()+1)+'/'+x.getDate()+' ('+DAYS[dow(x)]+')';})(parseKey(a.date));
+    (adl.length?adl.map(function(a){var md=function(k){return k?Number(k.slice(5,7))+'/'+Number(k.slice(8)):'';};var when=a.days?daysText(a.days)+((a.from||a.to)?' · '+md(a.from)+'~'+md(a.to):''):a.end?md(a.date)+'~'+md(a.end):(function(x){return (x.getMonth()+1)+'/'+x.getDate()+' ('+DAYS[dow(x)]+')';})(parseKey(a.date));
       return '<div class="setrow"><span style="display:flex;align-items:center;gap:8px"><i class="cdot" style="--c:'+a.color+';margin:0"></i><span>'+esc(a.title)+'<small>'+esc(when)+'</small></span></span><button class="tbtn" data-act="edit-ad" data-id="'+a.id+'">수정</button></div>';}).join('')
       :'<div class="empty">시간 없이 매일·특정 요일에 띄울 일정을 넣어요</div>')+'</section>';
   var exHTML='<section class="card"><div class="card-h"><h3>시험 기간</h3><button class="tbtn" data-act="add-exam">+ 추가</button></div>'+
@@ -1673,11 +1673,11 @@ function openBlock(c,def,dk){
     '<span class="lbl">요일</span><div class="seg" id="f-days">'+days+'</div>'+
     '<span class="lbl">적용 기간 (비우면 학기 기간을 따라요)</span><div class="row"><input class="fld" type="date" id="f-cfrom" value="'+(b.from||'')+'"><span>~</span><input class="fld" type="date" id="f-cto" value="'+(b.to||'')+'"></div>'+
     '<div id="f-times" style="'+(b.day==null?'display:none':'')+'"><span class="lbl">시간</span><div class="row"><input class="fld" type="time" id="f-start" value="'+(b.start||'09:00')+'"><span>~</span><input class="fld" type="time" id="f-end" value="'+(b.end||'10:15')+'"></div></div>'+
+    (c&&dk&&c.day!=null?'<p class="hint">여기서 삭제하면 이 날만 휴강으로 빠져요. 매주 지우려면 시간표 탭에서 삭제해요</p>':'')+
     (c&&dk&&c.day!=null&&(c.skip||[]).indexOf(dk)>=0?(function(){var dd=parseKey(dk);return '<button class="tbtn skipbtn" data-act="unskip-once" data-id="'+c.id+'" data-date="'+dk+'">'+(dd.getMonth()+1)+'/'+dd.getDate()+' 다시 넣기</button>';})():'')+
     palHTML(b.color,'색상')+(c?'<label class="ck"><input type="checkbox" id="f-allsame" checked>같은 과목 모든 시간에 적용 (색·기간)</label>':'')+
     (c?'<button class="b-ghost" style="width:100%;height:42px;border-radius:12px;font-weight:600;margin-bottom:8px;text-align:center" data-act="course-todos" data-name="'+esc(c.name)+'">이 과목 할 일 보기'+(openCnt(c.name)?' ('+openCnt(c.name)+')':'')+'</button>':'')+
-    (c&&dk&&c.day!=null&&(c.skip||[]).indexOf(dk)<0?(function(){var dd=parseKey(dk);return '<div class="delrow"><button class="tbtn" data-act="skip-once" data-id="'+c.id+'" data-date="'+dk+'">'+(dd.getMonth()+1)+'/'+dd.getDate()+' 이 날만 삭제</button><button class="tbtn cdel" data-act="del-block">매주 전부 삭제</button></div>';})():'')+
-    '<div class="acts">'+(c&&!(dk&&c.day!=null)?'<button class="b-del" data-act="del-block">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-block">저장</button></div>');
+    '<div class="acts">'+(c?(dk&&c.day!=null?((c.skip||[]).indexOf(dk)<0?'<button class="b-del" data-act="skip-once" data-id="'+c.id+'" data-date="'+dk+'">삭제</button>':''):'<button class="b-del" data-act="del-block">삭제</button>'):'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-block">저장</button></div>');
   if(!c)setTimeout(function(){var f=$('#f-name');if(f)f.focus();},50);
 }
 function saveBlock(){
@@ -1769,8 +1769,8 @@ function openAllday(a,def){
   openModal('<h3>'+(a?'종일 일정 수정':'종일 일정 추가')+'</h3>'+
     '<input class="fld" id="f-adtitle" placeholder="예: 헬스, 영양제, 알바" maxlength="40" value="'+esc(x.title)+'">'+
     '<span class="lbl">언제</span><div class="seg" id="f-admode"><button data-act="ad-mode" data-v="once">하루만</button><button data-act="ad-mode" data-v="rep">반복</button></div>'+
-    '<div id="ad-once"><input class="fld" type="date" id="f-addate" value="'+(x.date||dkey(U.date))+'"></div>'+
-    '<div id="ad-rep"><div class="seg" id="f-adays"></div><div class="seg"><button data-act="ad-preset" data-v="all">매일</button><button data-act="ad-preset" data-v="wd">평일</button><button data-act="ad-preset" data-v="we">주말</button></div></div>'+
+    '<div id="ad-once"><div class="row"><input class="fld" type="date" id="f-addate" value="'+(x.date||dkey(U.date))+'"><span>~</span><input class="fld" type="date" id="f-adend" value="'+(x.end||'')+'"></div><p class="hint" style="margin-top:-4px">여러 날이면 끝나는 날도 넣어요 (여행, 축제 등)</p></div>'+
+    '<div id="ad-rep"><span class="lbl">적용 기간 (비우면 계속)</span><div class="row"><input class="fld" type="date" id="f-adfrom" value="'+(x.from||'')+'"><span>~</span><input class="fld" type="date" id="f-adto" value="'+(x.to||'')+'"></div><div class="seg" id="f-adays"></div><div class="seg"><button data-act="ad-preset" data-v="all">매일</button><button data-act="ad-preset" data-v="wd">평일</button><button data-act="ad-preset" data-v="we">주말</button></div></div>'+
     palHTML(x.color)+
     '<div class="acts">'+(a?'<button class="b-del" data-act="del-ad">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-ad">저장</button></div>');
   drawAd();
@@ -1785,9 +1785,9 @@ function drawAd(){
 function saveAllday(){
   var t=$('#f-adtitle').value.trim();
   if(!t){bad('#f-adtitle');return;}
-  var data={title:t,color:M.color,date:null,days:null};
-  if(M.mode==='once'){var dt=$('#f-addate').value;if(!dt){bad('#f-addate');return;}data.date=dt;}
-  else{if(!M.days.length){$('#f-adays').style.outline='2px solid var(--now)';return;}data.days=M.days.slice().sort();}
+  var data={title:t,color:M.color,date:null,days:null,end:null,from:null,to:null};
+  if(M.mode==='once'){var dt=$('#f-addate').value,de=$('#f-adend').value||null;if(!dt){bad('#f-addate');return;}if(de&&de<dt){bad('#f-adend');return;}data.date=dt;data.end=(de&&de!==dt)?de:null;}
+  else{if(!M.days.length){$('#f-adays').style.outline='2px solid var(--now)';return;}data.days=M.days.slice().sort();data.from=$('#f-adfrom').value||null;data.to=$('#f-adto').value||null;if(data.from&&data.to&&data.to<data.from){bad('#f-adto');return;}}
   if(M.id){var a=S.allday.find(function(x){return x.id===M.id;});if(a)Object.assign(a,data);}
   else S.allday.push(Object.assign({id:uid()},data));
   save();closeModal();render();
