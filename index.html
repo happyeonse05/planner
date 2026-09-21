@@ -539,6 +539,10 @@ main{padding:0 14px 24px}
 .semrow>span:not(:first-child){flex:none;color:var(--sub)}
 .semrow input{flex:1 1 0;height:40px;border-radius:10px;border:1px solid transparent;background:var(--soft);color:var(--ink);padding:0 8px;font-size:15px;min-width:0;width:auto;text-align:center}
 .semrow input.bad{border-color:var(--now)}
+
+.delrow{display:flex;gap:8px;margin:0 0 10px}
+.delrow .tbtn{flex:1;height:42px;text-align:center}
+.delrow .cdel.armed{background:#c9524a;color:#fff}
 </style>
 </head>
 <body>
@@ -1669,10 +1673,11 @@ function openBlock(c,def,dk){
     '<span class="lbl">요일</span><div class="seg" id="f-days">'+days+'</div>'+
     '<span class="lbl">적용 기간 (비우면 학기 기간을 따라요)</span><div class="row"><input class="fld" type="date" id="f-cfrom" value="'+(b.from||'')+'"><span>~</span><input class="fld" type="date" id="f-cto" value="'+(b.to||'')+'"></div>'+
     '<div id="f-times" style="'+(b.day==null?'display:none':'')+'"><span class="lbl">시간</span><div class="row"><input class="fld" type="time" id="f-start" value="'+(b.start||'09:00')+'"><span>~</span><input class="fld" type="time" id="f-end" value="'+(b.end||'10:15')+'"></div></div>'+
-    (c&&dk&&c.day!=null?(function(){var sk=(c.skip||[]).indexOf(dk)>=0,dd=parseKey(dk);return '<button class="tbtn skipbtn" data-act="'+(sk?'unskip-once':'skip-once')+'" data-id="'+c.id+'" data-date="'+dk+'">'+(sk?(dd.getMonth()+1)+'/'+dd.getDate()+' 다시 넣기':(dd.getMonth()+1)+'/'+dd.getDate()+' 이번만 빼기 (휴강·쉬는 날)')+'</button>';})():'')+
+    (c&&dk&&c.day!=null&&(c.skip||[]).indexOf(dk)>=0?(function(){var dd=parseKey(dk);return '<button class="tbtn skipbtn" data-act="unskip-once" data-id="'+c.id+'" data-date="'+dk+'">'+(dd.getMonth()+1)+'/'+dd.getDate()+' 다시 넣기</button>';})():'')+
     palHTML(b.color,'색상')+(c?'<label class="ck"><input type="checkbox" id="f-allsame" checked>같은 과목 모든 시간에 적용 (색·기간)</label>':'')+
     (c?'<button class="b-ghost" style="width:100%;height:42px;border-radius:12px;font-weight:600;margin-bottom:8px;text-align:center" data-act="course-todos" data-name="'+esc(c.name)+'">이 과목 할 일 보기'+(openCnt(c.name)?' ('+openCnt(c.name)+')':'')+'</button>':'')+
-    '<div class="acts">'+(c?'<button class="b-del" data-act="del-block">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-block">저장</button></div>');
+    (c&&dk&&c.day!=null&&(c.skip||[]).indexOf(dk)<0?(function(){var dd=parseKey(dk);return '<div class="delrow"><button class="tbtn" data-act="skip-once" data-id="'+c.id+'" data-date="'+dk+'">'+(dd.getMonth()+1)+'/'+dd.getDate()+' 이 날만 삭제</button><button class="tbtn cdel" data-act="del-block">매주 전부 삭제</button></div>';})():'')+
+    '<div class="acts">'+(c&&!(dk&&c.day!=null)?'<button class="b-del" data-act="del-block">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-block">저장</button></div>');
   if(!c)setTimeout(function(){var f=$('#f-name');if(f)f.focus();},50);
 }
 function saveBlock(){
