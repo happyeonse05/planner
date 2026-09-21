@@ -1206,9 +1206,9 @@ function tagOf(t){
 /* ---------- 화면: 공통 ---------- */
 function relLabel(){
   var t=new Date(),n;
-  if(U.tab==='month'){n=(U.date.getFullYear()-t.getFullYear())*12+U.date.getMonth()-t.getMonth();return n===0?'이번 달':n>0?n+'달 뒤':(-n)+'달 전';}
-  if(U.tab==='week'){n=Math.round((mondayOf(U.date)-mondayOf(t))/(7*864e5));return n===0?'이번 주':n>0?n+'주 뒤':(-n)+'주 전';}
-  n=diffDays(dkey(U.date));return n===0?'오늘':n===1?'내일':n===-1?'어제':n>0?n+'일 뒤':(-n)+'일 전';
+  if(U.tab==='month'){n=(U.date.getFullYear()-t.getFullYear())*12+U.date.getMonth()-t.getMonth();return n===0?'이번 달':n>0?n+'달 후':(-n)+'달 전';}
+  if(U.tab==='week'){n=Math.round((mondayOf(U.date)-mondayOf(t))/(7*864e5));return n===0?'이번 주':n>0?n+'주 후':(-n)+'주 전';}
+  n=diffDays(dkey(U.date));return n===0?'오늘':n>0?n+'일 후':(-n)+'일 전';
 }
 function topHTML(){
   var d=U.date,t='',s='',arrows=false,plus='';
