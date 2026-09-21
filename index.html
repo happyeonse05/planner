@@ -400,6 +400,10 @@ main{padding:0 14px 24px}
 .lt-prev img{width:64px;height:64px;border-radius:10px;object-fit:cover}
 .lt-add{display:inline-flex;align-items:center;margin-top:10px;cursor:pointer}
 .lt-big{display:block;max-width:100%;max-height:60vh;margin:0 auto;border-radius:12px}
+
+.nudge{display:flex;align-items:center;gap:8px;margin:10px 0;padding:10px 12px 10px 14px;border-radius:14px;background:var(--card);border:1px solid var(--edge);font-size:14px;font-weight:600}
+.nudge span{flex:1;min-width:0}
+.nudge .tbtn{height:32px}
 </style>
 </head>
 <body>
@@ -411,7 +415,7 @@ main{padding:0 14px 24px}
 <div id="modal"></div>
 
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script>
 (function(){
 'use strict';
@@ -515,7 +519,7 @@ function save(){
 }
 
 /* ---------- Supabase 설정 (깃허브 배포용) ---------- */
-var SUPA_CFG=window.PLANNER_CONFIG||{};
+var SUPA_CFG=window.PLANNER_CONFIG||{supabaseUrl:'https://mhxcnmfgemdnfjwmtqlh.supabase.co',supabaseAnonKey:'sb_publishable_PxgP4E_dgBowjQcv0093kw_xePXJh'};
 var SUPABASE_URL=SUPA_CFG.supabaseUrl||'';       // config.js에서 읽어요
 var SUPABASE_ANON_KEY=SUPA_CFG.supabaseAnonKey||'';
 var SUPA_TABLE='planner';
@@ -602,7 +606,7 @@ function initSupa(){
   try{window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){return false;}
   Sync.kind='supa';
   Sync.sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  Sync.sb.auth.getSession().then(function(r){supaAttach(r.data&&r.data.session);});
+  Sync.sb.auth.getSession().then(function(r){Sync.ready=true;var ss=r.data&&r.data.session;supaAttach(ss);if(!ss&&!M.type)render();}).catch(function(){Sync.ready=true;if(!M.type)render();});
   Sync.sb.auth.onAuthStateChange(function(ev,session){setTimeout(function(){supaAttach(session);},0);});
   return true;
 }
@@ -635,6 +639,11 @@ function authErr(e){
   return m||'연결이 안 돼요. 인터넷을 확인해주세요';
 }
 function initSync(){
+  if(!window.claude){
+    if(!SUPABASE_URL)Sync.diag='config.js 파일을 못 찾았어요. index.html이랑 같은 폴더에 올렸는지 확인해주세요.';
+    else if(!/^https:\/\/.+/.test(SUPABASE_URL)||SUPABASE_ANON_KEY.length<=20)Sync.diag='config.js에 주소나 키가 비어 있어요.';
+    else if(!window.supabase)Sync.diag='로그인 도구를 못 불러왔어요. 인터넷 연결을 확인하고 새로고침해주세요.';
+  }
   if(initSupa())return;
   try{
     if(!window.claude||typeof window.claude.use!=='function')return;
@@ -1181,6 +1190,9 @@ function viewSettings(){
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div></section>';
   var acct='';
+  if(Sync.kind!=='supa'&&Sync.diag){
+    acct='<section class="card warn"><div class="card-h"><h3>계정</h3></div><div class="setrow"><span>로그인을 쓸 수 없어요<small>'+esc(Sync.diag)+'</small></span></div></section>';
+  }
   if(Sync.kind==='supa'){
     acct='<section class="card"><div class="card-h"><h3>계정</h3></div>'+(Sync.uid?
       '<div class="setrow"><span>로그인됨<small>'+esc(Sync.email)+'</small></span></div>'+
@@ -1221,6 +1233,8 @@ function render(reset){
   var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings}[U.tab]();
   if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=examBar()+v;
   if(U.tab!=='settings'&&U.tab!=='ttable')v=letterBar()+v;
+  if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
+    v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
   main.innerHTML=(storageOK?'':'<div class="note">이 브라우저에서는 저장이 막혀 있어요. 새로고침하면 내용이 사라질 수 있어요.</div>')+v;
   $('#nav').innerHTML=navHTML();
   $('#app').classList.toggle('wide',U.tab==='day');
@@ -1473,6 +1487,7 @@ function act(a,e){
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
+    case 'nudge-off':lsSet('planner.loginNudge','off');render();break;
     case 'toggle-letter':S.settings.letterOn=!S.settings.letterOn;save();render();break;
     case 'letter-seen':{var lk=todayKey();if(S.letters[lk]){S.letters[lk].seen=true;save();}render();break;}
     case 'letter-rmphoto':setLetter(a.dataset.k,{photo:null});save();render();break;
