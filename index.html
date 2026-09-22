@@ -209,6 +209,18 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .course .nm{font-weight:700}
 .course .cd{font-size:12px;color:var(--sub);margin-left:6px}
 .course .slots{margin-top:7px}
+.course-overview{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:var(--soft)}
+.course-overview .lbl{margin:0 0 6px;color:var(--sub)}
+.course-line{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px}
+.course-line b{font-size:12px;min-width:42px;color:var(--sub);font-variant-numeric:tabular-nums}
+.course-line span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.next-class{display:flex;align-items:center;gap:10px;width:100%;margin:8px 0 10px;padding:12px 14px;border-radius:14px;background:var(--c);color:#1c1c1e;text-align:left}
+.next-class>span{display:block;flex:1;min-width:0}
+.next-class small,.next-class b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.next-class small{font-size:11px;opacity:.68;margin-bottom:3px}
+.next-class b{font-size:15px}
+.next-class em{font-style:normal;font-size:12px;white-space:nowrap}
+.next-class .chev{font-size:22px;opacity:.55}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
 .setrow:last-child{border-bottom:0}
 .setrow span{font-size:14px}
@@ -1547,8 +1559,10 @@ function homeStrip(){
   var na=S.events.filter(function(e){var ek=e.date||e.from||'';return e.kind==='appointment'&&ek>=k&&(ek>k||!e.start||toMin(e.start)>=now);}).sort(function(a,b){return ((a.date||a.from||'')+' '+(a.start||'99:99')).localeCompare((b.date||b.from||'')+' '+(b.start||'99:99'));})[0];
   var nd=S.ddays.filter(function(x){return x.mode==='since'||diffDays(ddNext(x))>=0;}).sort(function(a,b){return ddNext(a)<ddNext(b)?-1:1;})[0];
   var pct=tot?Math.round(dn/tot*100):0;
-  var mini='<div class="hsumm"><div class="hmini">다음 수업<b>'+(nc?esc(nc.name):'없음')+'</b></div><div class="hmini">가까운 약속<b>'+(na?esc(eventChipLabel(na)):'없음')+'</b></div><div class="hmini">가장 가까운 D-day<b>'+(nd?esc(nd.title)+' · '+esc(ddLabel(nd)):'없음')+'</b></div></div>';
-  return '<section class="home"><div><div class="hrow1"><b>오늘 할 일 '+pct+'%</b>'+(nx?(nx.start>now&&nx.start-now<=30?'<span class="hsoon">곧 시작 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>':'<span>다음 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>'):'<span>남은 일정 없음</span>')+
+  var classCount=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped;}).length;
+  var nextCard=nc?'<button class="next-class" style="--c:'+esc(nc.color||S.settings.defColor||'#dce9f7')+'" data-act="course-todos" data-name="'+esc(nc.name)+'"><span><small>'+(nc.start<=now&&nc.end>now?'지금 수업 중':'다음 수업')+' · '+timeShort(fmt(nc.start))+'–'+timeShort(fmt(nc.end))+'</small><b>'+esc(nc.name)+'</b>'+(nc.sub?'<small>'+esc(nc.sub)+'</small>':'')+'</span><em>과목 보기</em><i class="chev">›</i></button>':'';
+  var mini='<div class="hsumm"><div class="hmini">오늘 수업<b>'+classCount+'개</b></div><div class="hmini">가까운 약속<b>'+(na?esc(eventChipLabel(na)):'없음')+'</b></div><div class="hmini">가장 가까운 D-day<b>'+(nd?esc(nd.title)+' · '+esc(ddLabel(nd)):'없음')+'</b></div></div>';
+  return '<section class="home"><div>'+nextCard+'<div class="hrow1"><b>오늘 할 일 '+pct+'%</b>'+(nx?(nx.start>now&&nx.start-now<=30?'<span class="hsoon">곧 시작 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>':'<span>다음 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>'):'<span>남은 일정 없음</span>')+
     (S.focus[k]?'<span>집중 '+durLong(S.focus[k])+'</span>':'')+(function(){var n=S.todos.filter(function(t){return !t.done&&t.due&&t.due<=k;}).length;return n?'<span class="hdue">마감 '+n+'개</span>':'';})()+'</div><div class="hbar" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>'+mini+'</div><button class="tbtn plus ibt" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
 }
 function askReminderPermission(){
@@ -2653,12 +2667,19 @@ function drawCourse(){
   var n=M.name,did='course:'+n;
   var all=S.todos.filter(function(t){return t.course===n;});
   var open=sortTodos(all.filter(function(t){return !t.done;})),done=all.length-open.length;
+  var blocks=S.classes.filter(function(c){return c.name===n&&c.day!=null;}).sort(function(a,b){return a.day-b.day||a.start.localeCompare(b.start);});
+  var blockHTML=blocks.length?blocks.map(function(c){return '<div class="course-line"><b>'+esc(DAYS[c.day])+'</b><span>'+esc(c.start||'')+'–'+esc(c.end||'')+(c.sub?' · '+esc(c.sub):'')+'</span></div>';}).join(''):'<div class="empty">등록된 수업 시간이 없어요</div>';
+  var exs=S.exams.filter(function(e){return examCourse(e)===n;}).sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:0;});
+  var examHTML=exs.length?'<div class="course-overview"><span class="lbl">시험·일정</span>'+exs.map(function(e){return '<button class="bex" data-act="edit-exam" data-id="'+e.id+'"><b>'+esc(e.kind||'시험')+'</b><span>'+esc(e.name)+'</span><em>'+rangeTxt(e.start,e.end)+'</em></button>';}).join('')+'</div>':'';
+  var chatId='course:'+n,chatCount=S.selfchat.filter(function(m){return (m.room||'general')===chatId;}).length;
   sh.innerHTML='<h3 style="display:flex;align-items:center;gap:8px"><span class="dot" style="--c:'+courseColor(n)+';margin:0"></span>'+esc(n)+'</h3>'+
-    '<ul class="todos">'+(open.map(function(t){return todoItem(t,{tag:true,nocourse:true});}).join('')||'<li class="empty">남은 할 일이 없어요</li>')+'</ul>'+
+    '<div class="course-overview"><span class="lbl">수업 시간</span>'+blockHTML+'</div>'+examHTML+
+    '<div class="card-h" style="margin-top:12px"><h3>과목 할 일</h3><span class="cnt">'+open.length+'개 남음 · '+done+'개 완료</span></div>'+ 
+    '<ul class="todos">'+(open.map(function(t){return todoItem(t,{tag:true,nocourse:true});}).join('')||'<li class="empty">남은 할 일이 없어요</li>')+'</ul>'+ 
     (done?'<p class="hint" style="margin-top:8px">완료한 일 '+done+'개</p>':'')+
-    '<div class="add"><input data-draft="'+esc(did)+'" placeholder="이 과목 할 일" enterkeyhint="done" value="'+esc(U.drafts[did]||'')+'"><button data-act="add-course-todo">추가</button></div>'+
-    '<div class="duebox"><span>마감일</span><input type="date" id="c-due" value="'+esc(U.cdue||'')+'"></div>'+
-    '<div class="acts" style="margin-top:12px"><button class="b-ghost" data-act="close">닫기</button></div>';
+    '<div class="add"><input data-draft="'+esc(did)+'" placeholder="이 과목 할 일" enterkeyhint="done" value="'+esc(U.drafts[did]||'')+'"><button data-act="add-course-todo">추가</button></div>'+ 
+    '<div class="duebox"><span>마감일</span><input type="date" id="c-due" value="'+esc(U.cdue||'')+'"></div>'+ 
+    '<div class="acts" style="margin-top:12px"><button class="tbtn" data-act="chat-room" data-room="'+esc(chatId)+'">수업 채팅방'+(chatCount?' · '+chatCount:'')+'</button><button class="b-ghost" data-act="close">닫기</button></div>';
   if(U.refocus===did){var i=sh.querySelector('.add input');if(i)i.focus();U.refocus=null;}
 }
 function openExam(e){
