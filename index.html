@@ -897,7 +897,7 @@ function normalize(s){
   if(!o.settings.calItem)o.settings.calItem='study';
   if(!o.settings.calDday)o.settings.calDday='star';
   /* 이전 버전에서 '기본'으로 저장된 배경도 새 일정 기본 색 연동으로 한 번 교정 */
-  if(o.settings.bgLinkedV2===undefined){o.settings.bg='rainbow';o.settings.bgLinkedV2=true;}
+  if(o.settings.bgLinkedV3===undefined){o.settings.bg='rainbow';o.settings.bgLinkedV3=true;}
   o.settings.monthItems=Object.assign({appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},o.settings.monthItems||{});
   if(!Array.isArray(o.settings.topOrder))o.settings.topOrder=[];
   if(!Array.isArray(o.settings.links))o.settings.links=schoolLinks(o.settings.school);
@@ -2018,8 +2018,9 @@ function viewSettings(){
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div><div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
     '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
-    '<div class="setrow"><span>배경<small>무지개 아이콘이지만 실제 배경은 새 일정 기본 색과 같아요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','핑크 땡땡이'],['white','흰 바탕 핑크 땡땡이'],['beige','베이지 땡땡이']].map(function(x){
-      return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'" data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+
+    '<div class="setrow"><span>배경<small>새 일정 기본 색과 같은 색으로 보여요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','핑크 땡땡이'],['white','흰 바탕 핑크 땡땡이'],['beige','베이지 땡땡이']].map(function(x){
+      var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';
+      return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+ 
     '<div class="setrow"><span>시간표 시간<small>이 범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
       '<select class="sel" id="set-hs">'+[0,1,2,3,4,5,6,7,8,9,10,11,12].map(function(h){return '<option value="'+h+'"'+((S.settings.hStart!=null?S.settings.hStart:9)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select><span>~</span>'+
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
