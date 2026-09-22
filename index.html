@@ -1281,7 +1281,7 @@ function examRow(e,noCourse){
 }
 function exPinned(e){return e.pin!=null?e.pin:e.kind!=='기타';}
 function topBar(){
-  var n=S.settings.topN!=null?S.settings.topN:3;if(!n)return '';
+  var n=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3));
   var tk=todayKey(),items=[];
   S.exams.forEach(function(e){if(!exPinned(e)||e.end<tk)return;var d=diffDays(e.start),lab=d>0?'D-'+d:d===0?'D-day':(diffDays(e.end)===0?'오늘 끝':'진행 중');
     items.push({k:e.start,html:'<button class="ddpill ex'+(d<=0?' today':'')+'" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+'</span><b>'+lab+'</b></button>'});});
@@ -1657,7 +1657,7 @@ function viewSettings(){
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
     '<div class="setrow defc"><span>새 일정 기본 색<small>일정·종일 일정·D-day를 만들 때 처음 골라져 있는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+
-    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[0,'끔'],[1,'1'],[2,'2'],[3,'3'],[5,'5']].map(function(x){var cur=S.settings.topN!=null?S.settings.topN:3;return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
+    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div></section>';
   var acct='';
