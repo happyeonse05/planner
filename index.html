@@ -609,6 +609,11 @@ main{padding:0 14px 24px}
 .bex span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bex em{flex:none;font-style:normal;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
 .bex.past span,.bex.past em{text-decoration:line-through;color:var(--sub)}
+
+.cell.exam{background:transparent!important}
+.exmark{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:3px;vertical-align:middle}
+.ddpill.ex::before{background:var(--accent)}
+.setrow .seg button{padding:6px 10px}
 </style>
 </head>
 <body>
@@ -1274,6 +1279,17 @@ function examRow(e,noCourse){
   var ec=examCourse(e);
   return '<div class="setrow'+(e.end<todayKey()?' past':'')+'"><span>'+esc(e.name)+'<small>'+rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:'')+(!noCourse&&ec&&ec!=='기타'&&e.name.replace(/\s/g,'').indexOf(ec.replace(/\s/g,''))<0?' · '+esc(ec):'')+'</small></span><button class="tbtn" data-act="edit-exam" data-id="'+e.id+'">수정</button></div>';
 }
+function exPinned(e){return e.pin!=null?e.pin:e.kind!=='기타';}
+function topBar(){
+  var n=S.settings.topN!=null?S.settings.topN:3;if(!n)return '';
+  var tk=todayKey(),items=[];
+  S.exams.forEach(function(e){if(!exPinned(e)||e.end<tk)return;var d=diffDays(e.start),lab=d>0?'D-'+d:d===0?'D-day':(diffDays(e.end)===0?'오늘 끝':'진행 중');
+    items.push({k:e.start,html:'<button class="ddpill ex'+(d<=0?' today':'')+'" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+'</span><b>'+lab+'</b></button>'});});
+  S.ddays.forEach(function(x){if(!x.pin)return;var nk=ddNext(x);
+    items.push({k:x.mode==='since'?'9999':nk,html:'<button class="ddpill'+(diffDays(nk)===0&&x.mode!=='since'?' today':'')+'" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'"><span>'+esc(x.title)+'</span><b>'+ddLabel(x)+'</b></button>'});});
+  items.sort(function(a,b){return a.k<b.k?-1:a.k>b.k?1:0;});
+  return items.length?'<div class="ddbar">'+items.slice(0,n).map(function(i){return i.html;}).join('')+'</div>':'';
+}
 function routinesFor(d){var w=dow(d);return S.routines.filter(function(r){return r.days.indexOf(w)>=0;});}
 function routineDone(r,k){return (S.routineDone[k]||[]).indexOf(r.id)>=0;}
 function daysText(days){
@@ -1435,7 +1451,7 @@ function viewMonth(){
       .concat(tds.map(function(t){return '<span class="chip td'+(t.done?' cdone':'')+'">'+esc(t.text)+'</span>';}));
     var shown=chips.slice(0,2).join('')+(chips.length>2?'<span class="more">+'+(chips.length-2)+'</span>':'');
     cells+='<button class="cell '+(c.getMonth()!==m?'out ':'')+(w>=5?'we ':'')+(holi(k)?'hol ':'')+(k===tk?'today ':'')+(inExam(k)?'exam':'')+'" data-act="open-day" data-date="'+k+'">'+
-      '<span class="n"'+(holi(k)?' title="'+holi(k)+'"':'')+'>'+c.getDate()+'</span>'+(holi(k)?'<span class="holn">'+holi(k)+'</span>':'')+(dues.length?'<span class="duemark"></span>':'')+((evs.length||ads.length)?'<span class="evmark" style="--c:'+((evs[0]||ads[0]).color)+'"></span>':'')+(ddOn(k).length?'<span class="impmark" style="--c:'+ddOn(k)[0].color+'">★</span>':'')+(tds.length?'<span class="tcnt">'+tdn+'/'+tds.length+'</span>':'')+'<span class="dots">'+dots+'</span>'+calCell(k)+shown+'</button>';
+      '<span class="n"'+(holi(k)?' title="'+holi(k)+'"':'')+'>'+c.getDate()+'</span>'+(holi(k)?'<span class="holn">'+holi(k)+'</span>':'')+(dues.length?'<span class="duemark"></span>':'')+(inExam(k)?'<span class="exmark" title="시험"></span>':'')+((evs.length||ads.length)?'<span class="evmark" style="--c:'+((evs[0]||ads[0]).color)+'"></span>':'')+(ddOn(k).length?'<span class="impmark" style="--c:'+ddOn(k)[0].color+'">★</span>':'')+(tds.length?'<span class="tcnt">'+tdn+'/'+tds.length+'</span>':'')+'<span class="dots">'+dots+'</span>'+calCell(k)+shown+'</button>';
   }
   var sum='';
   if(S.settings.logOn){
@@ -1641,6 +1657,7 @@ function viewSettings(){
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
     '<div class="setrow defc"><span>새 일정 기본 색<small>일정·종일 일정·D-day를 만들 때 처음 골라져 있는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+
+    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[0,'끔'],[1,'1'],[2,'2'],[3,'3'],[5,'5']].map(function(x){var cur=S.settings.topN!=null?S.settings.topN:3;return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div></section>';
   var acct='';
@@ -1687,7 +1704,7 @@ function render(reset){
   var main=$('#main'),st=reset?0:main.scrollTop;
   $('#top').innerHTML=topHTML();
   var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings}[U.tab]();
-  if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=examBar()+ddayBar()+v;
+  if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=topBar()+v;
   if(U.tab!=='settings'&&U.tab!=='ttable')v=letterBar()+v;
   if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
     v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
@@ -1845,12 +1862,13 @@ function drawCourse(){
   if(U.refocus===did){var i=sh.querySelector('.add input');if(i)i.focus();U.refocus=null;}
 }
 function openExam(e){
-  var x=e||{name:'',start:'',end:'',kind:''};
+  var x=e||{name:'',start:'',end:'',kind:'',pin:true};
   M={type:'exam',id:e?e.id:null,kind:x.kind||'',single:!e||!x.end||x.end===x.start};
   openModal('<h3>'+(e?'시험 기간 수정':'시험 기간 추가')+'</h3>'+
     '<div class="seg">'+['중간고사','기말고사','기타'].map(function(k){return '<button data-act="exam-name" data-v="'+k+'" class="'+(M.kind===k?'on':'')+'">'+k+'</button>';}).join('')+'</div>'+
     '<input class="fld" id="f-ename" placeholder="이름 (예: 경제학입문, 토익, 과제 제출)" maxlength="30" value="'+esc(x.name)+'">'+
     '<span class="lbl">날짜</span>'+rangeSeg('f-erange',M.single)+'<div class="row"><input class="fld" type="date" id="f-es" value="'+x.start+'"><span class="eew" id="f-eew"'+(M.single?' style="display:none"':'')+'><span>~</span><input class="fld" type="date" id="f-ee" value="'+(x.end&&x.end!==x.start?x.end:'')+'"></span></div>'+
+    '<label class="ck"><input type="checkbox" id="f-epin"'+(exPinned(x)?' checked':'')+'>맨 위에 D-day 표시</label>'+
     '<span class="lbl">과목</span><select class="fld" id="f-ecourse"><option value="">선택 안 함</option>'+courseNames().map(function(c){return '<option value="'+esc(c)+'"'+(examCourse(x)===c?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'<option value="기타"'+(x.course==='기타'?' selected':'')+'>기타</option></select>'+
     '<div class="acts">'+(e?'<button class="b-del" data-act="del-exam">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-exam">저장</button></div>');
 }
@@ -1862,8 +1880,8 @@ function saveExam(){
   if(!a){bad('#f-es');return;}
   if(M.single||!b)b=a;
   if(b<a){bad('#f-ee');return;}
-  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=b;e.kind=M.kind||null;e.course=ecv;}}
-  else S.exams.push({id:uid(),name:n,start:a,end:b,kind:M.kind||null,course:ecv});
+  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=b;e.kind=M.kind||null;e.course=ecv;e.pin=$('#f-epin').checked;}}
+  else S.exams.push({id:uid(),name:n,start:a,end:b,kind:M.kind||null,course:ecv,pin:$('#f-epin').checked});
   save();closeModal();render();
 }
 function openCourseColor(name){
@@ -1994,6 +2012,7 @@ function act(a,e){
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
+    case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
     case 'exview':S.settings.examView=a.dataset.v;save();render();break;
     case 'esem':{var dv=Number(a.dataset.v),o=U.esem;if(dv>0){U.esem=o.t===1?{y:o.y,t:2}:{y:o.y+1,t:1};}else{U.esem=o.t===2?{y:o.y,t:1}:{y:o.y-1,t:2};}render();break;}
     case 'rsel':{var sg=a.dataset.g,one=a.dataset.v==='1';document.querySelectorAll('#'+sg+' button').forEach(function(b){b.classList.toggle('on',b===a);});
