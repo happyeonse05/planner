@@ -886,13 +886,14 @@ function examNow(){
   return S.exams.filter(function(e){return e.end>=tk;}).sort(function(a,b){return a.start<b.start?-1:1;})[0]||null;
 }
 function inExam(k){return S.exams.some(function(e){return k>=e.start&&k<=e.end;});}
+function rangeTxt(a,b){var x=parseKey(a),y=parseKey(b||a);return (x.getMonth()+1)+'/'+x.getDate()+(a===b||!b?'':' – '+(y.getMonth()+1)+'/'+y.getDate());}
 function examBar(){
   var e=examNow();if(!e)return '';
   var n=diffDays(e.start),txt;
   if(n>0)txt='<b>D-'+n+'</b>';
   else{var left=diffDays(e.end);txt='<b>'+(left===0?'오늘 끝':left+'일 남음')+'</b>';}
   var s=parseKey(e.start),en=parseKey(e.end);
-  return '<button class="exbar" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+(n<=0?' 기간':'')+' <small>'+(s.getMonth()+1)+'/'+s.getDate()+' – '+(en.getMonth()+1)+'/'+en.getDate()+'</small></span>'+txt+'</button>';
+  return '<button class="exbar" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+(n<=0?' 기간':'')+' <small>'+rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:'')+'</small></span>'+txt+'</button>';
 }
 function alldayFor(d){
   var k=dkey(d),w=dow(d);
@@ -1528,7 +1529,7 @@ function viewTable(){
       :'<div class="empty">시간 없이 매일·특정 요일에 띄울 일정을 넣어요</div>')+'</section>';
   var exHTML='<section class="card"><div class="card-h"><h3>시험 기간</h3><button class="tbtn" data-act="add-exam">+ 추가</button></div>'+
     (ex.length?ex.map(function(e){var a=parseKey(e.start),b=parseKey(e.end);
-      return '<div class="setrow"><span>'+esc(e.name)+'<small>'+(a.getMonth()+1)+'/'+a.getDate()+' – '+(b.getMonth()+1)+'/'+b.getDate()+'</small></span><button class="tbtn" data-act="edit-exam" data-id="'+e.id+'">수정</button></div>';}).join('')
+      return '<div class="setrow"><span>'+esc(e.name)+'<small>'+rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:'')+'</small></span><button class="tbtn" data-act="edit-exam" data-id="'+e.id+'">수정</button></div>';}).join('')
       :'<div class="empty">중간·기말 날짜를 넣으면 위에 D-day가 떠요</div>')+'</section>';
   return '<section class="card"><div class="card-h"><h3>수업·고정 일정</h3><button class="tbtn" data-act="all-color">전체 색 바꾸기</button></div>'+
     '<div class="semrow"><span>학기 기간</span><input type="date" id="set-ss" value="'+(S.settings.semStart||'')+'"><span>~</span><input type="date" id="set-se" value="'+(S.settings.semEnd||'')+'"></div><p class="hint">개강~종강을 넣으면 방학엔 수업이 안 뜨고, 주간 제목이 "개강 N주차"로 바뀌어요</p>'+
@@ -1737,22 +1738,23 @@ function drawCourse(){
   if(U.refocus===did){var i=sh.querySelector('.add input');if(i)i.focus();U.refocus=null;}
 }
 function openExam(e){
-  var x=e||{name:'',start:'',end:''};
-  M={type:'exam',id:e?e.id:null};
+  var x=e||{name:'',start:'',end:'',kind:''};
+  M={type:'exam',id:e?e.id:null,kind:x.kind||''};
   openModal('<h3>'+(e?'시험 기간 수정':'시험 기간 추가')+'</h3>'+
-    '<div class="seg"><button data-act="exam-name" data-v="중간고사">중간고사</button><button data-act="exam-name" data-v="기말고사">기말고사</button><button data-act="exam-name" data-v="">기타</button></div>'+
-    '<input class="fld" id="f-ename" placeholder="시험 이름 (예: 토익, 자격증, 퀴즈)" maxlength="30" value="'+esc(x.name)+'">'+
+    '<div class="seg">'+['중간고사','기말고사','기타'].map(function(k){return '<button data-act="exam-name" data-v="'+k+'" class="'+(M.kind===k?'on':'')+'">'+k+'</button>';}).join('')+'</div>'+
+    '<input class="fld" id="f-ename" placeholder="이름 (예: 경제학입문, 토익, 과제 제출)" maxlength="30" value="'+esc(x.name)+'">'+
     '<span class="lbl">기간</span><div class="row"><input class="fld" type="date" id="f-es" value="'+x.start+'"><span>~</span><input class="fld" type="date" id="f-ee" value="'+x.end+'"></div>'+
     '<div class="acts">'+(e?'<button class="b-del" data-act="del-exam">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-exam">저장</button></div>');
 }
 function saveExam(){
   var n=$('#f-ename').value.trim(),a=$('#f-es').value,b=$('#f-ee').value;
+  if(!n&&M.kind&&M.kind!=='기타')n=M.kind;
   if(!n){bad('#f-ename');return;}
   if(!a){bad('#f-es');return;}
   if(!b)b=a;
   if(b<a){bad('#f-ee');return;}
-  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=b;}}
-  else S.exams.push({id:uid(),name:n,start:a,end:b});
+  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=b;e.kind=M.kind||null;}}
+  else S.exams.push({id:uid(),name:n,start:a,end:b,kind:M.kind||null});
   save();closeModal();render();
 }
 function openCourseColor(name){
@@ -2007,7 +2009,7 @@ function act(a,e){
     }
     case 'add-exam':openExam(null);break;
     case 'edit-exam':{var ee=S.exams.find(function(x){return x.id===id;});if(ee)openExam(ee);break;}
-    case 'exam-name':{var en=$('#f-ename');en.value=a.dataset.v;document.querySelectorAll('#modal .seg button').forEach(function(b){b.classList.toggle('on',b===a);});if(!a.dataset.v)en.focus();break;}
+    case 'exam-name':{M.kind=M.kind===a.dataset.v?'':a.dataset.v;document.querySelectorAll('#modal .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.v===M.kind);});var en=$('#f-ename');if(!en.value)en.focus();break;}
     case 'save-exam':saveExam();break;
     case 'del-exam':if(armed(a)){var xid=M.id;S.exams=S.exams.filter(function(x){return x.id!==xid;});save();closeModal();render();}break;
     case 'carry-over':{
