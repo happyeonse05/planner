@@ -84,6 +84,9 @@ main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-
 .nav button.on{background:var(--soft);color:var(--ink)}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}
+.friendrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.friendrow>div:first-child{min-width:0}.friendrow b,.friendrow small{display:block}.friendrow small{font-size:12px;color:var(--sub);margin-top:3px}.friendacts{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.friendacts .tbtn{height:30px;padding:0 8px;font-size:11px}.friendacts .tbtn.on{background:var(--ink);color:var(--bg)}.friend-plan{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.friend-plan small{color:var(--sub)}
+.requestbox{padding:14px;border-radius:14px;background:var(--soft);margin:10px 0 14px}.requestbox b,.requestbox small{display:block}.requestbox small{color:var(--sub);margin-top:5px;line-height:1.5}
 .card.warn{border-color:color-mix(in srgb,var(--now) 45%,var(--line))}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
 .card-h h3{margin:0;font-size:15px;font-weight:700}
@@ -848,7 +851,7 @@ var DEFAULT_CLASSES=[];
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topOrder:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -863,6 +866,7 @@ function normalize(s){
   if(o.settings.schoolCampus==null)o.settings.schoolCampus=schoolProfile(o.settings.school,o).campuses[0]||'';
   if(!o.settings.wakeGoal)o.settings.wakeGoal='09:00';
   o.settings.logDisplay=Object.assign({wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},o.settings.logDisplay||{});
+  if(o.settings.topShow===undefined)o.settings.topShow=true;
   if(!Array.isArray(o.settings.chatRooms))o.settings.chatRooms=[];
   if(!o.settings.chatHidden||typeof o.settings.chatHidden!=='object')o.settings.chatHidden={};
   if(!o.settings.chatRoomNames||typeof o.settings.chatRoomNames!=='object')o.settings.chatRoomNames={};
@@ -927,6 +931,7 @@ function save(){
   S.updatedAt=Date.now();
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storageOK=false;}
   scheduleSync();
+  if(typeof FriendSync!=='undefined')friendPush();
 }
 
 /* ---------- Supabase 설정 (깃허브 배포용) ---------- */
@@ -938,6 +943,132 @@ var SUPA_TABLE='planner';
 
 /* ---------- 기기 간 동기화 (사용 가능할 때만) ---------- */
 var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null,sb:null,email:'',uid:null};
+/* ---------- 친구 공유 동기화 ---------- */
+var FriendSync={code:'',friends:[],incoming:[],requests:[],shared:[],shown:{},loaded:false,busy:false,msg:'',error:''};
+var FRIEND_CODE_ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function friendDb(){return Sync.kind==='supa'&&Sync.sb&&Sync.uid?Sync.sb:null;}
+function makeFriendCode(){var out='';for(var i=0;i<8;i++)out+=FRIEND_CODE_ALPH[Math.floor(Math.random()*FRIEND_CODE_ALPH.length)];return out;}
+function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if(U.tab==='settings'&&!M.type)render();}
+function friendPayload(kind){
+  if(kind==='calendar')return {events:S.events.map(function(e){return Object.assign({},e);}),allday:S.allday.map(function(e){return Object.assign({},e);})};
+  return {classes:S.classes.map(function(e){return Object.assign({},e);}),events:S.events.map(function(e){return Object.assign({},e);}),allday:S.allday.map(function(e){return Object.assign({},e);}),todos:S.todos.map(function(e){return Object.assign({},e);}),routines:S.routines.map(function(e){return Object.assign({},e);}),exams:S.exams.map(function(e){return Object.assign({},e);}),ddays:S.ddays.map(function(e){return Object.assign({},e);})};
+}
+function friendPush(){
+  var sb=friendDb();if(!sb||!FriendSync.loaded||FriendSync.busy)return Promise.resolve();
+  var rows=[];
+  FriendSync.friends.forEach(function(f){
+    if(f.outCalendar)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'calendar',payload:friendPayload('calendar'),updated_at:new Date().toISOString()});
+    if(f.outPlanner)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'planner',payload:friendPayload('planner'),updated_at:new Date().toISOString()});
+  });
+  if(!rows.length)return Promise.resolve();
+  FriendSync.busy=true;
+  return Promise.all(rows.map(function(row){return sb.from('planner_friend_data').upsert(row,{onConflict:'owner_id,friend_id,kind'});})).then(function(rs){
+    var bad=rs.find(function(x){return x.error;});if(bad)throw bad.error;
+  }).catch(function(e){FriendSync.error=e&&e.message||'친구 공유 저장에 실패했어요';}).then(function(){FriendSync.busy=false;});
+}
+function friendLoad(){
+  var sb=friendDb();
+  if(!sb){FriendSync.loaded=false;FriendSync.friends=[];FriendSync.incoming=[];return Promise.resolve();}
+  FriendSync.error='';
+  return sb.from('planner_friend_codes').select('code').eq('user_id',Sync.uid).maybeSingle().then(function(r){
+    if(r.error)throw r.error;
+    if(r.data&&r.data.code){FriendSync.code=r.data.code;return null;}
+    var c=makeFriendCode();return sb.from('planner_friend_codes').insert({user_id:Sync.uid,code:c}).then(function(x){if(x.error)throw x.error;FriendSync.code=c;});
+  }).then(function(){
+    return Promise.all([
+      sb.from('planner_friendships').select('user_a,user_b').eq('user_a',Sync.uid),
+      sb.from('planner_friendships').select('user_a,user_b').eq('user_b',Sync.uid)
+    ]);
+  }).then(function(rs){
+    rs.forEach(function(r){if(r.error)throw r.error;});
+    var links=(rs[0].data||[]).concat(rs[1].data||[]),ids=[];
+    links.forEach(function(x){var id=x.user_a===Sync.uid?x.user_b:x.user_a;if(ids.indexOf(id)<0)ids.push(id);});
+    if(!ids.length){FriendSync.friends=[];FriendSync.incoming=[];FriendSync.loaded=true;return null;}
+    return Promise.all([
+      sb.from('planner_friend_codes').select('user_id,code').in('user_id',ids),
+      sb.from('planner_friend_shares').select('owner_id,friend_id,share_calendar,share_planner').in('owner_id',[Sync.uid].concat(ids)).in('friend_id',[Sync.uid].concat(ids)),
+      sb.from('planner_friend_data').select('owner_id,friend_id,kind,payload,updated_at').eq('friend_id',Sync.uid).in('owner_id',ids)
+    ]).then(function(xs){
+      xs.forEach(function(r){if(r.error)throw r.error;});
+      var cm={};(xs[0].data||[]).forEach(function(x){cm[x.user_id]=x.code;});
+      var sm={};(xs[1].data||[]).forEach(function(x){sm[x.owner_id+'|'+x.friend_id]=x;});
+      FriendSync.friends=ids.map(function(id){var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{};return {id:id,code:cm[id]||id.slice(0,6).toUpperCase(),outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};});
+      FriendSync.incoming=(xs[2].data||[]).filter(function(x){var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});return f&&(x.kind==='calendar'?f.inCalendar:f.inPlanner);});
+    });
+  }).then(function(){FriendSync.loaded=true;return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;FriendSync.error=/relation|planner_friend_/i.test(e&&e.message||'')?'Supabase SQL 설정이 아직 필요해요. 함께 받은 친구 공유 SQL을 먼저 실행해주세요.':(e&&e.message||'친구 연동 테이블을 확인해주세요');if(U.tab==='settings'&&!M.type)render();});
+}
+function friendAdd(code){
+  var sb=friendDb(),c=String(code||'').trim().toUpperCase();if(!sb){friendNote('먼저 로그인해주세요');return;}if(!/^[A-Z2-9]{8}$/.test(c)){friendNote('8자리 초대코드를 입력해주세요');return;}
+  sb.from('planner_friend_codes').select('user_id').eq('code',c).maybeSingle().then(function(r){if(r.error)throw r.error;if(!r.data){friendNote('초대코드를 찾지 못했어요');return;}if(r.data.user_id===Sync.uid){friendNote('내 초대코드는 입력할 수 없어요');return;}
+    var pair=[Sync.uid,r.data.user_id].sort();return sb.from('planner_friendships').upsert({user_a:pair[0],user_b:pair[1]},{onConflict:'user_a,user_b'}).then(function(x){if(x.error)throw x.error;return sb.from('planner_friend_shares').upsert({owner_id:Sync.uid,friend_id:r.data.user_id,share_calendar:false,share_planner:false},{onConflict:'owner_id,friend_id'});}).then(function(x){if(x&&x.error)throw x.error;friendNote('친구가 연결됐어요. 공유 범위를 골라주세요');return friendLoad();});
+  }).catch(function(e){friendNote(e&&e.message||'친구 연결에 실패했어요');});
+}
+function friendToggle(id,mode){
+  var sb=friendDb(),f=FriendSync.friends.find(function(x){return x.id===id;});if(!sb||!f)return;
+  var row={owner_id:Sync.uid,friend_id:id,share_calendar:mode==='calendar'?!f.outCalendar:f.outCalendar,share_planner:mode==='planner'?!f.outPlanner:f.outPlanner};
+  sb.from('planner_friend_shares').upsert(row,{onConflict:'owner_id,friend_id'}).then(function(r){if(r.error)throw r.error;return friendLoad();}).then(friendPush).catch(function(e){friendNote(e&&e.message||'공유 범위를 바꾸지 못했어요');});
+}
+function friendRemove(id){
+  var sb=friendDb(),pair=[Sync.uid,id].sort();if(!sb)return;
+  Promise.all([sb.from('planner_friendships').delete().eq('user_a',pair[0]).eq('user_b',pair[1]),sb.from('planner_friend_shares').delete().eq('owner_id',Sync.uid).eq('friend_id',id)]).then(function(rs){rs.forEach(function(r){if(r.error)throw r.error;});return friendLoad();}).then(function(){friendNote('친구 연결을 해제했어요');}).catch(function(e){friendNote(e&&e.message||'친구 연결 해제에 실패했어요');});
+}
+function requestFriendCode(id){var f=FriendSync.friends.find(function(x){return x.id===id;});return f?f.code:'친구';}
+function appointmentRequestText(p){return [p.what,p.place,p.date,p.start?timeShort(p.start):'시간 미정'].filter(function(x){return !!x;}).join(' · ')||'약속';}
+function mergeSharedAppointments(rows){
+  var accepted={},changed=false;(rows||[]).forEach(function(r){var p=Object.assign({},r.payload||{});p.id='shared:'+r.request_id;p.sharedRequestId=r.request_id;p.shared=true;p.kind='appointment';accepted[r.request_id]=1;var old=S.events.find(function(e){return e.sharedRequestId===r.request_id;});if(old)Object.assign(old,p);else{S.events.push(p);changed=true;}});
+  var before=S.events.length;S.events=S.events.filter(function(e){return !e.sharedRequestId||accepted[e.sharedRequestId];});if(before!==S.events.length)changed=true;
+  if(changed){S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storageOK=false;}scheduleSync();}
+}
+function showNextAppointmentRequest(){
+  if(M.type||!Sync.uid)return;
+  var r=FriendSync.requests.find(function(x){return x.to_user===Sync.uid&&x.status==='pending'&&!FriendSync.shown[x.id];});if(!r)return;
+  FriendSync.shown[r.id]=1;M={type:'appointment-request',request:r};
+  var p=r.payload||{};
+  openModal('<h3>새 약속 요청</h3><p class="hint">친구 · '+esc(requestFriendCode(r.from_user))+'님이 약속을 제안했어요.</p><div class="requestbox"><b>'+esc(p.what||'약속')+'</b><small>'+esc([p.date,p.start?timeShort(p.start):'시간 미정',p.place].filter(function(x){return !!x;}).join(' · '))+'</small></div><p class="hint" id="request-msg"></p><div class="acts"><button class="b-del" data-act="appointment-decline">거절</button><button class="b-save" data-act="appointment-accept">수락</button></div>');
+}
+function friendRequestLoad(){
+  var sb=friendDb();if(!sb){FriendSync.requests=[];FriendSync.shared=[];return Promise.resolve();}
+  return Promise.all([
+    sb.from('planner_appointment_requests').select('id,from_user,to_user,payload,status,created_at').eq('to_user',Sync.uid).eq('status','pending'),
+    sb.from('planner_appointment_requests').select('id,from_user,to_user,payload,status,created_at').eq('from_user',Sync.uid).eq('status','pending'),
+    sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload,updated_at').eq('user_a',Sync.uid),
+    sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload,updated_at').eq('user_b',Sync.uid)
+  ]).then(function(rs){rs.forEach(function(r){if(r.error)throw r.error;});FriendSync.requests=(rs[0].data||[]).concat(rs[1].data||[]);FriendSync.shared=(rs[2].data||[]).concat(rs[3].data||[]);mergeSharedAppointments(FriendSync.shared);showNextAppointmentRequest();if(!M.type)render();}).catch(function(e){if(!/relation|planner_appointment|planner_shared/i.test(e&&e.message||''))FriendSync.error=e&&e.message||'약속 요청을 불러오지 못했어요';});
+}
+function sendAppointmentRequest(target,data){
+  var sb=friendDb();if(!sb){friendNote('친구 요청은 로그인 후 사용할 수 있어요');return;}
+  sb.from('planner_appointment_requests').insert({from_user:Sync.uid,to_user:target,payload:data,status:'pending'}).then(function(r){if(r.error)throw r.error;friendNote('약속 수락 요청을 보냈어요');closeModal();render();}).catch(function(e){var m=$('#appointment-msg');if(m)m.textContent=e&&e.message||'약속 요청을 보내지 못했어요';});
+}
+function respondAppointmentRequest(accept){
+  var sb=friendDb(),r=M.request;if(!sb||!r)return;
+  var work;
+  if(accept){var pair=[r.from_user,r.to_user].sort();work=sb.from('planner_shared_appointments').upsert({request_id:r.id,user_a:pair[0],user_b:pair[1],payload:r.payload||{},updated_at:new Date().toISOString()},{onConflict:'request_id'});}
+  else work=Promise.resolve({error:null});
+  work.then(function(x){if(x.error)throw x.error;return sb.from('planner_appointment_requests').update({status:accept?'accepted':'declined',responded_at:new Date().toISOString()}).eq('id',r.id).eq('to_user',Sync.uid);}).then(function(x){if(x.error)throw x.error;FriendSync.shown[r.id]=1;return friendRequestLoad();}).then(function(){closeModal();render();}).catch(function(e){var m=$('#request-msg');if(m)m.textContent=e&&e.message||'처리하지 못했어요';});
+}
+function sharedAppointmentPayload(e){var p=Object.assign({},e);delete p.id;delete p.shared;delete p.sharedRequestId;return p;}
+function updateSharedAppointment(e){var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();return sb.from('planner_shared_appointments').update({payload:sharedAppointmentPayload(e),updated_at:new Date().toISOString()}).eq('request_id',e.sharedRequestId).then(function(r){if(r.error)throw r.error;});}
+function cancelSharedAppointment(e){var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();return sb.from('planner_appointment_requests').update({status:'cancelled',responded_at:new Date().toISOString()}).eq('id',e.sharedRequestId).then(function(r){if(r.error)throw r.error;return sb.from('planner_shared_appointments').delete().eq('request_id',e.sharedRequestId);}).then(function(r){if(r.error)throw r.error;});}
+function friendCopyCode(){if(!FriendSync.code)return;var ok=function(){friendNote('초대코드를 복사했어요')};try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(FriendSync.code).then(ok);else throw 0;}catch(e){var t=document.createElement('textarea');t.value=FriendSync.code;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(x){}t.remove();ok();}}
+function friendSharedLabels(d){
+  if(!FriendSync.incoming.length)return [];
+  var k=dkey(d),seen={},chips=[];
+  FriendSync.incoming.forEach(function(r){var p=r.payload||{};(p.events||[]).filter(function(e){return eventOnDate(e,k);}).forEach(function(e){var id=r.owner_id+'|e|'+e.id;if(seen[id])return;seen[id]=1;chips.push({text:eventChipLabel(e),color:e.color||defCol()});});(p.allday||[]).filter(function(a){return alldayForPayload(a,d);}).forEach(function(a){var id=r.owner_id+'|a|'+a.id;if(seen[id])return;seen[id]=1;chips.push({text:a.title||'일정',color:a.color||defCol()});});});
+  return chips;
+}
+function friendScheduleHTML(d){
+  var chips=friendSharedLabels(d).map(function(x){return '<span class="adchip" style="--c:'+x.color+'">'+esc(x.text)+'</span>';});
+  return chips.length?'<div class="adrow"><span class="adlabel">친구 공유</span>'+chips.join('')+'</div>':'';
+}
+function alldayForPayload(a,d){var k=dkey(d),w=dow(d);return a.days?(a.days.indexOf(w)>=0&&(!a.from||k>=a.from)&&(!a.to||k<=a.to)):(k>=a.date&&k<=(a.end||a.date));}
+function friendPlannerHTML(k){
+  var rows=[];FriendSync.incoming.filter(function(r){return r.kind==='planner';}).forEach(function(r){var p=r.payload||{},ts=(p.todos||[]).filter(function(t){return t.scope==='day'&&t.key===k;}),cs=(p.classes||[]).filter(function(c){return c.day===dow(parseKey(k))&&clsActive(c,k);});if(ts.length||cs.length)rows.push('<div class="friend-plan"><b>친구 · '+esc((FriendSync.friends.find(function(f){return f.id===r.owner_id;})||{}).code||'공유 플래너')+'</b><small>'+(cs.length?'수업 '+cs.length+'개 · ':'')+'할 일 '+ts.filter(function(t){return !t.done;}).length+'/'+ts.length+'개</small></div>');});
+  return rows.length?'<section class="card"><div class="card-h"><h3>친구 공유 플래너</h3><span class="cnt">보기 전용</span></div>'+rows.join('')+'</section>':'';
+}
+function pendingAppointmentHTML(k){
+  var xs=FriendSync.requests.filter(function(r){return r.from_user===Sync.uid&&r.status==='pending'&&r.payload&&r.payload.date===k;});
+  return xs.length?'<div class="adrow"><span class="adlabel">수락 대기</span>'+xs.map(function(r){return '<span class="adchip" style="--c:'+((r.payload&&r.payload.color)||defCol())+'">'+esc((r.payload&&r.payload.what)||'약속')+' · 친구에게 요청함</span>';}).join('')+'</div>':'';
+}
 function scheduleSync(){
   if(!Sync.db)return;
   clearTimeout(Sync.timer);
@@ -1042,12 +1173,13 @@ function supaAdapter(sb,uid){
 function supaAttach(session){
   if(!session||!session.user){
     Sync.db=null;Sync.on=false;Sync.uid=null;Sync.email='';
+    FriendSync.loaded=false;FriendSync.code='';FriendSync.friends=[];FriendSync.incoming=[];FriendSync.requests=[];FriendSync.shared=[];FriendSync.shown={};
     if(!M.type)render();return;
   }
   if(Sync.uid===session.user.id)return;
   Sync.uid=session.user.id;Sync.email=session.user.email||'';
   Sync.db=supaAdapter(Sync.sb,Sync.uid);Sync.path='planner';loadMeta();
-  pull().then(function(){Sync.on=true;if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render();}});
+  pull().then(function(){Sync.on=true;return friendLoad();}).then(function(){if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render();}});
 }
 function initSupa(){
   if(!supaReady())return false;
@@ -1136,10 +1268,10 @@ function eventOnDate(e,k){
   return !!(e.from&&e.to&&k>=e.from&&k<=e.to);
 }
 function eventLabel(e){return e.kind==='appointment'?(e.what||e.title||e.person||e.place||'약속'):(e.title||'일정');}
-function eventSub(e){return e.kind==='appointment'?[e.person].filter(function(x){return !!x;}).join(' · '):'';}
+function eventSub(e){return e.kind==='appointment'?[e.person,e.place].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(' · '):'';}
 function eventChipLabel(e){
   if(e.kind!=='appointment')return eventLabel(e);
-  return [e.what,e.person].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(' · ')||'약속';
+  return [e.what,e.person,e.place].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(' · ')||'약속';
 }
 function appointmentChip(e){return '<button class="adchip" style="--c:'+e.color+'" data-act="edit-event" data-id="'+e.id+'">'+esc(eventChipLabel(e))+'</button>';}
 function actOf(it){return it.kind==='event'?'edit-event':it.kind==='todo'||(it.kind==='focus'&&it.id)?'edit-todo':it.kind==='focus'?'noop':'edit-block';}
@@ -1517,6 +1649,8 @@ function specialRowsForDay(d){
   if(dds.length||exs.length)html+='<div class="adrow"><span class="adlabel">D-day</span>'+dds.map(ddChip).join('')+exs.map(examChip).join('')+'</div>';
   if(ads.length)html+='<div class="adrow"><span class="adlabel">일정</span>'+ads.map(adChip).join('')+'</div>';
   if(aps.length)html+='<div class="adrow"><span class="adlabel">약속</span>'+aps.map(appointmentChip).join('')+'</div>';
+  html+=friendScheduleHTML(d);
+  html+=pendingAppointmentHTML(k);
   if(total)html+='<div class="adrow"><span class="adlabel">할 일</span><span class="adchip todochip">'+done+'/'+total+'개 · '+Math.round(done/total*100)+'%</span></div>';
   return html;
 }
@@ -1592,6 +1726,7 @@ function topItemHTML(i){
   return '<button class="trow topdrag'+(i.now?' now':'')+'" data-act="'+act+'" data-id="'+(i.type==='exam'?i.id.slice(5):i.id.slice(3))+'" data-top-id="'+i.id+'"><span><b>'+dot+esc(i.title)+'</b><small>'+esc(i.sub)+'</small></span><em>'+esc(i.value)+'</em></button>';
 }
 function topBar(){
+  if(S.settings.topShow===false)return '';
   var n=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3)),items=topItems();
   return items.length?'<div class="toplist">'+items.slice(0,n).map(topItemHTML).join('')+'</div>':'';
 }
@@ -1755,7 +1890,7 @@ function viewMonth(){
     var tds=monthItemOn('todo')?sortTodos(S.todos.filter(function(t){return t.scope==='day'&&t.key===k;})):[];var tdn=tds.filter(function(t){return t.done;}).length;
     var dues=monthItemOn('todo')?S.todos.filter(function(t){return t.due===k&&!t.done;}):[];
     var ads=monthItemOn('event')?alldayFor(c):[],exs=monthItemOn('exam')?examsFor(c):[],dds=monthItemOn('dday')?ddOn(k):[],adSummary=ads.length?'<span class="chip ev" style="--c:'+ads[0].color+'">'+esc(ads[0].title)+(ads.length>1?'<b class="admore">+'+(ads.length-1)+'</b>':'')+'</span>':'';
-    var chips=dds.map(function(x){return '<span class="chip ev" style="--c:'+x.color+'">'+esc(ddDisplay(x))+' '+esc(x.title)+'</span>';}).concat(dues.map(function(t){return '<span class="chip due">'+esc(t.text)+'</span>';})).concat(adSummary?[adSummary]:[]).concat(evs.map(function(e){return '<span class="chip ev" style="--c:'+e.color+'">'+esc(eventChipLabel(e))+'</span>';}))
+    var friendChips=friendSharedLabels(c),chips=dds.map(function(x){return '<span class="chip ev" style="--c:'+x.color+'">'+esc(ddDisplay(x))+' '+esc(x.title)+'</span>';}).concat(dues.map(function(t){return '<span class="chip due">'+esc(t.text)+'</span>';})).concat(adSummary?[adSummary]:[]).concat(evs.map(function(e){return '<span class="chip ev" style="--c:'+e.color+'">'+esc(eventChipLabel(e))+'</span>';})).concat(friendChips.map(function(x){return '<span class="chip ev" style="--c:'+x.color+'">'+esc(x.text)+'</span>';}))
       .concat(tds.map(function(t){return '<span class="chip td'+(t.done?' cdone':'')+'">'+esc(t.text)+'</span>';}));
     var shown=chips.slice(0,2).join('')+(chips.length>2?'<span class="more">+'+(chips.length-2)+'</span>':'');
     cells+='<button class="cell '+(c.getMonth()!==m?'out ':'')+(w>=5?'we ':'')+(holi(k)?'hol ':'')+(k===tk?'today ':'')+(exs.length?'exam':'')+'" data-act="open-day" data-date="'+k+'">'+
@@ -1860,7 +1995,7 @@ function viewDay(){
   var over=(k===tk)?S.todos.filter(function(t){return !t.done&&t.scope==='day'&&t.key<tk;}):[];
   var warn=over.length?'<section class="card warn"><div class="card-h"><h3>밀린 할 일 '+over.length+'개</h3><button class="tbtn" data-act="move-all-today">모두 오늘로</button></div><ul class="todos">'+
     sortTodos(over).map(function(t){return todoItem(t,{tag:true,move:true});}).join('')+'</ul></section>':'';
-  var side='<div class="side">'+warn+sideTodo(k,k===tk?'오늘 할 일':'이날 할 일')+
+  var side='<div class="side">'+warn+sideTodo(k,k===tk?'오늘 할 일':'이날 할 일')+friendPlannerHTML(k)+
     '<section class="card s-memo" data-memo-drop="'+k+'"><div class="card-h"><h3>하루 메모</h3></div><textarea class="memo" data-memo="'+k+'" placeholder="기억할 것, 오늘 있었던 일">'+esc(memo.text)+'</textarea>'+
     memoPhotosHTML(k,memo.photos)+'<label class="tbtn memo-addphoto">사진 추가<input type="file" accept="image/*" multiple data-memophoto="'+k+'" hidden></label></section>'+
     '<div class="s-log">'+logCard(k)+'</div><div class="s-letter">'+letterCard(k)+'</div></div>';
@@ -2027,7 +2162,8 @@ function viewSettings(){
     '<div class="setrow defc"><span>새 일정 기본 색<small>일정·종일 일정·D-day를 만들 때 처음 골라져 있는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+ 
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+ 
     '<div class="setrow"><span>가까운 일정 알림<small>앱이 열려 있을 때 30분 전 알림을 보내요</small></span><button class="tbtn" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'꺼짐')+'</button></div>'+ 
-    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
+    '<div class="setrow"><span>상단 D-day·시험 표시<small>홈·일간·주간 화면 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+ 
+    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
     '<div class="setrow"><span>달력 D-day 표시</span><div class="seg" style="margin:0"><button data-act="set-caldd" data-v="star" class="'+((S.settings.calDday||'star')==='star'?'on':'')+'">별표</button><button data-act="set-caldd" data-v="text" class="'+((S.settings.calDday||'star')==='text'?'on':'')+'">D-숫자</button></div></div>'+
     '<div class="setrow"><span>월간 표시 항목<small>체크한 항목만 월간 달력에 보여요</small></span></div><div class="monthopts">'+[['appointment','약속'],['dday','D-day'],['exam','시험'],['event','일정'],['todo','할 일']].map(function(x){return '<label class="monthopt"><input type="checkbox" data-month-item="'+x[0]+'"'+(monthItemOn(x[0])?' checked':'')+'>'+x[1]+'</label>';}).join('')+'</div>'+
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
@@ -2050,7 +2186,7 @@ function viewSettings(){
     '<div class="setrow"><span>시간표 비우기<small>수업·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
-  return chatHTML+schoolHTML+linkHTML+supportHTML+logPrefHTML+viewHTML+topOrderHTML()+acct+dataHTML;
+  return chatHTML+friendHTML()+schoolHTML+linkHTML+supportHTML+logPrefHTML+viewHTML+topOrderHTML()+acct+dataHTML;
 }
 function openLink(l){
   var x=l||{name:'',url:''};
@@ -2081,6 +2217,11 @@ function moveTopItem(id,dir){
   var ids=topItems().map(function(x){return x.id;}),i=ids.indexOf(id),j=i+dir;
   if(i<0||j<0||j>=ids.length)return;
   var t=ids[i];ids[i]=ids[j];ids[j]=t;S.settings.topOrder=ids;save();render();
+}
+function friendHTML(){
+  if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>친구 연동</h3></div><p class="hint">친구와 공유하려면 먼저 로그인해주세요. 개인 메모·나와의 채팅·생활기록은 공유하지 않아요.</p><button class="tbtn" data-act="open-login">로그인하기</button></section>';
+  var rows=FriendSync.friends.map(function(f){return '<div class="friendrow"><div><b>친구 · '+esc(f.code)+'</b><small>내가 공유하는 범위</small></div><div class="friendacts"><button class="tbtn '+(f.outCalendar?'on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">공유 일정</button><button class="tbtn '+(f.outPlanner?'on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="planner">플래너</button><button class="tbtn" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
+  return '<section class="card"><div class="card-h"><h3>친구 연동</h3><span class="cnt">'+(FriendSync.loaded?'연결됨':'확인 중')+'</span></div><p class="hint">친구마다 <b>공유 일정</b>과 <b>플래너</b>를 따로 선택해요. 플래너를 켜도 하루 메모·나와의 채팅·생활기록은 비공개예요.</p><div class="setrow"><span>내 초대코드<small>친구가 이 코드를 입력하면 연결돼요</small></span><button class="tbtn" data-act="friend-copy-code">'+esc(FriendSync.code||'생성 중')+'</button></div><div class="row"><input class="fld" style="margin:0" id="f-friend-code" maxlength="8" autocapitalize="characters" placeholder="친구 초대코드 8자리"><button class="b-save" style="height:44px;padding:0 14px" data-act="friend-add">연결</button></div>'+(FriendSync.error?'<p class="hint" style="color:var(--now)">'+esc(FriendSync.error)+'</p>':'')+(FriendSync.msg?'<p class="hint">'+esc(FriendSync.msg)+'</p>':'')+(rows||'<div class="empty">아직 연결된 친구가 없어요</div>')+'</section>';
 }
 
 /* ---------- 렌더 ---------- */
@@ -2221,25 +2362,28 @@ function saveEvent(){
 function openAppointment(e,def){
   var ap=e||{person:'',place:'',what:'',date:(def&&def.date)||dkey(U.date),start:(def&&def.start)||'',end:'',color:defCol()};
   var what=ap.what||(ap.title&&ap.title!==ap.person?ap.title:'');
-  M={type:'appointment',id:e?e.id:null,color:ap.color,tpA:null};
-  openModal('<h3>'+(e?'약속 수정':'약속 추가')+'</h3>'+
-    '<span class="lbl">누구랑 <em>(선택)</em></span><input class="fld" id="f-aperson" maxlength="30" value="'+esc(ap.person||'')+'">'+
+  M={type:'appointment',id:e?e.id:null,color:ap.color,tpA:null,friendId:null};
+  var friendPicker=!e?(FriendSync.friends.length?'<select class="sel" id="f-afriend"><option value="">직접 입력</option>'+FriendSync.friends.map(function(f){return '<option value="'+f.id+'">친구 · '+esc(f.code)+'</option>';}).join('')+'</select>':'<button class="tbtn" data-act="open-settings" style="margin-bottom:10px">친구 연결하기</button>'):'',personHint=FriendSync.friends.length?'친구를 선택하면 수락 후 양쪽 플래너에 기록돼요. 직접 입력은 나만 저장돼요.':'친구가 아니면 이름을 직접 입력해요. 이 약속은 나만 볼 수 있어요.';
+  openModal('<h3>'+(e?'약속 수정':'약속 추가')+'</h3>'+ 
+    '<span class="lbl">누구랑 <em>(선택)</em></span>'+friendPicker+'<input class="fld" id="f-aperson" maxlength="30" placeholder="직접 입력" value="'+esc(ap.person||'')+'"><p class="hint">'+personHint+'</p>'+ 
+    '<span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-aplace" maxlength="50" value="'+esc(ap.place||'')+'">'+
     '<span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-awhat" maxlength="60" value="'+esc(what)+'">'+
     '<span class="lbl">시간 <em>(선택)</em><em class="tphint">칸을 눌러 시간을 골라도 돼요</em></span><div class="tpick" id="tpick"></div>'+
     '<div class="row"><input class="fld" type="time" id="f-start" value="'+(ap.start||'')+'"><span>~</span><input class="fld" type="time" id="f-end" value="'+(ap.end||'')+'"></div>'+
     '<span class="lbl">날짜</span><input class="fld" type="date" id="f-date" value="'+(ap.date||dkey(U.date))+'">'+
-    '<p class="hint">끝나는 시간은 비워도 돼요. 아무것도 입력하지 않아도 저장할 수 있어요.</p>'+palHTML(ap.color)+
+    '<p class="hint" id="appointment-msg">끝나는 시간은 비워도 돼요. 아무것도 입력하지 않아도 저장할 수 있어요.</p>'+palHTML(ap.color)+
     '<div class="acts">'+(e?'<button class="b-del" data-act="del-event">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-appointment">저장</button></div>');
   drawTpick();
   if(!e)setTimeout(function(){var f=$('#f-aperson');if(f)f.focus();},50);
 }
 function saveAppointment(){
-  var person=$('#f-aperson').value.trim(),start=$('#f-start').value,end=$('#f-end').value||null,what=$('#f-awhat').value.trim(),date=$('#f-date').value;
+  var person=$('#f-aperson').value.trim(),place=$('#f-aplace').value.trim(),start=$('#f-start').value,end=$('#f-end').value||null,what=$('#f-awhat').value.trim(),date=$('#f-date').value,target=$('#f-afriend')?$('#f-afriend').value:'';
   if(!date){bad('#f-date');return;}
   if(end&&!start){bad('#f-start');return;}
   if(end&&toMin(end)<=toMin(start)){bad('#f-end');return;}
-  var data={kind:'appointment',title:what||person||'약속',what:what,person:person,place:'',date:date,start:start||null,end:end,color:M.color};
-  if(M.id){var ev=S.events.find(function(x){return x.id===M.id;});if(ev)Object.assign(ev,data);}
+  var data={kind:'appointment',title:what||person||place||'약속',what:what,person:person,place:place,date:date,start:start||null,end:end,color:M.color};
+  if(!M.id&&target){data.person=person||('친구 · '+requestFriendCode(target));sendAppointmentRequest(target,data);return;}
+  if(M.id){var ev=S.events.find(function(x){return x.id===M.id;});if(ev){Object.assign(ev,data);save();if(ev.sharedRequestId)updateSharedAppointment(ev);closeModal();render();return;}}
   else S.events.push(Object.assign({id:uid()},data));
   save();closeModal();render();
 }
@@ -2644,7 +2788,14 @@ function act(a,e){
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
+    case 'friend-copy-code':friendCopyCode();break;
+    case 'friend-add':friendAdd($('#f-friend-code')?$('#f-friend-code').value:'');break;
+    case 'friend-toggle-share':friendToggle(id,a.dataset.mode);break;
+    case 'friend-remove':if(armed(a))friendRemove(id);break;
+    case 'appointment-accept':respondAppointmentRequest(true);break;
+    case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
+    case 'toggle-top-show':S.settings.topShow=S.settings.topShow===false;save();render();break;
     case 'top-up':moveTopItem(a.dataset.id,-1);break;
     case 'top-down':moveTopItem(a.dataset.id,1);break;
     case 'set-caldd':S.settings.calDday=a.dataset.v;save();render();break;
@@ -2749,7 +2900,7 @@ function act(a,e){
       if(S.settings.calItem===tid||(S.settings.calItem==='range'&&(tid==='sstart'||tid==='send')))S.settings.calItem=S.trackers[0]?S.trackers[0].id:'study';
       save();closeModal();render();}break;
     case 'set-bg':S.settings.bg=a.dataset.v;lsSet('planner.bg',a.dataset.v);save();applyTheme();render();break;
-    case 'open-settings':U.prevTab=U.tab;U.tab='settings';render(true);break;
+    case 'open-settings':closeModal();U.prevTab=U.tab;U.tab='settings';render(true);break;
     case 'school-link':S.settings.schoolLastChecked=Date.now();save();try{window.open(a.dataset.url,'_blank','noopener');}catch(e){location.href=a.dataset.url;}break;
     case 'open-feedback':openFeedback();break;
     case 'feedback-copy':copyFeedback();break;
@@ -2882,7 +3033,7 @@ function act(a,e){
     case 'schedule-day':{var sd=Number(a.dataset.v),si=M.days.indexOf(sd);if(si>=0)M.days.splice(si,1);else M.days.push(sd);drawSchedule();break;}
     case 'schedule-preset':M.days=a.dataset.v==='all'?[0,1,2,3,4,5,6]:a.dataset.v==='wd'?[0,1,2,3,4]:[5,6];drawSchedule();break;
     case 'del-schedule':if(armed(a)){S.events=S.events.filter(function(x){return x.id!==M.id;});S.allday=S.allday.filter(function(x){return x.id!==M.id;});save();closeModal();render();}break;
-    case 'del-event':if(armed(a)){S.events=S.events.filter(function(x){return x.id!==M.id;});save();closeModal();render();}break;
+    case 'del-event':if(armed(a)){var delEv=S.events.find(function(x){return x.id===M.id;});S.events=S.events.filter(function(x){return x.id!==M.id;});save();if(delEv&&delEv.sharedRequestId)cancelSharedAppointment(delEv);closeModal();render();}break;
     case 'save-block':saveBlock();break;
     case 'del-block':if(armed(a)){S.classes=S.classes.filter(function(x){return x.id!==M.id;});save();closeModal();render();}break;
     case 'save-todo':saveTodo();break;
@@ -3120,6 +3271,7 @@ function flush(){if(memoTimer){clearTimeout(memoTimer);memoTimer=null;save();}}
 document.addEventListener('change',function(e){
   if(e.target.id==='f-on-school'){var picked=allSchoolProfiles().find(function(x){return x.name===e.target.value;});if(picked){M.school=picked.id;M.campus=picked.campuses[0]||'';drawOnboard();}return;}
   if(e.target.id==='f-on-campus'){M.campus=e.target.value;return;}
+  if(e.target.id==='f-afriend'){M.friendId=e.target.value||null;return;}
   if(e.target.id==='set-school'){if(e.target.value==='__add__'){openSchoolAdd(false);}else{setSchool(e.target.value);render();}return;}
   if(e.target.id==='set-campus'){S.settings.schoolCampus=e.target.value;save();render();return;}
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
@@ -3158,7 +3310,8 @@ document.addEventListener('visibilitychange',function(){
 setInterval(updateNow,60000);
 setInterval(tickFocus,500);
 setInterval(checkReminders,60000);
-setInterval(function(){if(Sync.db&&!document.hidden&&!Sync.busy&&!Sync.timer&&!memoTimer&&!M.type)pull();},45000);
+setInterval(function(){if(Sync.db&&!document.hidden&&!Sync.busy&&!Sync.timer&&!memoTimer&&!M.type){pull();if(Sync.kind==='supa')friendLoad();}},45000);
+setInterval(function(){if(Sync.kind==='supa'&&Sync.uid&&!document.hidden&&!M.type)friendRequestLoad();},12000);
 
 /* ---------- 시작 ---------- */
 applyTheme();
