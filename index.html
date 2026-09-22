@@ -553,6 +553,9 @@ main{padding:0 14px 24px}
 .tp.sel{background:var(--ink);color:var(--bg)}
 .tp.sel small{color:var(--bg)}
 @media (max-width:430px){.tpick{grid-template-columns:repeat(5,1fr)}}
+
+.setrow.defc{border-bottom:0;padding-bottom:4px}
+.defpal{margin:0 2px 8px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -1166,7 +1169,7 @@ function ddayBar(){
 }
 function ddChip(x){return '<button class="adchip ddchip" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'">★ '+esc(x.title)+'</button>';}
 function openDD(x,def){
-  var v=x||{title:'',date:(def&&def.date)||dkey(U.date),color:'#f8dedd',yearly:false,pin:true,mode:'until',one:false};
+  var v=x||{title:'',date:(def&&def.date)||dkey(U.date),color:defCol(),yearly:false,pin:true,mode:'until',one:false};
   M={type:'dd',id:x?x.id:null,color:v.color,mode:v.mode||'until'};
   openModal('<h3>'+(x?'D-day 수정':'D-day 추가')+'</h3>'+
     '<input class="fld" id="f-ddt" placeholder="예: 기말고사, 여행, 공모전 마감" maxlength="30" value="'+esc(v.title)+'">'+
@@ -1202,6 +1205,7 @@ function saveDD(){
 function clsFrom(c){return c.from||S.settings.semStart||'';}
 function clsTo(c){return c.to||S.settings.semEnd||'';}
 function clsActive(c,k){var a=clsFrom(c),b=clsTo(c);return (!a||k>=a)&&(!b||k<=b);}
+function defCol(){return S.settings.defColor||PALETTE[5];}
 function routinesFor(d){var w=dow(d);return S.routines.filter(function(r){return r.days.indexOf(w)>=0;});}
 function routineDone(r,k){return (S.routineDone[k]||[]).indexOf(r.id)>=0;}
 function daysText(days){
@@ -1561,6 +1565,7 @@ function viewSettings(){
     '<div class="setrow"><span>시간표 시간<small>이 범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
       '<select class="sel" id="set-hs">'+[0,1,2,3,4,5,6,7,8,9,10,11,12].map(function(h){return '<option value="'+h+'"'+((S.settings.hStart!=null?S.settings.hStart:9)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select><span>~</span>'+
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
+    '<div class="setrow defc"><span>새 일정 기본 색<small>일정·종일 일정·D-day를 만들 때 처음 골라져 있는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div></section>';
   var acct='';
@@ -1643,7 +1648,7 @@ function armed(btn){
 }
 
 function openEvent(e,def){
-  var ev=e||{title:'',date:def.date,start:def.start,end:def.end,color:PALETTE[5]};
+  var ev=e||{title:'',date:def.date,start:def.start,end:def.end,color:defCol()};
   M={type:'event',id:e?e.id:null,color:ev.color,tpA:null};
   openModal('<h3>'+(e?'일정 수정':(def&&def.heading)||'일정 추가')+'</h3>'+
     '<input class="fld" id="f-title" placeholder="'+((def&&def.ph)||'일정 제목')+'" maxlength="60" value="'+esc(ev.title)+'">'+
@@ -1791,7 +1796,7 @@ function openCourseColor(name){
 }
 function openAllday(a,def){
   def=def||{};
-  var x=a||{title:def.title||'',color:PALETTE[5],date:def.date||dkey(U.date),days:null};
+  var x=a||{title:def.title||'',color:defCol(),date:def.date||dkey(U.date),days:null};
   M={type:'allday',id:a?a.id:null,color:x.color,mode:a?(a.days?'rep':'once'):(def.mode||'once'),days:x.days?x.days.slice():[0,1,2,3,4,5,6]};
   openModal('<h3>'+(a?'종일 일정 수정':'종일 일정 추가')+'</h3>'+
     '<input class="fld" id="f-adtitle" placeholder="예: 헬스, 영양제, 알바" maxlength="40" value="'+esc(x.title)+'">'+
@@ -1910,6 +1915,7 @@ function act(a,e){
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
+    case 'set-defcolor':S.settings.defColor=a.dataset.v;save();render();break;
     case 'tp':{var th=Number(a.dataset.h);
       if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
       else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
