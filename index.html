@@ -543,6 +543,16 @@ main{padding:0 14px 24px}
 .delrow{display:flex;gap:8px;margin:0 0 10px}
 .delrow .tbtn{flex:1;height:42px;text-align:center}
 .delrow .cdel.armed{background:#c9524a;color:#fff}
+
+.tphint{font-style:normal;font-size:11px;color:var(--sub);margin-left:4px}
+.tpick{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:10px}
+.tp{height:44px;border-radius:9px;background:var(--soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden;padding:0 3px;text-align:center}
+.tp b{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.tp small{font-size:9px;color:#1c1c1e;opacity:.75;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp.busy{background:var(--c);color:#1c1c1e}
+.tp.sel{background:var(--ink);color:var(--bg)}
+.tp.sel small{color:var(--bg)}
+@media (max-width:430px){.tpick{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 <body>
@@ -1634,16 +1644,31 @@ function armed(btn){
 
 function openEvent(e,def){
   var ev=e||{title:'',date:def.date,start:def.start,end:def.end,color:PALETTE[5]};
-  M={type:'event',id:e?e.id:null,color:ev.color};
+  M={type:'event',id:e?e.id:null,color:ev.color,tpA:null};
   openModal('<h3>'+(e?'일정 수정':(def&&def.heading)||'일정 추가')+'</h3>'+
     '<input class="fld" id="f-title" placeholder="'+((def&&def.ph)||'일정 제목')+'" maxlength="60" value="'+esc(ev.title)+'">'+
     '<span class="lbl">날짜</span><input class="fld" type="date" id="f-date" value="'+ev.date+'">'+
-    '<span class="lbl">시간</span><div class="row"><input class="fld" type="time" id="f-start" value="'+ev.start+'"><span>~</span><input class="fld" type="time" id="f-end" value="'+ev.end+'"></div>'+
+    '<span class="lbl">시간 <em class="tphint">칸을 눌러 고르고, 끝나는 칸을 한 번 더 누르면 범위로 잡혀요</em></span><div class="tpick" id="tpick"></div>'+
+    '<div class="row"><input class="fld" type="time" id="f-start" value="'+ev.start+'"><span>~</span><input class="fld" type="time" id="f-end" value="'+ev.end+'"></div>'+
     palHTML(ev.color)+
     (e?'':'<label class="ck"><input type="checkbox" id="f-weekly">매주 반복 (시간표에 고정)</label>'+
       '<button class="tbtn" style="width:100%;margin:0 0 12px;text-align:center" data-act="to-allday">시간 없이 종일 일정으로 넣기</button>')+
     '<div class="acts">'+(e?'<button class="b-del" data-act="del-event">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-event">저장</button></div>');
+  drawTpick();
   if(!e)setTimeout(function(){var f=$('#f-title');if(f)f.focus();},50);
+}
+function drawTpick(){
+  var box=$('#tpick');if(!box)return;
+  var dv=$('#f-date').value;if(!dv){box.innerHTML='';return;}
+  var lo=S.settings.hStart!=null?S.settings.hStart:8,hi=S.settings.hEnd!=null?S.settings.hEnd:23;
+  var its=itemsFor(parseKey(dv)).filter(function(it){return !it.skipped&&!(it.kind==='event'&&it.id===M.id);});
+  var sv=$('#f-start').value,ev=$('#f-end').value,sm=sv?toMin(sv):-1,em=ev?toMin(ev):-1,html='';
+  for(var h=lo;h<hi;h++){
+    var hs=h*60,he=hs+60,busy=its.filter(function(it){return it.start<he&&it.end>hs;})[0];
+    var sel=sm>=0&&em>sm&&hs<em&&he>sm;
+    html+='<button class="tp'+(busy?' busy':'')+(sel?' sel':'')+'" data-act="tp" data-h="'+h+'"'+(busy?' style="--c:'+busy.color+'"':'')+'><b>'+h+'</b>'+(busy?'<small>'+esc(busy.name)+'</small>':'')+'</button>';
+  }
+  box.innerHTML=html;
 }
 function saveEvent(){
   var title=$('#f-title').value.trim(),date=$('#f-date').value,s=$('#f-start').value,e=$('#f-end').value;
@@ -1885,6 +1910,10 @@ function act(a,e){
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
+    case 'tp':{var th=Number(a.dataset.h);
+      if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
+      else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
+      $('#f-start').classList.remove('bad');$('#f-end').classList.remove('bad');drawTpick();break;}
     case 'skip-once':case 'unskip-once':{var sc=S.classes.find(function(x){return x.id===id;});if(sc){var dkk=a.dataset.date;sc.skip=(sc.skip||[]).filter(function(z){return z!==dkk&&z>=dkey(addDays(new Date(),-60));});if(name==='skip-once')sc.skip.push(dkk);save();closeModal();render();}break;}
     case 'add-dd':openDD(null,{date:a.dataset.date});break;
     case 'edit-dd':{var dx=S.ddays.find(function(y){return y.id===id;});if(dx)openDD(dx);break;}
@@ -2193,6 +2222,7 @@ document.addEventListener('input',function(e){
 });
 function flush(){if(memoTimer){clearTimeout(memoTimer);memoTimer=null;save();}}
 document.addEventListener('change',function(e){
+  if(M.type==='event'&&/^f-(date|start|end)$/.test(e.target.id)){M.tpA=null;drawTpick();}
   if(e.target.id==='set-ss'||e.target.id==='set-se'){var a1=$('#set-ss').value||null,b1=$('#set-se').value||null;if(a1&&b1&&b1<a1){e.target.classList.add('bad');return;}S.settings.semStart=a1;S.settings.semEnd=b1;save();render();return;}
   if(M.type==='dd'&&/^f-dd[dyo]$/.test(e.target.id)){drawDD();}
   if(e.target.id==='set-hs'||e.target.id==='set-he'){var hs=Number($('#set-hs').value),he=Number($('#set-he').value);if(he-hs<3)he=Math.min(24,hs+3);S.settings.hStart=hs;S.settings.hEnd=he;save();render();return;}
