@@ -1205,7 +1205,7 @@ function friendLoad(){
       FriendSync.friends=ids.map(function(id){var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{};return {id:id,code:cm[id]||id.slice(0,6).toUpperCase(),outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};});
       FriendSync.incoming=(xs[2].data||[]).filter(function(x){var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});return f&&(x.kind==='calendar'?f.inCalendar:f.inPlanner);});
     });
-  }).then(function(){FriendSync.loaded=true;return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;FriendSync.error=/relation|planner_friend_/i.test(e&&e.message||'')?'Supabase SQL 설정이 아직 필요해요. 함께 받은 친구 공유 SQL을 먼저 실행해주세요.':(e&&e.message||'친구 연동 테이블을 확인해주세요');if(U.tab==='settings'&&!M.type)render();});
+  }).then(function(){FriendSync.loaded=true;return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. planner-setup.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. planner-setup.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')';if(U.tab==='settings'&&!M.type)render();});
 }
 function friendAdd(code){
   var sb=friendDb(),c=String(code||'').trim().toUpperCase();if(!sb){friendNote('먼저 로그인해주세요');return;}if(!/^[A-Z2-9]{8}$/.test(c)){friendNote('8자리 초대코드를 입력해주세요');return;}
