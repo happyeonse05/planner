@@ -87,7 +87,11 @@ main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-
 .friendrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .friendrow>div:first-child{min-width:0}.friendrow b,.friendrow small{display:block}.friendrow small{font-size:12px;color:var(--sub);margin-top:3px}.friendacts{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.friendacts .tbtn{height:30px;padding:0 8px;font-size:11px}.friendacts .tbtn.on{background:var(--ink);color:var(--bg)}.friend-plan{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.friend-plan small{color:var(--sub)}
 .friend-plan-day{padding:10px 0;border-top:1px solid var(--line)}.friend-plan-day>b{display:block;margin-bottom:6px;font-size:14px}.friend-plan-item{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border-radius:8px;background:var(--soft);margin-top:4px;font-size:13px}.friend-plan-item small{color:var(--sub);white-space:nowrap}
-.memory-lines{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 10px}.memory-lines button,.station-grid button{height:32px;padding:0 9px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.memory-lines button.on,.station-grid button.on{background:var(--ink);color:var(--bg)}.station-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-height:210px;overflow:auto;margin-bottom:12px}.station-grid button{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.memory-card{padding:10px;border-radius:12px;background:var(--soft);margin:7px 0}.memory-card b,.memory-card small{display:block}.memory-card small{color:var(--sub);margin-top:4px;line-height:1.45}.memory-empty{padding:14px 0;color:var(--sub);font-size:13px}.pwrow{display:flex;align-items:center;gap:6px;margin:8px 0}.pwrow .fld{margin:0;flex:1}.pw-eye{width:42px;height:42px;border-radius:11px;background:var(--soft);display:grid;place-items:center}.pw-eye svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+.memory-lines{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 10px}.memory-lines button,.station-grid button{height:32px;padding:0 9px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.memory-lines button.on,.station-grid button.on{background:var(--ink);color:var(--bg)}.station-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:210px;overflow:auto;margin-bottom:12px}.station-grid button{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.memory-card{padding:10px;border-radius:12px;background:var(--soft);margin:7px 0}.memory-card b,.memory-card small{display:block}.memory-card small{color:var(--sub);margin-top:4px;line-height:1.45}.memory-empty{padding:14px 0;color:var(--sub);font-size:13px}
+.place-search{display:flex;gap:7px;margin:8px 0}.place-search .fld{margin:0}.place-results{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 12px}.place-result{padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-result.on{background:var(--ink);color:var(--bg)}
+.memory-banners{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:6px 0 12px;padding-bottom:2px}.memory-banners::-webkit-scrollbar{display:none}.memory-banner{flex:none;max-width:230px;padding:9px 12px;border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 18%,var(--edge));font-size:12px;line-height:1.35}.memory-banner b{display:block;font-size:13px;margin-bottom:2px}.meet-history{padding:10px 12px;border-radius:14px;background:var(--soft);font-size:13px;margin:0 0 12px}.meet-history b{font-size:14px}.place-mode{display:flex;gap:6px;margin:0 0 8px}.place-mode button{padding:7px 11px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-mode button.on{background:var(--ink);color:var(--bg)}
+.postmeet{margin:10px 0;padding:13px 14px;border-radius:16px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid var(--edge)}.postmeet b{display:block;font-size:14px}.postmeet small{display:block;color:var(--sub);margin:4px 0 10px}.postmeet .acts{margin:0}.postmeet .acts button{height:38px;font-size:13px}.pwrow{display:flex;align-items:center;gap:6px;margin:8px 0}.pwrow .fld{margin:0;flex:1}.pw-eye{width:42px;height:42px;border-radius:11px;background:var(--soft);display:grid;place-items:center}.pw-eye svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+.fav img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}.profile-photo-row{display:flex;align-items:center;gap:12px;margin:6px 0 12px}.profile-photo{width:64px;height:64px;border-radius:50%;background:var(--soft);overflow:hidden;display:grid;place-items:center;font-size:24px;font-weight:800;flex:none}.profile-photo img{width:100%;height:100%;object-fit:cover}.profile-photo-actions{display:flex;gap:6px;flex-wrap:wrap}.region-path{padding:9px 11px;border-radius:10px;background:var(--soft);font-size:12px;color:var(--sub);margin:0 0 10px}.region-path b{color:var(--ink)}
 .gsearch{display:flex;align-items:center;gap:8px;margin:0 0 12px}.gsearch input{flex:1;min-width:0;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px}.gsearch input:focus{border-color:var(--accent);outline:none}.gsearch-close{height:36px;padding:0 10px;border-radius:10px;background:var(--soft);font-size:13px;font-weight:600;flex:none}.gresult-count{font-size:12px;color:var(--sub);margin:0 2px 8px}.gresults{display:flex;flex-direction:column;gap:6px;max-height:58vh;overflow-y:auto}.gresult{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;background:var(--soft);text-align:left}.gresult:active{background:var(--line)}.gresult-type{flex:none;min-width:44px;color:var(--sub);font-size:11px;font-weight:700}.gresult-main{min-width:0;flex:1}.gresult-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700}.gresult-meta{display:block;margin-top:3px;color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gresult-arrow{flex:none;color:var(--sub);font-size:17px}
 .fcard{padding:12px 0;border-top:1px solid var(--line)}.fcard.req{background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:12px;padding:12px 10px;border-top:0;margin:6px 0}
 .fc-top{display:flex;align-items:center;gap:10px}.fav{flex:none;width:36px;height:36px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:700;font-size:15px;color:var(--ink)}
@@ -650,7 +654,7 @@ main{padding:0 14px 24px}
 .tt-head .today b.holb{color:var(--accent-ink)}
 
 /* 귀여운 날짜 선택 */
-.dbtn{display:block;text-align:left;color:var(--ink);font-weight:600;cursor:pointer}
+.dbtn{display:block;text-align:left;color:var(--ink);font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dbtn:not(.fld){height:36px;border-radius:10px;background:var(--soft);padding:0 12px;font-size:14px;flex:1;min-width:0}
 .fld.dbtn{padding:0 14px;font-size:15px}
 .dbtn.empty{color:var(--sub);font-weight:500}
@@ -718,6 +722,8 @@ main{padding:0 14px 24px}
 .warn2{color:var(--now);font-size:12px;margin:-2px 0 6px;text-align:left}
 .snaplist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
 .backup-auto{margin:14px 0}.backup-auto summary{cursor:pointer;color:var(--sub);font-size:12px;padding:8px 2px;list-style:none}.backup-auto summary::-webkit-details-marker{display:none}.backup-auto summary::before{content:'›';display:inline-block;margin-right:7px;transition:transform .15s}.backup-auto[open] summary::before{transform:rotate(90deg)}
+
+.share-preview{padding:12px;border:1px solid var(--edge);border-radius:16px;background:var(--soft);margin:10px 0}.share-preview-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}.share-preview-head .profile-photo{width:42px;height:42px}.share-preview-badges{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 10px}.share-preview-badges span{font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:var(--card);border:1px solid var(--edge)}.share-preview-private{font-size:12px;color:var(--sub);padding:8px 10px;border-radius:12px;background:var(--card)}.share-preview .friend-plan-day{background:var(--card)}
 </style>
 </head>
 <body>
@@ -962,6 +968,7 @@ function setSchool(id,campus){
   var p=schoolProfile(id),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
   var nextCampus=canonicalCampus(p.id,campus);
   S.settings.school=p.id;S.settings.schoolCampus=nextCampus;
+  S.settings.schoolConfigured=true;
   S.settings.links=schoolLinks(p.id,nextCampus).concat(custom);
   save();
 }
@@ -998,11 +1005,11 @@ var DEFAULT_CLASSES=[];
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
-  var d=defaults();
+  var d=defaults(),hadSavedSchool=!!(s&&s.settings&&s.settings.school);
   var o=Object.assign(d,s||{});
   o.settings=Object.assign({weekend:false},(s&&s.settings)||{});
   if(!Array.isArray(o.settings.customSchools))o.settings.customSchools=[];
@@ -1010,6 +1017,9 @@ function normalize(s){
   if(!Array.isArray(o.settings.friendMemories))o.settings.friendMemories=[];
   if(typeof o.settings.profileName!=='string')o.settings.profileName='';
   o.settings.profileName=o.settings.profileName.trim().slice(0,20);
+  if(typeof o.settings.profilePhoto!=='string')o.settings.profilePhoto='';
+  if(o.settings.schoolConfigured===undefined)o.settings.schoolConfigured=hadSavedSchool;
+  if(o.settings.onboardDone===undefined)o.settings.onboardDone=hadSavedSchool;
   if(!o.settings.notified||typeof o.settings.notified!=='object')o.settings.notified={};
   if(o.settings.remindOn===undefined)o.settings.remindOn=false;
   if(o.settings.schoolLastChecked==null)o.settings.schoolLastChecked=0;
@@ -1358,17 +1368,88 @@ var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null
 /* ---------- 친구 공유 동기화 ---------- */
 var FriendSync={invitesIn:[],invitesOut:[],inviteNames:{},inviteError:'',busyMap:{},busyError:'',lastBusy:'',code:'',friends:[],incoming:[],requests:[],shared:[],memories:[],shown:{},loaded:false,busy:false,msg:'',error:'',memoryError:''};
 var FRIEND_CODE_ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-var SUBWAY_STATIONS={
-  '1':'소요산|동두천|양주|의정부|도봉산|노원|청량리|종로3가|시청|서울역|남영|용산|노량진|영등포|신도림|구로|인천|수원|병점|천안|신창'.split('|'),
-  '2':'시청|을지로입구|을지로3가|을지로4가|동대문역사문화공원|신당|왕십리|한양대|성수|잠실|강남|교대|사당|신림|신촌|홍대입구|합정|당산|영등포구청|신도림'.split('|'),
-  '3':'대화|주엽|정발산|마두|백석|대곡|연신내|불광|독립문|경복궁|안국|종로3가|을지로3가|충무로|약수|압구정|신사|고속터미널|교대|양재|도곡|수서|가락시장|오금'.split('|'),
-  '4':'진접|별내별가람|당고개|노원|창동|혜화|동대문|동대문역사문화공원|충무로|명동|회현|서울역|숙대입구|삼각지|이촌|사당|총신대입구|남태령|금정|산본|안산|중앙|오이도'.split('|'),
-  '5':'방화|김포공항|송정|마곡|발산|여의도|영등포시장|신길|광화문|종로3가|을지로4가|동대문역사문화공원|청구|왕십리|답십리|장한평|군자|강동|천호|하남검단산|마천'.split('|'),
-  '6':'응암|역촌|불광|독바위|연신내|구산|새절|증산|디지털미디어시티|월드컵경기장|합정|망원|상수|이태원|한강진|약수|청구|신당|동묘앞|고려대|안암|석계|태릉입구|봉화산'.split('|'),
-  '7':'장암|도봉산|노원|중계|하계|공릉|태릉입구|먹골|상봉|면목|사가정|군자|어린이대공원|건대입구|뚝섬유원지|청담|강남구청|논현|반포|고속터미널|이수|남성|숭실대입구|가산디지털단지|철산|광명사거리|온수|부평구청'.split('|'),
-  '8':'암사|천호|강동구청|몽촌토성|잠실|석촌|송파|가락시장|문정|장지|복정|모란|남위례|산성|남한산성입구|단대오거리|신흥'.split('|'),
-  '9':'개화|김포공항|가양|염창|당산|국회의사당|여의도|노량진|노들|흑석|동작|구반포|신반포|고속터미널|사평|신논현|언주|선정릉|삼성중앙|봉은사|종합운동장|석촌|송파나루|한성백제|올림픽공원|중앙보훈병원'.split('|')
-};
+var KOREA_REGIONS={"서울특별시":["종로구","중구","용산구","성동구","광진구","동대문구","중랑구","성북구","강북구","도봉구","노원구","은평구","서대문구","마포구","양천구","강서구","구로구","금천구","영등포구","동작구","관악구","서초구","강남구","송파구","강동구"],"부산광역시":["중구","서구","동구","영도구","부산진구","동래구","남구","북구","해운대구","사하구","금정구","강서구","연제구","수영구","사상구","기장군"],"대구광역시":["중구","동구","서구","남구","북구","수성구","달서구","달성군","군위군"],"인천광역시":["중구","동구","미추홀구","연수구","남동구","부평구","계양구","서구","강화군","옹진군"],"광주광역시":["동구","서구","남구","북구","광산구"],"대전광역시":["동구","중구","서구","유성구","대덕구"],"울산광역시":["중구","남구","동구","북구","울주군"],"세종특별자치시":["세종특별자치시"],"경기도":{"수원시":["장안구","권선구","팔달구","영통구"],"성남시":["수정구","중원구","분당구"],"의정부시":[],"안양시":["만안구","동안구"],"부천시":["원미구","소사구","오정구"],"광명시":[],"평택시":[],"동두천시":[],"안산시":["상록구","단원구"],"고양시":["덕양구","일산동구","일산서구"],"과천시":[],"구리시":[],"남양주시":[],"오산시":[],"시흥시":[],"군포시":[],"의왕시":[],"하남시":[],"용인시":["처인구","기흥구","수지구"],"파주시":[],"이천시":[],"안성시":[],"김포시":[],"화성시":["만세구","효행구","병점구","동탄구"],"광주시":[],"양주시":[],"포천시":[],"여주시":[],"연천군":[],"가평군":[],"양평군":[]},"강원특별자치도":["춘천시","원주시","강릉시","동해시","태백시","속초시","삼척시","홍천군","횡성군","영월군","평창군","정선군","철원군","화천군","양구군","인제군","고성군","양양군"],"충청북도":{"청주시":["상당구","서원구","흥덕구","청원구"],"충주시":[],"제천시":[],"보은군":[],"옥천군":[],"영동군":[],"증평군":[],"진천군":[],"괴산군":[],"음성군":[],"단양군":[]},"충청남도":{"천안시":["동남구","서북구"],"공주시":[],"보령시":[],"아산시":[],"서산시":[],"논산시":[],"계룡시":[],"당진시":[],"금산군":[],"부여군":[],"서천군":[],"청양군":[],"홍성군":[],"예산군":[],"태안군":[]},"전북특별자치도":{"전주시":["완산구","덕진구"],"군산시":[],"익산시":[],"정읍시":[],"남원시":[],"김제시":[],"완주군":[],"진안군":[],"무주군":[],"장수군":[],"임실군":[],"순창군":[],"고창군":[],"부안군":[]},"전라남도":["목포시","여수시","순천시","나주시","광양시","담양군","곡성군","구례군","고흥군","보성군","화순군","장흥군","강진군","해남군","영암군","무안군","함평군","영광군","장성군","완도군","진도군","신안군"],"경상북도":{"포항시":["남구","북구"],"경주시":[],"김천시":[],"안동시":[],"구미시":[],"영주시":[],"영천시":[],"상주시":[],"문경시":[],"경산시":[],"의성군":[],"청송군":[],"영양군":[],"영덕군":[],"청도군":[],"고령군":[],"성주군":[],"칠곡군":[],"예천군":[],"봉화군":[],"울진군":[],"울릉군":[]},"경상남도":{"창원시":["의창구","성산구","마산합포구","마산회원구","진해구"],"진주시":[],"통영시":[],"사천시":[],"김해시":[],"밀양시":[],"거제시":[],"양산시":[],"의령군":[],"함안군":[],"창녕군":[],"고성군":[],"남해군":[],"하동군":[],"산청군":[],"함양군":[],"거창군":[],"합천군":[]},"제주특별자치도":["제주시","서귀포시"]};
+var REGION_SHORT={'서울특별시':'서울','부산광역시':'부산','대구광역시':'대구','인천광역시':'인천','광주광역시':'광주','대전광역시':'대전','울산광역시':'울산','세종특별자치시':'세종','강원특별자치도':'강원','충청북도':'충북','충청남도':'충남','전북특별자치도':'전북','전라남도':'전남','경상북도':'경북','경상남도':'경남','제주특별자치도':'제주'};
+function regionShort(k){return REGION_SHORT[k]||k;}
+function regionCities(region){var x=KOREA_REGIONS[region];return Array.isArray(x)?x:Object.keys(x||{});}
+function regionDistricts(region,city){var x=KOREA_REGIONS[region];return !Array.isArray(x)&&x&&Array.isArray(x[city])?x[city]:[];}
+function memoryAreaLabel(x){
+  if(!x)return '';
+  if(/^\d+$/.test(String(x.line||'')))return (x.line||'')+'호선'+(x.station?' · '+x.station:'');
+  var parts=[x.line].concat(String(x.station||'').split('>').map(function(v){return v.trim();}).filter(Boolean));
+  return parts.filter(Boolean).join(' · ');
+}
+function selectedMemoryArea(){
+  var p=[M.region||'',M.city||'',M.district||''].filter(Boolean);
+  return p.join(' · ');
+}
+function normalizePlaceText(v){return String(v||'').replace(/\s+/g,' ').trim();}
+function placeLeaf(v){var a=normalizePlaceText(v).split(/\s*·\s*|\s*>\s*/).filter(Boolean);return a[a.length-1]||'';}
+function allRegionPlaces(){
+  var out=[];
+  Object.keys(KOREA_REGIONS).forEach(function(r){
+    regionCities(r).forEach(function(c){
+      var ds=regionDistricts(r,c);
+      if(ds.length)ds.forEach(function(d){out.push({label:regionShort(r)+' '+c+' '+d,value:r+' · '+c+' · '+d,kind:'area'});});
+      else out.push({label:regionShort(r)+' '+c,value:r+' · '+c,kind:'area'});
+    });
+  });
+  return out;
+}
+function placeSearchRows(q){
+  q=normalizePlaceText(q).replace(/특별시|광역시|특별자치시|특별자치도/g,'').toLowerCase();
+  if(!q)return [];
+  var rows=allRegionPlaces().filter(function(x){var h=x.label.replace(/특별시|광역시|특별자치시|특별자치도/g,'').toLowerCase();return h.indexOf(q)>=0;}).slice(0,24);
+  if(/역$/.test(q)||(!rows.length&&q.length>=2))rows.unshift({label:(/역$/.test(q)?q:q+'역')+' · 지하철역',value:(/역$/.test(q)?q:q+'역'),kind:'station'});
+  return rows.slice(0,24);
+}
+function friendPlaceCounts(id){
+  var m={};friendMemoryRows(id).forEach(function(x){var raw=x.place||memoryAreaLabel(x),leaf=placeLeaf(raw);if(!leaf)return;m[leaf]=(m[leaf]||0)+1;});
+  return m;
+}
+function friendMemoryBanners(id){
+  var rows=friendMemoryRows(id),cnt=friendPlaceCounts(id),seen={},out=[];
+  rows.forEach(function(x){var raw=x.place||memoryAreaLabel(x),leaf=placeLeaf(raw);if(!leaf||seen[leaf])return;seen[leaf]=1;out.push('<div class="memory-banner"><b>'+esc(leaf)+'</b><span>'+cnt[leaf]+'번째 추억까지 쌓였어요 ✦</span></div>');});
+  return out.length?'<div class="memory-banners">'+out.slice(0,8).join('')+'</div>':'';
+}
+function lastMetInfo(id){
+  var dates=friendMemoryRows(id).map(function(x){return x.visited_at;}).filter(Boolean);
+  S.events.filter(function(e){return e.friendId===id&&e.sharedRequestId&&e.date;}).forEach(function(e){var end=e.end?toMin(e.end):1440,now=new Date();if(e.date<dkey(now)||(e.date===dkey(now)&&end<=now.getHours()*60+now.getMinutes()))dates.push(e.date);});
+  dates.sort().reverse();if(!dates.length)return '아직 함께한 기록이 없어요';
+  var n=Math.max(0,diffDays(dates[0]));return n===0?'오늘 만났어요 ㅎ.ㅎ':n===1?'어제 만났어요':'안 만난 지 '+n+'일';
+}
+function appointmentPlacePickerHTML(){
+  var mode=M.placeMode||'undecided',chosen=M.placeValue||'';
+  return '<span class="lbl">장소</span><div class="place-mode"><button class="'+(mode==='undecided'?'on':'')+'" data-act="place-mode" data-v="undecided">미정</button><button class="'+(mode==='area'?'on':'')+'" data-act="place-mode" data-v="area">지역</button><button class="'+(mode==='station'?'on':'')+'" data-act="place-mode" data-v="station">지하철역</button><button class="'+(mode==='other'?'on':'')+'" data-act="place-mode" data-v="other">기타</button></div>'+
+    (mode==='undecided'?'<div class="hint">장소는 나중에 정해도 돼요.</div>':mode==='other'?'<input class="fld" id="f-place-other" maxlength="80" placeholder="해외여행, 놀이터, 놀이공원, 학교 등 자유롭게 입력" value="'+esc(chosen)+'"><div class="hint">예: 도쿄 디즈니랜드 · 한강 놀이터 · 오사카 여행</div>':'<div class="place-search"><input class="fld" id="f-place-search" placeholder="~시 ~구로 입력하거나 지하철역 입력하세요" value="'+esc(M.placeQuery||'')+'"></div><div id="place-picker-results">'+placePickerResultsHTML(M.placeQuery||'')+'</div><input type="hidden" id="f-mtplace" value="'+esc(chosen)+'">');
+}
+function placePickerResultsHTML(q){
+  var rows=placeSearchRows(q);
+  if(!normalizePlaceText(q))return '<div class="hint">예: 서울시 관악구 · 경기도 성남시 분당구 · 성수역</div>';
+  return '<div class="place-results">'+(rows.length?rows.map(function(x){return '<button class="place-result'+(M.placeValue===x.value?' on':'')+'" data-act="place-pick" data-v="'+esc(x.value)+'" data-kind="'+x.kind+'">'+esc(x.label)+'</button>';}).join(''):'<span class="hint">검색 결과가 없어요.</span>')+'</div>';
+}
+function postMeetAnswer(rid,yes){
+  var row=(FriendSync.shared||[]).find(function(x){return x.request_id===rid;}),sb=friendDb();if(!row||!sb)return;
+  var p=Object.assign({},row.payload||{}),fb=Object.assign({},p.feedback||{});fb[Sync.uid]=yes?'yes':'no';p.feedback=fb;
+  sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',rid).then(function(r){if(r.error)throw r.error;return friendRequestLoad();}).then(function(){inAppToast(yes?'웅! 상대 답도 확인할게요 ㅎ.ㅎ':'안 만난 약속으로 표시했어요');}).catch(function(){inAppToast('답을 저장하지 못했어요');});
+}
+function autoMemoryFromShared(){
+  var sb=friendDb();if(!sb)return Promise.resolve();
+  var jobs=[];
+  (FriendSync.shared||[]).forEach(function(r){
+    var p=r.payload||{},fb=p.feedback||{},pair=[r.user_a,r.user_b];
+    if(p.memoryCreated||fb[pair[0]]!=='yes'||fb[pair[1]]!=='yes'||Sync.uid!==r.user_a)return;
+    var friend=r.user_b,place=p.place||'',station=/역$/.test(place)?place:'',line=station?'지하철':'약속',what=p.what||p.title||'함께한 약속';
+    jobs.push(sb.from('planner_friend_memories').insert({owner_id:Sync.uid,friend_id:friend,line:line,station:station,visited_at:p.date||dkey(new Date()),place:place,what:what}).then(function(x){if(x.error)throw x.error;p.memoryCreated=true;return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',r.request_id);}));
+  });
+  return Promise.all(jobs).then(function(){if(jobs.length)return friendLoadMemories();}).catch(function(){});
+}
+function postMeetNudgesHTML(){
+  if(!Sync.uid)return '';
+  var now=new Date(),tk=dkey(now),nm=now.getHours()*60+now.getMinutes(),out=[];
+  (FriendSync.shared||[]).forEach(function(r){var p=r.payload||{},end=p.end?toMin(p.end):(p.start?toMin(p.start)+60:1440);if(!p.date||(p.date>tk)||(p.date===tk&&end>nm))return;var fb=p.feedback||{};if(fb[Sync.uid])return;var fid=r.user_a===Sync.uid?r.user_b:r.user_a,who=requestFriendCode(fid);out.push('<section class="postmeet"><b>'+esc(who)+'님과 재밌었어요?</b><small>'+esc([p.date,p.place||'장소 미정',p.what||p.title||'약속'].join(' · '))+'</small><div class="acts"><button class="b-save" data-act="postmeet-yes" data-id="'+r.request_id+'">웅 ㅎ.ㅎ</button><button class="b-ghost" data-act="postmeet-no" data-id="'+r.request_id+'">아니, 안 놀았어</button></div></section>');});
+  return out.join('');
+}
 function eyeSVG(open){return open?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 5.9A10.4 10.4 0 0 1 12 5.8c6.2 0 9.5 6.2 9.5 6.2a17 17 0 0 1-3.4 3.9M6.6 6.8C4.1 8.2 2.5 12 2.5 12s3.3 6 9.5 6c1.4 0 2.7-.3 3.8-.8"/></svg>'}
 function friendDb(){return Sync.kind==='supa'&&Sync.sb&&Sync.uid?Sync.sb:null;}
 function makeFriendCode(){var out='';for(var i=0;i<8;i++)out+=FRIEND_CODE_ALPH[Math.floor(Math.random()*FRIEND_CODE_ALPH.length)];return out;}
@@ -1401,53 +1482,75 @@ function toggleFriendPin(id){
   if(i>=0)S.settings.pinnedFriends.splice(i,1);else S.settings.pinnedFriends.unshift(id);
   save();render();
 }
+function payloadClsActive(c,k,p){
+  var a=c.from||(p&&p.semStart)||'',b=c.to||(p&&p.semEnd)||'';
+  return (!a||k>=a)&&(!b||k<=b);
+}
 function friendTimetableHTML(p){
-  var tk=dkey(new Date()),cs=(p.classes||[]).filter(function(c){return c.start&&c.end&&clsActive(c,tk);});
-  if(!cs.length)return '';
+  var tk=dkey(new Date()),cs=(p.classes||[]).filter(function(c){return c.start&&c.end&&payloadClsActive(c,tk,p);});
+  if(!cs.length)return '<div class="empty">등록된 수업 시간표가 없어요.</div>';
   var lo=Math.floor(Math.min.apply(null,cs.map(function(c){return toMin(c.start);}))/60)*60,hi=Math.ceil(Math.max.apply(null,cs.map(function(c){return toMin(c.end);}))/60)*60;
   var nd=cs.some(function(c){return c.day>=5;})?7:5,PX=0.5,H=(hi-lo)*PX;
   var h='<div class="ftt" style="grid-template-columns:22px repeat('+nd+',minmax(0,1fr))"><span></span>';
   for(var i=0;i<nd;i++)h+='<span class="fh">'+DAYS[i]+'</span>';
   var tm='<div class="ftm" style="height:'+H+'px">';for(var m=lo;m<hi;m+=60)tm+='<span style="top:'+((m-lo)*PX)+'px">'+(m/60)+'</span>';h+=tm+'</div>';
   for(var d=0;d<nd;d++){h+='<div class="fcol" style="height:'+H+'px">'+cs.filter(function(c){return c.day===d;}).map(function(c){var a=toMin(c.start),b=toMin(c.end);return '<div class="fb" style="--c:'+esc(c.color||defCol())+';top:'+((a-lo)*PX)+'px;height:'+Math.max(14,(b-a)*PX-2)+'px">'+esc(c.name||'수업')+'<small>'+esc(timeShort(c.start))+'</small></div>';}).join('')+'</div>';}
-  return '<span class="lbl">수업 시간표</span>'+h+'</div><span class="lbl">앞으로 30일 <em>(빈 날은 숨겼어요)</em></span>';
+  return '<span class="lbl">수업 시간표</span>'+h+'</div>';
+}
+function friendExamHTML(p){
+  var ex=(p.exams||[]).slice().sort(function(a,b){return String(a.start||'').localeCompare(String(b.start||''));});
+  var now=todayKey(),future=ex.filter(function(x){return x.end>=now;}).slice(0,6);
+  if(!future.length)return '';
+  return '<span class="lbl">시험·과제 기간</span>'+future.map(function(x){return '<div class="friend-plan-item"><span>'+esc(x.name||x.kind||'시험')+'</span><small>'+esc(rangeTxt(x.start,x.end))+'</small></div>';}).join('');
 }
 function openFriendPlanner(id){
-  var f=FriendSync.friends.find(function(x){return x.id===id;}),row=FriendSync.incoming.find(function(x){return x.owner_id===id&&x.kind==='planner';});
-  var label=friendLabel(f),html='<h3>친구 플래너 · '+esc(label)+'</h3><p class="hint">공유받은 플래너를 보기 전용으로 보여줘요. 데이터는 계정에 계속 보관돼요.</p>';
-  if(!f||!f.inPlanner||!row){
-    html+='<div class="empty">친구가 플래너 공유를 켜면 여기에서 볼 수 있어요.</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
+  var f=FriendSync.friends.find(function(x){return x.id===id;});
+  var trow=FriendSync.incoming.find(function(x){return x.owner_id===id&&x.kind==='timetable';});
+  var prow=FriendSync.incoming.find(function(x){return x.owner_id===id&&x.kind==='planner';});
+  var label=friendLabel(f),html='<h3>친구 시간표 · '+esc(label)+'</h3><p class="hint">수업 시간표는 친구로 연결된 동안 항상 서버에 보관돼서 상대가 로그아웃해도 마지막 동기화 상태를 볼 수 있어요.</p>';
+  if(!f){
+    html+='<div class="empty">친구 연결 정보를 찾지 못했어요.</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
     M={type:'friend-planner',id:id};openModal(html);return;
   }
-  var p=row.payload||{},today=new Date(),days=[];
-  html+=friendTimetableHTML(p);
-  /* 친구 플래너 화면만 7일로 잘려 보이던 문제를 완화해 한 달을 보여줘요.
-     원본 플래너 데이터와 채팅은 날짜 제한 없이 계정에 저장돼요. */
+  var base=(trow&&trow.payload)||(prow&&prow.payload)||null;
+  if(!base){
+    html+='<div class="empty">친구 시간표가 아직 서버에 올라오지 않았어요. 친구가 앱을 한 번 열면 자동으로 저장돼요.</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
+    M={type:'friend-planner',id:id};openModal(html);return;
+  }
+  html+=friendTimetableHTML(base);
+  if(!f.inPlanner||!prow){
+    html+='<p class="hint" style="margin-top:12px">할 일·개별 일정 같은 상세 플래너는 친구가 ‘플래너’ 공유를 켠 경우에만 보여요.</p><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
+    M={type:'friend-planner',id:id};openModal(html);return;
+  }
+  var p=prow.payload||{},today=new Date();
+  html+='<span class="lbl" style="margin-top:12px">앞으로 30일 상세 플래너</span>';
   for(var i=0;i<30;i++){
     var d=addDays(today,i),k=dkey(d),items=[];
-    (p.classes||[]).filter(function(c){return c.day===dow(d)&&clsActive(c,k);}).forEach(function(c){items.push({text:c.name||c.title||'수업',meta:(c.start||'')+(c.end?'–'+c.end:''),kind:'수업'});});
+    (p.classes||[]).filter(function(c){return c.day===dow(d)&&payloadClsActive(c,k,p);}).forEach(function(c){items.push({text:c.name||c.title||'수업',meta:(c.start||'')+(c.end?'–'+c.end:''),kind:'수업'});});
     (p.todos||[]).filter(function(t){return t.scope==='day'&&t.key===k;}).forEach(function(t){items.push({text:t.text||'할 일',meta:t.done?'완료':'할 일',kind:'할 일'});});
     (p.events||[]).filter(function(e){return eventOnDate(e,k);}).forEach(function(e){items.push({text:e.title||e.name||'일정',meta:e.start||'일정',kind:'일정'});});
     (p.allday||[]).filter(function(a){return alldayForPayload(a,d);}).forEach(function(a){items.push({text:a.title||'종일 일정',meta:'종일',kind:'일정'});});
     (p.exams||[]).filter(function(e){return e.start&&e.start<=k&&(!e.end||k<=e.end);}).forEach(function(e){items.push({text:e.name||e.title||'시험·과제',meta:e.kind||'시험',kind:'시험'});});
     (p.ddays||[]).filter(function(x){return x.date===k;}).forEach(function(x){items.push({text:x.title||'D-day',meta:'D-day',kind:'D-day'});});
     if(!items.length&&i>0)continue;
-    html+='<div class="friend-plan-day"><b>'+esc((i===0?'오늘 ':'')+(d.getMonth()+1)+'/'+d.getDate()+' '+DAYS[dow(d)])+'</b>'+(items.length?items.map(function(x){return '<div class="friend-plan-item"><span>'+esc(x.text)+'</span><small>'+esc(x.meta)+'</small></div>';}).join(''):'<small class="empty">등록된 내용 없음</small>')+'</div>';
+    html+='<div class="friend-plan-day"><b>'+esc((i===0?'오늘 ':'')+(d.getMonth()+1)+'월 '+d.getDate()+'일 '+DAYS[dow(d)])+'</b>'+(items.length?items.map(function(x){return '<div class="friend-plan-item"><span>'+esc(x.text)+'</span><small>'+esc(x.meta)+'</small></div>';}).join(''):'<small class="empty">등록된 내용 없음</small>')+'</div>';
   }
   html+='<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
   M={type:'friend-planner',id:id};openModal(html);
 }
 function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if(U.tab==='settings'&&!M.type)render();}
 function friendPayload(kind){
+  if(kind==='profile')return {name:(S.settings.profileName||'').trim(),photo:S.settings.profilePhoto||''};
+  if(kind==='timetable')return {classes:S.classes.map(function(e){return Object.assign({},e);}),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null,school:S.settings.school||'',schoolCampus:S.settings.schoolCampus||''};
   if(kind==='calendar')return {events:S.events.map(function(e){return Object.assign({},e);}),allday:S.allday.map(function(e){return Object.assign({},e);})};
-  return {classes:S.classes.map(function(e){return Object.assign({},e);}),events:S.events.map(function(e){return Object.assign({},e);}),allday:S.allday.map(function(e){return Object.assign({},e);}),todos:S.todos.map(function(e){return Object.assign({},e);}),routines:S.routines.map(function(e){return Object.assign({},e);}),exams:S.exams.map(function(e){return Object.assign({},e);}),ddays:S.ddays.map(function(e){return Object.assign({},e);})};
+  return {classes:S.classes.map(function(e){return Object.assign({},e);}),events:S.events.map(function(e){return Object.assign({},e);}),allday:S.allday.map(function(e){return Object.assign({},e);}),todos:S.todos.map(function(e){return Object.assign({},e);}),routines:S.routines.map(function(e){return Object.assign({},e);}),exams:S.exams.map(function(e){return Object.assign({},e);}),ddays:S.ddays.map(function(e){return Object.assign({},e);}),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null};
 }
 function friendBusyItems(friendId,k){
   var d=parseKey(k),out=[],f=FriendSync.friends.find(function(x){return x.id===friendId;}),detail=!!(f&&f.inPlanner),G='#c9c9c9';
   var nm=function(t){return detail&&t?t:'일정 있음';};
   FriendSync.incoming.filter(function(r){return r.owner_id===friendId&&(r.kind==='calendar'||r.kind==='planner');}).forEach(function(r){
     var p=r.payload||{};
-    (p.classes||[]).filter(function(c){return c.day===dow(d)&&clsActive(c,k);}).forEach(function(c){if(c.start&&c.end)out.push({start:toMin(c.start),end:toMin(c.end),name:nm(c.name),color:G,friendBusy:true});});
+    (p.classes||[]).filter(function(c){return c.day===dow(d)&&payloadClsActive(c,k,p);}).forEach(function(c){if(c.start&&c.end)out.push({start:toMin(c.start),end:toMin(c.end),name:nm(c.name),color:G,friendBusy:true});});
     (p.events||[]).filter(function(e){return eventOnDate(e,k);}).forEach(function(e){var s0=e.start||'00:00',en=e.end||'23:59';out.push({start:toMin(s0),end:toMin(en),name:nm(e.title),color:G,friendBusy:true});});
     (p.allday||[]).filter(function(a){return alldayForPayload(a,d);}).forEach(function(a){out.push({start:0,end:24*60,name:nm(a.title),color:G,friendBusy:true});});
   });
@@ -1459,10 +1562,13 @@ function friendBusyItems(friendId,k){
 function friendPush(){
   var sb=friendDb();if(!sb||!FriendSync.loaded||FriendSync.busy)return Promise.resolve();
   friendBusyPush();
-  var rows=[];
+  var rows=[],stamp=new Date().toISOString();
   FriendSync.friends.forEach(function(f){
-    if(f.outCalendar)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'calendar',payload:friendPayload('calendar'),updated_at:new Date().toISOString()});
-    if(f.outPlanner)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'planner',payload:friendPayload('planner'),updated_at:new Date().toISOString()});
+    /* 프로필과 수업 시간표는 친구 연결 자체에 포함: 공유 토글과 무관하게 서버에 남겨요. */
+    rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'profile',payload:friendPayload('profile'),updated_at:stamp});
+    rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'timetable',payload:friendPayload('timetable'),updated_at:stamp});
+    if(f.outCalendar)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'calendar',payload:friendPayload('calendar'),updated_at:stamp});
+    if(f.outPlanner)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'planner',payload:friendPayload('planner'),updated_at:stamp});
   });
   if(!rows.length)return Promise.resolve();
   FriendSync.busy=true;
@@ -1496,8 +1602,17 @@ function friendLoad(){
       xs.forEach(function(r){if(r.error)throw r.error;});
       var cm={};(xs[0].data||[]).forEach(function(x){cm[x.user_id]={code:x.code,name:(x.display_name||'').trim()};});
       var sm={};(xs[1].data||[]).forEach(function(x){sm[x.owner_id+'|'+x.friend_id]=x;});
-      FriendSync.friends=ids.map(function(id){var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{},info=cm[id]||{};return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:info.name||'',outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};});
-      FriendSync.incoming=(xs[2].data||[]).filter(function(x){var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});return f&&(x.kind==='calendar'?f.inCalendar:f.inPlanner);});
+      var rawData=xs[2].data||[],profiles={};
+      rawData.forEach(function(x){if(x.kind==='profile')profiles[x.owner_id]=x.payload||{};});
+      FriendSync.friends=ids.map(function(id){
+        var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{},info=cm[id]||{},pr=profiles[id]||{};
+        return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:(pr.name||info.name||'').trim(),photo:pr.photo||'',outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};
+      });
+      FriendSync.incoming=rawData.filter(function(x){
+        var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});if(!f)return false;
+        if(x.kind==='profile'||x.kind==='timetable')return true;
+        return x.kind==='calendar'?f.inCalendar:(x.kind==='planner'&&f.inPlanner);
+      });
     });
   }).then(function(){FriendSync.loaded=true;return friendBusyLoad().then(friendLoadMemories);}).then(function(){return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. friend-sharing-schema.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. friend-sharing-schema.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')';if(U.tab==='settings'&&!M.type)render();});
 }
@@ -1515,22 +1630,37 @@ function friendMemoryRows0(id){
   (S.settings.friendMemories||[]).filter(function(x){return (x.owner_id===Sync.uid&&x.friend_id===id)||(x.owner_id===id&&x.friend_id===Sync.uid);}).forEach(function(x){if(!out.some(function(y){return y.id===x.id;}))out.push(x);});
   return out.sort(function(a,b){return String(b.visited_at||b.created_at||'').localeCompare(String(a.visited_at||a.created_at||''));});
 }
-function openFriendMemories(id,pre){var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;M={type:'friend-memories',friendId:id,line:'1',station:'',memoryDate:(pre&&pre.date)||dkey(new Date()),mplace:(pre&&pre.place)||'',mwhat:(pre&&pre.what)||''};drawFriendMemories(true);}
+function openFriendMemories(id,pre){
+  var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
+  M={type:'friend-memories',friendId:id,region:'서울특별시',city:'',district:'',memoryDate:(pre&&pre.date)||dkey(new Date()),mplace:(pre&&pre.place)||'',mwhat:(pre&&pre.what)||''};
+  drawFriendMemories(true);
+}
 function drawFriendMemories(fresh){
   if(!fresh&&$('#f-mplace')){M.mplace=$('#f-mplace').value;M.mwhat=$('#f-mwhat').value;M.memoryDate=$('#f-mdate').value;}
-  var id=M.friendId,f=FriendSync.friends.find(function(x){return x.id===id;}),rows=friendMemoryRows(id),line=M.line||'1',stations=SUBWAY_STATIONS[line]||[];
-  var list=rows.length?rows.map(function(x){return '<div class="memory-card"><b>'+esc(x.line+'호선 · '+x.station)+'</b><small>'+esc([x.visited_at,x.place,x.what].filter(function(v){return !!v;}).join(' · ')||'기록만 남김')+'</small></div>';}).join(''):'<div class="memory-empty">아직 함께 기록한 역이 없어요.</div>';
-  var lines=Object.keys(SUBWAY_STATIONS).map(function(n){return '<button class="'+(n===line?'on':'')+'" data-act="memory-line" data-v="'+n+'">'+n+'호선</button>';}).join('');
-  var stationHTML=stations.map(function(st){return '<button class="'+(M.station===st?'on':'')+'" data-act="memory-station" data-station="'+esc(st)+'">'+esc(st)+'</button>';}).join('');
-  openModal('<h3>친구와의 추억 · '+esc(friendLabel(f))+'</h3><p class="hint">같이 가본 역을 누르고 날짜·장소·무엇을 했는지 남겨요. 이 기록은 이 친구와만 공유돼요.</p><div class="memory-card">'+list+'</div><span class="lbl">호선</span><div class="memory-lines">'+lines+'</div><span class="lbl">가본 역</span><div class="station-grid">'+stationHTML+'</div><span class="lbl">언제 <em>(선택)</em></span><input class="fld" type="date" id="f-mdate" value="'+esc(M.memoryDate||'')+'"><span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-mplace" maxlength="50" placeholder="장소" value="'+esc(M.mplace||'')+'"><span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mwhat" maxlength="80" placeholder="같이 한 일" value="'+esc(M.mwhat||'')+'"><p class="hint" id="memory-msg">'+(FriendSync.memoryError?'추억 표 권한을 확인해주세요. 아래 SQL을 한 번 실행하면 계정에 저장돼요.':'')+'</p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-ghost" data-act="memory-appointment">이 기록으로 약속 잡기</button><button class="b-save" data-act="save-friend-memory">추억 저장</button></div>');
+  var id=M.friendId,f=FriendSync.friends.find(function(x){return x.id===id;}),rows=friendMemoryRows(id),region=M.region||'서울특별시';
+  var cities=regionCities(region),districts=M.city?regionDistricts(region,M.city):[];
+  var list=rows.length?rows.map(function(x){return '<div class="memory-card"><b>'+esc(memoryAreaLabel(x))+'</b><small>'+esc([x.visited_at,x.place,x.what].filter(function(v){return !!v;}).join(' · ')||'기록만 남김')+'</small></div>';}).join(''):'<div class="memory-empty">아직 함께 기록한 지역이 없어요.</div>';
+  var regions=Object.keys(KOREA_REGIONS).map(function(n){return '<button class="'+(n===region?'on':'')+'" data-act="memory-region" data-v="'+esc(n)+'">'+esc(regionShort(n))+'</button>';}).join('');
+  var cityHTML=cities.map(function(c){return '<button class="'+(M.city===c?'on':'')+'" data-act="memory-city" data-v="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
+  var districtHTML=districts.map(function(d){return '<button class="'+(M.district===d?'on':'')+'" data-act="memory-district" data-v="'+esc(d)+'">'+esc(d)+'</button>';}).join('');
+  var path=selectedMemoryArea();
+  openModal('<h3>친구와의 추억 · '+esc(friendLabel(f))+'</h3><p class="hint">전국 지역이나 지하철역으로 기록할 수 있어요. 같은 장소가 쌓이면 “성수에서 2번째 추억이에요!”처럼 보여줘요.</p>'+friendMemoryBanners(id)+'<div class="place-search"><input class="fld" id="f-memory-search" placeholder="~시 ~구로 입력하거나 지하철역 입력하세요"></div><div id="memory-search-results"></div><div class="place-mode"><button data-act="memory-other-mode">기타 장소 직접 입력</button></div><div id="memory-other-box"></div><div class="memory-card">'+list+'</div>'+
+    '<span class="lbl">지역</span><div class="memory-lines">'+regions+'</div>'+
+    '<span class="lbl">'+(region==='서울특별시'?'구':region==='세종특별자치시'?'지역':'시·군·구')+'</span><div class="station-grid">'+cityHTML+'</div>'+
+    (districts.length?'<span class="lbl">구</span><div class="station-grid">'+districtHTML+'</div>':'')+
+    '<div class="region-path">선택한 지역 · <b>'+esc(path||'아직 선택 안 함')+'</b></div>'+
+    '<span class="lbl">언제 <em>(선택)</em></span><input class="fld" type="date" id="f-mdate" value="'+esc(M.memoryDate||'')+'"><span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-mplace" maxlength="50" placeholder="카페, 공원, 식당 등" value="'+esc(M.mplace||'')+'"><span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mwhat" maxlength="80" placeholder="같이 한 일" value="'+esc(M.mwhat||'')+'"><p class="hint" id="memory-msg">'+(FriendSync.memoryError?'추억 표 권한을 확인해주세요. 기존 DB 열을 그대로 써서 별도 표 수정 없이 저장하도록 했어요.':'')+'</p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-ghost" data-act="memory-appointment">이 기록으로 약속 잡기</button><button class="b-save" data-act="save-friend-memory">추억 저장</button></div>');
 }
 function saveFriendMemory(){
-  var line=M.line,station=M.station,date=$('#f-mdate').value||null,place=$('#f-mplace').value.trim(),what=$('#f-mwhat').value.trim(),id=M.friendId;
-  if(!station){var el=$('.station-grid');if(el)el.style.outline='2px solid var(--now)';var mm=$('#memory-msg');if(mm)mm.textContent='같이 간 역을 먼저 골라주세요';return;}
-  var row={id:'local-memory-'+uid(),owner_id:Sync.uid,friend_id:id,line:line,station:station,visited_at:date,place:place,what:what,created_at:new Date().toISOString()};
+  var region=M.region||'',city=M.city||'',district=M.district||'',date=$('#f-mdate').value||null,place=$('#f-mplace').value.trim(),what=$('#f-mwhat').value.trim(),id=M.friendId;
+  if(!city){var el=$('.station-grid');if(el)el.style.outline='2px solid var(--now)';var mm=$('#memory-msg');if(mm)mm.textContent='지역이나 지하철역을 먼저 골라주세요';return;}
+  if(region!=='지하철'&&region!=='기타'&&regionDistricts(region,city).length&&!district){var grids=document.querySelectorAll('.station-grid'),el2=grids[grids.length-1];if(el2)el2.style.outline='2px solid var(--now)';var mm2=$('#memory-msg');if(mm2)mm2.textContent='구까지 골라주세요';return;}
+  /* 기존 Supabase 스키마 호환: line=시·도, station=시/군/구 > 구 로 저장 */
+  var station=(region==='지하철'||region==='기타')?city:[city,district].filter(Boolean).join(' > ');
+  var row={id:'local-memory-'+uid(),owner_id:Sync.uid,friend_id:id,line:region,station:station,visited_at:date,place:place,what:what,created_at:new Date().toISOString()};
   var sb=friendDb();
-  if(sb){sb.from('planner_friend_memories').insert({owner_id:row.owner_id,friend_id:row.friend_id,line:row.line,station:row.station,visited_at:row.visited_at,place:row.place,what:row.what}).select().single().then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);M.station='';FriendSync.memoryError='';drawFriendMemories();}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';M.station='';M.mplace='';M.mwhat='';drawFriendMemories(true);var msg=$('#memory-msg');if(msg)msg.textContent='기기에는 저장했어요. Supabase SQL을 실행하면 친구와도 공유돼요.';});}
-  else{S.settings.friendMemories.push(row);save();FriendSync.memories.push(row);M.station='';M.mplace='';M.mwhat='';drawFriendMemories(true);}
+  if(sb){sb.from('planner_friend_memories').insert({owner_id:row.owner_id,friend_id:row.friend_id,line:row.line,station:row.station,visited_at:row.visited_at,place:row.place,what:row.what}).select().single().then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);M.city='';M.district='';FriendSync.memoryError='';drawFriendMemories();}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';M.city='';M.district='';M.mplace='';M.mwhat='';drawFriendMemories(true);var msg=$('#memory-msg');if(msg)msg.textContent='기기에는 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
+  else{S.settings.friendMemories.push(row);save();FriendSync.memories.push(row);M.city='';M.district='';M.mplace='';M.mwhat='';drawFriendMemories(true);}
 }
 function friendAdd(code){
   var sb=friendDb(),c=String(code||'').trim().toUpperCase();if(!sb){friendNote('먼저 로그인해주세요');return;}if(!/^[A-Z2-9]{8}$/.test(c)){friendNote('8자리 초대코드를 입력해주세요');return;}
@@ -1581,7 +1711,7 @@ function friendRequestLoad(){
     sb.from('planner_appointment_requests').select('id,from_user,to_user,payload,status,created_at').eq('from_user',Sync.uid).eq('status','pending'),
     sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload,updated_at').eq('user_a',Sync.uid),
     sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload,updated_at').eq('user_b',Sync.uid)
-  ]).then(function(rs){rs.forEach(function(r){if(r.error)throw r.error;});FriendSync.requests=(rs[0].data||[]).concat(rs[1].data||[]);FriendSync.shared=(rs[2].data||[]).concat(rs[3].data||[]);mergeSharedAppointments(FriendSync.shared);friendNotifyScan();showNextAppointmentRequest();softRender();}).catch(function(e){if(!/relation|planner_appointment|planner_shared/i.test(e&&e.message||''))FriendSync.error=e&&e.message||'약속 요청을 불러오지 못했어요';});
+  ]).then(function(rs){rs.forEach(function(r){if(r.error)throw r.error;});FriendSync.requests=(rs[0].data||[]).concat(rs[1].data||[]);FriendSync.shared=(rs[2].data||[]).concat(rs[3].data||[]);mergeSharedAppointments(FriendSync.shared);autoMemoryFromShared();friendNotifyScan();showNextAppointmentRequest();softRender();}).catch(function(e){if(!/relation|planner_appointment|planner_shared/i.test(e&&e.message||''))FriendSync.error=e&&e.message||'약속 요청을 불러오지 못했어요';});
 }
 function sendAppointmentRequest(target,data){
   var sb=friendDb();if(!sb){friendNote('친구 요청은 로그인 후 사용할 수 있어요');return;}
@@ -1668,14 +1798,15 @@ function openFriendMeet(id,pre){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
   var av=friendAvail(id),known=!!(FriendSync.busyMap&&FriendSync.busyMap[id]),mon=weekMon(new Date());
   var wk=mon;if(pre&&pre.date&&pre.date>=dkey(new Date()))wk=weekMon(parseKey(pre.date));
-  M={type:'friend-meet',friendId:id,week:wk,minWeek:mon,sel:null,lo:av[0]*60,hi:av[1]*60};
-  openModal('<h3>약속 잡기 · '+esc(friendLabel(f))+'</h3><p class="hint">친구 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · 빈 칸을 눌러 시작·끝을 골라요</p>'+
+  var pv=pre&&pre.place?pre.place:'';
+  M={type:'friend-meet',friendId:id,week:wk,minWeek:mon,sel:null,lo:av[0]*60,hi:av[1]*60,placeMode:pv?(/역$/.test(pv)?'station':'area'):'undecided',placeValue:pv,placeQuery:pv};
+  openModal('<h3>약속 잡기 · '+esc(friendLabel(f))+'</h3><div class="meet-history"><b>'+esc(lastMetInfo(id))+'</b><div style="margin-top:3px;color:var(--sub)">함께 쌓인 장소 기록을 보고 다음 약속을 잡아봐요.</div></div>'+friendMemoryBanners(id)+
+    '<p class="hint">친구 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · 빈 칸을 눌러 시작·끝을 골라요</p>'+
     (known?'':'<p class="hint warn2">친구가 아직 새 버전을 열지 않아서 바쁜 시간을 몰라요. 신청은 되고, 친구가 수락할 때 확인해요.</p>')+
-    '<div id="meetbox"></div><p class="hint" id="meet-sel"></p>'+
-    '<span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-mtplace" maxlength="50" placeholder="장소">'+
+    '<div id="meetbox"></div><p class="hint" id="meet-sel"></p><div id="appointment-place">'+appointmentPlacePickerHTML()+'</div>'+
     '<span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mtwhat" maxlength="60" placeholder="같이 할 일">'+
     '<p class="hint" id="appointment-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="meet-send">약속 신청</button></div>');
-  if(pre){if(pre.place)$('#f-mtplace').value=pre.place;if(pre.what)$('#f-mtwhat').value=pre.what;}
+  if(pre&&pre.what)$('#f-mtwhat').value=pre.what;
   drawMeet();refreshMeetBusy();
 }
 /* 창을 열 때 친구의 최신 바쁜 시간을 한 번 더 받아와요 */
@@ -1747,8 +1878,8 @@ function meetTap(k,m){
 function meetSend(){
   var f=FriendSync.friends.find(function(x){return x.id===M.friendId;}),s=M.sel;
   if(!s){var i=$('#meet-sel');if(i)i.textContent='먼저 빈 칸을 눌러 시간을 골라주세요';return;}
-  var place=$('#f-mtplace').value.trim(),what=$('#f-mtwhat').value.trim(),name=friendLabel(f);
-  sendAppointmentRequest(M.friendId,{kind:'appointment',title:what||place||name||'약속',what:what,person:name,place:place,date:s.date,start:hm(s.s),end:hm(Math.min(s.e,1439)),color:defCol(),fromUser:Sync.uid,fromName:myDisplayName(),toName:name});
+  var place=M.placeMode==='undecided'?'':M.placeMode==='other'?normalizePlaceText($('#f-place-other')?$('#f-place-other').value:''):normalizePlaceText(M.placeValue||($('#f-mtplace')?$('#f-mtplace').value:'')),what=$('#f-mtwhat').value.trim(),name=friendLabel(f);
+  sendAppointmentRequest(M.friendId,{kind:'appointment',title:what||place||name||'약속',what:what,person:name,place:place,placePending:M.placeMode==='undecided',date:s.date,start:hm(s.s),end:hm(Math.min(s.e,1439)),color:defCol(),fromUser:Sync.uid,fromName:myDisplayName(),toName:name});
 }
 function counterAppointment(){
   var r=M.request,s=M.sel,sb=friendDb();if(!sb||!r||!s)return;
@@ -3016,6 +3147,38 @@ function importPastedTable(replace,btn){
   rows.forEach(function(x){S.classes.push(Object.assign({id:uid()},x));});
   save();closeModal();render(true);
 }
+var RECOVER_2026F_CLASSES=[
+  {name:'미분적분학1',sub:'62306',day:0,start:'10:30',end:'11:45'},
+  {name:'영어쓰기',sub:'26508',day:1,start:'13:30',end:'14:45'},
+  {name:'창의적글쓰기',sub:'36101',day:1,start:'15:00',end:'16:15'},
+  {name:'미분적분학1',sub:'62306',day:2,start:'09:00',end:'10:15'},
+  {name:'예술과4차산업혁명',sub:'36109',day:3,start:'09:00',end:'11:50'},
+  {name:'영어쓰기',sub:'26508',day:3,start:'12:00',end:'13:15'},
+  {name:'창의적글쓰기',sub:'36101',day:3,start:'16:00',end:'17:15'},
+  {name:'문학입문',sub:'26506',day:4,start:'09:00',end:'11:50'},
+  {name:'창의적융합디자인',sub:'36203',day:4,start:'12:00',end:'13:50'}
+];
+function restore2026FallSchedule(){
+  var added=0,baseColor=S.settings.defColor||defCol();
+  RECOVER_2026F_CLASSES.forEach(function(c){
+    var exists=S.classes.some(function(x){return x.name===c.name&&x.day===c.day&&x.start===c.start&&x.end===c.end;});
+    if(!exists){S.classes.push(Object.assign({id:uid(),color:baseColor,from:null,to:null},c));added++;}
+  });
+  S.settings.semStart='2026-08-31';S.settings.semEnd='2026-12-18';
+  S.settings.school='skku';S.settings.schoolCampus='수원';S.settings.schoolConfigured=true;S.settings.onboardDone=true;
+  var custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
+  S.settings.links=schoolLinks('skku','수원').concat(custom);
+  [
+    {name:'2026-2 중간시험 기간',start:'2026-10-19',end:'2026-10-23',kind:'중간고사'},
+    {name:'2026-2 기말시험 기간',start:'2026-12-14',end:'2026-12-18',kind:'기말고사'}
+  ].forEach(function(e){
+    var old=S.exams.find(function(x){return x.name===e.name||((x.kind===e.kind)&&x.start===e.start&&x.end===e.end);});
+    if(old)Object.assign(old,e,{course:'기타',pin:true});
+    else S.exams.push(Object.assign({id:uid(),course:'기타',pin:true},e));
+  });
+  S.settings.recovered2026F=true;
+  save();friendPush();render(true);inAppToast((added?added+'개 수업 + ':'')+'학기·시험기간을 복원했어요');
+}
 function viewTable(){
   var map={},order=[];
   S.classes.forEach(function(c){
@@ -3052,7 +3215,7 @@ function viewTable(){
       return order.map(function(c){return '<div class="exgrp"><div class="exgh"><i class="cdot" style="--c:'+(c==='과목 미지정'||c==='기타'?'#ebebee':courseColor(c))+';margin:0"></i>'+esc(c)+'<span class="cnt">'+g[c].length+'</span></div>'+g[c].map(function(e){return examRow(e,true);}).join('')+'</div>';}).join('');
     })():ex.map(function(e){return examRow(e);}).join(''))
       :'<div class="empty">이 학기엔 등록된 시험이 없어요</div>')+'</section>';
-  return '<section class="card"><div class="card-h"><h3>수업·고정 일정</h3><div class="tt-actions"><button class="tbtn" data-act="paste-table">붙여넣기</button><button class="tbtn" data-act="all-color">전체 색 바꾸기</button></div></div>'+
+  return '<section class="card"><div class="card-h"><h3>수업·고정 일정</h3><div class="tt-actions"><button class="tbtn" data-act="paste-table">붙여넣기</button><button class="tbtn" data-act="all-color">전체 색</button></div></div>'+
     '<div class="semrow"><span>학기 기간</span><input type="date" id="set-ss" value="'+(S.settings.semStart||'')+'"><span>~</span><input type="date" id="set-se" value="'+(S.settings.semEnd||'')+'"></div><p class="hint">개강~종강을 넣으면 방학엔 수업이 안 뜨고, 주간 제목이 "개강 N주차"로 바뀌어요</p>'+
     '<p class="hint">동그라미는 과목별, 시간표 블록은 그 시간만 바꿀 수 있어요</p>'+list+
     '<div class="acts" style="margin-top:10px"><button class="b-ghost" data-act="add-block">+ 수업·일정 추가</button></div></section>'+ddHTML+adHTML+exHTML;
@@ -3142,18 +3305,31 @@ function moveTopItem(id,dir){
   var t=ids[i];ids[i]=ids[j];ids[j]=t;S.settings.topOrder=ids;save();render();
 }
 function profileHTML(){
-  if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>프로필</h3></div><p class="hint">로그인하면 친구에게 보일 이름을 설정할 수 있어요.</p></section>';
-  return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div><div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름이 보여요.</small></span></div><div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(S.settings.profileName||'')+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">저장</button></div></section>';
+  if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>프로필</h3></div><p class="hint">로그인하면 친구에게 보일 이름과 사진을 설정할 수 있어요.</p></section>';
+  var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',initial=(n||'?').charAt(0);
+  return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div>'+
+    '<div class="profile-photo-row"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="프로필 사진">':esc(initial))+'</div><div class="profile-photo-actions"><label class="tbtn" style="display:grid;place-items:center;padding:0 12px">사진 선택<input type="file" accept="image/*" data-profile-photo hidden></label>'+(photo?'<button class="tbtn" data-act="profile-photo-remove">사진 삭제</button>':'')+'</div></div>'+
+    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div><div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">저장</button></div></section>';
 }
 function saveProfile(){
   var el=$('#f-profile-name'),name=el?el.value.trim().slice(0,20):'';
   S.settings.profileName=name;save();
   var sb=friendDb();
-  if(!sb){friendNote('프로필 이름을 이 기기에 저장했어요. 친구에게 표시하려면 로그인해주세요');return;}
+  if(!sb){friendNote('프로필을 이 기기에 저장했어요. 친구에게 표시하려면 로그인해주세요');return;}
   sb.from('planner_friend_codes').update({display_name:name,updated_at:new Date().toISOString()}).eq('user_id',Sync.uid).then(function(r){
     if(r.error){if(/display_name|column|schema cache/i.test(r.error.message||''))friendNote('이 기기에는 저장했어요. 친구에게 이름을 보이려면 friend-sharing-schema.sql을 한 번 다시 실행해주세요.');else friendNote('프로필은 저장했지만 친구 표시 이름 동기화에 실패했어요');return;}
-    friendNote('친구에게 보일 이름을 저장했어요');return friendLoad();
+    return friendPush();
+  }).then(function(){friendNote('친구에게 보일 프로필을 저장했어요');return friendLoad();}).catch(function(){friendNote('프로필은 저장했지만 친구 동기화를 다시 확인해주세요');});
+}
+function setProfilePhoto(file){
+  if(!file)return;
+  shrinkProfileImage(file,function(url){
+    if(!url){friendNote('사진을 읽지 못했어요');return;}
+    S.settings.profilePhoto=url;save();friendPush().then(function(){friendNote('프로필 사진을 저장했어요');render();});
   });
+}
+function shrinkProfileImage(file,cb){
+  var fr=new FileReader();fr.onload=function(){var img=new Image();img.onload=function(){var max=256,w=img.width,h=img.height,r=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*r));c.height=Math.max(1,Math.round(h*r));c.getContext('2d').drawImage(img,0,0,c.width,c.height);try{cb(c.toDataURL('image/jpeg',0.72));}catch(e){cb(null);}};img.onerror=function(){cb(null);};img.src=fr.result;};fr.onerror=function(){cb(null);};fr.readAsDataURL(file);
 }
 function softRender(){var ae=document.activeElement;if(!M.type&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))render();}
 function memoryNudgeHTML(){
@@ -3232,16 +3408,46 @@ function drawNotices(){
   var ch=false;L.forEach(function(n){if(!n.read){n.read=true;ch=true;}});if(ch){save();var tb=$('#top');if(tb&&typeof topHTML==='function')tb.innerHTML=topHTML();}
 }
 function friendAlertCount(){if(typeof FriendSync==='undefined'||!Sync.uid)return 0;return (FriendSync.invitesIn||[]).length+(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).length;}
-function friendAvatar(t){var c=String(t||'?').trim().charAt(0)||'?';return '<span class="fav">'+esc(c)+'</span>';}
+function friendAvatar(t,photo){var c=String(t||'?').trim().charAt(0)||'?';return '<span class="fav">'+(photo?'<img src="'+esc(photo)+'" alt="">':esc(c))+'</span>';}
+
+function openFriendSharePreview(id){
+  var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
+  var n=(S.settings.profileName||'').trim()||'내 프로필',photo=S.settings.profilePhoto||'',initial=n.charAt(0)||'?';
+  var badges=['시간표'];
+  if(f.outCalendar)badges.push('공유 일정');
+  if(f.outPlanner)badges.push('상세 플래너');
+  var html='<h3>'+esc(friendLabel(f))+'에게 보이는 내 화면</h3><p class="hint">실제 공개 설정을 기준으로 미리 보여줘요. 여기서 보이지 않는 내용은 이 친구에게 공개되지 않아요.</p>'+
+    '<div class="share-preview"><div class="share-preview-head"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="">':esc(initial))+'</div><div><b>'+esc(n)+'</b><small style="display:block;color:var(--sub)">친구에게 표시되는 프로필</small></div></div>'+
+    '<div class="share-preview-badges">'+badges.map(function(x){return '<span>'+esc(x)+' 공개</span>';}).join('')+'</div>'+
+    friendTimetableHTML({classes:S.classes,semStart:S.settings.semStart||'',semEnd:S.settings.semEnd||''});
+  if(f.outCalendar){
+    var now=new Date(),shown=0;
+    html+='<span class="lbl" style="margin-top:12px">공유 일정</span>';
+    for(var i=0;i<14&&shown<6;i++){var d=addDays(now,i),k=dkey(d),it=[];
+      S.events.filter(function(e){return eventOnDate(e,k);}).forEach(function(e){it.push(e.title||e.name||'일정');});
+      S.allday.filter(function(a){return alldayForPayload(a,d);}).forEach(function(a){it.push(a.title||'종일 일정');});
+      if(it.length){shown++;html+='<div class="friend-plan-day"><b>'+esc((d.getMonth()+1)+'월 '+d.getDate()+'일 '+DAYS[dow(d)])+'</b>'+it.slice(0,5).map(function(x){return '<div class="friend-plan-item"><span>'+esc(x)+'</span><small>일정</small></div>';}).join('')+'</div>';}
+    }
+    if(!shown)html+='<div class="empty">앞으로 2주간 공유할 일정이 없어요.</div>';
+  }
+  if(f.outPlanner){
+    html+='<span class="lbl" style="margin-top:12px">상세 플래너</span>';
+    var tk=dkey(new Date()),todos=S.todos.filter(function(t){return t.scope==='day'&&t.key===tk;});
+    html+='<div class="friend-plan-day"><b>오늘</b>'+(todos.length?todos.slice(0,8).map(function(t){return '<div class="friend-plan-item"><span>'+esc(t.text||'할 일')+'</span><small>'+(t.done?'완료':'할 일')+'</small></div>';}).join(''):'<small class="empty">오늘 등록된 할 일이 없어요.</small>')+'</div>';
+  }
+  html+='<div class="share-preview-private">🔒 항상 비공개: 메모 · 나와의 채팅 · 생활기록 · 회고 · 사진</div></div>'+
+    '<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
+  M={type:'friend-share-preview',friendId:id};openModal(html);
+}
 function friendHTML(){
   if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>친구</h3></div><p class="hint">친구와 약속을 잡고 추억을 남기려면 먼저 로그인해주세요. 메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p><button class="tbtn" data-act="open-login">로그인하기</button></section>';
   var myCode=FriendSync.code||storedFriendCode()||'생성 중';
   var invIn=(FriendSync.invitesIn||[]).map(function(x){var n=inviteName(x.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n)+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 요청을 보냈어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn fc-pri b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div></div>';}).join('');
   var reqIn=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).map(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n)+'<div class="fc-name"><b>'+esc(n)+' · '+esc(p.what||p.title||'약속')+'</b><small>'+esc([p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'',p.place].filter(function(x){return !!x;}).join(' · ')||'약속 요청')+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div></div>';}).join('');
-  var rows=sortedFriends().map(function(f){var pinned=friendPinIndex(f.id)>=0,n=friendLabel(f),inc=[f.inCalendar?'일정':'',f.inPlanner?'플래너':''].filter(function(x){return !!x;});
-    return '<div class="fcard"><div class="fc-top">'+friendAvatar(n)+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+(inc.length?'친구가 '+inc.join('·')+' 공개 중':'바쁜 시간만 보여요')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★ 고정됨':'☆ 고정')+'</button></div>'+
-      '<div class="fc-main"><button class="tbtn pri" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너 보기</button></div>'+
-      '<div class="fc-share"><span>내가 공개</span><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">공유 일정</button><button class="chipt'+(f.outPlanner?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="planner">플래너</button><button class="fc-rm" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
+  var rows=sortedFriends().map(function(f){var pinned=friendPinIndex(f.id)>=0,n=friendLabel(f),inc=[f.inCalendar?'공유 일정':'',f.inPlanner?'상세 플래너':''].filter(function(x){return !!x;});
+    return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,f.photo)+'<div class="fc-name"><b>'+esc(n)+'</b><small>시간표 공개'+(inc.length?' · '+inc.join(' · '):' · 상세 일정은 비공개')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★ 고정됨':'☆ 고정')+'</button></div>'+
+      '<div class="fc-main"><button class="tbtn pri" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너 보기</button><button class="tbtn" data-act="friend-share-preview" data-id="'+f.id+'">내 화면 미리보기</button></div>'+
+      '<div class="fc-share"><span>내가 공개</span><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">공유 일정</button><button class="chipt'+(f.outPlanner?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="planner">상세 플래너</button><button class="fc-rm" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
   var invOut=(FriendSync.invitesOut||[]).map(function(x){var n=inviteName(x.to_user);return '<div class="fcard"><div class="fc-top">'+friendAvatar(n)+'<div class="fc-name"><b>'+esc(n)+'</b><small>수락 기다리는 중</small></div><button class="tbtn" data-act="friend-invite-cancel" data-id="'+x.id+'">요청 취소</button></div></div>';}).join('');
   var av=meetAvail(),availRow='<div class="setrow"><span>약속 가능 시간<small>친구는 이 시간 안에서만 약속을 신청할 수 있어요</small></span><div class="row" style="margin:0;flex:none;align-items:center">'+meetAvailSelHTML('set-meet-s',av[0],0,23)+'<span>~</span>'+meetAvailSelHTML('set-meet-e',av[1],1,24)+'</div></div>';
   var ferr=[FriendSync.error,FriendSync.inviteError,FriendSync.busyError].filter(function(x){return !!x;}).filter(function(x,i,a){return a.indexOf(x)===i;}).map(function(x){return '<p class="hint" style="color:var(--now)">'+esc(x)+'</p>';}).join('');
@@ -3332,7 +3538,7 @@ function render(reset){
   var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings}[U.tab]();
   if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=topBar()+v;
   if(U.tab!=='settings'&&U.tab!=='ttable')v=letterBar()+v;
-  if(U.tab==='day')v=memoryNudgeHTML()+v;
+  if(U.tab==='day')v=postMeetNudgesHTML()+memoryNudgeHTML()+v;
   if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
     v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
   main.innerHTML=(storageOK?'':'<div class="note">이 브라우저에서는 저장이 막혀 있어요. 새로고침하면 내용이 사라질 수 있어요.</div>')+(Sync.loading?'<div class="note">계정 플래너 불러오는 중…</div>':'')+v;
@@ -3350,10 +3556,10 @@ function render(reset){
     if(inp){inp.focus();}
     U.refocus=null;
   }
-  if(Sync.uid&&!M.type&&!lsGet('planner.onboard.'+Sync.uid)&&!onboardTimer){
+  if(Sync.uid&&!M.type&&!S.settings.onboardDone&&!S.settings.schoolConfigured&&!lsGet('planner.onboard.'+Sync.uid)&&!onboardTimer){
     onboardTimer=setTimeout(function(){
       onboardTimer=null;
-      if(Sync.uid&&!M.type&&!lsGet('planner.onboard.'+Sync.uid))openOnboard();
+      if(Sync.uid&&!M.type&&!S.settings.onboardDone&&!S.settings.schoolConfigured&&!lsGet('planner.onboard.'+Sync.uid))openOnboard();
     },250);
   }
 }
@@ -3361,7 +3567,7 @@ function render(reset){
 /* ---------- 모달 ---------- */
 function openModal(html){var el=$('#modal');el.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+html+'</div>';el.classList.add('open');}
 function closeModal(){var el=$('#modal');el.classList.remove('open');el.classList.remove('full');el.innerHTML='';M={type:null};setTimeout(function(){if(!M.type&&Sync.uid&&typeof showNextFriendInvite==='function'){showNextFriendInvite();showNextAppointmentRequest();}},350);}
-function finishOnboard(){if(Sync.uid)lsSet('planner.onboard.'+Sync.uid,'1');}
+function finishOnboard(){S.settings.onboardDone=true;S.settings.schoolConfigured=true;if(Sync.uid)lsSet('planner.onboard.'+Sync.uid,'1');save();}
 function openSchoolAdd(fromOnboard){
   M={type:'school-add',fromOnboard:!!fromOnboard};
   openModal('<h3>내 학교 직접 추가</h3><p class="hint">학교 이름과 공식 사이트 주소를 넣으면 학교 선택 목록에 저장돼요. 공지·식단 주소는 선택이에요.</p>'+ 
@@ -3925,6 +4131,20 @@ function addTodo(scope,key,text,draftId,due,course){
 }
 function findTodo(id){return S.todos.find(function(t){return t.id===id;});}
 
+function signOutSafely(openOther){
+  var owner=Sync.uid||lsGet('planner.activeUser');
+  saveLogoutBackup(owner,S);
+  save();
+  clearTimeout(Sync.timer);Sync.timer=null;
+  clearTimeout(window.__fpT);
+  var jobs=[];
+  if(Sync.db)jobs.push(Promise.resolve(Sync.kind==='supa'&&!Sync.pulled?pull():null).then(function(){return push();}).catch(function(){}));
+  if(friendDb())jobs.push(Promise.resolve(FriendSync.loaded?null:friendLoad()).then(function(){return friendPush();}).catch(function(){}));
+  Promise.all(jobs).then(function(){return Sync.sb.auth.signOut();}).then(function(){
+    lsSet('planner.syncedUser','');
+    if(openOther)openLogin('다른 아이디로 로그인해주세요');
+  }).catch(function(){if(openOther)openLogin('다른 아이디로 로그인해주세요');});
+}
 function act(a,e){
   var id=a.dataset.id,name=a.dataset.act;
   switch(name){
@@ -3955,15 +4175,21 @@ function act(a,e){
     case 'login-mode':switchAuthMode(false);break;
     case 'toggle-password':togglePassword(a.dataset.target,a);break;
     case 'save-profile':saveProfile();break;
+    case 'profile-photo-remove':S.settings.profilePhoto='';save();friendPush().then(function(){friendNote('프로필 사진을 삭제했어요');render();});break;
     case 'friend-copy-code':friendCopyCode();break;
     case 'friend-add':friendAdd($('#f-friend-code')?$('#f-friend-code').value:'');break;
     case 'friend-pin':toggleFriendPin(id);break;
     case 'friend-view-planner':openFriendPlanner(id);break;
+    case 'friend-share-preview':openFriendSharePreview(id);break;
     case 'friend-memories':openFriendMemories(id);break;
     case 'friend-meet':openFriendMeet(id);break;
     case 'meet-cell':meetTap(a.dataset.k,Number(a.dataset.m));break;
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
     case 'meet-send':meetSend();break;
+    case 'place-mode':M.placeMode=a.dataset.v;M.placeValue='';M.placeQuery='';var ap=$('#appointment-place');if(ap)ap.innerHTML=appointmentPlacePickerHTML();break;
+    case 'place-pick':M.placeValue=a.dataset.v;M.placeMode=a.dataset.kind||M.placeMode;var ap2=$('#appointment-place');if(ap2)ap2.innerHTML=appointmentPlacePickerHTML();break;
+    case 'postmeet-yes':postMeetAnswer(id,true);break;
+    case 'postmeet-no':postMeetAnswer(id,false);break;
     case 'appointment-counter':counterAppointment();break;
     case 'friend-notify':friendNotifyToggle();if(M.type==='notices')setTimeout(drawNotices,400);break;
     case 'open-notices':openNotices();break;
@@ -3981,10 +4207,13 @@ function act(a,e){
     case 'friend-invite-cancel':friendInviteCancel(id);break;
     case 'friend-toggle-share':friendToggle(id,a.dataset.mode);break;
     case 'friend-remove':if(armed(a))friendRemove(id);break;
-    case 'memory-line':M.line=a.dataset.v;M.station='';drawFriendMemories();break;
-    case 'memory-station':M.station=a.dataset.station||'';document.querySelectorAll('.station-grid button').forEach(function(b){b.classList.toggle('on',b.dataset.station===M.station);});break;
+    case 'memory-other-mode':{M.region='기타';M.city='';M.district='';M.mplace='';var ob=$('#memory-other-box');if(ob)ob.innerHTML='<input class="fld" id="f-memory-other" maxlength="80" placeholder="해외여행, 놀이터, 놀이공원, 학교 등 자유롭게 입력"><div class="hint">예: 도쿄 디즈니랜드 · 한강 놀이터 · 오사카 여행</div>';break;}
+    case 'memory-search-pick':{var vv=a.dataset.v||'';if(a.dataset.kind==='station'){M.region='지하철';M.city=vv;M.district='';M.mplace=vv;}else{var pp=vv.split(' · ');M.region=pp[0]||'서울특별시';M.city=pp[1]||'';M.district=pp[2]||'';}drawFriendMemories(true);break;}
+    case 'memory-region':M.region=a.dataset.v;M.city='';M.district='';drawFriendMemories();break;
+    case 'memory-city':M.city=a.dataset.v||'';M.district='';drawFriendMemories();break;
+    case 'memory-district':M.district=a.dataset.v||'';drawFriendMemories();break;
     case 'save-friend-memory':saveFriendMemory();break;
-    case 'memory-appointment':{var mmDate=$('#f-mdate')?$('#f-mdate').value:'',mmPlace=$('#f-mplace')?$('#f-mplace').value.trim():'',mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'';var memStation=M.station,memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{date:mmDate,place:mmPlace||(memStation?memStation+'역':''),what:mmWhat});break;}
+    case 'memory-appointment':{var mmDate=$('#f-mdate')?$('#f-mdate').value:'',mmPlace=$('#f-mplace')?$('#f-mplace').value.trim():'',mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'';var memArea=selectedMemoryArea(),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{date:mmDate,place:mmPlace||memArea,what:mmWhat});break;}
     case 'appointment-accept':respondAppointmentRequest(true);break;
     case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
@@ -4127,7 +4356,7 @@ function act(a,e){
     case 'edit-link':{var lk=S.settings.links.find(function(x){return x.id===id;});if(lk)openLink(lk);break;}
     case 'save-link':saveLink();break;
     case 'del-link':if(armed(a)){var lid=M.id;S.settings.links=S.settings.links.filter(function(x){return x.id!==lid;});save();closeModal();render();}break;
-    case 'switch-account':saveLogoutBackup(Sync.uid||lsGet('planner.activeUser'),S);Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');openLogin('다른 아이디로 로그인해주세요');});break;
+    case 'switch-account':signOutSafely(true);break;
     case 'login':case 'signup':{
       var em=$('#f-email').value.trim(),pw=$('#f-pw').value,pw2=$('#f-pw2')?$('#f-pw2').value:'';
       if(!em){bad('#f-email');break;}
@@ -4151,7 +4380,7 @@ function act(a,e){
       }).catch(function(e){loginMsg(authErr(e));});
       break;
     }
-    case 'logout':if(armed(a)){saveLogoutBackup(Sync.uid||lsGet('planner.activeUser'),S);Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');});}break;
+    case 'logout':if(armed(a))signOutSafely(false);break;
     case 'recover-all':recoverAll();break;
     case 'use-merge':{
       try{if(hasPlannerData(S))bkPut('prev',JSON.stringify(S));var rm=normalize(JSON.parse(M.r.json));var mg=mergeState(S,rm,null);mg.updatedAt=Date.now();S=mg;lsSet(KEY,JSON.stringify(S));}catch(e){}
@@ -4350,6 +4579,12 @@ function dpClick(e){
 }
 try{new MutationObserver(function(){if(document.querySelector('input[type=date]:not([data-dx])'))enhanceDates();}).observe(document.body,{childList:true,subtree:true});}catch(x){}
 var TOPDR=null,topDragIgnore=0;
+document.addEventListener('input',function(e){
+  if(e.target&&e.target.id==='f-place-search'&&M.type==='friend-meet'){M.placeQuery=e.target.value;var z=$('#place-picker-results');if(z)z.innerHTML=placePickerResultsHTML(M.placeQuery);}
+  if(e.target&&e.target.id==='f-place-other'&&M.type==='friend-meet'){M.placeValue=e.target.value;}
+  if(e.target&&e.target.id==='f-memory-search'&&M.type==='friend-memories'){var q=e.target.value,z=$('#memory-search-results');if(z){var rr=placeSearchRows(q);z.innerHTML='<div class="place-results">'+rr.map(function(x){return '<button class="place-result" data-act="memory-search-pick" data-v="'+esc(x.value)+'" data-kind="'+x.kind+'">'+esc(x.label)+'</button>';}).join('')+'</div>';}}
+  if(e.target&&e.target.id==='f-memory-other'&&M.type==='friend-memories'){M.region='기타';M.city=e.target.value;M.district='';M.mplace=e.target.value;}
+});
 document.addEventListener('click',function(e){
   if(e.target.closest&&e.target.closest('#dp')){dpClick(e);return;}
   var db=e.target.closest&&e.target.closest('.dbtn');if(db){if(DP.btn===db)closeDP();else openDP(db);return;}
@@ -4508,6 +4743,9 @@ document.addEventListener('change',function(e){
   if(e.target.id==='set-campus'){setSchool(S.settings.school,e.target.value);render();return;}
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
   if(e.target.dataset&&e.target.dataset.monthItem){S.settings.monthItems[e.target.dataset.monthItem]=e.target.checked;save();render();return;}
+  if(e.target.dataset&&e.target.dataset.profilePhoto&&e.target.files&&e.target.files[0]){
+    setProfilePhoto(e.target.files[0]);e.target.value='';return;
+  }
   if(e.target.dataset&&e.target.dataset.memophoto&&e.target.files){
     addMemoPhotos(e.target.dataset.memophoto,e.target.files);e.target.value='';return;
   }
