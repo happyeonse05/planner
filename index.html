@@ -1106,7 +1106,26 @@ function backupCode(st){
   try{return btoa(unescape(encodeURIComponent(JSON.stringify(st||backupData()))));}catch(e){return '';}
 }
 function decodeBackupCode(code){
-  return JSON.parse(decodeURIComponent(escape(atob(String(code||'').trim()))));
+  var text=String(code||'').trim();
+  if(!text)throw new Error('empty backup');
+  /* 코드 칸에 JSON을 직접 붙여넣은 경우도 함께 지원해요. */
+  try{return JSON.parse(text);}catch(e){}
+  var b64=text.replace(/-/g,'+').replace(/_/g,'/');
+  while(b64.length%4)b64+='=';
+  return JSON.parse(decodeURIComponent(escape(atob(b64))));
+}
+function validBackupState(st){
+  if(!st||typeof st!=='object'||Array.isArray(st))return false;
+  return ['classes','events','todos','routines','exams','allday','selfchat','ddays','memos','settings'].some(function(k){return Object.prototype.hasOwnProperty.call(st,k);});
+}
+function restoreBackupState(raw,emptyMsg){
+  try{
+    var obj=typeof raw==='string'?decodeBackupCode(raw):raw;
+    if(obj&&obj.state&&typeof obj.state==='object')obj=obj.state;
+    if(!validBackupState(obj))throw new Error('bad backup');
+    lsSet('planner.prevBackup',JSON.stringify(S));
+    S=normalize(obj);S.updatedAt=Date.now();save();closeModal();render(true);return true;
+  }catch(e){bkMsg(emptyMsg||'이 백업을 읽지 못했어요');return false;}
 }
 function saveLocalBackupLayers(st){
   if(!hasPlannerData(st))return;
@@ -2572,7 +2591,7 @@ function viewSettings(){
     '<div class="setrow"><span>시간표 시간<small>이 범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
       '<select class="sel" id="set-hs">'+[0,1,2,3,4,5,6,7,8,9,10,11,12].map(function(h){return '<option value="'+h+'"'+((S.settings.hStart!=null?S.settings.hStart:9)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select><span>~</span>'+
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
-    '<div class="setrow defc"><span>새 일정 기본 색<small>일정·종일 일정·D-day를 만들 때 처음 골라져 있는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+ 
+    '<div class="setrow defc"><span>새 일정 기본 색<small>수업·일정·종일 일정·D-day에 적용되는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+ 
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+ 
     '<div class="setrow"><span>가까운 일정 알림<small>앱이 열려 있을 때 30분 전 알림을 보내요</small></span><button class="tbtn" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'꺼짐')+'</button></div>'+ 
     '<div class="setrow"><span>상단 D-day·시험 표시<small>홈·일간·주간 화면 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+ 
@@ -3217,7 +3236,7 @@ function openBackup(){
     '<hr><p class="hint">파일 대신 이 백업 코드를 메모 앱에 보관해도 돼요. 한 번 복사하면 전체 데이터가 들어 있어요.</p>'+ 
     '<textarea class="ta" id="f-backup-code" spellcheck="false" placeholder="백업 코드를 붙여넣어요">'+esc(code)+'</textarea>'+ 
     '<div class="acts"><button class="b-ghost" data-act="copy-backup-code">백업 코드 복사</button><button class="b-save" data-act="restore-backup-code">백업 코드로 복원</button></div>'+ 
-    '<p class="hint" id="bk-msg" style="margin-top:10px">저장·로그아웃할 때 자동 백업돼요. 복원 버튼은 실수 방지를 위해 한 번 더 눌러요.</p>');
+    '<p class="hint" id="bk-msg" style="margin-top:10px">저장·로그아웃할 때 자동 백업돼요. 복원하면 현재 상태는 자동으로 이전 상태에 보관돼요.</p>');
 }
 function bkMsg(t){var el=$('#bk-msg');if(el)el.textContent=t;}
 function feedbackBody(){
@@ -3305,7 +3324,7 @@ function act(a,e){
     case 'rsel':{var sg=a.dataset.g,one=a.dataset.v==='1';document.querySelectorAll('#'+sg+' button').forEach(function(b){b.classList.toggle('on',b===a);});
       var wrap=sg==='f-erange'?$('#f-eew'):$('#f-adew');if(wrap)wrap.style.display=one?'none':'';if(sg==='f-erange')M.single=one;break;}
     case 'toggle-holi':S.settings.holiOff=!S.settings.holiOff;save();render();break;
-    case 'set-defcolor':S.settings.defColor=a.dataset.v;save();render();break;
+    case 'set-defcolor':{var dc2=a.dataset.v;S.settings.defColor=dc2;lsSet('planner.defColor',dc2);/* 기본 색을 바꾸면 기존 시간표 수업도 같은 색으로 맞춰요. */S.classes.forEach(function(x){x.color=dc2;});save();render();break;}
     case 'tp':{var th=Number(a.dataset.h);
       if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
       else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
@@ -3347,10 +3366,10 @@ function act(a,e){
       try{var mo=JSON.parse($('#f-backup').value);if(!mo||typeof mo!=='object')throw 0;lsSet('planner.prevBackup',JSON.stringify(S));
         var mm=mergeState(S,normalize(mo),null);mm.updatedAt=Date.now();S=mm;save();closeModal();render(true);}catch(e){bkMsg('올바른 백업 글자가 아니에요');}
       break;}
-    case 'undo-backup':{if(!armed(a))break;try{var pv=JSON.parse(lsGet('planner.prevBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(pv);save();closeModal();render(true);}catch(e){bkMsg('되돌릴 내용이 없어요');}break;}
-    case 'restore-remote-backup':{if(!armed(a))break;try{var rb=JSON.parse(lsGet('planner.remoteBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(rb);save();closeModal();render(true);}catch(e){bkMsg('시험·일정 백업이 없어요');}break;}
-    case 'restore-last-good':{if(!armed(a))break;try{var lg=JSON.parse(lastGoodRaw());if(!lg)throw 0;lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lg);save();closeModal();render(true);}catch(e){bkMsg('마지막 정상 상태가 없어요');}break;}
-    case 'restore-logout-backup':{if(!armed(a))break;try{var lb=JSON.parse(logoutBackupRaw());if(!lb)throw 0;lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lb);save();closeModal();render(true);}catch(e){bkMsg('로그아웃 전 백업이 없어요');}break;}
+    case 'undo-backup':restoreBackupState(lsGet('planner.prevBackup'),'되돌릴 내용이 없어요');break;
+    case 'restore-remote-backup':restoreBackupState(lsGet('planner.remoteBackup'),'시험·일정 백업이 없어요');break;
+    case 'restore-last-good':restoreBackupState(lastGoodRaw(),'마지막 정상 상태를 읽지 못했어요');break;
+    case 'restore-logout-backup':restoreBackupState(logoutBackupRaw(),'로그아웃 전 백업을 읽지 못했어요');break;
     case 'load-snap':{
       var sk=a.dataset.k;
       var putSnap=function(sd){if(sd&&M.type==='backup'){$('#f-backup').value=sd;bkMsg(sk+' 백업을 불러왔어요. 아래 \'합치기\'를 눌러요');}else bkMsg('그 날짜 백업을 못 찾았어요');};
@@ -3584,22 +3603,9 @@ function act(a,e){
       try{navigator.clipboard.writeText(ca.value).then(cok,cfail);}catch(err){cfail();}
       break;
     }
-    case 'restore-backup-code':{
-      if(!armed(a))break;
-      try{
-        var codeObj=decodeBackupCode($('#f-backup-code').value);
-        if(!codeObj||!Array.isArray(codeObj.classes))throw new Error('bad');
-        lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(codeObj);save();closeModal();render(true);
-      }catch(err){bkMsg('올바른 백업 코드가 아니에요');}
-      break;
-    }
+    case 'restore-backup-code':restoreBackupState($('#f-backup-code').value,'올바른 백업 코드가 아니에요');break;
     case 'import-backup':{
-      if(!armed(a))break;
-      try{
-        var obj=JSON.parse($('#f-backup').value);
-        if(!obj||!Array.isArray(obj.classes))throw new Error('bad');
-        lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(obj);save();closeModal();render(true);
-      }catch(err){bkMsg('올바른 백업 글자가 아니에요');}
+      restoreBackupState($('#f-backup').value,'올바른 백업 글자가 아니에요');
       break;
     }
     case 'reset-classes':
@@ -3824,7 +3830,7 @@ document.addEventListener('change',function(e){
   if(e.target.id==='set-ss'||e.target.id==='set-se'){var a1=$('#set-ss').value||null,b1=$('#set-se').value||null;if(a1&&b1&&b1<a1){e.target.classList.add('bad');return;}S.settings.semStart=a1;S.settings.semEnd=b1;save();render();return;}
   if(M.type==='dd'&&/^f-dd[dyo]$/.test(e.target.id)){drawDD();}
   if(e.target.id==='set-hs'||e.target.id==='set-he'){var hs=Number($('#set-hs').value),he=Number($('#set-he').value);if(he-hs<3)he=Math.min(24,hs+3);S.settings.hStart=hs;S.settings.hEnd=he;save();render();return;}
-  if(e.target.id==='f-bkfile'&&e.target.files&&e.target.files[0]){var fr=new FileReader();fr.onload=function(){var ta=$('#f-backup');if(ta){ta.value=fr.result;bkMsg('파일을 읽었어요. 불러오기를 두 번 누르면 바뀌어요');}};fr.readAsText(e.target.files[0]);return;}
+  if(e.target.id==='f-bkfile'&&e.target.files&&e.target.files[0]){var fr=new FileReader();fr.onload=function(){var ta=$('#f-backup');if(ta){ta.value=fr.result;bkMsg('파일을 읽었어요. 불러오기를 누르면 전체 데이터가 복원돼요');}};fr.readAsText(e.target.files[0]);return;}
   if(e.target.id==='f-task'&&F){F.tid=e.target.value||null;saveF();return;}
   if(e.target.dataset&&e.target.dataset.letterphoto&&e.target.files&&e.target.files[0]){
     var lk=e.target.dataset.letterphoto;
