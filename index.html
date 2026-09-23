@@ -1053,6 +1053,55 @@ function hasPlannerData(st){
   return ['classes','events','todos','routines','exams','allday','trackers','ddays'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
     Object.keys(st.memos||{}).length>0||Object.keys(st.selfchat||{}).length>0;
 }
+/* 계정별 보관함
+   localStorage의 planner.v1 하나만 공유하면 로그아웃 후 다른 계정의 빈 데이터가
+   이전 계정 데이터를 밀어낼 수 있어요. 계정별 사본을 따로 두고, 서버 동기화 전에
+   현재 계정과 다음 계정의 데이터를 분리해요. */
+function accountKey(uid){return uid?'planner.account.'+uid:'';}
+function accountBackupKey(uid){return uid?'planner.logoutBackup.'+uid:'';}
+function saveAccountState(uid,st){
+  if(!uid||!st)return;
+  try{lsSet(accountKey(uid),JSON.stringify(st));}catch(e){}
+}
+function readAccountState(uid){
+  if(!uid)return null;
+  var raw=lsGet(accountKey(uid));
+  if(!raw)raw=lsGet(accountBackupKey(uid));
+  try{return raw?normalize(JSON.parse(raw)):null;}catch(e){return null;}
+}
+function saveLogoutBackup(uid,st){
+  if(!st||!hasPlannerData(st))return;
+  try{
+    var raw=JSON.stringify(st);
+    lsSet('planner.logoutBackup',raw);
+    if(uid)lsSet(accountBackupKey(uid),raw);
+    lsSet('planner.lastGoodBackup',raw);
+    saveAccountState(uid,st);
+    saveLocalBackupLayers(st);
+  }catch(e){}
+}
+function logoutBackupRaw(){
+  var raw=Sync&&Sync.uid?lsGet(accountBackupKey(Sync.uid)):null;
+  return raw||lsGet('planner.logoutBackup');
+}
+function lastGoodRaw(){
+  var raw=Sync&&Sync.uid?lsGet('planner.lastGoodBackup.'+Sync.uid):null;
+  return raw||lsGet('planner.lastGoodBackup');
+}
+function prepareAccount(uid){
+  var active=lsGet('planner.activeUser')||'';
+  var legacy=lsGet('planner.syncedUser')||'';
+  var previous=active||legacy;
+  if(previous&&previous!==uid&&!/^loggedout:/.test(previous))saveLogoutBackup(previous,S);
+  if(previous!==uid){
+    var cached=readAccountState(uid);
+    if(cached)S=cached;
+    else if(!previous&&!legacy&&hasPlannerData(S))saveAccountState(uid,S);
+    else S=defaults();
+    try{lsSet(KEY,JSON.stringify(S));}catch(e){}
+  }
+  lsSet('planner.activeUser',uid);
+}
 function backupCode(st){
   try{return btoa(unescape(encodeURIComponent(JSON.stringify(st||backupData()))));}catch(e){return '';}
 }
@@ -1065,7 +1114,8 @@ function saveLocalBackupLayers(st){
     var ring=JSON.parse(lsGet('planner.backupRing')||'[]');
     if(!Array.isArray(ring))ring=[];
     ring.push({at:Date.now(),data:JSON.parse(JSON.stringify(st))});
-    lsSet('planner.backupRing',JSON.stringify(ring.slice(-3)));
+    /* 짧은 삭제/동기화 실수도 되돌릴 수 있게 최근 20개를 보관해요. */
+    lsSet('planner.backupRing',JSON.stringify(ring.slice(-20)));
   }catch(e){}
   try{
     if(!window.indexedDB)return;
@@ -1098,9 +1148,11 @@ function save(){
   try{
     /* 새 저장 전에 마지막 정상 상태를 남겨, 실수 삭제·동기화 덮어쓰기를 복구해요. */
     var previous=localStorage.getItem(KEY);
-    if(previous){try{var ps=normalize(JSON.parse(previous));if(hasPlannerData(ps))localStorage.setItem('planner.lastGoodBackup',previous);}catch(e){}}
+    if(previous){try{var ps=normalize(JSON.parse(previous));if(hasPlannerData(ps)){localStorage.setItem('planner.lastGoodBackup',previous);var po=Sync&&Sync.uid||lsGet('planner.activeUser');if(po&&!/^loggedout:/.test(po))lsSet('planner.lastGoodBackup.'+po,previous);}}catch(e){}}
     localStorage.setItem(KEY,JSON.stringify(S));
   }catch(e){storageOK=false;}
+  var owner=Sync&&Sync.uid||lsGet('planner.activeUser');
+  if(owner&&!/^loggedout:/.test(owner))saveAccountState(owner,S);
   saveLocalBackupLayers(S);
   snapshotIfNeeded();
   scheduleSync();
@@ -1340,7 +1392,7 @@ function snapshotIfNeeded(){
   var json=JSON.stringify(S);
   try{lsSet('planner.snap.'+tk,json);}catch(e){}
   ds.push(tk);
-  while(ds.length>7){var old=ds.shift();try{localStorage.removeItem('planner.snap.'+old);}catch(e){}}
+  while(ds.length>30){var old=ds.shift();try{localStorage.removeItem('planner.snap.'+old);}catch(e){}}
   lsSet('planner.snapDates',JSON.stringify(ds));
   cloudSnapshot(tk,json);
 }
@@ -1364,7 +1416,7 @@ function loadCloudSnap(k){
 }
 function snapBoxHTML(dates,loading){
   if(!dates.length&&!loading)return '';
-  var lbl=Sync.kind==='supa'&&Sync.uid?'계정에 자동 저장된 날짜별 백업 (최근 30일)':'이 기기에 자동 저장된 날짜별 백업 (최근 7일)';
+  var lbl=Sync.kind==='supa'&&Sync.uid?'계정에 자동 저장된 날짜별 백업 (최근 30일)':'이 기기에 자동 저장된 날짜별 백업 (최근 30일)';
   return '<p class="lbl" style="margin-top:14px">'+lbl+'</p><div class="snaplist">'+dates.slice().reverse().map(function(k){var d=parseKey(k);return '<button class="tbtn" data-act="load-snap" data-k="'+k+'">'+(d.getMonth()+1)+'/'+d.getDate()+'</button>';}).join('')+(loading?'<span class="tbtn" style="opacity:.5">불러오는 중…</span>':'')+'</div><p class="hint">날짜를 눌러 칸에 불러온 다음, 지금 걸 지키려면 \'합치기\'를 눌러요</p>';
 }
 function push(){
@@ -1428,11 +1480,19 @@ function supaAdapter(sb,uid){
 }
 function supaAttach(session){
   if(!session||!session.user){
+    var oldUid=Sync.uid||lsGet('planner.activeUser')||'';
+    if(oldUid&&!/^loggedout:/.test(oldUid)){
+      /* 로그아웃 이벤트가 먼저 와도 현재 계정의 마지막 상태를 남겨요. */
+      saveLogoutBackup(oldUid,S);
+      saveAccountState(oldUid,S);
+      lsSet('planner.activeUser','loggedout:'+oldUid);
+    }
     Sync.db=null;Sync.on=false;Sync.uid=null;Sync.email='';
     FriendSync.loaded=false;FriendSync.code='';FriendSync.friends=[];FriendSync.incoming=[];FriendSync.requests=[];FriendSync.shared=[];FriendSync.shown={};
     if(!M.type)render();return;
   }
   if(Sync.uid===session.user.id)return;
+  prepareAccount(session.user.id);
   Sync.uid=session.user.id;Sync.email=session.user.email||'';FriendSync.code=storedFriendCode();
   Sync.db=supaAdapter(Sync.sb,Sync.uid);Sync.path='planner';loadMeta();
   pull().then(function(){Sync.on=true;return friendLoad();}).then(function(){if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render();}});
@@ -3147,17 +3207,17 @@ function saveRoutine(){
 function openBackup(){
   M={type:'backup'};
   if(Sync.kind==='supa'&&Sync.uid){fetchCloudSnaps().then(function(dates){var box=$('#snapbox');if(box&&M.type==='backup')box.innerHTML=snapBoxHTML(dates,false);});}
-  var data=backupData(),code=backupCode(data);
+  var data=backupData(),code=backupCode(data),hasLogout=!!logoutBackupRaw();
   openModal('<h3>백업·복원</h3><p class="hint">아래 글자를 통째로 복사해서 메모 앱 등에 보관해두세요. 복원할 때는 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
     '<textarea class="ta" id="f-backup" spellcheck="false">'+esc(JSON.stringify(data))+'</textarea>'+ 
     '<div class="acts"><button class="b-ghost" data-act="copy-backup">복사</button><button class="b-save" data-act="import-backup">불러오기</button></div>'+ 
-    '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button>'+(lsGet('planner.prevBackup')?'<button class="b-ghost" data-act="undo-backup">이전 상태로 되돌리기</button>':'')+(lsGet('planner.remoteBackup')?'<button class="b-ghost" data-act="restore-remote-backup">시험·일정 백업 복원</button>':'')+(lsGet('planner.lastGoodBackup')?'<button class="b-ghost" data-act="restore-last-good">마지막 정상 상태 복원</button>':'')+'</div>'+ 
+    '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button>'+(lsGet('planner.prevBackup')?'<button class="b-ghost" data-act="undo-backup">이전 상태로 되돌리기</button>':'')+(lsGet('planner.remoteBackup')?'<button class="b-ghost" data-act="restore-remote-backup">시험·일정 백업 복원</button>':'')+(lastGoodRaw()?'<button class="b-ghost" data-act="restore-last-good">마지막 정상 상태 복원</button>':'')+(hasLogout?'<button class="b-ghost" data-act="restore-logout-backup">로그아웃 전 데이터 복원</button>':'')+'</div>'+ 
     '<div class="acts"><button class="b-ghost" data-act="save-backup-file">파일로 저장</button><label class="b-ghost fileload">파일 불러오기<input type="file" accept=".json,application/json" id="f-bkfile" hidden></label></div>'+ 
     '<div id="snapbox">'+snapBoxHTML(snapDates(),Sync.kind==='supa'&&Sync.uid)+'</div>'+ 
     '<hr><p class="hint">파일 대신 이 백업 코드를 메모 앱에 보관해도 돼요. 한 번 복사하면 전체 데이터가 들어 있어요.</p>'+ 
     '<textarea class="ta" id="f-backup-code" spellcheck="false" placeholder="백업 코드를 붙여넣어요">'+esc(code)+'</textarea>'+ 
     '<div class="acts"><button class="b-ghost" data-act="copy-backup-code">백업 코드 복사</button><button class="b-save" data-act="restore-backup-code">백업 코드로 복원</button></div>'+ 
-    '<p class="hint" id="bk-msg" style="margin-top:10px">저장할 때마다 직전 정상 상태도 자동으로 보관돼요</p>');
+    '<p class="hint" id="bk-msg" style="margin-top:10px">저장·로그아웃할 때 자동 백업돼요. 복원 버튼은 실수 방지를 위해 한 번 더 눌러요.</p>');
 }
 function bkMsg(t){var el=$('#bk-msg');if(el)el.textContent=t;}
 function feedbackBody(){
@@ -3289,7 +3349,8 @@ function act(a,e){
       break;}
     case 'undo-backup':{if(!armed(a))break;try{var pv=JSON.parse(lsGet('planner.prevBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(pv);save();closeModal();render(true);}catch(e){bkMsg('되돌릴 내용이 없어요');}break;}
     case 'restore-remote-backup':{if(!armed(a))break;try{var rb=JSON.parse(lsGet('planner.remoteBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(rb);save();closeModal();render(true);}catch(e){bkMsg('시험·일정 백업이 없어요');}break;}
-    case 'restore-last-good':{if(!armed(a))break;try{var lg=JSON.parse(lsGet('planner.lastGoodBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lg);save();closeModal();render(true);}catch(e){bkMsg('마지막 정상 상태가 없어요');}break;}
+    case 'restore-last-good':{if(!armed(a))break;try{var lg=JSON.parse(lastGoodRaw());if(!lg)throw 0;lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lg);save();closeModal();render(true);}catch(e){bkMsg('마지막 정상 상태가 없어요');}break;}
+    case 'restore-logout-backup':{if(!armed(a))break;try{var lb=JSON.parse(logoutBackupRaw());if(!lb)throw 0;lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lb);save();closeModal();render(true);}catch(e){bkMsg('로그아웃 전 백업이 없어요');}break;}
     case 'load-snap':{
       var sk=a.dataset.k;
       var putSnap=function(sd){if(sd&&M.type==='backup'){$('#f-backup').value=sd;bkMsg(sk+' 백업을 불러왔어요. 아래 \'합치기\'를 눌러요');}else bkMsg('그 날짜 백업을 못 찾았어요');};
@@ -3361,7 +3422,7 @@ function act(a,e){
     case 'edit-link':{var lk=S.settings.links.find(function(x){return x.id===id;});if(lk)openLink(lk);break;}
     case 'save-link':saveLink();break;
     case 'del-link':if(armed(a)){var lid=M.id;S.settings.links=S.settings.links.filter(function(x){return x.id!==lid;});save();closeModal();render();}break;
-    case 'switch-account':Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');openLogin('다른 아이디로 로그인해주세요');});break;
+    case 'switch-account':saveLogoutBackup(Sync.uid||lsGet('planner.activeUser'),S);Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');openLogin('다른 아이디로 로그인해주세요');});break;
     case 'login':case 'signup':{
       var em=$('#f-email').value.trim(),pw=$('#f-pw').value;
       if(!em){bad('#f-email');break;}
@@ -3384,7 +3445,7 @@ function act(a,e){
       }).catch(function(e){loginMsg(authErr(e));});
       break;
     }
-    case 'logout':if(armed(a)){Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');});}break;
+    case 'logout':if(armed(a)){saveLogoutBackup(Sync.uid||lsGet('planner.activeUser'),S);Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');});}break;
     case 'use-merge':{
       try{lsSet('planner.prevBackup',JSON.stringify(S));var rm=normalize(JSON.parse(M.r.json));var mg=mergeState(S,rm,null);mg.updatedAt=Date.now();S=mg;lsSet(KEY,JSON.stringify(S));}catch(e){}
       lsSet('planner.syncedUser',Sync.uid);Sync.lastSeen=M.remoteAt;Sync.base=idsOf(S);saveMeta();Sync.on=true;closeModal();push();render();break;
@@ -3739,7 +3800,12 @@ document.addEventListener('input',function(e){
     clearTimeout(memoTimer);memoTimer=setTimeout(function(){memoTimer=null;save();},400);
   }
 });
-function flush(){if(memoTimer){clearTimeout(memoTimer);memoTimer=null;save();}}
+function flush(){
+  if(memoTimer){clearTimeout(memoTimer);memoTimer=null;save();}
+  /* 탭 닫기·새로고침도 로그아웃과 같은 마지막 안전 저장으로 처리해요. */
+  var owner=Sync&&Sync.uid||lsGet('planner.activeUser');
+  if(owner&&!/^loggedout:/.test(owner))saveLogoutBackup(owner,S);
+}
 document.addEventListener('change',function(e){
   if(e.target.id==='f-on-school'){var picked=allSchoolProfiles().find(function(x){return x.name===e.target.value;});if(picked){M.school=picked.id;M.campus=picked.campuses[0]||'';drawOnboard();}return;}
   if(e.target.id==='f-on-campus'){M.campus=e.target.value;return;}
