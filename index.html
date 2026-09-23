@@ -1573,6 +1573,7 @@ function openAppointmentRequest(r){
   drawMeet();refreshMeetBusy();
 }
 function friendRequestLoad(){
+  if(!Sync.on)return Promise.resolve();
   var sb=friendDb();if(!sb){FriendSync.requests=[];FriendSync.shared=[];return Promise.resolve();}
   friendInviteLoad();
   return Promise.all([
@@ -1825,7 +1826,7 @@ function reconcile(r){
   if(localHasData&&!remoteHasData&&rat!==localAt&&Sync.examGuardAt!==rat){
     Sync.examGuardAt=rat;
     try{bkPut(bkOwner()?'remote.'+bkOwner():'remote',JSON.stringify(S));}catch(e){}
-    if(Sync.kind==='supa')openChoice(r,rat);
+    if(Sync.kind==='supa'){autoMerge(r,rat);return false;}
     return false;
   }
   var dirty=localAt>0&&(!Sync.lastSeen||localAt>Sync.lastSeen);
@@ -1834,8 +1835,14 @@ function reconcile(r){
   m.updatedAt=Math.max(Date.now(),rat+1);applyRemote(m,m.updatedAt);
   Sync.lastSeen=rat;saveMeta();return true;
 }
+function cloudGuardSnap(json){
+  if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return Promise.resolve();
+  var d=new Date(),k=dkey(d)+'~'+pad(d.getHours())+pad(d.getMinutes());
+  try{return Sync.sb.from('planner_snapshots').upsert({user_id:Sync.uid,date:k,json:json,updated_at:Date.now()}).then(function(){},function(){});}catch(e){return Promise.resolve();}
+}
 function snapDates(){try{return JSON.parse(lsGet('planner.snapDates')||'[]');}catch(e){return [];}}
 function snapshotIfNeeded(){
+  if(!hasPlannerData(S))return;
   var tk=todayKey(),ds=snapDates();
   if(ds.length&&ds[ds.length-1]===tk)return;
   var json=JSON.stringify(S);
@@ -1866,18 +1873,28 @@ function loadCloudSnap(k){
 function snapBoxHTML(dates,loading){
   if(!dates.length&&!loading)return '';
   var lbl=Sync.kind==='supa'&&Sync.uid?'계정에 자동 저장된 날짜별 백업 (최근 30일)':'이 기기에 자동 저장된 날짜별 백업 (최근 30일)';
-  var latest=dates.slice().sort().slice(-1);
-  return '<p class="lbl" style="margin-top:14px">'+lbl+'</p><div class="snaplist">'+latest.map(function(k){var d=parseKey(k);return '<button class="tbtn" data-act="load-snap" data-k="'+k+'">'+(d.getMonth()+1)+'/'+d.getDate()+'</button>';}).join('')+(loading?'<span class="tbtn" style="opacity:.5">불러오는 중…</span>':'')+'</div><p class="hint">최근 백업만 보여줘요. 날짜를 눌러 칸에 불러온 다음, 지금 걸 지키려면 \'합치기\'를 눌러요</p>';
+  var latest=dates.slice().sort().reverse();
+  var lab=function(k){var p=k.split('~'),d=parseKey(p[0]),t=(d.getMonth()+1)+'/'+d.getDate();return p[1]?t+' '+p[1].slice(0,2)+':'+p[1].slice(2)+' 덮기 전':t;};
+  return '<p class="lbl" style="margin-top:14px">'+lbl+'</p><div class="snaplist">'+latest.map(function(k){return '<button class="tbtn" data-act="load-snap" data-k="'+esc(k)+'">'+esc(lab(k))+'</button>';}).join('')+(loading?'<span class="tbtn" style="opacity:.5">불러오는 중…</span>':'')+'</div><p class="hint">최근 백업만 보여줘요. 날짜를 눌러 칸에 불러온 다음, 지금 걸 지키려면 \'합치기\'를 눌러요</p>';
 }
 function push(){
   Sync.timer=null;
   if(!Sync.db)return Promise.resolve();
-  if(Sync.busy){Sync.dirty=true;return Promise.resolve();}
+  if(Sync.busy||(Sync.kind==='supa'&&!Sync.pulled)){Sync.dirty=true;return Promise.resolve();}
   Sync.busy=true;
   var ref=Sync.db.doc(Sync.path);
   return ref.get().then(function(snap){
-    if(snap.exists&&!Sync.forceRestore){var r=snap.data()||{};if((+r.updatedAt||0)!==Sync.lastSeen){try{reconcile(r);}catch(e){}}}
-    return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();});
+    var rem=null,r=null;
+    if(snap.exists){r=snap.data()||{};try{rem=normalize(JSON.parse(r.json));}catch(e){rem=null;}}
+    if(r&&!Sync.forceRestore){
+      if((+r.updatedAt||0)!==Sync.lastSeen){try{reconcile(r);}catch(e){}}
+      else if(!Sync.base&&rem){var m0=mergeState(S,rem,null);if(itemCount(m0)!==itemCount(S)){m0.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);S=m0;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(Sync.uid)saveAccountState(Sync.uid,S);if(!M.type)render();}}
+      /* 빈 플래너로 내용 있는 계정을 덮지 않아요 */
+      if(rem&&hasPlannerData(rem)&&!hasPlannerData(S)){applyRemote(rem,+r.updatedAt||0);Sync.lastSeen=+r.updatedAt||0;Sync.base=idsOf(S);saveMeta();return;}
+    }
+    /* 항목이 많이 줄어드는 저장은 덮기 전에 계정에 사본을 하나 남겨요 */
+    var guard=(r&&rem&&itemCount(rem)-itemCount(S)>=5)?cloudGuardSnap(r.json):Promise.resolve();
+    return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();});
   }).catch(function(e){Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
     .then(function(){
       Sync.busy=false;
@@ -1888,12 +1905,13 @@ function pull(){
   if(!Sync.db)return Promise.resolve();
   if(Sync.forceRestore)return push();
   return Sync.db.doc(Sync.path).get().then(function(snap){
+    Sync.pulled=true;
     var localAt=S.updatedAt||0;
     if(snap.exists){
       var r=snap.data()||{};
       var remoteAt=+r.updatedAt||0;
       if(Sync.kind==='supa'&&lsGet('planner.syncedUser')!==Sync.uid&&localAt>0&&remoteAt!==localAt){
-        openChoice(r,remoteAt);return;
+        autoMerge(r,remoteAt);return;
       }
       if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);
       if(remoteAt===Sync.lastSeen){
@@ -1902,7 +1920,7 @@ function pull(){
         return;
       }
       if(remoteAt===localAt){
-        if(r.json!==JSON.stringify(S)){openChoice(r,remoteAt);return;}
+        if(r.json!==JSON.stringify(S)){autoMerge(r,remoteAt);return;}
         Sync.lastSeen=remoteAt;Sync.base=idsOf(S);saveMeta();return;
       }
       try{if(reconcile(r))push();}catch(e){}
@@ -1945,21 +1963,21 @@ function supaAttach(session){
       saveAccountState(oldUid,S);
       lsSet('planner.activeUser','loggedout:'+oldUid);
     }
-    Sync.db=null;Sync.on=false;Sync.loading=false;Sync.uid=null;Sync.email='';
+    Sync.db=null;Sync.on=false;Sync.pulled=false;Sync.loading=false;Sync.uid=null;Sync.email='';
     FriendSync.loaded=false;FriendSync.invitesIn=[];FriendSync.invitesOut=[];FriendSync.busyMap={};FriendSync.lastBusy='';FriendSync.code='';FriendSync.friends=[];FriendSync.incoming=[];FriendSync.requests=[];FriendSync.shared=[];FriendSync.memories=[];FriendSync.shown={};
     if(!M.type)render();return;
   }
   if(Sync.uid===session.user.id)return;
   prepareAccount(session.user.id);
   Sync.uid=session.user.id;Sync.email=session.user.email||'';FriendSync.code=storedFriendCode();
-  Sync.db=supaAdapter(Sync.sb,Sync.uid);Sync.path='planner';loadMeta();
+  Sync.db=supaAdapter(Sync.sb,Sync.uid);Sync.path='planner';loadMeta();Sync.base=null;Sync.pulled=false;
   /* 로그인되면 모달부터 닫고 이 기기 사본을 바로 보여줘요 (계정 데이터는 이어서 덮어씀) */
   if(M.type==='login')closeModal();
   Sync.loading=true;if(!M.type)render(true);
   var myUid=Sync.uid;
   pull().catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
     if(Sync.uid!==myUid)return;
-    Sync.loading=false;Sync.on=true;
+    Sync.loading=false;Sync.on=true;Sync.pulled=true;if(Sync.dirty){Sync.dirty=false;scheduleSync();}
     if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
     /* 친구 기능은 시간표 표시를 막지 않게 뒤에서 따로 불러와요 */
     friendLoad().catch(function(){}).then(function(){if(U.tab==='settings'&&!M.type)render();});
@@ -1975,6 +1993,19 @@ function initSupa(){
 }
 function dataBucketCount(v){if(Array.isArray(v))return v.length;if(v&&typeof v==='object')return Object.keys(v).length;return v?1:0;}
 function itemCount(st){if(!st)return 0;return ['classes','events','todos','routines','exams','allday','ddays','selfchat','memos','logs','letters','hourNotes','retro'].reduce(function(n,k){return n+dataBucketCount(st[k]);},0);}
+/* 로그인·재로그인 때 이 기기와 계정 내용이 다르면 묻지 않고 합쳐요.
+   (예전엔 '계정 것만/이 기기 것만'을 잘못 누르면 한쪽이 통째로 사라졌어요) */
+function autoMerge(r,remoteAt){
+  try{
+    if(hasPlannerData(S))savePrevBackup(S);
+    var rem=normalize(JSON.parse(r.json)),before=itemCount(S),rb=itemCount(rem);
+    var m=mergeState(S,rem,null);m.updatedAt=Math.max(Date.now(),(+remoteAt||0)+1);
+    applyRemote(m,m.updatedAt);if(Sync.uid)saveAccountState(Sync.uid,S);
+    lsSet('planner.syncedUser',Sync.uid);Sync.lastSeen=+remoteAt||0;Sync.base=null;saveMeta();Sync.on=true;
+    if(before&&rb&&itemCount(S)>Math.min(before,rb)&&typeof inAppToast==='function')inAppToast('이 기기와 계정 내용을 합쳤어요. 사라진 건 없어요');
+    push();
+  }catch(e){}
+}
 function openChoice(r,remoteAt){
   M={type:'choice',r:r,remoteAt:remoteAt};
   var rt=new Date(remoteAt),lt=new Date(S.updatedAt||0);
@@ -3822,7 +3853,7 @@ function drawBackupSlots(){
 function openBackup(){
   M={type:'backup'};
   if(Sync.kind==='supa'&&Sync.uid){fetchCloudSnaps().then(function(dates){var box=$('#snapbox');if(box&&M.type==='backup')box.innerHTML=snapBoxHTML(dates,false);});}
-  openModal('<h3>백업·복원</h3><p class="hint">‘복사’를 누르면 전체 데이터가 복사돼요. 메모 앱에 붙여넣어 보관하고, 복원할 때는 아래 칸에 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
+  openModal('<h3>백업·복원</h3><button class="b-save" style="width:100%;margin:4px 0 6px" data-act="recover-all">사라진 내용 되살리기</button><p class="hint" style="margin-bottom:14px">계정에 남은 날짜별 백업과 이 기기 백업을 전부 지금 플래너에 합쳐요. 지금 내용은 그대로 두고 빠진 것만 채워요.</p><p class="hint">‘복사’를 누르면 전체 데이터가 복사돼요. 메모 앱에 붙여넣어 보관하고, 복원할 때는 아래 칸에 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
     '<textarea class="ta" id="f-backup" spellcheck="false" placeholder="복원할 백업 글자를 여기에 붙여넣어요"></textarea>'+ 
     '<div class="acts"><button class="b-ghost" data-act="copy-backup">복사</button><button class="b-save" data-act="import-backup">불러오기</button></div>'+ 
     '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button></div>'+ 
@@ -3835,6 +3866,22 @@ function openBackup(){
     '<div class="acts"><button class="b-ghost" data-act="copy-backup-code">백업 코드 복사</button><button class="b-save" data-act="restore-backup-code">백업 코드로 복원</button></div>'+ 
     '<p class="hint" id="bk-msg" style="margin-top:10px">저장할 때마다 이 기기에 자동 백업돼요. 복원하면 지금 상태는 ‘방금 복원 전으로 되돌리기’에 보관돼요.</p>');
   drawBackupSlots();
+}
+function recoverAll(){
+  bkMsg('백업을 모으는 중…');var t0=Date.now(),before=itemCount(S),cands=[];
+  var cloud=(Sync.kind==='supa'&&Sync.uid&&Sync.sb)?Sync.sb.from('planner_snapshots').select('date,json').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(60).then(function(res){(res&&res.data||[]).forEach(function(x){cands.push(x.json);});},function(){}):Promise.resolve();
+  var o=bkOwner(),keys=['logout','lastGood','remote','prev'].map(function(n){return o?n+'.'+o:n;});
+  var local=Promise.all(keys.map(function(k){return bkFirst([k]).then(function(rec){if(rec&&rec.raw)cands.push(rec.raw);},function(){});})).then(function(){return bkRingList().then(function(rows){rows.slice(0,40).forEach(function(x){if(x.data&&(!o||!x.owner||x.owner===o))cands.push(x.data);});});});
+  var acc=(Sync.uid&&lsGet(accountKey(Sync.uid)));if(acc)cands.push(acc);
+  Promise.all([cloud,local]).then(function(){
+    if(!cands.length){bkMsg('합칠 백업을 찾지 못했어요');return;}
+    savePrevBackup(S);
+    var cur=S;cands.forEach(function(c){try{var st=typeof c==='string'?JSON.parse(c):c;if(st&&st.state)st=st.state;if(validBackupState(st))cur=mergeState(cur,normalize(st),null);}catch(e){}});
+    var added=itemCount(cur)-before;
+    if(added<=0){bkMsg('백업 '+cands.length+'개를 확인했어요. 빠진 항목은 없었어요');return;}
+    cur.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);S=cur;save();closeModal();render(true);
+    inAppToast(added+'개를 되살렸어요');
+  });
 }
 function bkMsg(t){var el=$('#bk-msg');if(el)el.textContent=t;}
 function feedbackBody(){
@@ -4105,6 +4152,7 @@ function act(a,e){
       break;
     }
     case 'logout':if(armed(a)){saveLogoutBackup(Sync.uid||lsGet('planner.activeUser'),S);Sync.sb.auth.signOut().then(function(){lsSet('planner.syncedUser','');});}break;
+    case 'recover-all':recoverAll();break;
     case 'use-merge':{
       try{if(hasPlannerData(S))bkPut('prev',JSON.stringify(S));var rm=normalize(JSON.parse(M.r.json));var mg=mergeState(S,rm,null);mg.updatedAt=Date.now();S=mg;lsSet(KEY,JSON.stringify(S));}catch(e){}
       lsSet('planner.syncedUser',Sync.uid);Sync.lastSeen=M.remoteAt;Sync.base=idsOf(S);saveMeta();Sync.on=true;closeModal();push();render();break;
