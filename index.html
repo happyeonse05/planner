@@ -680,6 +680,9 @@ main{padding:0 14px 24px}
 .trow.topdrag{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
 .trow.topdrag.dragging{opacity:.45;cursor:grabbing}
 .tdot{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);flex:none}
+
+.warn2{color:var(--now);font-size:12px;margin:-2px 0 6px;text-align:left}
+.snaplist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -705,6 +708,87 @@ var DEFAULT_LINKS=[
   {name:'학교 공지사항',url:'https://www.skku.edu/skku/campus/skk_comm/notice01.do'},
   {name:'봉룡학사 식단',url:'https://dorm.skku.edu/dorm_suwon/lifeguide/dorm_restaurant_table.jsp'}
 ];
+/* 캠퍼스가 나뉘는 학교는 캠퍼스별 바로가기를 따로 관리해요. */
+var CAMPUS_LINKS={
+  skku:{
+    '서울':[
+      {name:'학교 홈페이지',url:'https://www.skku.edu'},
+      {name:'학교 공지사항',url:'https://www.skku.edu/skku/campus/skk_comm/notice01.do'},
+      {name:'명륜학사·서울 식단',url:'https://dorm.skku.edu/dorm_seoul/'}
+    ],
+    '수원':[
+      {name:'학교 홈페이지',url:'https://www.skku.edu'},
+      {name:'학교 공지사항',url:'https://www.skku.edu/skku/campus/skk_comm/notice01.do'},
+      {name:'봉룡학사·수원 식단',url:'https://dorm.skku.edu/dorm_suwon/lifeguide/dorm_restaurant_table.jsp'}
+    ]
+  },
+  yonsei:{
+    '신촌':[
+      {name:'신촌캠퍼스 홈페이지',url:'https://www.yonsei.ac.kr/sc/index.do'},
+      {name:'신촌 공지사항',url:'https://www.yonsei.ac.kr/sc/254/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGc2MlMkY1OCUyRjk0MjQ2MiUyRmFydGNsVmlldy5kbyUzRg%3D%3D'}
+    ],
+    '미래':[
+      {name:'미래캠퍼스 홈페이지',url:'https://yonsei.ac.kr/wj/1415/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGd2olMkYxMDQlMkY5NDIzMzclMkZhcnRjbFZpZXcuZG8lM0Y%3D'},
+      {name:'미래 공지사항',url:'https://yonsei.ac.kr/wj/1415/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGd2olMkYxMDQlMkY5NDIzMzclMkZhcnRjbFZpZXcuZG8lM0Y%3D'},
+      {name:'송도학사·미래 생활관',url:'https://yicdorm.yonsei.ac.kr/'}
+    ]
+  },
+  korea:{
+    '서울':[
+      {name:'학교 홈페이지',url:'https://www.korea.ac.kr/ko/index.do'},
+      {name:'서울 공지사항',url:'https://www.korea.ac.kr/ko/index.do'},
+      {name:'기숙사 안내',url:'https://dorm.korea.ac.kr/'}
+    ],
+    '세종':[
+      {name:'세종캠퍼스 홈페이지',url:'https://sejong.korea.ac.kr/koreaSejong/index.do'},
+      {name:'세종 공지·학사안내',url:'https://sejong.korea.ac.kr/koreaSejong/index.do'},
+      {name:'세종 식단·생활관',url:'https://sejong.korea.ac.kr/koreaSejong/8025/subview.do'}
+    ]
+  },
+  hanyang:{
+    '서울':[
+      {name:'서울캠퍼스 홈페이지',url:'https://www.hanyang.ac.kr/'},
+      {name:'서울 공지사항',url:'https://www.hanyang.ac.kr/'},
+      {name:'서울 생활관',url:'https://www.dormitory.hanyang.ac.kr/'}
+    ],
+    'ERICA':[
+      {name:'ERICA 홈페이지',url:'https://erica.hanyang.ac.kr/web/go/home'},
+      {name:'ERICA 공지사항',url:'https://erica.hanyang.ac.kr/web/go/home'},
+      {name:'ERICA 캠퍼스 안내',url:'https://erica.hanyang.ac.kr/web/go/home'}
+    ]
+  },
+  hongik:{
+    '서울':[
+      {name:'서울캠퍼스 홈페이지',url:'https://www.hongik.ac.kr/kr/index.do'},
+      {name:'서울 공지사항',url:'https://www.hongik.ac.kr/kr/education/notice-undergrad.do?mode=list&srCategoryId=23&srEndDt=&srSearchKey=article_title&srSearchVal=&srStartDt='},
+      {name:'서울 식당',url:'https://www.hongik.ac.kr/kr/life/seoul-cafeteria.do'},
+      {name:'서울 기숙사',url:'https://dormitory.hongik.ac.kr/'}
+    ],
+    '세종':[
+      {name:'세종캠퍼스 홈페이지',url:'https://www.hongik.ac.kr/kr/index.do'},
+      {name:'세종 공지사항',url:'https://www.hongik.ac.kr/kr/education/notice-undergrad.do?mode=list&srCategoryId=25&srEndDt=&srSearchKey=article_title&srSearchVal=&srStartDt='},
+      {name:'세종 식당',url:'https://www.hongik.ac.kr/kr/life/dining-room.do'},
+      {name:'세종 기숙사',url:'https://house.hongik.ac.kr/'}
+    ]
+  },
+  pusan:{
+    '부산':[
+      {name:'학교 홈페이지',url:'https://www.pusan.ac.kr/'},
+      {name:'학교 공지사항',url:'https://m.pusan.ac.kr/ko/notice/cover/?current=notice'},
+      {name:'부산캠퍼스 식단',url:'https://m.pusan.ac.kr/ko/meals/cover/?current=geumjeong'}
+    ],
+    '밀양':[
+      {name:'학교 홈페이지',url:'https://www.pusan.ac.kr/'},
+      {name:'학교 공지사항',url:'https://m.pusan.ac.kr/ko/notice/cover/?current=notice'},
+      {name:'밀양캠퍼스 식단',url:'https://m.pusan.ac.kr/ko/meals/cover/?current=miryang'}
+    ],
+    '양산':[
+      {name:'학교 홈페이지',url:'https://www.pusan.ac.kr/'},
+      {name:'학교 공지사항',url:'https://m.pusan.ac.kr/ko/notice/cover/?current=notice'},
+      {name:'양산캠퍼스 식단',url:'https://m.pusan.ac.kr/ko/meals/cover/?current=yangsan'}
+    ]
+  }
+};
 function basicSchool(id,name,url,campuses){return {id:id,name:name,campuses:campuses||['본교'],links:[{name:'학교 홈페이지',url:url}]};}
 var SCHOOL_PROFILES=[
   {id:'skku',name:'성균관대학교',campuses:['수원','서울'],links:DEFAULT_LINKS},
@@ -815,21 +899,35 @@ function allSchoolProfiles(state){
 }
 function schoolProfile(id,state){return allSchoolProfiles(state).find(function(x){return x.id===id;})||SCHOOL_PROFILES[0];}
 function schoolName(id){return schoolProfile(id).name;}
+function canonicalCampus(id,campus){
+  var p=schoolProfile(id),raw=String(campus||'');
+  return p.campuses.find(function(c){return c===raw;})||p.campuses.find(function(c){return raw.indexOf(c)>=0||c.indexOf(raw)>=0;})||p.campuses[0]||'';
+}
 function schoolHost(url){return String(url||'').replace(/^https?:\/\//i,'').split('/')[0];}
 function schoolSearchUrl(url,query){return 'https://search.naver.com/search.naver?query='+encodeURIComponent('site:'+schoolHost(url)+' '+query);}
-function schoolLinks(id){
-  var p=schoolProfile(id),list=(p.links||[]).slice(),names=list.map(function(l){return l.name||'';}).join(' ');
-  if(!/공지|알림|학생처/.test(names)&&list[0]&&list[0].url)list.push({name:'공지사항 검색',url:schoolSearchUrl(list[0].url,'공지사항')});
-  if(!/채용|모집/.test(names)&&list[0]&&list[0].url)list.push({name:'채용·모집 검색',url:schoolSearchUrl(list[0].url,'채용 모집 학생 공지')});
-  if(!/식단|학식|급식|기숙|생활관/.test(names)&&list[0]&&list[0].url)list.push({name:'학식·기숙사 검색',url:schoolSearchUrl(list[0].url,'학식 식단 기숙사 생활관')});
+function schoolLinks(id,campus){
+  var p=schoolProfile(id),camp=campus||p.campuses[0]||'',campusList=CAMPUS_LINKS[id]&&CAMPUS_LINKS[id][campus];
+  var list=(campusList||p.links||[]).map(function(l){return {name:l.name,url:l.url};}),names=list.map(function(l){return l.name||'';}).join(' ');
   return list.map(function(l){return {id:uid(),name:l.name,url:l.url,schoolLink:true};});
+}
+function isGeneratedSchoolLink(l){
+  if(!l)return false;
+  if(l.schoolLink===false)return false;
+  if(l.schoolLink===true)return true;
+  var u=String(l.url||'').replace(/\/$/,'');
+  if(/^https:\/\/search\.naver\.com\/search\.naver\?query=site%3A/i.test(u))return true;
+  var found=false;
+  function scan(arr){(arr||[]).forEach(function(x){if(x&&String(x.url||'').replace(/\/$/,'')===u)found=true;});}
+  SCHOOL_PROFILES.forEach(function(p){scan(p.links);Object.keys(CAMPUS_LINKS[p.id]||{}).forEach(function(k){scan(CAMPUS_LINKS[p.id][k]);});});
+  return found;
 }
 function schoolOptions(sel){return allSchoolProfiles().map(function(x){return '<option value="'+x.id+'"'+(x.id===sel?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'<option value="__add__">+ 내 학교 직접 추가</option>';}
 function schoolDatalist(){return allSchoolProfiles().map(function(x){return '<option value="'+esc(x.name)+'">';}).join('');}
 function setSchool(id,campus){
-  var p=schoolProfile(id),custom=(S.settings.links||[]).filter(function(l){return l&&!l.schoolLink;});
-  S.settings.school=p.id;S.settings.schoolCampus=campus||p.campuses[0]||'';
-  S.settings.links=schoolLinks(p.id).concat(custom);
+  var p=schoolProfile(id),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
+  var nextCampus=canonicalCampus(p.id,campus);
+  S.settings.school=p.id;S.settings.schoolCampus=nextCampus;
+  S.settings.links=schoolLinks(p.id,nextCampus).concat(custom);
   save();
 }
 var DEFAULT_TRK=[
@@ -878,7 +976,7 @@ function normalize(s){
   if(o.settings.remindOn===undefined)o.settings.remindOn=false;
   if(o.settings.schoolLastChecked==null)o.settings.schoolLastChecked=0;
   if(!o.settings.school||!schoolProfile(o.settings.school,o))o.settings.school='skku';
-  if(o.settings.schoolCampus==null)o.settings.schoolCampus=schoolProfile(o.settings.school,o).campuses[0]||'';
+  o.settings.schoolCampus=canonicalCampus(o.settings.school,o.settings.schoolCampus);
   if(!o.settings.wakeGoal)o.settings.wakeGoal='09:00';
   o.settings.logDisplay=Object.assign({wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},o.settings.logDisplay||{});
   if(o.settings.topShow===undefined)o.settings.topShow=true;
@@ -919,8 +1017,11 @@ function normalize(s){
   if(o.settings.bgLinkedV3===undefined){o.settings.bg='rainbow';o.settings.bgLinkedV3=true;}
   o.settings.monthItems=Object.assign({appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},o.settings.monthItems||{});
   if(!Array.isArray(o.settings.topOrder))o.settings.topOrder=[];
-  if(!Array.isArray(o.settings.links))o.settings.links=schoolLinks(o.settings.school);
-  o.settings.links.forEach(function(l){if(l&&l.schoolLink===undefined)l.schoolLink=DEFAULT_LINKS.some(function(d){return d.name===l.name&&d.url===l.url;});});
+  if(!Array.isArray(o.settings.links))o.settings.links=[];
+  /* 학교를 바꾸기 전 버전에서 남은 학교 링크·검색 링크를 제거하고
+     현재 학교/캠퍼스 공식 링크만 다시 만들어요. 사용자 추가 링크는 보존해요. */
+  var customLinks=o.settings.links.filter(function(l){return !isGeneratedSchoolLink(l);});
+  o.settings.links=schoolLinks(o.settings.school,o.settings.schoolCampus).concat(customLinks);
   var OLDB=['#efe7da','#f4e0bf'];
   o.classes.forEach(function(c){if(OLDB.indexOf(c.color)>=0)c.color=BEIGE;});
   o.events.forEach(function(e){if(OLDB.indexOf(e.color)>=0)e.color=BEIGE;});
@@ -942,11 +1043,68 @@ function load(){
   return defaults();
 }
 var S=load();
+function backupData(){
+  var d=JSON.parse(JSON.stringify(S||{}));
+  delete d.updatedAt;
+  return d;
+}
+function hasPlannerData(st){
+  if(!st)return false;
+  return ['classes','events','todos','routines','exams','allday','trackers','ddays'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
+    Object.keys(st.memos||{}).length>0||Object.keys(st.selfchat||{}).length>0;
+}
+function backupCode(st){
+  try{return btoa(unescape(encodeURIComponent(JSON.stringify(st||backupData()))));}catch(e){return '';}
+}
+function decodeBackupCode(code){
+  return JSON.parse(decodeURIComponent(escape(atob(String(code||'').trim()))));
+}
+function saveLocalBackupLayers(st){
+  if(!hasPlannerData(st))return;
+  try{
+    var ring=JSON.parse(lsGet('planner.backupRing')||'[]');
+    if(!Array.isArray(ring))ring=[];
+    ring.push({at:Date.now(),data:JSON.parse(JSON.stringify(st))});
+    lsSet('planner.backupRing',JSON.stringify(ring.slice(-3)));
+  }catch(e){}
+  try{
+    if(!window.indexedDB)return;
+    var lastIdb=+(lsGet('planner.idbAt')||0);
+    if(Date.now()-lastIdb<10*60000)return;   /* 10분에 한 번만 */
+    lsSet('planner.idbAt',String(Date.now()));
+    var req=indexedDB.open('planner-safe-backups-v1',1);
+    req.onupgradeneeded=function(){if(!req.result.objectStoreNames.contains('snapshots'))req.result.createObjectStore('snapshots',{keyPath:'id',autoIncrement:true});};
+    req.onsuccess=function(){try{var db=req.result,tx=db.transaction('snapshots','readwrite'),os=tx.objectStore('snapshots');os.add({at:Date.now(),data:JSON.parse(JSON.stringify(st))});
+      var kr=os.getAllKeys();kr.onsuccess=function(){var ks=kr.result||[];ks.slice(0,Math.max(0,ks.length-40)).forEach(function(k){os.delete(k);});};
+      tx.oncomplete=function(){db.close();};}catch(e){}};
+  }catch(e){}
+}
+function recoverLocalBackup(){
+  if(hasPlannerData(S))return;
+  var candidate=null;
+  try{candidate=JSON.parse(lsGet('planner.lastGoodBackup')||'null');}catch(e){}
+  if(!candidate){try{var ring=JSON.parse(lsGet('planner.backupRing')||'[]');if(ring.length)candidate=ring[ring.length-1].data;}catch(e){}}
+  if(candidate&&hasPlannerData(candidate)){
+    S=normalize(candidate);S.updatedAt=Date.now();lsSet(KEY,JSON.stringify(S));render(true);return;
+  }
+  try{
+    if(!window.indexedDB)return;
+    var req=indexedDB.open('planner-safe-backups-v1',1);
+    req.onsuccess=function(){try{var db=req.result,tx=db.transaction('snapshots','readonly'),q=tx.objectStore('snapshots').getAll();q.onsuccess=function(){var rows=(q.result||[]).sort(function(a,b){return b.at-a.at;}),r=rows[0];if(r&&r.data&&hasPlannerData(r.data)){S=normalize(r.data);S.updatedAt=Date.now();lsSet(KEY,JSON.stringify(S));render(true);}db.close();};}catch(e){}};
+  }catch(e){}
+}
 function save(){
   S.updatedAt=Date.now();
-  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storageOK=false;}
+  try{
+    /* 새 저장 전에 마지막 정상 상태를 남겨, 실수 삭제·동기화 덮어쓰기를 복구해요. */
+    var previous=localStorage.getItem(KEY);
+    if(previous){try{var ps=normalize(JSON.parse(previous));if(hasPlannerData(ps))localStorage.setItem('planner.lastGoodBackup',previous);}catch(e){}}
+    localStorage.setItem(KEY,JSON.stringify(S));
+  }catch(e){storageOK=false;}
+  saveLocalBackupLayers(S);
+  snapshotIfNeeded();
   scheduleSync();
-  if(typeof FriendSync!=='undefined')friendPush();
+  if(typeof FriendSync!=='undefined'){clearTimeout(window.__fpT);window.__fpT=setTimeout(function(){try{friendPush();}catch(e){}},3000);}
 }
 
 /* ---------- Supabase 설정 (깃허브 배포용) ---------- */
@@ -957,7 +1115,7 @@ var SUPABASE_ANON_KEY=SUPA_CFG.supabaseAnonKey||'';
 var SUPA_TABLE='planner';
 
 /* ---------- 기기 간 동기화 (사용 가능할 때만) ---------- */
-var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null,sb:null,email:'',uid:null};
+var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null,sb:null,email:'',uid:null,examGuardAt:0};
 /* ---------- 친구 공유 동기화 ---------- */
 var FriendSync={code:'',friends:[],incoming:[],requests:[],shared:[],shown:{},loaded:false,busy:false,msg:'',error:''};
 var FRIEND_CODE_ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -981,13 +1139,15 @@ function toggleFriendPin(id){
 }
 function openFriendPlanner(id){
   var f=FriendSync.friends.find(function(x){return x.id===id;}),row=FriendSync.incoming.find(function(x){return x.owner_id===id&&x.kind==='planner';});
-  var label=f&&f.code||'친구',html='<h3>친구 플래너 · '+esc(label)+'</h3><p class="hint">공유받은 플래너를 보기 전용으로 보여줘요.</p>';
+  var label=f&&f.code||'친구',html='<h3>친구 플래너 · '+esc(label)+'</h3><p class="hint">공유받은 플래너를 보기 전용으로 보여줘요. 데이터는 계정에 계속 보관돼요.</p>';
   if(!f||!f.inPlanner||!row){
     html+='<div class="empty">친구가 플래너 공유를 켜면 여기에서 볼 수 있어요.</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
     M={type:'friend-planner',id:id};openModal(html);return;
   }
   var p=row.payload||{},today=new Date(),days=[];
-  for(var i=0;i<7;i++){
+  /* 친구 플래너 화면만 7일로 잘려 보이던 문제를 완화해 한 달을 보여줘요.
+     원본 플래너 데이터와 채팅은 날짜 제한 없이 계정에 저장돼요. */
+  for(var i=0;i<30;i++){
     var d=addDays(today,i),k=dkey(d),items=[];
     (p.classes||[]).filter(function(c){return c.day===dow(d)&&clsActive(c,k);}).forEach(function(c){items.push({text:c.name||c.title||'수업',meta:(c.start||'')+(c.end?'–'+c.end:''),kind:'수업'});});
     (p.todos||[]).filter(function(t){return t.scope==='day'&&t.key===k;}).forEach(function(t){items.push({text:t.text||'할 일',meta:t.done?'완료':'할 일',kind:'할 일'});});
@@ -1145,6 +1305,9 @@ function mergeState(loc,rem,base){
   return normalize(out);
 }
 function applyRemote(st,at){
+  /* 원격 반영 전 현재 상태를 보관해, 다른 기기의 빈/옛 데이터로
+     시험·일정이 덮여도 되돌릴 수 있게 해요. */
+  try{if(S&&hasPlannerData(S)){lsSet('planner.remoteBackup',JSON.stringify(S));saveLocalBackupLayers(S);}}catch(e){}
   S=st;S.updatedAt=at;
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
   var ae=document.activeElement;
@@ -1155,11 +1318,54 @@ function loadMeta(){Sync.lastSeen=0;Sync.base=null;try{var m=JSON.parse(lsGet('p
 function reconcile(r){
   var rat=+r.updatedAt||0,rem=normalize(JSON.parse(r.json));
   var localAt=S.updatedAt||0;
+  /* 내용이 있는 기기에 데이터 0개인 원격 상태가 들어오면 자동 반영하지 않아요.
+     같은 계정의 빈 상태가 먼저 저장된 경우에도 사용자가 직접 선택하게 해요. */
+  var localHasData=hasPlannerData(S),remoteHasData=hasPlannerData(rem);
+  if(localHasData&&!remoteHasData&&rat!==localAt&&Sync.examGuardAt!==rat){
+    Sync.examGuardAt=rat;
+    try{lsSet('planner.remoteBackup',JSON.stringify(S));}catch(e){}
+    if(Sync.kind==='supa')openChoice(r,rat);
+    return false;
+  }
   var dirty=localAt>0&&(!Sync.lastSeen||localAt>Sync.lastSeen);
   if(!dirty){applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;}
   var m=mergeState(S,rem,Sync.lastSeen?Sync.base:null);
   m.updatedAt=Math.max(Date.now(),rat+1);applyRemote(m,m.updatedAt);
   Sync.lastSeen=rat;saveMeta();return true;
+}
+function snapDates(){try{return JSON.parse(lsGet('planner.snapDates')||'[]');}catch(e){return [];}}
+function snapshotIfNeeded(){
+  var tk=todayKey(),ds=snapDates();
+  if(ds.length&&ds[ds.length-1]===tk)return;
+  var json=JSON.stringify(S);
+  try{lsSet('planner.snap.'+tk,json);}catch(e){}
+  ds.push(tk);
+  while(ds.length>7){var old=ds.shift();try{localStorage.removeItem('planner.snap.'+old);}catch(e){}}
+  lsSet('planner.snapDates',JSON.stringify(ds));
+  cloudSnapshot(tk,json);
+}
+function cloudSnapshot(tk,json){
+  if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return;
+  try{
+    Sync.sb.from('planner_snapshots').upsert({user_id:Sync.uid,date:tk,json:json,updated_at:Date.now()}).then(function(){
+      var cutoff=dkey(addDays(new Date(),-30));
+      Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).lt('date',cutoff);
+    },function(){});
+  }catch(e){}
+}
+function fetchCloudSnaps(){
+  if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return Promise.resolve([]);
+  return Sync.sb.from('planner_snapshots').select('date').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(30)
+    .then(function(res){return (res&&res.data)?res.data.map(function(r){return r.date;}):[];},function(){return [];});
+}
+function loadCloudSnap(k){
+  return Sync.sb.from('planner_snapshots').select('json').eq('user_id',Sync.uid).eq('date',k).maybeSingle()
+    .then(function(res){return res&&res.data?res.data.json:null;},function(){return null;});
+}
+function snapBoxHTML(dates,loading){
+  if(!dates.length&&!loading)return '';
+  var lbl=Sync.kind==='supa'&&Sync.uid?'계정에 자동 저장된 날짜별 백업 (최근 30일)':'이 기기에 자동 저장된 날짜별 백업 (최근 7일)';
+  return '<p class="lbl" style="margin-top:14px">'+lbl+'</p><div class="snaplist">'+dates.slice().reverse().map(function(k){var d=parseKey(k);return '<button class="tbtn" data-act="load-snap" data-k="'+k+'">'+(d.getMonth()+1)+'/'+d.getDate()+'</button>';}).join('')+(loading?'<span class="tbtn" style="opacity:.5">불러오는 중…</span>':'')+'</div><p class="hint">날짜를 눌러 칸에 불러온 다음, 지금 걸 지키려면 \'합치기\'를 눌러요</p>';
 }
 function push(){
   Sync.timer=null;
@@ -1239,13 +1445,19 @@ function initSupa(){
   Sync.sb.auth.onAuthStateChange(function(ev,session){setTimeout(function(){supaAttach(session);},0);});
   return true;
 }
+function itemCount(st){return (st.classes||[]).length+(st.events||[]).length+(st.todos||[]).length+(st.routines||[]).length+(st.exams||[]).length+(st.allday||[]).length+(st.ddays||[]).length;}
 function openChoice(r,remoteAt){
   M={type:'choice',r:r,remoteAt:remoteAt};
   var rt=new Date(remoteAt),lt=new Date(S.updatedAt||0);
+  var rem;try{rem=normalize(JSON.parse(r.json));}catch(e){rem={};}
+  var rn=itemCount(rem),ln=itemCount(S);
   function f(d){return (d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
-  openModal('<h3>어떤 플래너를 쓸까요?</h3><p class="hint">이 기기에 적힌 내용과 계정에 저장된 내용이 달라요. 합치면 양쪽 내용이 모두 남아요.</p>'+
-    '<div class="acts" style="flex-direction:column"><button class="b-save" data-act="use-merge">둘 다 합치기 (추천)</button><button class="b-ghost" data-act="use-remote">계정에 저장된 것만 (마지막 수정 '+f(rt)+')</button>'+
-    '<button class="b-ghost" data-act="use-local">이 기기 것만 (마지막 수정 '+f(lt)+')</button></div>');
+  var warnR=rn<ln?'<p class="hint warn2">⚠️ 계정 쪽 항목이 '+(ln-rn)+'개 더 적어요. 이걸 고르면 이 기기 내용이 사라져요.</p>':'';
+  var warnL=ln<rn?'<p class="hint warn2">⚠️ 이 기기 항목이 '+(rn-ln)+'개 더 적어요. 이걸 고르면 계정 내용이 사라져요.</p>':'';
+  openModal('<h3>어떤 플래너를 쓸까요?</h3><p class="hint">이 기기에 적힌 내용과 계정에 저장된 내용이 달라요. 합치면 양쪽 내용이 모두 남고, 아무것도 안 사라져요.</p>'+
+    '<div class="acts" style="flex-direction:column"><button class="b-save" data-act="use-merge">둘 다 합치기 (추천)</button>'+
+    warnR+'<button class="b-ghost" data-act="use-remote">계정에 저장된 것만 · 총 '+rn+'개 ('+f(rt)+')</button>'+
+    warnL+'<button class="b-ghost" data-act="use-local">이 기기 것만 · 총 '+ln+'개 ('+f(lt)+')</button></div>');
 }
 function openLogin(msg){
   M={type:'login'};
@@ -1779,7 +1991,8 @@ function topItemHTML(i){
 }
 function topBar(){
   if(S.settings.topShow===false)return '';
-  var n=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3)),items=topItems();
+  var n=Math.min(3,Math.max(0,S.settings.topN!=null?S.settings.topN:3)),items=topItems();
+  if(n===0)return '';
   return items.length?'<div class="toplist">'+items.slice(0,n).map(topItemHTML).join('')+'</div>':'';
 }
 function routinesFor(d){var w=dow(d);return S.routines.filter(function(r){return r.days.indexOf(w)>=0;});}
@@ -2124,8 +2337,8 @@ function timelineHTML(d){
   return '<section class="card tl"><div class="tl-h"><b>'+(d.getMonth()+1)+'월 '+d.getDate()+'일</b><span>'+DAYS[dow(d)]+'요일</span><button class="tbtn" style="margin-left:auto" data-act="add-dd" data-date="'+k+'">D-day</button><button class="tbtn" data-act="add-appointment" data-date="'+k+'">+ 약속</button><button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button></div>'+rows+specialRowsForDay(d)+'</section>';
 }
 function schoolInfoCard(){
-  var p=schoolProfile(S.settings.school),camp=S.settings.schoolCampus||p.campuses[0]||'',custom=(S.settings.links||[]).filter(function(l){return l&&!l.schoolLink;});
-  var links=schoolLinks(p.id).concat(custom);
+ var p=schoolProfile(S.settings.school),camp=canonicalCampus(p.id,S.settings.schoolCampus),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
+  var links=schoolLinks(p.id,camp).concat(custom);
   var checked=S.settings.schoolLastChecked?new Date(S.settings.schoolLastChecked):null,sub=checked?'마지막 확인 '+(checked.getMonth()+1)+'/'+checked.getDate()+' '+pad(checked.getHours())+':'+pad(checked.getMinutes()):'공식 사이트에서 최신 내용을 확인해요';
   return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div><button class="tbtn" data-act="open-settings">설정</button></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
 }
@@ -2303,7 +2516,7 @@ function viewSettings(){
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+ 
     '<div class="setrow"><span>가까운 일정 알림<small>앱이 열려 있을 때 30분 전 알림을 보내요</small></span><button class="tbtn" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'꺼짐')+'</button></div>'+ 
     '<div class="setrow"><span>상단 D-day·시험 표시<small>홈·일간·주간 화면 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+ 
-    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로</small></span><div class="seg" style="margin:0">'+[[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(1,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
+    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로 보여줘요</small></span><div class="seg" style="margin:0">'+[[0,'0'],[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(0,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
     '<div class="setrow"><span>달력 D-day 표시</span><div class="seg" style="margin:0"><button data-act="set-caldd" data-v="star" class="'+((S.settings.calDday||'star')==='star'?'on':'')+'">별표</button><button data-act="set-caldd" data-v="text" class="'+((S.settings.calDday||'star')==='text'?'on':'')+'">D-숫자</button></div></div>'+
     '<div class="setrow"><span>월간 표시 항목<small>체크한 항목만 월간 달력에 보여요</small></span></div><div class="monthopts">'+[['appointment','약속'],['dday','D-day'],['exam','시험'],['event','일정'],['todo','할 일']].map(function(x){return '<label class="monthopt"><input type="checkbox" data-month-item="'+x[0]+'"'+(monthItemOn(x[0])?' checked':'')+'>'+x[1]+'</label>';}).join('')+'</div>'+
     '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
@@ -2933,13 +3146,18 @@ function saveRoutine(){
 }
 function openBackup(){
   M={type:'backup'};
-  var data={classes:S.classes,events:S.events,todos:S.todos,routines:S.routines,exams:S.exams,allday:S.allday,logs:S.logs,trackers:S.trackers,letters:S.letters,focus:S.focus,retro:S.retro,fsess:S.fsess,selfchat:S.selfchat,ddays:S.ddays,routineDone:S.routineDone,memos:S.memos,hourNotes:S.hourNotes,settings:S.settings};
-  openModal('<h3>백업·복원</h3><p class="hint">아래 글자를 통째로 복사해서 메모 앱 등에 보관해두세요. 복원할 때는 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+
-    '<textarea class="ta" id="f-backup" spellcheck="false">'+esc(JSON.stringify(data))+'</textarea>'+
-    '<div class="acts"><button class="b-ghost" data-act="copy-backup">복사</button><button class="b-save" data-act="import-backup">불러오기</button></div>'+
-    '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button>'+(lsGet('planner.prevBackup')?'<button class="b-ghost" data-act="undo-backup">이전 상태로 되돌리기</button>':'')+'</div>'+
-    '<div class="acts"><button class="b-ghost" data-act="save-backup-file">파일로 저장</button><label class="b-ghost fileload">파일 불러오기<input type="file" accept=".json,application/json" id="f-bkfile" hidden></label></div>'+
-    '<p class="hint" id="bk-msg" style="margin-top:10px">불러오기 전 지금 내용은 자동으로 한 번 보관돼요</p>');
+  if(Sync.kind==='supa'&&Sync.uid){fetchCloudSnaps().then(function(dates){var box=$('#snapbox');if(box&&M.type==='backup')box.innerHTML=snapBoxHTML(dates,false);});}
+  var data=backupData(),code=backupCode(data);
+  openModal('<h3>백업·복원</h3><p class="hint">아래 글자를 통째로 복사해서 메모 앱 등에 보관해두세요. 복원할 때는 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
+    '<textarea class="ta" id="f-backup" spellcheck="false">'+esc(JSON.stringify(data))+'</textarea>'+ 
+    '<div class="acts"><button class="b-ghost" data-act="copy-backup">복사</button><button class="b-save" data-act="import-backup">불러오기</button></div>'+ 
+    '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button>'+(lsGet('planner.prevBackup')?'<button class="b-ghost" data-act="undo-backup">이전 상태로 되돌리기</button>':'')+(lsGet('planner.remoteBackup')?'<button class="b-ghost" data-act="restore-remote-backup">시험·일정 백업 복원</button>':'')+(lsGet('planner.lastGoodBackup')?'<button class="b-ghost" data-act="restore-last-good">마지막 정상 상태 복원</button>':'')+'</div>'+ 
+    '<div class="acts"><button class="b-ghost" data-act="save-backup-file">파일로 저장</button><label class="b-ghost fileload">파일 불러오기<input type="file" accept=".json,application/json" id="f-bkfile" hidden></label></div>'+ 
+    '<div id="snapbox">'+snapBoxHTML(snapDates(),Sync.kind==='supa'&&Sync.uid)+'</div>'+ 
+    '<hr><p class="hint">파일 대신 이 백업 코드를 메모 앱에 보관해도 돼요. 한 번 복사하면 전체 데이터가 들어 있어요.</p>'+ 
+    '<textarea class="ta" id="f-backup-code" spellcheck="false" placeholder="백업 코드를 붙여넣어요">'+esc(code)+'</textarea>'+ 
+    '<div class="acts"><button class="b-ghost" data-act="copy-backup-code">백업 코드 복사</button><button class="b-save" data-act="restore-backup-code">백업 코드로 복원</button></div>'+ 
+    '<p class="hint" id="bk-msg" style="margin-top:10px">저장할 때마다 직전 정상 상태도 자동으로 보관돼요</p>');
 }
 function bkMsg(t){var el=$('#bk-msg');if(el)el.textContent=t;}
 function feedbackBody(){
@@ -3070,6 +3288,14 @@ function act(a,e){
         var mm=mergeState(S,normalize(mo),null);mm.updatedAt=Date.now();S=mm;save();closeModal();render(true);}catch(e){bkMsg('올바른 백업 글자가 아니에요');}
       break;}
     case 'undo-backup':{if(!armed(a))break;try{var pv=JSON.parse(lsGet('planner.prevBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(pv);save();closeModal();render(true);}catch(e){bkMsg('되돌릴 내용이 없어요');}break;}
+    case 'restore-remote-backup':{if(!armed(a))break;try{var rb=JSON.parse(lsGet('planner.remoteBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(rb);save();closeModal();render(true);}catch(e){bkMsg('시험·일정 백업이 없어요');}break;}
+    case 'restore-last-good':{if(!armed(a))break;try{var lg=JSON.parse(lsGet('planner.lastGoodBackup'));lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(lg);save();closeModal();render(true);}catch(e){bkMsg('마지막 정상 상태가 없어요');}break;}
+    case 'load-snap':{
+      var sk=a.dataset.k;
+      var putSnap=function(sd){if(sd&&M.type==='backup'){$('#f-backup').value=sd;bkMsg(sk+' 백업을 불러왔어요. 아래 \'합치기\'를 눌러요');}else bkMsg('그 날짜 백업을 못 찾았어요');};
+      if(Sync.kind==='supa'&&Sync.uid){bkMsg('불러오는 중…');loadCloudSnap(sk).then(function(sd){if(!sd){try{sd=lsGet('planner.snap.'+sk);}catch(e){}}putSnap(sd);});}
+      else{var sd2=null;try{sd2=lsGet('planner.snap.'+sk);}catch(e){}putSnap(sd2);}
+      break;}
     case 'save-backup-file':{
       try{var blob=new Blob([JSON.stringify(S)],{type:'application/json'});var url=URL.createObjectURL(blob);var an=document.createElement('a');an.href=url;an.download='planner-backup-'+todayKey()+'.json';document.body.appendChild(an);an.click();setTimeout(function(){URL.revokeObjectURL(url);an.remove();},1000);bkMsg('파일로 저장했어요');}catch(e){bkMsg('이 화면에선 파일 저장이 안 돼요. 복사를 써주세요');}
       break;}
@@ -3290,6 +3516,22 @@ function act(a,e){
       try{navigator.clipboard.writeText(ta.value).then(ok,fail);}catch(err){fail();}
       break;
     }
+    case 'copy-backup-code':{
+      var ca=$('#f-backup-code');ca.focus();ca.select();
+      var cok=function(){bkMsg('백업 코드를 복사했어요');};
+      var cfail=function(){try{document.execCommand('copy');cok();}catch(err){bkMsg('코드를 길게 눌러 직접 복사해주세요');}};
+      try{navigator.clipboard.writeText(ca.value).then(cok,cfail);}catch(err){cfail();}
+      break;
+    }
+    case 'restore-backup-code':{
+      if(!armed(a))break;
+      try{
+        var codeObj=decodeBackupCode($('#f-backup-code').value);
+        if(!codeObj||!Array.isArray(codeObj.classes))throw new Error('bad');
+        lsSet('planner.prevBackup',JSON.stringify(S));S=normalize(codeObj);save();closeModal();render(true);
+      }catch(err){bkMsg('올바른 백업 코드가 아니에요');}
+      break;
+    }
     case 'import-backup':{
       if(!armed(a))break;
       try{
@@ -3503,7 +3745,7 @@ document.addEventListener('change',function(e){
   if(e.target.id==='f-on-campus'){M.campus=e.target.value;return;}
   if(e.target.id==='f-afriend'){M.friendId=e.target.value||null;return;}
   if(e.target.id==='set-school'){if(e.target.value==='__add__'){openSchoolAdd(false);}else{setSchool(e.target.value);render();}return;}
-  if(e.target.id==='set-campus'){S.settings.schoolCampus=e.target.value;save();render();return;}
+  if(e.target.id==='set-campus'){setSchool(S.settings.school,e.target.value);render();return;}
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
   if(e.target.dataset&&e.target.dataset.monthItem){S.settings.monthItems[e.target.dataset.monthItem]=e.target.checked;save();render();return;}
   if(e.target.dataset&&e.target.dataset.memophoto&&e.target.files){
@@ -3549,6 +3791,7 @@ carryOver();
 setTimeout(enhanceDates,0);
 pruneLetters();
 render(true);
+setTimeout(recoverLocalBackup,120);
 restoreFocus();
 initSync();
 })();
