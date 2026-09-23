@@ -1583,6 +1583,7 @@ function applyRemote(st,at){
   S=st;S.updatedAt=at;
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
   var ae=document.activeElement;
+  if(M.type==='login'){closeModal();ae=null;}
   if(!M.type&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))render();
 }
 function saveMeta(){lsSet('planner.sync.'+(Sync.uid||'local'),JSON.stringify({lastSeen:Sync.lastSeen||0,base:Sync.base||null}));}
@@ -1716,7 +1717,7 @@ function supaAttach(session){
       saveAccountState(oldUid,S);
       lsSet('planner.activeUser','loggedout:'+oldUid);
     }
-    Sync.db=null;Sync.on=false;Sync.uid=null;Sync.email='';
+    Sync.db=null;Sync.on=false;Sync.loading=false;Sync.uid=null;Sync.email='';
     FriendSync.loaded=false;FriendSync.code='';FriendSync.friends=[];FriendSync.incoming=[];FriendSync.requests=[];FriendSync.shared=[];FriendSync.memories=[];FriendSync.shown={};
     if(!M.type)render();return;
   }
@@ -1724,7 +1725,17 @@ function supaAttach(session){
   prepareAccount(session.user.id);
   Sync.uid=session.user.id;Sync.email=session.user.email||'';FriendSync.code=storedFriendCode();
   Sync.db=supaAdapter(Sync.sb,Sync.uid);Sync.path='planner';loadMeta();
-  pull().then(function(){Sync.on=true;return friendLoad();}).then(function(){if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render();}});
+  /* 로그인되면 모달부터 닫고 이 기기 사본을 바로 보여줘요 (계정 데이터는 이어서 덮어씀) */
+  if(M.type==='login')closeModal();
+  Sync.loading=true;if(!M.type)render(true);
+  var myUid=Sync.uid;
+  pull().catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
+    if(Sync.uid!==myUid)return;
+    Sync.loading=false;Sync.on=true;
+    if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
+    /* 친구 기능은 시간표 표시를 막지 않게 뒤에서 따로 불러와요 */
+    friendLoad().catch(function(){}).then(function(){if(U.tab==='settings'&&!M.type)render();});
+  });
 }
 function initSupa(){
   if(!supaReady())return false;
@@ -2971,7 +2982,7 @@ function render(reset){
   if(U.tab!=='settings'&&U.tab!=='ttable')v=letterBar()+v;
   if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
     v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
-  main.innerHTML=(storageOK?'':'<div class="note">이 브라우저에서는 저장이 막혀 있어요. 새로고침하면 내용이 사라질 수 있어요.</div>')+v;
+  main.innerHTML=(storageOK?'':'<div class="note">이 브라우저에서는 저장이 막혀 있어요. 새로고침하면 내용이 사라질 수 있어요.</div>')+(Sync.loading?'<div class="note">계정 플래너 불러오는 중…</div>':'')+v;
   $('#nav').innerHTML=navHTML();
   $('#app').classList.toggle('wide',U.tab==='day');
   main.scrollTop=st;
