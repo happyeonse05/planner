@@ -1055,8 +1055,9 @@ function hasPlannerData(st){
   if(!st)return false;
   /* 기본 시간표·기본 기록 항목은 새 계정에도 들어 있어서 '내용'으로 치지 않아요.
      (예전엔 이것 때문에 빈 계정도 내용이 있는 걸로 판단돼, 빈 데이터가 덮어쓰는 걸 못 막았어요) */
-  return ['events','todos','routines','exams','allday','ddays'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
-    ['memos','selfchat','logs','letters','hourNotes','retro'].some(function(k){return st[k]&&typeof st[k]==='object'&&Object.keys(st[k]).length>0;});
+  return ['classes','events','todos','routines','exams','allday','ddays'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
+    ['memos','selfchat','logs','letters','hourNotes','retro','focus','fsess','routineDone'].some(function(k){return st[k]&&typeof st[k]==='object'&&Object.keys(st[k]).length>0;})||
+    !!(st.settings&&((st.settings.chatRooms||[]).length||(st.settings.friendMemories||[]).length));
 }
 /* 계정별 보관함
    localStorage의 planner.v1 하나만 공유하면 로그아웃 후 다른 계정의 빈 데이터가
@@ -1083,15 +1084,15 @@ function bkOpen(){
   if(BK.wait)return BK.wait;
   BK.wait=new Promise(function(res){
     try{
-      if(!window.indexedDB){res(null);return;}
+      if(!window.indexedDB){BK.wait=null;res(null);return;}
       var req=indexedDB.open('planner-safe-backups-v1',2);
       req.onupgradeneeded=function(){var d=req.result;
         if(!d.objectStoreNames.contains('snapshots'))d.createObjectStore('snapshots',{keyPath:'id',autoIncrement:true});
         if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv');};
       req.onsuccess=function(){BK.db=req.result;res(BK.db);};
-      req.onerror=function(){res(null);};
-      req.onblocked=function(){res(null);};
-    }catch(e){res(null);}
+      req.onerror=function(){BK.wait=null;res(null);};
+      req.onblocked=function(){BK.wait=null;res(null);};
+    }catch(e){BK.wait=null;res(null);}
   });
   return BK.wait;
 }
@@ -1104,7 +1105,13 @@ function bkPut(k,raw){
 }
 function bkGetRec(k){
   return bkOpen().then(function(db){
-    if(!db){var r=lsGet('planner.bk.'+k);return r?{at:0,raw:r}:null;}
+    if(!db){
+      var legacy=k==='logout'?'planner.logoutBackup':k.indexOf('logout.')===0?'planner.logoutBackup.'+k.slice(7):
+        k==='lastGood'?'planner.lastGoodBackup':k.indexOf('lastGood.')===0?'planner.lastGoodBackup.'+k.slice(9):
+        k==='remote'?'planner.remoteBackup':k==='prev'?'planner.prevBackup':k.indexOf('snap.')===0?'planner.snap.'+k.slice(5):'';
+      var r=lsGet('planner.bk.'+k)||(legacy?lsGet(legacy):null);
+      return r?{at:0,raw:r}:null;
+    }
     return new Promise(function(res){try{var q=db.transaction('kv','readonly').objectStore('kv').get(k);q.onsuccess=function(){res(q.result&&q.result.raw?q.result:null);};q.onerror=function(){res(null);};}catch(e){res(null);}});
   });
 }
@@ -1119,7 +1126,7 @@ function bkFirst(keys){
   return keys.filter(Boolean).reduce(function(p,k){return p.then(function(r){return r||bkGetRec(k);});},Promise.resolve(null));
 }
 function bkOwner(){var o=Sync&&Sync.uid||lsGet('planner.activeUser')||'';return /^loggedout:/.test(o)?o.slice(10):o;}
-function bkKeys(name){var o=bkOwner();return [o?name+'.'+o:'',name];}
+function bkKeys(name){var o=bkOwner();return o?[name+'.'+o]:[name];}
 /* 자동 백업 기록 (최근 40개, 평소엔 5분에 한 번) */
 function bkRingAdd(st,force){
   if(!st||!hasPlannerData(st))return Promise.resolve(false);
@@ -1243,19 +1250,30 @@ function restoreBackupState(raw,emptyMsg){
     var obj=typeof raw==='string'?decodeBackupCode(raw):raw;
     if(obj&&obj.state&&typeof obj.state==='object')obj=obj.state;
     if(!validBackupState(obj))throw new Error('bad backup');
-    bkPut('prev',JSON.stringify(S));
-    S=normalize(obj);S.updatedAt=Date.now();save();closeModal();render(true);return true;
-  }catch(e){bkMsg(emptyMsg||'이 백업을 읽지 못했어요');return false;}
+    var next=normalize(obj),old=S;
+    next.updatedAt=Math.max(Date.now(),(old.updatedAt||0)+1,(Sync.lastSeen||0)+1);
+    return bkPut(bkOwner()?'prev.'+bkOwner():'prev',JSON.stringify(old)).then(function(){
+      try{
+        /* 저장 실패 시 복원했다고 표시하거나 기존 화면을 지우지 않아요. */
+        localStorage.setItem(KEY,JSON.stringify(next));
+        S=next;storageOK=true;
+        if(Sync.uid)saveAccountState(Sync.uid,S);
+        bkRingAdd(S,true);
+        if(Sync.db){Sync.forceRestore=true;scheduleSync();}
+        closeModal();render(true);return true;
+      }catch(e){bkMsg('저장 공간이 부족하거나 복원에 실패했어요. 기존 데이터는 유지했어요.');return false;}
+    });
+  }catch(e){bkMsg(emptyMsg||'이 백업을 읽지 못했어요');return Promise.resolve(false);}
 }
 function bkRestore(name,emptyMsg){
   bkMsg('불러오는 중…');
-  return bkFirst(name==='prev'||name==='remote'?[name]:bkKeys(name)).then(function(rec){
+  return bkFirst(bkKeys(name)).then(function(rec){
     if(!rec){bkMsg(emptyMsg);return;}
-    restoreBackupState(rec.raw,emptyMsg);
+    return restoreBackupState(rec.raw,emptyMsg);
   });
 }
 function recoverLocalBackup(){
-  if(hasPlannerData(S))return;
+  if(hasPlannerData(S))return Promise.resolve();
   var o=bkOwner();
   bkFirst(o?['lastGood.'+o,'logout.'+o]:['lastGood','logout']).then(function(rec){
     var cand=null;try{cand=rec?JSON.parse(rec.raw):null;}catch(e){}
@@ -1273,7 +1291,7 @@ function save(){
   try{localStorage.setItem(KEY,json);storageOK=true;}
   catch(e){
     /* 꽉 찼으면 옛 사본 자리를 비우고 한 번 더 */
-    bkFreeSpace();
+    /* 이관에 성공했는지 확인되기 전에는 과거 백업을 지우지 않아요. */
     try{localStorage.setItem(KEY,json);storageOK=true;}catch(e2){storageOK=false;}
   }
   /* 새 저장 전 상태를 '마지막 정상 상태'로 남겨요 (1분에 한 번) */
@@ -1527,7 +1545,7 @@ function mergeState(loc,rem,base){
 function applyRemote(st,at){
   /* 원격 반영 전 현재 상태를 보관해, 다른 기기의 빈/옛 데이터로
      시험·일정이 덮여도 되돌릴 수 있게 해요. */
-  try{if(S&&hasPlannerData(S)){bkPut('remote',JSON.stringify(S));saveLocalBackupLayers(S);}}catch(e){}
+  try{if(S&&hasPlannerData(S)){bkPut(bkOwner()?'remote.'+bkOwner():'remote',JSON.stringify(S));saveLocalBackupLayers(S);}}catch(e){}
   S=st;S.updatedAt=at;
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
   var ae=document.activeElement;
@@ -1543,7 +1561,7 @@ function reconcile(r){
   var localHasData=hasPlannerData(S),remoteHasData=hasPlannerData(rem);
   if(localHasData&&!remoteHasData&&rat!==localAt&&Sync.examGuardAt!==rat){
     Sync.examGuardAt=rat;
-    try{bkPut('remote',JSON.stringify(S));}catch(e){}
+    try{bkPut(bkOwner()?'remote.'+bkOwner():'remote',JSON.stringify(S));}catch(e){}
     if(Sync.kind==='supa')openChoice(r,rat);
     return false;
   }
@@ -1594,9 +1612,9 @@ function push(){
   Sync.busy=true;
   var ref=Sync.db.doc(Sync.path);
   return ref.get().then(function(snap){
-    if(snap.exists){var r=snap.data()||{};if((+r.updatedAt||0)!==Sync.lastSeen){try{reconcile(r);}catch(e){}}}
-    return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)}).then(function(){Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();});
-  }).catch(function(){})
+    if(snap.exists&&!Sync.forceRestore){var r=snap.data()||{};if((+r.updatedAt||0)!==Sync.lastSeen){try{reconcile(r);}catch(e){}}}
+    return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();});
+  }).catch(function(e){Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
     .then(function(){
       Sync.busy=false;
       if(Sync.dirty){Sync.dirty=false;scheduleSync();}
@@ -1604,6 +1622,7 @@ function push(){
 }
 function pull(){
   if(!Sync.db)return Promise.resolve();
+  if(Sync.forceRestore)return push();
   return Sync.db.doc(Sync.path).get().then(function(snap){
     var localAt=S.updatedAt||0;
     if(snap.exists){
@@ -1613,8 +1632,15 @@ function pull(){
         openChoice(r,remoteAt);return;
       }
       if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);
-      if(remoteAt===Sync.lastSeen){if(localAt>remoteAt)push();return;}
-      if(remoteAt===localAt){Sync.lastSeen=remoteAt;Sync.base=idsOf(S);saveMeta();return;}
+      if(remoteAt===Sync.lastSeen){
+        if(localAt>remoteAt)push();
+        else if(r.json!==JSON.stringify(S))applyRemote(normalize(JSON.parse(r.json)),remoteAt);
+        return;
+      }
+      if(remoteAt===localAt){
+        if(r.json!==JSON.stringify(S)){openChoice(r,remoteAt);return;}
+        Sync.lastSeen=remoteAt;Sync.base=idsOf(S);saveMeta();return;
+      }
       try{if(reconcile(r))push();}catch(e){}
     }else{if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);if(localAt>0)push();}
   }).catch(function(){});
@@ -3395,7 +3421,7 @@ function copyText(txt,box,okMsg){
 }
 function drawBackupSlots(){
   var o=bkOwner();
-  var probe=[['prev',['prev'],'undo-backup','방금 복원 전으로 되돌리기'],['logout',bkKeys('logout'),'restore-logout-backup','로그아웃 전 데이터 복원'],['lastGood',bkKeys('lastGood'),'restore-last-good','마지막 정상 상태 복원'],['remote',['remote'],'restore-remote-backup','동기화 전 데이터 복원']];
+  var probe=[['prev',bkKeys('prev'),'undo-backup','방금 복원 전으로 되돌리기'],['logout',bkKeys('logout'),'restore-logout-backup','로그아웃 전 데이터 복원'],['lastGood',bkKeys('lastGood'),'restore-last-good','마지막 정상 상태 복원'],['remote',bkKeys('remote'),'restore-remote-backup','동기화 전 데이터 복원']];
   Promise.all(probe.map(function(p){return bkFirst(p[1]);})).then(function(recs){
     var box=$('#bk-slots');if(!box||M.type!=='backup')return;
     var html=probe.map(function(p,i){var r=recs[i];if(!r)return '';var n='';try{n=' · '+itemCount(normalize(JSON.parse(r.raw)))+'개';}catch(e){}return '<button class="b-ghost" data-act="'+p[2]+'">'+p[3]+(r.at?' ('+ringLabel(r)+n+')':'')+'</button>';}).join('');
@@ -4069,9 +4095,8 @@ carryOver();
 setTimeout(enhanceDates,0);
 pruneLetters();
 render(true);
-bkMigrate().then(function(){setTimeout(recoverLocalBackup,60);});
+bkMigrate().then(recoverLocalBackup).then(initSync,function(){initSync();});
 restoreFocus();
-initSync();
 })();
 </script>
 </body>
