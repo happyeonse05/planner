@@ -2916,7 +2916,7 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','hourNotes','routineDone'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
@@ -3066,13 +3066,30 @@ function pull(){
         autoMerge(r,remoteAt);return;
       }
       if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);
+      /* 로그인/재로그인에서는 서버 JSON을 통째로 applyRemote 하지 않아요.
+         같은 lastSeen이어도 로컬의 주간 할 일·메모·회고가 서버에 없을 수 있어서,
+         더 최신인 쪽을 우선값으로 삼되 양쪽의 '한쪽에만 있는 데이터'를 항상 합칩니다. */
+      var remNow=null;try{remNow=normalize(JSON.parse(r.json));}catch(e){remNow=null;}
+      if(remNow){
+        var primary=remoteAt>localAt?remNow:S;
+        var secondary=remoteAt>localAt?S:remNow;
+        var joined=mergeState(primary,secondary,null);
+        var differsRemote=JSON.stringify(joined)!==JSON.stringify(remNow);
+        var differsLocal=JSON.stringify(joined)!==JSON.stringify(S);
+        if(differsLocal||differsRemote){
+          joined.updatedAt=Math.max(Date.now(),remoteAt+1,localAt+1);
+          applyRemote(joined,joined.updatedAt);
+          Sync.lastSeen=remoteAt;Sync.base=idsOf(S);saveMeta();
+          if(Sync.uid)saveAccountState(Sync.uid,S);
+          push();
+          return;
+        }
+      }
       if(remoteAt===Sync.lastSeen){
         if(localAt>remoteAt)push();
-        else if(r.json!==JSON.stringify(S))applyRemote(normalize(JSON.parse(r.json)),remoteAt);
         return;
       }
       if(remoteAt===localAt){
-        if(r.json!==JSON.stringify(S)){autoMerge(r,remoteAt);return;}
         Sync.lastSeen=remoteAt;Sync.base=idsOf(S);saveMeta();return;
       }
       try{if(reconcile(r))push();}catch(e){}
@@ -3138,8 +3155,15 @@ function supaAttach(session){
     Sync.loading=false;Sync.on=true;Sync.pulled=true;
     /* 이 계정에서 온보딩을 한 번 끝냈다면 다시 학교/색을 묻지 않아요.
        예전 버전에서 로컬 표식만 남고 cloud flag가 빠진 경우도 여기서 복구해 계정에 저장합니다. */
-    if(lsGet('planner.onboard.'+Sync.uid)&&(!S.settings.onboardDone||!S.settings.schoolConfigured)){
-      S.settings.onboardDone=true;S.settings.schoolConfigured=true;save();
+    /* 온보딩은 계정당 딱 한 번만. 예전 버전에서 완료 플래그가 클라우드에 빠졌어도
+       이미 사용 중인 계정(플래너 데이터/프로필/학교 설정이 있음)은 완료 계정으로 마이그레이션해요. */
+    var onboardKey='planner.onboard.'+Sync.uid;
+    var existingAccount=hasPlannerData(S)||!!S.settings.profileName||!!S.settings.schoolConfigured||!!S.settings.onboardDone;
+    if(lsGet(onboardKey)||existingAccount){
+      if(!S.settings.onboardDone||!S.settings.schoolConfigured){
+        S.settings.onboardDone=true;S.settings.schoolConfigured=true;save();
+      }
+      lsSet(onboardKey,'1');
     }
     if(Sync.dirty){Sync.dirty=false;scheduleSync();}
     if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
