@@ -3760,9 +3760,37 @@ function homeStrip(){
   var evening=hour>=17?'<div class="home-evening">'+(featOn('showDiary')?'<button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span>':'')+'<button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+(stk>=2?' · '+stk+'일째':'')+'</button></div>':'';
   return '<section class="home home-clean"><div class="home-main">'+nextCard+todo+gapLine+evening+'</div><button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
 }
+function isStandalonePWA(){
+  try{return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}catch(e){return false;}
+}
+function isIOSDevice(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);}
+function reminderPermissionLabel(){
+  if(!('Notification' in window))return isIOSDevice()&&!isStandalonePWA()?'홈 화면 설치 필요':'알림 미지원';
+  if(Notification.permission==='granted')return '허용됨';
+  if(Notification.permission==='denied')return '차단됨';
+  return '권한 필요';
+}
 function askReminderPermission(){
-  if(!('Notification' in window)){S.settings.remindOn=false;save();render();return;}
-  Notification.requestPermission().then(function(p){if(p!=='granted')S.settings.remindOn=false;save();render();}).catch(function(){S.settings.remindOn=false;save();render();});
+  if(isIOSDevice()&&!isStandalonePWA()){
+    S.settings.remindOn=false;save();render();toast('아이폰은 Safari 공유 → 홈 화면에 추가 후 앱으로 열어야 알림을 켤 수 있어요');return Promise.resolve(false);
+  }
+  if(!('Notification' in window)){
+    S.settings.remindOn=false;save();render();toast('이 브라우저는 시스템 알림을 지원하지 않아요');return Promise.resolve(false);
+  }
+  if(Notification.permission==='granted'){
+    S.settings.remindOn=true;save();render();toast('가까운 일정 알림을 켰어요');return Promise.resolve(true);
+  }
+  if(Notification.permission==='denied'){
+    S.settings.remindOn=false;save();render();toast('알림이 차단되어 있어요. 브라우저/기기 설정에서 알림을 허용해주세요');return Promise.resolve(false);
+  }
+  return Notification.requestPermission().then(function(p){
+    if(p==='granted'){
+      S.settings.remindOn=true;save();render();toast('가까운 일정 알림을 켰어요');return true;
+    }
+    S.settings.remindOn=false;save();render();toast(p==='denied'?'알림 권한이 차단됐어요':'알림 권한이 허용되지 않았어요');return false;
+  }).catch(function(){
+    S.settings.remindOn=false;save();render();toast('알림 권한을 요청하지 못했어요');return false;
+  });
 }
 function checkReminders(){
   if(!S.settings.remindOn||!('Notification' in window)||Notification.permission!=='granted')return;
@@ -4794,7 +4822,7 @@ function viewSettings(){
       '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
     '<div class="setrow defc"><span>이름 기본 색<small>수업·일정·종일 일정·D-day에 적용되는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+ 
     '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+ 
-    '<div class="setrow"><span>가까운 일정 알림<small>앱이 열려 있을 때 30분 전 알림을 보내요</small></span><button class="tbtn" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'꺼짐')+'</button></div>'+ 
+    '<div class="setrow"><span>가까운 일정 알림<small>'+(isIOSDevice()&&!isStandalonePWA()?'아이폰은 홈 화면에 추가한 앱에서 켤 수 있어요 · 현재 '+reminderPermissionLabel():'30분 전 시스템 알림 · 현재 '+reminderPermissionLabel())+'</small></span><button class="tbtn'+(S.settings.remindOn?' on':'')+'" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'켜기')+'</button></div>'+ 
     '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로 보여줘요</small></span><div class="seg" style="margin:0">'+[[0,'0'],[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(0,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+     topOrderHTML()+
 
     '<div class="setrow"><span>달력 D-day 표시</span><div class="seg" style="margin:0"><button data-act="set-caldd" data-v="star" class="'+((S.settings.calDday||'star')==='star'?'on':'')+'">별표</button><button data-act="set-caldd" data-v="text" class="'+((S.settings.calDday||'star')==='text'?'on':'')+'">D-숫자</button></div></div>'+
@@ -6127,7 +6155,7 @@ function act(a,e){
     case 'feedback-mail':mailFeedback();break;
     case 'back':U.tab=U.prevTab||'week';render(true);break;
     case 'set-theme':S.settings.theme=a.dataset.v;lsSet('planner.theme',a.dataset.v);save();applyTheme();render();break;
-    case 'toggle-remind':if(S.settings.remindOn){S.settings.remindOn=false;save();render();}else{S.settings.remindOn=true;save();askReminderPermission();}break;
+    case 'toggle-remind':if(S.settings.remindOn){S.settings.remindOn=false;save();render();toast('가까운 일정 알림을 껐어요');}else{askReminderPermission();}break;
     case 'add-link':openLink(null);break;
     case 'edit-link':{var lk=S.settings.links.find(function(x){return x.id===id;});if(lk)openLink(lk);break;}
     case 'save-link':saveLink();break;
