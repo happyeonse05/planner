@@ -329,7 +329,18 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 /* ===== 10분 일기 ===== */
 .settings-group-head{margin:22px 4px 8px;padding-top:4px}.settings-group-head b{display:block;font-size:17px;letter-spacing:-.02em}.settings-group-head small{display:block;margin-top:2px;color:var(--sub);font-size:12px;font-weight:500}
 .diary-banner{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 48%,var(--card));border:1px solid color-mix(in srgb,var(--planner-color,#dce9f7) 75%,var(--edge));text-align:left}.diary-banner b{display:block;font-size:14px}.diary-banner small{display:block;margin-top:2px;color:var(--sub);font-size:12px}.diary-banner .chev{font-size:22px;color:var(--sub)}
-.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:color-mix(in srgb,var(--planner-color,#dce9f7) 72%,#111)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--planner-color,#dce9f7);color:#1d1d1f}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background-color:var(--soft);padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text.ruled{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1.65em - 1px),color-mix(in srgb,var(--diary-line,var(--accent)) 32%,transparent) calc(1.65em - 1px),color-mix(in srgb,var(--diary-line,var(--accent)) 32%,transparent) 1.65em);background-position:0 14px}.diary-text:focus{outline:2px solid var(--planner-color,#dce9f7)}.diary-note{min-height:100px;margin-top:9px;background-image:none;background-color:var(--soft)}.diary-count{display:flex;justify-content:flex-end;margin:-4px 4px 8px;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--planner-color,#dce9f7);color:#1d1d1f;font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}.diary-word{display:inline-flex;align-items:center;margin-left:6px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,#ef9fb5 14%,var(--card));border:1px solid color-mix(in srgb,#ef9fb5 32%,var(--line));font-size:11px;font-weight:700;color:var(--ink)}.diary-finish-word{margin:10px 0}.diary-finish-word input{text-align:center;font-weight:700;font-size:17px}
+.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:color-mix(in srgb,var(--planner-color,#dce9f7) 72%,#111)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--planner-color,#dce9f7);color:#1d1d1f}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background-color:var(--soft);padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text.ruled{
+  background-color:var(--soft);
+  background-image:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.65em - 1px),
+    var(--diary-rule-color,rgba(217,132,106,.34)) calc(1.65em - 1px),
+    var(--diary-rule-color,rgba(217,132,106,.34)) 1.65em
+  );
+  background-position:0 14px;
+  background-attachment:local;
+}.diary-text:focus{outline:2px solid var(--planner-color,#dce9f7)}.diary-note{min-height:100px;margin-top:9px;background-image:none;background-color:var(--soft)}.diary-count{display:flex;justify-content:flex-end;margin:-4px 4px 8px;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--planner-color,#dce9f7);color:#1d1d1f;font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}.diary-word{display:inline-flex;align-items:center;margin-left:6px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,#ef9fb5 14%,var(--card));border:1px solid color-mix(in srgb,#ef9fb5 32%,var(--line));font-size:11px;font-weight:700;color:var(--ink)}.diary-finish-word{margin:10px 0}.diary-finish-word input{text-align:center;font-weight:700;font-size:17px}
 
 /* ===== 테마: 화이트 미니멀 ===== */
 :root{
@@ -989,6 +1000,12 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .origin-rule-fields{display:grid;grid-template-columns:76px 14px 76px minmax(0,1fr) 30px;gap:6px;align-items:center}.origin-rule-fields .fld{margin:0;min-width:0}
 .origin-override{padding:9px 0;border-bottom:1px solid var(--line)}.origin-override>.sel{margin-bottom:7px}.origin-week-only summary{color:var(--ink)}
 @media(max-width:430px){.origin-rule-fields{grid-template-columns:1fr 14px 1fr 30px}.origin-rule-fields .origin-place{grid-column:1/4}.origin-rule-fields .pp-x{grid-column:4;grid-row:1/3;align-self:center}}
+
+
+.self-letter-compose{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.self-letter-compose .b-save{height:44px;padding:0 13px;white-space:nowrap}
+.self-letter-help{display:block;margin-top:7px;color:var(--sub);font-size:11px}
+@media(max-width:430px){.self-letter-compose{grid-template-columns:1fr}.self-letter-compose .b-save{width:100%}}
 
 </style>
 <link rel="manifest" href="manifest.webmanifest">
@@ -4082,9 +4099,11 @@ function letterCard(k){
       '<p class="lt-got">'+esc(got.text)+'</p></section>';
   }
   if(k===tk){
-    var nk=dkey(addDays(new Date(),1)),L=S.letters[nk]||{};
-    html+='<section class="card"><div class="card-h"><h3>내일의 나에게</h3><span class="cnt">내일 열면 맨 위에 떠요</span></div>'+
-      '<input class="fld" style="margin:0" data-letter="'+nk+'" maxlength="80" placeholder="한 줄 남기기" value="'+esc(L.text||'')+'"></section>';
+    var nk=dkey(addDays(new Date(),1)),L=S.letters[nk]||{},sent=!!(L&&L.text);
+    html+='<section class="card self-letter-card"><div class="card-h"><h3>내일의 나에게</h3><span class="cnt">'+(sent?'예약됨 ✓':'내일 맨 위에 도착')+'</span></div>'+
+      '<div class="self-letter-compose"><input class="fld" style="margin:0" id="f-letter-tomorrow" maxlength="80" placeholder="내일의 나에게 한 줄" value="'+esc(L.text||'')+'">'+
+      '<button class="b-save" data-act="send-letter-tomorrow" data-date="'+nk+'">'+(sent?'수정해서 다시 보내기':'내일 보내기')+'</button></div>'+
+      '<small class="self-letter-help">'+(sent?'내일 열기 전까지 수정할 수 있어요.':'입력만 해서는 저장되지 않아요. 버튼을 눌러야 예약돼요.')+'</small></section>';
   }
   return html;
 }
@@ -4109,6 +4128,14 @@ function setLetter(k,patch){
   delete L.photo;
   Object.keys(L).forEach(function(x){if(L[x]===null||L[x]===''||L[x]===undefined)delete L[x];});
   if(L.text)S.letters[k]=L;else delete S.letters[k];
+}
+function sendLetterTomorrow(k){
+  var f=$('#f-letter-tomorrow'),txt=f?(f.value||'').trim():'';
+  if(!txt){bad('#f-letter-tomorrow');inAppToast('내일의 나에게 남길 말을 적어줘');return;}
+  setLetter(k,{text:txt,seen:null,sentAt:Date.now()});
+  save();
+  render();
+  inAppToast('내일의 나에게 예약했어요 💌');
 }
 function pruneLetters(){
   var y=dkey(addDays(new Date(),-1)),ch=false;
@@ -6374,7 +6401,7 @@ function diaryLibraryMove(dir){var rows=diaryLibraryRows();if(!rows.length)retur
 function diaryLibraryGoDate(){diaryCalPick(M.diaryDate||todayKey());}
 function drawDiary(dateKey){
   var targetKey=dateKey||U.diaryDate||todayKey();U.diaryDate=targetKey;M={type:'diary'};var r=U.diaryRun,mins=diaryMinutes(),isToday=targetKey===todayKey(),targetDate=parseKey(targetKey);
-  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>'+(isToday?'오늘을 '+mins+'분만 적어봐요':mdTxt(targetDate)+'의 기록을 남겨요')+'</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text'+(featOn('diaryRuled')?' ruled':'')+'" style="--diary-line:'+esc(S.settings.defColor||defCol())+'" id="f-diary" oninput="diaryLiveInput(this)" oncompositionend="diaryLiveInput(this)" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><div class="diary-count" id="diary-count">'+diaryCharCount(U.diaryDraft||'')+'자</div><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
+  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>'+(isToday?'오늘을 '+mins+'분만 적어봐요':mdTxt(targetDate)+'의 기록을 남겨요')+'</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text'+(featOn('diaryRuled')?' ruled':'')+'" style="--diary-rule-color:'+diaryRuleColor()+'" id="f-diary" oninput="diaryLiveInput(this)" oncompositionend="diaryLiveInput(this)" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><div class="diary-count" id="diary-count">'+diaryCharCount(U.diaryDraft||'')+'자</div><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
   $('#modal').classList.add('full');diaryTick();setTimeout(function(){
     var x=$('#f-diary');
     if(x){
@@ -6387,6 +6414,19 @@ function drawDiary(dateKey){
     }
   },30);
 }
+
+function diaryRuleColor(){
+  var c=String(S.settings.defColor||defCol()||'#d9846a').trim();
+  var m=c.match(/^#([0-9a-f]{6})$/i);
+  if(!m)return 'rgba(217,132,106,.34)';
+  var n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  /* 아주 연한 기본색도 흰 배경에서 실제로 보이도록 대비를 조금 확보 */
+  r=Math.round(r*.82+70*.18);
+  g=Math.round(g*.82+70*.18);
+  b=Math.round(b*.82+70*.18);
+  return 'rgba('+r+','+g+','+b+',.38)';
+}
+
 function diaryCharCount(v){v=String(v==null?'':v);try{return Array.from(v).length;}catch(e){return v.length;}}
 function diaryLiveInput(el){if(el)U.diaryDraft=el.value||'';diaryCountUpdate();if(U.diaryDate)diarySessionSave(U.diaryDate);}
 function diaryCountUpdate(){var x=$('#f-diary'),c=$('#diary-count'),v=x?x.value:(U.diaryDraft||'');if(c)c.textContent=diaryCharCount(v)+'자';}
@@ -7090,6 +7130,7 @@ function act(a,e){
     case 'nudge-off':lsSet('planner.loginNudge','off');render();break;
     case 'toggle-letter':S.settings.letterOn=!S.settings.letterOn;save();render();break;
     case 'letter-seen':{var lk=todayKey();if(S.letters[lk]){S.letters[lk].seen=true;save();}render();break;}
+    case 'send-letter-tomorrow':sendLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
     case 'letter-rmphoto':setLetter(a.dataset.k,{photo:null});save();render();break;
     case 'letter-photo':{var LL=S.letters[a.dataset.k];if(LL&&LL.photo){M={type:'photo'};openModal('<img class="lt-big" src="'+LL.photo+'" alt="사진">'+(LL.text?'<p class="lt-got" style="margin-top:12px">'+esc(LL.text)+'</p>':'')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');}break;}
     case 'memo-photo-del':{
