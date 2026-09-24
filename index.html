@@ -853,6 +853,26 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .ttscan-meta .fld{margin:0;height:38px;font-size:13px;padding:0 8px}
 .ttscan-warn{font-size:11px;color:var(--now);margin-top:6px}
 @media(max-width:430px){.ttscan-grid{grid-template-columns:1fr 72px}.ttscan-grid .ttscan-time{grid-column:auto}.ttscan-meta{grid-template-columns:1fr}}
+
+/* 2026-09 mobile appointment UX */
+.meet-sheet{background:color-mix(in srgb,var(--planner-color,#dce9f7) 28%,var(--card))!important}
+.meet-sheet .meet-head,.meet-sheet .meet-advanced,.meet-sheet .task-row,.meet-sheet #meet-top3{background:color-mix(in srgb,var(--planner-color,#dce9f7) 18%,var(--card))}
+.meet-sheet .fld,.meet-sheet .tbtn,.meet-sheet .pp-sel,.meet-sheet .task-person{background:color-mix(in srgb,var(--planner-color,#dce9f7) 10%,var(--card))}
+.meet-sheet .hint{font-size:11px;line-height:1.35;margin:5px 0 8px}.meet-sheet .meetlegend{font-size:10px}.meet-sheet .meet-step small{display:none}
+.meet-step{margin:12px 0 6px;font-size:14px;font-weight:900}.meet-step small{display:block;margin-top:2px;color:var(--sub);font-size:11px;font-weight:500}
+.meet-advanced{margin:10px 0;border:1px solid var(--edge);border-radius:14px;background:var(--card);overflow:hidden}.meet-advanced>summary{padding:13px 14px;font-weight:800;cursor:pointer;list-style:none}.meet-advanced>summary::-webkit-details-marker{display:none}.meet-advanced>div{padding:0 12px 12px}
+.task-assign-wrap{background:transparent;padding:0;margin:8px 0}.task-assign-wrap>b{font-size:13px}.task-row{display:block;padding:10px 0;border-bottom:1px solid var(--line)}.task-row>span{display:block;font-weight:800;margin-bottom:7px}.task-drop{border:0;padding:0;min-height:0;display:flex;gap:6px;flex-wrap:wrap}.task-person{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800}.task-person.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+@media(max-width:600px){.modal{padding-left:14px;padding-right:14px}.meetgrid{max-height:330px}.moilkka-options{grid-template-columns:1fr}.top-slots>div,.meetsug-row{scroll-snap-type:x proximity}.sugchip,.top-slots button{scroll-snap-align:start}.task-assign-wrap .hint{font-size:11px}}
+
+/* 2026-09 모바일 정리 */
+.meet-sheet .meet-advanced>summary{font-size:13px;padding:11px 12px;color:var(--sub)}
+.meet-sheet .meet-advanced[open]>summary{color:var(--ink)}
+.meet-sheet .meet-activity-picks{margin-bottom:10px}
+.meet-sheet .task-assign-wrap>b{font-size:12px}
+.meet-sheet .task-assign-wrap .hint{display:none}
+@media(max-width:599px){.meet-sheet{font-size:14px}.meet-sheet h3{font-size:18px;margin-bottom:8px}.meet-sheet .meet-step{margin-top:9px}.meet-sheet .lbl{font-size:11px}.meet-sheet .acts button{height:42px}.hsumm{gap:5px}.hmini{padding:8px!important}.hmini b{font-size:12px!important}}
+.meet-grid-more{margin:7px 0 10px;border:1px solid color-mix(in srgb,var(--planner-color) 35%,var(--edge));border-radius:12px;background:var(--card);overflow:hidden}.meet-grid-more>summary{padding:10px 12px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer;list-style:none}.meet-grid-more>summary::-webkit-details-marker{display:none}.meet-grid-more[open]>summary{color:var(--ink);border-bottom:1px solid var(--edge)}.meet-grid-more>#meetbox{padding:8px}.meet-sheet>.acts{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));z-index:5;margin:12px -16px calc(-16px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--planner-color) 18%,var(--card));border-top:1px solid var(--edge)}
+
 </style>
 </head>
 <body>
@@ -1940,7 +1960,7 @@ function openLinkCreate(){
   M={type:'link-create',pp:ppNew(null,{allowUndecided:true}),days:14};
   openModal('<h3>링크로 약속 잡기</h3><p class="hint">앱이 없는 친구도, 여러 명(팀플·동아리·모임)도 링크만 열면 되는 시간을 골라요. 내 일정은 제목 없이 “안 되는 시간”으로만 보여요.</p>'+
     '<span class="lbl">무엇을</span><input class="fld" id="f-lkwhat" maxlength="40" placeholder="예: 팀플 회의, 동아리 회식, 저녁">'+
-    '<span class="lbl">장소</span><div id="pp">'+ppHTML(M.pp)+'</div>'+
+    '<div class="meet-step">2. 장소 정하기 <small>지금 정하지 않아도 돼요.</small></div><div id="pp">'+ppHTML(M.pp)+'</div>'+
     '<div class="card" style="margin:8px 0"><label class="ck" style="margin-bottom:8px"><input type="checkbox" id="f-lk-place-reco" checked> 출발역으로 약속장소 추천받기</label>'+
     '<span class="lbl">총 몇 명이 답할 예정이야? <em>(나 포함)</em></span><input class="fld" id="f-lk-expected" type="number" min="2" max="30" value="3">'+
     '<span class="lbl">내 출발역</span><select class="fld" id="f-lk-origin">'+moStationOptions(S.settings.homeStation||'')+'</select>'+
@@ -2607,18 +2627,18 @@ function openFriendMeet(id,pre){
   var info=pre&&(pre.info||(pre.place?placeInfoFromText(pre.place):null));
   M={type:'friend-meet',friendId:id,friendIds:[id],week:wk,minWeek:mon,sel:null,lo:9*60,hi:22*60,pp:ppNew(info,{allowUndecided:true,friendId:id,future:true})};
   var av=meetGroupAvail();M.lo=av[0]*60;M.hi=av[1]*60;
-  openModal('<h3>약속 잡기</h3>'+meetHeadHTML(f)+relationSummaryHTML(id,true)+
+  openModal('<h3>약속 잡기</h3>'+meetHeadHTML(f)+
     '<div id="meet-friend-picker">'+meetFriendPickerHTML()+'</div>'+
-    '<p class="hint" id="meet-group-hint">'+(av[1]>av[0]?'모두 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · '+esc(meetGroupLabel()):'설정한 약속 가능 시간이 서로 겹치지 않아요. 친구 설정을 확인해주세요.')+'</p>'+
-    '<p class="hint">회색 칸은 선택한 사람 중 한 명이라도 일정이 있는 시간이에요. 흰 칸만 모두 가능한 시간이에요.</p>'+
-    '<div id="meetbox"></div><div id="meet-top3">'+groupTopSlotsHTML()+'</div><p class="hint" id="meet-sel"></p><span class="lbl">장소</span><div id="pp">'+ppHTML(M.pp)+'</div><div id="appointment-candidates"'+(M.pp.mode==='undecided'?'':' style="display:none"')+'>'+candidateInputsHTML([])+'</div>'+
-    '<button class="tbtn" style="width:100%;margin:4px 0 8px;text-align:center" data-act="place-reco-toggle">약속장소 추천받기</button><div id="place-reco-panel" style="display:none">'+placeRecoPanelHTML()+'</div>'+'<span class="lbl">뭐 할지 <em>(여러 개 선택 가능)</em></span>'+activityPickerHTML()+
-    '<span class="lbl">직접 적기 <em>(선택)</em></span><input class="fld" id="f-mtwhat" maxlength="60" placeholder="예: 성수에서 밥 먹고 카페">'+
-    '<div class="moilkka-options"><select class="fld" id="f-min-duration"><option value="60">최소 1시간</option><option value="120">최소 2시간</option><option value="180">최소 3시간</option><option value="240">최소 4시간</option></select><select class="fld" id="f-area-pref"><option value="">권역 상관없음</option><option>서울 동쪽</option><option>서울 서쪽</option><option>서울 남쪽</option><option>서울 북쪽</option><option>경기</option></select></div>'+
-    '<span class="lbl">투표 마감 <em>(선택)</em></span><input class="fld" id="f-poll-deadline" type="datetime-local">'+
-    '<span class="lbl">같이 준비할 것 <em>(선택 · 쉼표로 구분)</em></span><input class="fld" id="f-checklist" maxlength="180" placeholder="예: 예약하기, 케이크 사기, 선물 챙기기">'+
-    '<div id="task-assign">'+taskAssignHTML()+'</div>'+
+    '<p class="hint" id="meet-group-hint">'+(av[1]>av[0]?'가능 시간 '+av[0]+':00~'+av[1]+':00':'가능 시간이 겹치지 않아요.')+'</p>'+
+    '<div class="meet-step">1. 시간</div>'+
+    '<div id="meet-top3">'+groupTopSlotsHTML()+'</div><p class="hint" id="meet-sel"></p><details class="meet-grid-more"><summary>시간표에서 직접 고르기</summary><div id="meetbox"></div></details>'+
+    '<div class="meet-step">2. 장소</div><div id="pp">'+ppHTML(M.pp)+'</div><div id="appointment-candidates"'+(M.pp.mode==='undecided'?'':' style="display:none"')+'>'+candidateInputsHTML([])+'</div>'+
+    '<button class="tbtn" style="width:100%;margin:4px 0 8px;text-align:center" data-act="place-reco-toggle">중간 장소 추천</button><div id="place-reco-panel" style="display:none">'+placeRecoPanelHTML()+'</div>'+
+    '<details class="meet-advanced"><summary>더 설정하기</summary><div><span class="lbl">뭐 할지</span>'+activityPickerHTML()+'<input class="fld" id="f-mtwhat" maxlength="60" placeholder="직접 적기 (선택)">'+
+    '<span class="lbl">할 일</span><input class="fld" id="f-checklist" maxlength="180" placeholder="예: 예약하기, 케이크 사기"><div id="task-assign">'+taskAssignHTML()+'</div>'+
+    '<span class="lbl">조건</span><div class="moilkka-options"><select class="fld" id="f-min-duration"><option value="60">1시간 이상</option><option value="120">2시간 이상</option><option value="180">3시간 이상</option><option value="240">4시간 이상</option></select><select class="fld" id="f-area-pref"><option value="">권역 상관없음</option><option>서울 동쪽</option><option>서울 서쪽</option><option>서울 남쪽</option><option>서울 북쪽</option><option>경기</option></select></div><input class="fld" id="f-poll-deadline" type="datetime-local" aria-label="투표 마감"></div></details>'+
     '<p class="hint" id="appointment-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="meet-send">모두에게 약속 신청</button></div>');
+  var meetSheet=document.querySelector('#modal .sheet');if(meetSheet)meetSheet.classList.add('meet-sheet');
   if(pre&&pre.what)$('#f-mtwhat').value=pre.what;
   drawMeet();refreshMeetBusy();
 }
@@ -2718,7 +2738,7 @@ function groupTopSlots(limit){
 }
 function groupTopSlotsHTML(){
   var a=groupTopSlots(3);if(!a.length)return '<p class="hint">이번 주에는 모두가 1시간 이상 비는 시간이 없어요.</p>';
-  return '<div class="top-slots"><b>모두 되는 시간 Top '+a.length+'</b><div>'+a.map(function(x,i){
+  return '<div class="top-slots"><b>추천 시간</b><div>'+a.map(function(x,i){
     return '<button class="sugchip" data-act="meet-top-slot" data-date="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'">'+(i+1)+'순위 · '+mdTxt(parseKey(x.date))+' '+hm(x.s)+'</button>';
   }).join('')+'</div></div>';
 }
@@ -2744,18 +2764,11 @@ function parseMeetTasks(){
 function taskAssignHTML(){
   var people=[{id:Sync.uid,name:myDisplayName()||'나'}].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f)};}));
   var tasks=parseMeetTasks();M.taskAssign=M.taskAssign||{};
-  return '<div class="task-assign-wrap"><b>할 일 담당 정하기</b><p class="hint">사람을 아래 할 일 칸으로 드래그해요. 한 일에 여러 명도 가능해요.</p>'+
-    '<div class="person-pool">'+people.map(function(p){return '<span class="person-drag" draggable="true" data-uid="'+esc(p.id)+'" data-name="'+esc(p.name)+'">'+esc(p.name)+'</span>';}).join('')+'</div>'+
-    '<div>'+tasks.map(function(t){var ids=M.taskAssign[t.id]||[];return '<div class="task-row"><span>'+esc(t.text)+'</span><div class="task-drop" data-task="'+esc(t.id)+'">'+ids.map(function(uid){var p=people.find(function(z){return z.id===uid;});return p?'<span class="person-drag" draggable="true" data-uid="'+esc(uid)+'" data-name="'+esc(p.name)+'">'+esc(p.name)+' ✓</span>':'';}).join('')+'</div></div>';}).join('')+'</div></div>';
+  if(!tasks.length)return '<div class="task-assign-wrap"><p class="hint">할 일을 적으면 담당자를 정할 수 있어요.</p></div>';
+  return '<div class="task-assign-wrap"><b>누가 할까요?</b><p class="hint">드래그 대신 이름을 눌러 선택해요. 여러 명 선택도 가능해요.</p>'+tasks.map(function(t){var ids=M.taskAssign[t.id]||[];return '<div class="task-row"><span>'+esc(t.text)+'</span><div class="task-drop">'+people.map(function(p){return '<button type="button" class="task-person '+(ids.indexOf(p.id)>=0?'on':'')+'" data-act="task-person-toggle" data-task="'+esc(t.id)+'" data-uid="'+esc(p.id)+'">'+esc(p.name)+'</button>';}).join('')+'</div></div>';}).join('')+'</div>';
 }
 function refreshTaskAssign(){var x=$('#task-assign');if(x)x.innerHTML=taskAssignHTML();}
-function bindTaskDrag(){
-  document.querySelectorAll('.person-drag').forEach(function(el){el.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({uid:el.dataset.uid,name:el.dataset.name}));};});
-  document.querySelectorAll('.task-drop').forEach(function(el){
-    el.ondragover=function(e){e.preventDefault();el.classList.add('over');};
-    el.ondragleave=function(){el.classList.remove('over');};
-    el.ondrop=function(e){e.preventDefault();el.classList.remove('over');try{var z=JSON.parse(e.dataTransfer.getData('text/plain')),id=el.dataset.task;M.taskAssign=M.taskAssign||{};M.taskAssign[id]=M.taskAssign[id]||[];if(M.taskAssign[id].indexOf(z.uid)<0)M.taskAssign[id].push(z.uid);refreshTaskAssign();bindTaskDrag();}catch(_){}};});
-}
+function bindTaskDrag(){}
 function assignedChecklist(){
   var tasks=parseMeetTasks(),people=[{id:Sync.uid,name:myDisplayName()||'나'}].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f)};}));
   return tasks.map(function(t){var ids=(M.taskAssign&&M.taskAssign[t.id])||[],names=ids.map(function(uid){var p=people.find(function(z){return z.id===uid;});return p&&p.name;}).filter(Boolean);return {id:t.id,text:t.text,ownerIds:ids,owner:names.length?names.join(', '):'같이',doneBy:[]};});
@@ -2765,8 +2778,7 @@ function meetSend(){
   if(!s0){var i=$('#meet-sel');if(i)i.textContent='먼저 모두 비는 흰 칸을 눌러 시간을 골라주세요';if(msg)msg.textContent='위 표에서 시간을 먼저 골라주세요';return;}
   var info=ppInfo(M.pp);
   if(M.pp.mode!=='undecided'&&!info){if(msg)msg.textContent='장소를 고르거나 “미정”을 눌러주세요';return;}
-  var place=placeInfoText(info),what=$('#f-mtwhat').value.trim(),names=meetGroupNames(),deadline=meetPollDeadline(),
-      checklist=String(($('#f-checklist')&&$('#f-checklist').value)||'').split(',').map(function(x){return x.trim();}).filter(Boolean).map(function(x){return {id:'ck_'+Math.random().toString(36).slice(2),text:x,owner:'all',doneBy:[]};});
+  var place=placeInfoText(info),what=$('#f-mtwhat').value.trim(),names=meetGroupNames(),deadline=meetPollDeadline();
   var candidates=info?[]:cleanCandidates(Array.from(document.querySelectorAll('.f-place-candidate')).map(function(x){return x.value;})),cs={};
   if(candidates.length)cs[Sync.uid]=candidates.slice();
   var groupId='grp_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),sb=friendDb();
@@ -2873,10 +2885,22 @@ function reconcile(r){
     return false;
   }
   var dirty=localAt>0&&(!Sync.lastSeen||localAt>Sync.lastSeen);
-  if(!dirty){applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;}
-  var m=mergeState(S,rem,Sync.lastSeen?Sync.base:null);
+  /* 재로그인/다른 기기에서 계정 데이터를 불러올 때 원격 JSON에 일부 묶음이 빠져 있어도
+     이 기기의 시간표·시험·일정을 삭제하지 않아요. 서버와 로컬 중 한쪽에만 있는 항목은
+     우선 합쳐서 보존하고, 합쳐진 상태를 다시 계정에 저장합니다. */
+  if(!dirty){
+    if(!localHasData&&remoteHasData){applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;}
+    if(localHasData&&!remoteHasData){Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;}
+    var safe=mergeState(S,rem,null);
+    var changed=JSON.stringify(safe)!==JSON.stringify(rem);
+    if(changed){safe.updatedAt=Math.max(Date.now(),rat+1);applyRemote(safe,safe.updatedAt);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;}
+    applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;
+  }
+  /* 데이터 손실 방지가 우선이라 로그인 동기화에서는 삭제 추론을 하지 않아요.
+     명시적으로 앱에서 삭제한 직후의 일반 저장은 push()가 처리합니다. */
+  var m=mergeState(S,rem,null);
   m.updatedAt=Math.max(Date.now(),rat+1);applyRemote(m,m.updatedAt);
-  Sync.lastSeen=rat;saveMeta();return true;
+  Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;
 }
 function cloudGuardSnap(json){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return Promise.resolve();
@@ -2971,12 +2995,15 @@ function pull(){
   }).catch(function(){});
 }
 function applyTheme(){
-  var t=(typeof S!=='undefined'&&S.settings&&S.settings.theme)||lsGet('planner.theme')||'auto';
+  /* 계정 확인 전/로그아웃 상태에서는 특정 계정의 색·배경을 노출하지 않아요.
+     로그인 세션이 붙으면 아래 저장된 계정 설정으로 즉시 다시 그려집니다. */
+  var accountPending=(typeof Sync!=='undefined'&&Sync.kind==='supa'&&!Sync.uid);
+  var t=accountPending?'auto':((typeof S!=='undefined'&&S.settings&&S.settings.theme)||lsGet('planner.theme')||'auto');
   if(t==='auto')document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme',t);
-  var dc=(typeof S!=='undefined'&&S.settings&&S.settings.defColor)||'#dce9f7';
+  var dc=accountPending?'#ffffff':((typeof S!=='undefined'&&S.settings&&S.settings.defColor)||'#dce9f7');
   document.documentElement.style.setProperty('--planner-color',dc);
-  var bg=(typeof S!=='undefined'&&S.settings&&S.settings.bg)||lsGet('planner.bg')||'rainbow';
+  var bg=accountPending?'plain':((typeof S!=='undefined'&&S.settings&&S.settings.bg)||lsGet('planner.bg')||'rainbow');
   if(bg==='plain')document.documentElement.removeAttribute('data-bg');
   else document.documentElement.setAttribute('data-bg',bg);
 }
@@ -3020,7 +3047,13 @@ function supaAttach(session){
   var myUid=Sync.uid;
   pull().catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
     if(Sync.uid!==myUid)return;
-    Sync.loading=false;Sync.on=true;Sync.pulled=true;if(Sync.dirty){Sync.dirty=false;scheduleSync();}
+    Sync.loading=false;Sync.on=true;Sync.pulled=true;
+    /* 이 계정에서 온보딩을 한 번 끝냈다면 다시 학교/색을 묻지 않아요.
+       예전 버전에서 로컬 표식만 남고 cloud flag가 빠진 경우도 여기서 복구해 계정에 저장합니다. */
+    if(lsGet('planner.onboard.'+Sync.uid)&&(!S.settings.onboardDone||!S.settings.schoolConfigured)){
+      S.settings.onboardDone=true;S.settings.schoolConfigured=true;save();
+    }
+    if(Sync.dirty){Sync.dirty=false;scheduleSync();}
     if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
     /* 친구 기능은 시간표 표시를 막지 않게 뒤에서 따로 불러와요 */
     friendLoad().catch(function(){}).then(function(){if(U.tab==='settings'&&!M.type)render();});
@@ -3192,7 +3225,7 @@ function examBar(){
   if(n>0)txt='<b>D-'+n+'</b>';
   else{var left=diffDays(e.end);txt='<b>'+(left===0?'오늘 끝':left+'일 남음')+'</b>';}
   var s=parseKey(e.start),en=parseKey(e.end);
-  return '<button class="exbar" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+(n<=0?' 기간':'')+' <small>'+rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:'')+'</small></span>'+txt+'</button>';
+  return '<button class="exbar" data-act="edit-exam" data-id="'+e.id+'"><span>'+esc(e.name)+(n<=0?' 기간':'')+' <small>'+rangeTxt(e.start,e.end)+(e.time?' · '+e.time:'')+(e.kind?' · '+e.kind:'')+'</small></span>'+txt+'</button>';
 }
 function alldayFor(d){
   var k=dkey(d),w=dow(d);
@@ -3377,11 +3410,11 @@ function homeStrip(){
   var nx=itemsFor(d).filter(function(it){return !it.skipped&&(it.start>=now||(it.end>now));})[0];
   var nc=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped&&it.end>=now;})[0];
   var na=S.events.filter(function(e){var ek=e.date||e.from||'';return e.kind==='appointment'&&ek>=k&&(ek>k||!e.start||toMin(e.start)>=now);}).sort(function(a,b){return ((a.date||a.from||'')+' '+(a.start||'99:99')).localeCompare((b.date||b.from||'')+' '+(b.start||'99:99'));})[0];
-  var nd=S.ddays.filter(function(x){return x.mode==='since'||diffDays(ddNext(x))>=0;}).sort(function(a,b){return ddNext(a)<ddNext(b)?-1:1;})[0];
+  var ne=S.exams.filter(function(x){return (x.end||x.start)>=k;}).sort(function(a,b){return String(a.start).localeCompare(String(b.start));})[0];
   var pct=tot?Math.round(dn/tot*100):0;
   var classCount=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped;}).length;
   var nextCard=nc?'<button class="next-class" style="--c:'+esc(nc.color||S.settings.defColor||'#dce9f7')+'" data-act="course-todos" data-name="'+esc(nc.name)+'"><span><small>'+(nc.start<=now&&nc.end>now?'지금 수업 중':'다음 수업')+' · '+timeShort(fmt(nc.start))+'–'+timeShort(fmt(nc.end))+'</small><b>'+esc(nc.name)+'</b>'+(nc.sub?'<small>'+esc(nc.sub)+'</small>':'')+'</span><em>과목 보기</em><i class="chev">›</i></button>':'';
-  var mini='<div class="hsumm"><div class="hmini">오늘 수업<b>'+classCount+'개</b></div><div class="hmini">가까운 약속<b>'+(na?esc(eventChipLabel(na)):'없음')+'</b></div><div class="hmini">가장 가까운 D-day<b>'+(nd?esc(nd.title)+' · '+esc(ddLabel(nd)):'없음')+'</b></div></div>';
+  var mini='<div class="hsumm"><div class="hmini">할 일<b>'+dn+'/'+tot+'</b></div><div class="hmini">시험<b>'+(ne?esc(ne.name)+' · '+(diffDays(ne.start)>0?'D-'+diffDays(ne.start):(diffDays(ne.start)===0?'오늘':'진행 중')):'없음')+'</b></div><div class="hmini">약속<b>'+(na?esc(eventChipLabel(na)):'없음')+'</b></div></div>';
   return '<section class="home"><div>'+nextCard+'<div class="hrow1"><b>오늘 할 일 '+pct+'%</b>'+(nx?(nx.start>now&&nx.start-now<=30?'<span class="hsoon">곧 시작 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>':'<span>다음 '+timeShort(fmt(nx.start))+' '+esc(nx.name)+'</span>'):'<span>남은 일정 없음</span>')+
     (S.focus[k]?'<span>집중 '+durLong(S.focus[k])+'</span>':'')+(function(){var n=S.todos.filter(function(t){return !t.done&&t.due&&t.due<=k;}).length;return n?'<span class="hdue">마감 '+n+'개</span>':'';})()+'</div><div class="hbar" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>'+mini+'</div><button class="tbtn plus ibt" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
 }
@@ -3584,13 +3617,13 @@ function examCourse(e){
 }
 function examRow(e,noCourse){
   var ec=examCourse(e);
-  return '<div class="setrow'+(e.end<todayKey()?' past':'')+'"><span>'+esc(e.name)+'<small>'+rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:'')+(!noCourse&&ec&&ec!=='기타'&&e.name.replace(/\s/g,'').indexOf(ec.replace(/\s/g,''))<0?' · '+esc(ec):'')+'</small></span><button class="tbtn" data-act="edit-exam" data-id="'+e.id+'">수정</button></div>';
+  return '<div class="setrow'+(e.end<todayKey()?' past':'')+'"><span>'+esc(e.name)+'<small>'+rangeTxt(e.start,e.end)+(e.time?' · '+e.time:'')+(e.kind?' · '+e.kind:'')+(!noCourse&&ec&&ec!=='기타'&&e.name.replace(/\s/g,'').indexOf(ec.replace(/\s/g,''))<0?' · '+esc(ec):'')+'</small></span><button class="tbtn" data-act="edit-exam" data-id="'+e.id+'">수정</button></div>';
 }
 function exPinned(e){return e.pin!=null?e.pin:e.kind!=='기타';}
 function topItems(){
   var tk=todayKey(),items=[];
   S.exams.forEach(function(e){if(!exPinned(e)||e.end<tk)return;var d=diffDays(e.start),lab=d>0?'D-'+d:d===0?'D-day':(diffDays(e.end)===0?'오늘 끝':'진행 중');
-    items.push({id:'exam:'+e.id,type:'exam',title:e.name,sub:rangeTxt(e.start,e.end)+(e.kind?' · '+e.kind:''),value:lab,k:e.start,now:d<=0});});
+    items.push({id:'exam:'+e.id,type:'exam',title:e.name,sub:rangeTxt(e.start,e.end)+(e.time?' · '+e.time:'')+(e.kind?' · '+e.kind:''),value:lab,k:e.start,now:d<=0});});
   S.ddays.forEach(function(x){if(!x.pin)return;var nk=ddNext(x);
     items.push({id:'dd:'+x.id,type:'dd',title:x.title,sub:rangeTxt(nk)+(x.mode==='since'?' 부터':''),value:ddLabel(x),k:x.mode==='since'?'9999':nk,now:diffDays(nk)===0&&x.mode!=='since',color:x.color});});
   var order=S.settings.topOrder||[],rank={};order.forEach(function(id,i){rank[id]=i;});
@@ -4778,26 +4811,24 @@ function drawCourse(){
   if(U.refocus===did){var i=sh.querySelector('.add input');if(i)i.focus();U.refocus=null;}
 }
 function openExam(e){
-  var x=e||{name:'',start:'',end:'',kind:'',pin:true};
-  M={type:'exam',id:e?e.id:null,kind:x.kind||'',single:!e||!x.end||x.end===x.start};
-  openModal('<h3>'+(e?'시험 기간 수정':'시험 기간 추가')+'</h3>'+
-    '<div class="seg">'+['중간고사','기말고사','기타'].map(function(k){return '<button data-act="exam-name" data-v="'+k+'" class="'+(M.kind===k?'on':'')+'">'+k+'</button>';}).join('')+'</div>'+
-    '<input class="fld" id="f-ename" placeholder="이름 (예: 경제학입문, 토익, 과제 제출)" maxlength="30" value="'+esc(x.name)+'">'+
-    '<span class="lbl">날짜</span>'+rangeSeg('f-erange',M.single)+'<div class="row"><input class="fld" type="date" id="f-es" value="'+x.start+'"><span class="eew" id="f-eew"'+(M.single?' style="display:none"':'')+'><span>~</span><input class="fld" type="date" id="f-ee" value="'+(x.end&&x.end!==x.start?x.end:'')+'"></span></div>'+
-    '<label class="ck"><input type="checkbox" id="f-epin"'+(exPinned(x)?' checked':'')+'>맨 위에 D-day 표시</label>'+
-    '<span class="lbl">과목</span><select class="fld" id="f-ecourse"><option value="">선택 안 함</option>'+courseNames().map(function(c){return '<option value="'+esc(c)+'"'+(examCourse(x)===c?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'<option value="기타"'+(x.course==='기타'?' selected':'')+'>기타</option></select>'+
+  var x=e||{name:'',start:'',end:'',kind:'',course:'',time:'',pin:true};
+  M={type:'exam',id:e?e.id:null,kind:x.kind||'중간고사',single:true};
+  var cs=courseNames(),cur=examCourse(x)||'';
+  openModal('<h3>'+(e?'시험 수정':'시험 추가')+'</h3>'+ 
+    '<span class="lbl">과목</span><select class="fld" id="f-ecourse"><option value="">과목 선택</option>'+cs.map(function(c){return '<option value="'+esc(c)+'"'+(cur===c?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'<option value="기타"'+(cur==='기타'?' selected':'')+'>기타</option></select>'+ 
+    '<span class="lbl">시험</span><div class="seg">'+['중간고사','기말고사','기타'].map(function(k){return '<button data-act="exam-name" data-v="'+k+'" class="'+(M.kind===k?'on':'')+'">'+k+'</button>';}).join('')+'</div>'+ 
+    '<div class="row"><input class="fld" type="date" id="f-es" value="'+(x.start||'')+'"><input class="fld" type="time" id="f-etime" value="'+(x.time||'')+'"></div>'+ 
+    '<input class="fld" id="f-ename" placeholder="이름은 비워도 돼요" maxlength="30" value="'+esc(x.name||'')+'">'+ 
+    '<label class="ck"><input type="checkbox" id="f-epin"'+(exPinned(x)?' checked':'')+'>홈에 D-day 표시</label>'+ 
     '<div class="acts">'+(e?'<button class="b-del" data-act="del-exam">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-exam">저장</button></div>');
 }
 function saveExam(){
-  var ecv=$('#f-ecourse')?$('#f-ecourse').value||null:null;
-  var n=$('#f-ename').value.trim(),a=$('#f-es').value,b=$('#f-ee').value;
-  if(!n&&M.kind&&M.kind!=='기타')n=M.kind;
-  if(!n){bad('#f-ename');return;}
+  var course=$('#f-ecourse')?$('#f-ecourse').value||null:null;
+  var a=$('#f-es').value,time=$('#f-etime')?$('#f-etime').value:'',n=$('#f-ename').value.trim();
   if(!a){bad('#f-es');return;}
-  if(M.single||!b)b=a;
-  if(b<a){bad('#f-ee');return;}
-  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=b;e.kind=M.kind||null;e.course=ecv;e.pin=$('#f-epin').checked;}}
-  else S.exams.push({id:uid(),name:n,start:a,end:b,kind:M.kind||null,course:ecv,pin:$('#f-epin').checked});
+  if(!n)n=((course&&course!=='기타')?course+' ':'')+(M.kind||'시험');
+  if(M.id){var e=S.exams.find(function(x){return x.id===M.id;});if(e){e.name=n;e.start=a;e.end=a;e.time=time||null;e.kind=M.kind||null;e.course=course;e.pin=$('#f-epin').checked;}}
+  else S.exams.push({id:uid(),name:n,start:a,end:a,time:time||null,kind:M.kind||null,course:course,pin:$('#f-epin').checked});
   save();closeModal();render();
 }
 function openCourseColor(name){
@@ -5183,6 +5214,8 @@ function act(a,e){
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
     case 'meet-activity':
       b.classList.toggle('on');break;
+    case 'task-person-toggle':
+      var tid=b.dataset.task,uid=b.dataset.uid;M.taskAssign=M.taskAssign||{};M.taskAssign[tid]=M.taskAssign[tid]||[];var qi=M.taskAssign[tid].indexOf(uid);if(qi>=0)M.taskAssign[tid].splice(qi,1);else M.taskAssign[tid].push(uid);refreshTaskAssign();break;
     case 'meet-checklist-refresh':
       refreshTaskAssign();bindTaskDrag();break;
     case 'group-check':
