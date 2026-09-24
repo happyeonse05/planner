@@ -4214,14 +4214,18 @@ function viewTable(){
     '<div class="acts" style="margin-top:10px"><button class="b-ghost" data-act="add-block">+ 수업·일정 추가</button></div></section>'+ddHTML+adHTML+exHTML;
 }
 function viewSettings(){
-  var links=S.settings.links||[];
+  /* 학교 기본 링크는 현재 선택된 학교에서 매번 다시 만들고, 사용자가 직접 추가한 링크만 보존해요. */
+  var spNow=schoolProfile(S.settings.school),campNow=canonicalCampus(spNow.id,S.settings.schoolCampus);
+  var customLinks=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
+  var links=schoolLinks(spNow.id,campNow).concat(customLinks);
   var linkHTML='<section class="card"><div class="card-h"><h3>바로가기</h3><button class="tbtn" data-act="add-link">+ 추가</button></div>'+
     (links.length?links.map(function(l){
       return '<div class="setrow"><a class="lnk" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name)+'<small>'+esc(l.url.replace(/^https?:\/\//,'').replace(/\/$/,''))+'</small></a><button class="tbtn" data-act="edit-link" data-id="'+l.id+'">수정</button></div>';
     }).join(''):'<div class="empty">자주 가는 사이트를 넣어두세요</div>')+'</section>';
   var sp=schoolProfile(S.settings.school),schoolHTML='<section class="card"><div class="card-h"><h3>학교</h3></div>'+ 
-    '<div class="setrow"><span>학교<small>학교별 공지·기숙사 바로가기를 연결해요</small></span><select class="sel" id="set-school">'+schoolOptions(S.settings.school)+'</select></div>'+ 
-    (sp.campuses.length>1?'<div class="setrow"><span>캠퍼스</span><select class="sel" id="set-campus">'+sp.campuses.map(function(c){return '<option value="'+esc(c)+'"'+(c===S.settings.schoolCampus?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select></div>':'')+'</section>';
+    '<div class="setrow" style="align-items:flex-start"><span>학교<small>학교 이름을 검색해서 선택해요</small></span><div style="min-width:0;width:min(62%,420px)"><input class="fld" id="set-school-search" list="set-school-list" autocomplete="off" placeholder="학교 검색" value="'+esc(sp.name)+'" style="margin:0;width:100%"><datalist id="set-school-list">'+schoolDatalist()+'</datalist><small id="set-school-hint" style="display:block;margin-top:5px;color:var(--sub)">예: 가천대학교, 성균관대학교</small></div></div>'+ 
+    (sp.campuses.length>1?'<div class="setrow"><span>캠퍼스</span><select class="sel" id="set-campus">'+sp.campuses.map(function(c){return '<option value="'+esc(c)+'"'+(c===S.settings.schoolCampus?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select></div>':'')+
+    '<div class="setrow"><span>목록에 학교가 없나요?<small>공식 홈페이지를 직접 연결할 수 있어요</small></span><button class="tbtn" data-act="school-add-settings">+ 학교 추가</button></div></section>';
   var th=S.settings.theme||lsGet('planner.theme')||'auto';
   var bg=S.settings.bg||lsGet('planner.bg')||'rainbow';
   var ld=S.settings.logDisplay||{};
@@ -5509,6 +5513,7 @@ function act(a,e){
     case 'close':{var wl=M.type==='login',wo=M.type==='onboard',wc=!!M.fromChat||M.type==='chat-add-room'||M.type==='chat-room-menu'||M.type==='chat-room-rename',ws=M.type==='school-add',wso=ws&&M.fromOnboard; if(wo)finishOnboard();closeModal();if(wl||wo)render();if(wc)drawChat();if(ws){if(wso){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||defCol()};drawOnboard();}else render(true);}break;}
     case 'onboard-skip':finishOnboard();closeModal();render();break;
     case 'school-add-onboard':openSchoolAdd(true);break;
+    case 'school-add-settings':openSchoolAdd(false);break;
     case 'save-school':saveSchoolCustom();break;
     case 'onboard-next':
       if(M.step===0){setSchool(M.school,M.campus);}
@@ -5785,6 +5790,13 @@ document.addEventListener('change',function(e){
   if(e.target.id==='set-meet-s'||e.target.id==='set-meet-e'){var ms=Number($('#set-meet-s').value),me=Number($('#set-meet-e').value);if(me<=ms){e.target.classList.add('bad');return;}S.settings.meetStart=ms;S.settings.meetEnd=me;save();render();friendBusyPush();return;}
   if(e.target.id==='f-afriend'){M.friendId=e.target.value||null;M.tpA=null;if(M.pp){M.pp.friendId=M.friendId;ppDraw();}drawTpick();return;}
   if(e.target.id==='set-school'){if(e.target.value==='__add__'){openSchoolAdd(false);}else{setSchool(e.target.value);render();}return;}
+  if(e.target.id==='set-school-search'){
+    var q=String(e.target.value||'').trim();
+    var picked=allSchoolProfiles().find(function(x){return x.name===q;});
+    if(picked){setSchool(picked.id,picked.campuses[0]||'');render();}
+    else {var h=$('#set-school-hint');if(h)h.textContent=q?'목록에서 학교를 선택해 주세요':'예: 가천대학교, 성균관대학교';}
+    return;
+  }
   if(e.target.id==='set-campus'){setSchool(S.settings.school,e.target.value);render();return;}
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
   if(e.target.dataset&&e.target.dataset.monthItem){S.settings.monthItems[e.target.dataset.monthItem]=e.target.checked;save();render();return;}
