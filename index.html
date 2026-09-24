@@ -855,8 +855,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
 @media(max-width:430px){.ttscan-grid{grid-template-columns:1fr 72px}.ttscan-grid .ttscan-time{grid-column:auto}.ttscan-meta{grid-template-columns:1fr}}
 
 /* 2026-09 mobile appointment UX */
-.meet-sheet{background:color-mix(in srgb,var(--planner-color,#dce9f7) 28%,var(--card))!important}
-.meet-sheet .meet-head,.meet-sheet .meet-advanced,.meet-sheet .task-row,.meet-sheet #meet-top3{background:color-mix(in srgb,var(--planner-color,#dce9f7) 18%,var(--card))}
+.meet-sheet{background:color-mix(in srgb,var(--planner-color,#dce9f7) 52%,var(--card))!important}
+.meet-sheet .meet-head,.meet-sheet .meet-advanced,.meet-sheet .task-row,.meet-sheet #meet-top3{background:color-mix(in srgb,var(--planner-color,#dce9f7) 32%,var(--card))}
 .meet-sheet .fld,.meet-sheet .tbtn,.meet-sheet .pp-sel,.meet-sheet .task-person{background:color-mix(in srgb,var(--planner-color,#dce9f7) 10%,var(--card))}
 .meet-sheet .hint{font-size:11px;line-height:1.35;margin:5px 0 8px}.meet-sheet .meetlegend{font-size:10px}.meet-sheet .meet-step small{display:none}
 .meet-step{margin:12px 0 6px;font-size:14px;font-weight:900}.meet-step small{display:block;margin-top:2px;color:var(--sub);font-size:11px;font-weight:500}
@@ -871,7 +871,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .meet-sheet .task-assign-wrap>b{font-size:12px}
 .meet-sheet .task-assign-wrap .hint{display:none}
 @media(max-width:599px){.meet-sheet{font-size:14px}.meet-sheet h3{font-size:18px;margin-bottom:8px}.meet-sheet .meet-step{margin-top:9px}.meet-sheet .lbl{font-size:11px}.meet-sheet .acts button{height:42px}.hsumm{gap:5px}.hmini{padding:8px!important}.hmini b{font-size:12px!important}}
-.meet-grid-more{margin:7px 0 10px;border:1px solid color-mix(in srgb,var(--planner-color) 35%,var(--edge));border-radius:12px;background:var(--card);overflow:hidden}.meet-grid-more>summary{padding:10px 12px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer;list-style:none}.meet-grid-more>summary::-webkit-details-marker{display:none}.meet-grid-more[open]>summary{color:var(--ink);border-bottom:1px solid var(--edge)}.meet-grid-more>#meetbox{padding:8px}.meet-sheet>.acts{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));z-index:5;margin:12px -16px calc(-16px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--planner-color) 18%,var(--card));border-top:1px solid var(--edge)}
+.meet-grid-more{margin:7px 0 10px;border:1px solid color-mix(in srgb,var(--planner-color) 35%,var(--edge));border-radius:12px;background:var(--card);overflow:hidden}.meet-grid-more>summary{padding:10px 12px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer;list-style:none}.meet-grid-more>summary::-webkit-details-marker{display:none}.meet-grid-more[open]>summary{color:var(--ink);border-bottom:1px solid var(--edge)}.meet-grid-more>#meetbox{padding:8px}.meet-sheet>.acts{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));z-index:5;margin:12px -16px calc(-16px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--planner-color) 36%,var(--card));border-top:1px solid var(--edge)}
 
 </style>
 </head>
@@ -3003,6 +3003,9 @@ function applyTheme(){
   else document.documentElement.setAttribute('data-theme',t);
   var dc=accountPending?'#ffffff':((typeof S!=='undefined'&&S.settings&&S.settings.defColor)||'#dce9f7');
   document.documentElement.style.setProperty('--planner-color',dc);
+  /* 이름 기본 색은 단순 UI 포인트색이 아니라 플래너 항목의 공통색이에요.
+     클라우드에서 예전 개별 색이 다시 내려와도 화면을 그릴 때 현재 기본색으로 맞춥니다. */
+  if(!accountPending&&typeof S!=='undefined'&&S.settings&&typeof applyDefaultColorToPlanner==='function')applyDefaultColorToPlanner();
   var bg=accountPending?'plain':((typeof S!=='undefined'&&S.settings&&S.settings.bg)||lsGet('planner.bg')||'rainbow');
   if(bg==='plain')document.documentElement.removeAttribute('data-bg');
   else document.documentElement.setAttribute('data-bg',bg);
