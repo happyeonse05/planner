@@ -1478,7 +1478,7 @@ function placeSearchRows(q){
   if(sq.length>=1&&toks.length===1){
     SEOUL_STATIONS.forEach(function(s){if(s.indexOf(sq)===0)stations.push(s);});
     if(sq.length>=2)SEOUL_STATIONS.forEach(function(s){if(s.indexOf(sq)>0&&stations.indexOf(s)<0)stations.push(s);});
-    if(sq.length>=2&&stations.indexOf(sq)<0&&(wantStation||(!areas.length&&!stations.length))&&!/(시|도|구|군)$/.test(sq))stations.push(sq);
+    if(sq.length>=2&&stations.indexOf(sq)<0&&(wantStation||(!areas.length&&!stations.length))&&/^[가-힣0-9]+$/.test(sq)&&!/(시|도|구|군)$/.test(sq))stations.push(sq);
   }
   var ar=areas.slice(0,30).map(function(x){return {info:x.p,label:placeInfoText(x.p)};}),sr=stations.slice(0,12).map(function(s){return {info:{kind:'station',station:stationName(s)},label:stationName(s)};});
   return (wantStation?sr.concat(ar):ar.concat(sr)).slice(0,30);
@@ -1630,10 +1630,18 @@ function appointmentPrecheckHTML(){
   return out.join('');
 }
 function latestShared(rid){return (FriendSync.shared||[]).find(function(x){return x.request_id===rid;});}
-function updateSharedPayload(r,p,msg){
-  var sb=friendDb();if(!sb||!r)return Promise.resolve();
-  r.payload=p;mergeSharedAppointments(FriendSync.shared);softRender();
-  return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',r.request_id).then(function(x){if(x.error)throw x.error;return friendRequestLoad();}).then(function(){if(msg)inAppToast(msg);}).catch(function(){inAppToast('약속을 업데이트하지 못했어요. 잠시 뒤 다시 해주세요');});
+/* 약속 정보는 서버 최신본을 먼저 읽고 내 변경만 얹어서 저장해요 (둘이 동시에 눌러도 서로 답이 안 지워져요) */
+function sharedPatch(rid,fn){
+  var sb=friendDb();if(!sb)return Promise.reject(new Error('로그인이 필요해요'));
+  return sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload').eq('request_id',rid).maybeSingle().then(function(x){
+    if(x.error)throw x.error;if(!x.data)throw new Error('약속을 찾지 못했어요');
+    var p=JSON.parse(JSON.stringify(x.data.payload||{})),res=fn(p,x.data);
+    return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',rid).then(function(y){if(y.error)throw y.error;var loc=latestShared(rid);if(loc)loc.payload=p;return {p:p,res:res};});
+  });
+}
+function updateSharedPayload(r,fn,msg){
+  if(!r)return Promise.resolve();
+  return sharedPatch(r.request_id,fn).then(function(o){mergeSharedAppointments(FriendSync.shared);softRender();var m=typeof msg==='function'?msg(o):msg;if(m)inAppToast(m);return friendRequestLoad();}).catch(function(){inAppToast('약속을 업데이트하지 못했어요. 잠시 뒤 다시 해주세요');});
 }
 function openPlaceDecision(rid){
   var r=latestShared(rid);if(!r)return;
@@ -1658,16 +1666,18 @@ function drawCandidateCommon(){
 }
 function saveCandidateSelection(){
   var r=latestShared(M.requestId);if(!r)return;
-  var p=JSON.parse(JSON.stringify(r.payload||{})),fid=sharedFriendOf(r),cs=p.candidateSelections||{},sel=cleanCandidates(M.selected||[]);
-  p.placeCandidates=cleanCandidates((p.placeCandidates||[]).concat(M.added||[]));cs[Sync.uid]=sel;p.candidateSelections=cs;p.candidateBy=Sync.uid;p.candidateAt=Date.now();
-  var common=sel.filter(function(x){return (cs[fid]||[]).indexOf(x)>=0;});
-  if(common.length===1){finalizeCandidate(common[0],p,r);return;}
-  closeModal();updateSharedPayload(r,p,common.length>1?'겹친 곳이 '+common.length+'곳이에요. 하나를 눌러 확정해요':'장소 후보 선택을 저장했어요');
+  var sel=cleanCandidates(M.selected||[]),added=(M.added||[]).slice(),me=Sync.uid;closeModal();
+  updateSharedPayload(r,function(p,row){
+    var fid=row.user_a===me?row.user_b:row.user_a,cs=p.candidateSelections||{};
+    p.placeCandidates=cleanCandidates((p.placeCandidates||[]).concat(added));cs[me]=sel;p.candidateSelections=cs;p.candidateBy=me;p.candidateAt=Date.now();
+    var common=p.place?[]:sel.filter(function(x){return (cs[fid]||[]).indexOf(x)>=0;});
+    if(common.length===1){p.place=common[0];p.placeInfo=placeInfoFromText(common[0]);p.placePending=false;p.placeConfirmedBy=me;}
+    return common;
+  },function(o){var c=o.res||[];return c.length===1?euro(c[0])+' 장소를 확정했어요. 두 사람 캘린더에 같이 바뀌어요':c.length>1?'겹친 곳이 '+c.length+'곳이에요. 알림에서 하나를 눌러 확정해요':'장소 후보 선택을 저장했어요';});
 }
-function finalizeCandidate(v,pp,rr){
-  var r=rr||latestShared(M.requestId);if(!r)return;
-  var p=pp||JSON.parse(JSON.stringify(r.payload||{}));p.place=v;p.placeInfo=placeInfoFromText(v);p.placePending=false;p.placeConfirmedBy=Sync.uid;
-  closeModal();updateSharedPayload(r,p,euro(v)+' 장소를 확정했어요. 두 사람 캘린더에 같이 바뀌어요');
+function finalizeCandidate(v){
+  var r=latestShared(M.requestId);if(!r)return;closeModal();
+  updateSharedPayload(r,function(p){p.place=v;p.placeInfo=placeInfoFromText(v);p.placePending=false;p.placeConfirmedBy=Sync.uid;},euro(v)+' 장소를 확정했어요. 두 사람 캘린더에 같이 바뀌어요');
 }
 /* ----- 약속 끝난 뒤: 재밌었어? ----- */
 function pendingPostMeets(){
@@ -1681,12 +1691,14 @@ function postMeetRowHTML(r,compact){
 }
 function postMeetNudgesHTML(){return pendingPostMeets().slice(0,3).map(function(r){return postMeetRowHTML(r);}).join('');}
 function postMeetAnswer(rid,yes){
-  var row=latestShared(rid),sb=friendDb();if(!row||!sb)return;
-  var p=JSON.parse(JSON.stringify(row.payload||{})),fb=p.feedback||{},fid=sharedFriendOf(row);fb[Sync.uid]=yes?'yes':'no';p.feedback=fb;row.payload=p;
+  var row=latestShared(rid);if(!row||!friendDb())return;
+  var fid=sharedFriendOf(row),me=Sync.uid,lp=JSON.parse(JSON.stringify(row.payload||{}));(lp.feedback=lp.feedback||{})[me]=yes?'yes':'no';row.payload=lp;
   if(M.type==='notices')drawNotices();else softRender();
-  sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',rid).then(function(r){if(r.error)throw r.error;return friendRequestLoad();}).then(function(){
+  sharedPatch(rid,function(p){var fb=p.feedback||{};fb[me]=yes?'yes':'no';p.feedback=fb;}).then(function(o){
+    var fb=o.p.feedback||{};
     if(!yes)inAppToast('안 만난 약속으로 표시했어요');
     else if(fb[fid]!=='yes')inAppToast('웅! '+requestFriendCode(fid)+'님도 웅 하면 추억으로 자동 기록돼요');
+    return friendRequestLoad();
   }).catch(function(){inAppToast('답을 저장하지 못했어요');});
 }
 function memoryRowFromShared(r){
@@ -1713,7 +1725,7 @@ function autoMemoryFromShared(){
     jobs.push(sb.from('planner_friend_memories').upsert(withId,{onConflict:'id',ignoreDuplicates:true}).then(function(x){
       if(x.error){if(Sync.uid!==r.user_a)return null;return sb.from('planner_friend_memories').insert(row).then(function(y){if(y.error)throw y.error;return true;});}
       return true;
-    }).then(function(ok){if(!ok)return;var np=JSON.parse(JSON.stringify(p));np.memoryCreated=true;r.payload=np;return sb.from('planner_shared_appointments').update({payload:np,updated_at:new Date().toISOString()}).eq('request_id',r.request_id);}));
+    }).then(function(ok){if(!ok)return;var np=JSON.parse(JSON.stringify(p));np.memoryCreated=true;r.payload=np;return sharedPatch(r.request_id,function(q){q.memoryCreated=true;});}));
   });
   if(!jobs.length)return Promise.resolve();
   return Promise.all(jobs).then(function(){return friendLoadMemories();}).then(function(){autoMemoryFromShared();softRender();}).catch(function(){});
@@ -2015,11 +2027,8 @@ function respondAppointmentRequest(accept){
 }
 function sharedAppointmentPayload(e){var p=Object.assign({},e);delete p.id;delete p.shared;delete p.sharedRequestId;return p;}
 function updateSharedAppointment(e){
-  var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();
-  var r=latestShared(e.sharedRequestId),p=r?JSON.parse(JSON.stringify(r.payload||{})):sharedAppointmentPayload(e);
-  ['what','place','placeInfo','date','start','end','title'].forEach(function(k){p[k]=e[k]===undefined?null:e[k];});
-  if(p.place)p.placePending=false;
-  return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',e.sharedRequestId).then(function(x){if(x.error)throw x.error;if(r)r.payload=p;return friendRequestLoad();});
+  if(!friendDb()||!e||!e.sharedRequestId)return Promise.resolve();
+  return sharedPatch(e.sharedRequestId,function(p){['what','place','placeInfo','date','start','end','title'].forEach(function(k){p[k]=e[k]===undefined?null:e[k];});if(p.place)p.placePending=false;}).then(function(){return friendRequestLoad();});
 }
 function cancelSharedAppointment(e){var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();return sb.from('planner_appointment_requests').update({status:'cancelled',responded_at:new Date().toISOString()}).eq('id',e.sharedRequestId).then(function(r){if(r.error)throw r.error;return sb.from('planner_shared_appointments').delete().eq('request_id',e.sharedRequestId);}).then(function(r){if(r.error)throw r.error;});}
 /* ---------- 친구 요청(수락제) · 약속 가능 시간 · 약속 잡기 ---------- */
