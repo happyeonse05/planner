@@ -956,6 +956,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .gapfill-row b{flex:none;font-size:12px;color:var(--sub);font-weight:700;font-variant-numeric:tabular-nums}
 .gapfill-home{cursor:pointer}.gapfill-home em{color:var(--ink)!important;font-weight:700}
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
 <div id="app">
@@ -1312,7 +1315,27 @@ function normalize(s){
     o.events.forEach(function(e){if(PALETTE.indexOf(e.color)<0)e.color=PALETTE[5];});
     o.settings.colorV2=true;
   }
-  return o;
+  return migratePlannerState(o);
+}
+/* ---------- 앱 데이터 스키마 / 안전 마이그레이션 ---------- */
+var APP_SCHEMA_VERSION=5;
+function migratePlannerState(st){
+  if(!st||typeof st!=='object')return st;
+  st.settings=st.settings&&typeof st.settings==='object'?st.settings:{};
+  var v=Number(st.settings._schemaVersion||1);
+  /* 마이그레이션은 추가형만 사용: 기존 사용자 필드를 삭제/초기화하지 않아요. */
+  if(v<2){if(st.settings.onboardDone===undefined)st.settings.onboardDone=!!st.settings.schoolConfigured;v=2;}
+  if(v<3){if(!st.settings.monthItems)st.settings.monthItems={appointment:true,event:true,dday:true,exam:true,allday:true,todo:true};v=3;}
+  if(v<4){st.settings._lastMigrationAt=Date.now();v=4;}
+  if(v<5){if(!st.settings._syncMeta)st.settings._syncMeta={cols:{},maps:{}};v=5;}
+  st.settings._schemaVersion=APP_SCHEMA_VERSION;
+  return st;
+}
+function plannerStateValid(st){
+  if(!st||typeof st!=='object'||!st.settings||typeof st.settings!=='object')return false;
+  var arrays=['classes','events','todos','routines','exams','allday','trackers','selfchat','diaries','dayCloses','ddays'];
+  for(var i=0;i<arrays.length;i++)if(!Array.isArray(st[arrays[i]]))return false;
+  return true;
 }
 var storageOK=true;
 function load(){
@@ -1444,11 +1467,11 @@ function savePrevBackup(st){
   var o=bkOwner();
   return bkPut(o?'prev.'+o:'prev',raw);
 }
-/* 자동 백업 기록 (최근 40개, 평소엔 5분에 한 번) */
+/* 자동 백업 기록: 최근 24시간을 촘촘히 보존 (15분 간격, 최대 96개) */
 function bkRingAdd(st,force){
   if(!st||!hasPlannerData(st))return Promise.resolve(false);
   var last=+(lsGet('planner.idbAt')||0);
-  if(!force&&Date.now()-last<5*60000)return Promise.resolve(false);
+  if(!force&&Date.now()-last<15*60000)return Promise.resolve(false);
   lsSet('planner.idbAt',String(Date.now()));
   var data;try{data=JSON.parse(JSON.stringify(st));}catch(e){return Promise.resolve(false);}
   var owner=bkOwner();
@@ -1456,7 +1479,7 @@ function bkRingAdd(st,force){
     if(!db)return false;
     return new Promise(function(res){try{var tx=db.transaction('snapshots','readwrite'),os=tx.objectStore('snapshots');
       os.add({at:Date.now(),owner:owner,data:data});
-      var kr=os.getAllKeys();kr.onsuccess=function(){var ks=kr.result||[];ks.slice(0,Math.max(0,ks.length-40)).forEach(function(k){os.delete(k);});};
+      var kr=os.getAllKeys();kr.onsuccess=function(){var ks=kr.result||[];ks.slice(0,Math.max(0,ks.length-96)).forEach(function(k){os.delete(k);});};
       tx.oncomplete=function(){res(true);};tx.onerror=tx.onabort=function(){res(false);};}catch(e){res(false);}});
   });
 }
@@ -1603,11 +1626,52 @@ function recoverLocalBackup(){
     S=normalize(cand);S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}render(true);
   });
 }
+/* ---------- 항목 단위 기기 동기화 ----------
+   전체 JSON의 최신 시각만 비교하면 아이폰/아이패드에서 서로 다른 항목을 수정했을 때
+   마지막 저장이 다른 기기의 변경을 덮을 수 있어요. 각 항목/맵 키의 변경 시각과 삭제표식을
+   상태 안에 함께 저장해, 서로 다른 항목은 합치고 같은 항목만 더 최근 변경을 선택합니다. */
+function syncMeta(st){
+  st.settings=st.settings||{};
+  var m=st.settings._syncMeta;
+  if(!m||typeof m!=='object')m=st.settings._syncMeta={cols:{},maps:{}};
+  m.cols=m.cols||{};m.maps=m.maps||{};return m;
+}
+function stableItem(x){try{var y=JSON.parse(JSON.stringify(x));delete y.updatedAt;return JSON.stringify(y);}catch(e){return '';}}
+function stampItemChanges(prev,cur,at){
+  var m=syncMeta(cur),pm=prev&&prev.settings&&prev.settings._syncMeta||{cols:{},maps:{}};
+  COLS.forEach(function(c){
+    var old={},now={};(prev&&prev[c]||[]).forEach(function(x){if(x&&x.id)old[x.id]=x;});(cur[c]||[]).forEach(function(x){if(x&&x.id)now[x.id]=x;});
+    var cm=m.cols[c]||(m.cols[c]={}),pcm=(pm.cols&&pm.cols[c])||{};
+    Object.keys(now).forEach(function(id){if(!old[id]||stableItem(old[id])!==stableItem(now[id]))cm[id]={u:at};else if(!cm[id]&&pcm[id])cm[id]=pcm[id];});
+    Object.keys(old).forEach(function(id){if(!now[id])cm[id]={u:at,d:1};});
+  });
+  MAPS.forEach(function(k){
+    var old=prev&&prev[k]||{},now=cur[k]||{},mm=m.maps[k]||(m.maps[k]={}),pmm=(pm.maps&&pm.maps[k])||{};
+    var keys={};Object.keys(old).concat(Object.keys(now)).forEach(function(x){keys[x]=1;});
+    Object.keys(keys).forEach(function(id){if(!(id in now)&&id in old)mm[id]={u:at,d:1};else if(!(id in old)||stableItem(old[id])!==stableItem(now[id]))mm[id]={u:at};else if(!mm[id]&&pmm[id])mm[id]=pmm[id];});
+  });
+}
+function mergeStateV2(loc,rem){
+  var out=JSON.parse(JSON.stringify(loc)),lm=syncMeta(out),rm=rem&&rem.settings&&rem.settings._syncMeta||{cols:{},maps:{}};
+  COLS.forEach(function(c){
+    var a={},b={};(loc[c]||[]).forEach(function(x){if(x&&x.id)a[x.id]=x;});(rem[c]||[]).forEach(function(x){if(x&&x.id)b[x.id]=x;});
+    var ids={};Object.keys(a).concat(Object.keys(b)).concat(Object.keys((lm.cols&&lm.cols[c])||{})).concat(Object.keys((rm.cols&&rm.cols[c])||{})).forEach(function(id){ids[id]=1;});
+    var rows=[],meta=lm.cols[c]||(lm.cols[c]={}),rmeta=(rm.cols&&rm.cols[c])||{};
+    Object.keys(ids).forEach(function(id){var la=meta[id]||{},ra=rmeta[id]||{},lu=+la.u||0,ru=+ra.u||0,useR=ru>lu,win=useR?ra:la,val=useR?b[id]:a[id];if(ru===lu&&!val)val=a[id]||b[id];if(!win.d&&val)rows.push(JSON.parse(JSON.stringify(val)));meta[id]=JSON.parse(JSON.stringify(ru>lu?ra:la));});out[c]=rows;
+  });
+  MAPS.forEach(function(k){
+    var a=loc[k]||{},b=rem[k]||{},dst={},meta=lm.maps[k]||(lm.maps[k]={}),rmeta=(rm.maps&&rm.maps[k])||{},ids={};Object.keys(a).concat(Object.keys(b)).concat(Object.keys(meta)).concat(Object.keys(rmeta)).forEach(function(id){ids[id]=1;});
+    Object.keys(ids).forEach(function(id){var la=meta[id]||{},ra=rmeta[id]||{},useR=(+ra.u||0)>(+la.u||0),win=useR?ra:la,val=useR?b[id]:a[id];if((+ra.u||0)===(+la.u||0)&&val===undefined)val=a[id]!==undefined?a[id]:b[id];if(!win.d&&val!==undefined)dst[id]=JSON.parse(JSON.stringify(val));meta[id]=JSON.parse(JSON.stringify(useR?ra:la));});out[k]=dst;
+  });
+  mergeSettings(out.settings||(out.settings={}),rem.settings||{});return normalize(out);
+}
 function save(){
-  S.updatedAt=Date.now();
+  if(!plannerStateValid(S)){setSyncUI('error');Sync.diag='데이터 형식 이상을 감지해서 저장을 중단했어요. 마지막 정상 백업은 유지돼요.';try{inAppToast('저장 이상을 감지했어요. 기존 데이터는 보호했어요');}catch(e){}return;}
+  S.settings._schemaVersion=APP_SCHEMA_VERSION;
+  var previous=null,prevState=null;try{previous=localStorage.getItem(KEY);prevState=previous?normalize(JSON.parse(previous)):null;}catch(e){}
+  var saveAt=Date.now();stampItemChanges(prevState,S,saveAt);S.updatedAt=saveAt;
   var ph=prefHash(S);if(PREF_H&&ph!==PREF_H)S.settings.prefsAt=Date.now();PREF_H=ph;
-  var previous=null,json=JSON.stringify(S);
-  try{previous=localStorage.getItem(KEY);}catch(e){}
+  var json=JSON.stringify(S);
   try{localStorage.setItem(KEY,json);storageOK=true;}
   catch(e){
     /* 꽉 찼으면 옛 사본 자리를 비우고 한 번 더 */
@@ -1635,6 +1699,14 @@ var SUPA_TABLE='planner';
 
 /* ---------- 기기 간 동기화 (사용 가능할 때만) ---------- */
 var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null,sb:null,email:'',uid:null,examGuardAt:0};
+/* ---------- 추가 과금 없는 백업 구조 ----------
+   외부 종량제 저장소는 사용하지 않습니다.
+   1) 기기 IndexedDB 자동 백업 40개
+   2) Supabase 계정 원본
+   3) Supabase 날짜별 스냅샷 30일
+   + 사용자가 JSON/백업 코드를 내보낼 수 있습니다. */
+function mirrorPush(){return Promise.resolve(false);}
+function mirrorRescueIfUseful(){return Promise.resolve(false);}
 var SyncUI={state:'local',at:0};
 function setSyncUI(st){var was=SyncUI.state;SyncUI.state=st;SyncUI.at=Date.now();if(st==='error'&&was!=='error'&&Date.now()-(SyncUI.errDrawn||0)>30000&&(SyncUI.errDrawn=Date.now())&&typeof U!=='undefined'&&U.tab==='settings'&&typeof M!=='undefined'&&!M.type)setTimeout(function(){try{render();}catch(e){}},0);var el=document.getElementById('sync-state');if(el){el.className='sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'');el.innerHTML=syncStateHTML(true);}}
 function syncStateHTML(inner){var st=SyncUI.state;if(!Sync.uid)return (inner?'':'<div id="sync-state" class="sync-state">')+'<i class="sync-dot"></i>이 기기에 저장됨'+(inner?'':'</div>');var txt=st==='saving'?'계정에 저장 중…':st==='error'?'계정 동기화 실패':'계정 동기화 완료';return (inner?'':'<div id="sync-state" class="sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'')+'">')+'<i class="sync-dot"></i>'+txt+(inner?'':'</div>');}
@@ -3023,14 +3095,14 @@ function reconcile(r){
   if(!dirty){
     if(!localHasData&&remoteHasData){applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;}
     if(localHasData&&!remoteHasData){Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;}
-    var safe=mergeState(S,rem,null);
+    var safe=mergeStateV2(S,rem);
     var changed=JSON.stringify(safe)!==JSON.stringify(rem);
     if(changed){safe.updatedAt=Math.max(Date.now(),rat+1);applyRemote(safe,safe.updatedAt);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;}
     applyRemote(rem,rat);Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return false;
   }
   /* 데이터 손실 방지가 우선이라 로그인 동기화에서는 삭제 추론을 하지 않아요.
      명시적으로 앱에서 삭제한 직후의 일반 저장은 push()가 처리합니다. */
-  var m=mergeState(S,rem,null);
+  var m=mergeStateV2(S,rem);
   m.updatedAt=Math.max(Date.now(),rat+1);applyRemote(m,m.updatedAt);
   Sync.lastSeen=rat;Sync.base=idsOf(S);saveMeta();return true;
 }
@@ -3042,27 +3114,38 @@ function cloudGuardSnap(json){
 function snapDates(){try{return JSON.parse(lsGet('planner.snapDates')||'[]');}catch(e){return [];}}
 function snapshotIfNeeded(){
   if(!hasPlannerData(S))return;
-  var tk=todayKey(),ds=snapDates();
-  if(ds.length&&ds[ds.length-1]===tk)return;
-  var json=JSON.stringify(S);
-  bkPut('snap.'+tk,json);
-  ds.push(tk);
-  while(ds.length>30){var old=ds.shift();bkDel('snap.'+old);}
-  lsSet('planner.snapDates',JSON.stringify(ds));
-  cloudSnapshot(tk,json);
+  var now=new Date(),tk=todayKey(),ds=snapDates();
+  /* 기기에는 일별 복원 지점 30일을 별도로 유지 */
+  if(!ds.length||ds[ds.length-1]!==tk){
+    var json=JSON.stringify(S);bkPut('snap.'+tk,json);ds.push(tk);
+    while(ds.length>30){var old=ds.shift();bkDel('snap.'+old);}
+    lsSet('planner.snapDates',JSON.stringify(ds));
+  }
+  cloudSnapshotTiers(now,JSON.stringify(S));
 }
-function cloudSnapshot(tk,json){
+function cloudSnapshotTiers(now,json){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return;
-  try{
-    encryptCloudValue(json).then(function(cipher){return Sync.sb.from('planner_snapshots').upsert({user_id:Sync.uid,date:tk,json:cipher,updated_at:Date.now()});}).then(function(){
-      var cutoff=dkey(addDays(new Date(),-30));
-      Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).lt('date',cutoff);
-    },function(){});
-  }catch(e){}
+  /* 전문 앱식 소형 보존정책: 최근 24시간=시간별, 최근 30일=일별, 최근 12개월=월별 */
+  var hour='h:'+dkey(now)+'~'+pad(now.getHours());
+  var day='d:'+dkey(now);
+  var month='m:'+now.getFullYear()+'-'+pad(now.getMonth()+1);
+  encryptCloudValue(json).then(function(cipher){
+    var rows=[hour,day,month].map(function(k){return {user_id:Sync.uid,date:k,json:cipher,updated_at:Date.now()};});
+    return Sync.sb.from('planner_snapshots').upsert(rows);
+  }).then(function(){pruneCloudSnapshotTiers();},function(){});
+}
+function pruneCloudSnapshotTiers(){
+  if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return;
+  var hcut=new Date(Date.now()-24*3600000),dcut=addDays(new Date(),-30),mcut=new Date();mcut.setMonth(mcut.getMonth()-12);
+  var hk='h:'+dkey(hcut)+'~'+pad(hcut.getHours()),dk='d:'+dkey(dcut),mk='m:'+mcut.getFullYear()+'-'+pad(mcut.getMonth()+1);
+  /* prefix 범위 안에서만 삭제해서 다른 종류의 복원 지점은 건드리지 않음 */
+  Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).like('date','h:%').lt('date',hk).then(function(){},function(){});
+  Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).like('date','d:%').lt('date',dk).then(function(){},function(){});
+  Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).like('date','m:%').lt('date',mk).then(function(){},function(){});
 }
 function fetchCloudSnaps(){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return Promise.resolve([]);
-  return Sync.sb.from('planner_snapshots').select('date').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(30)
+  return Sync.sb.from('planner_snapshots').select('date').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(200)
     .then(function(res){return (res&&res.data)?res.data.map(function(r){return r.date;}):[];},function(){return [];});
 }
 function loadCloudSnap(k){
@@ -3071,13 +3154,22 @@ function loadCloudSnap(k){
 }
 function snapBoxHTML(dates,loading){
   if(!dates.length&&!loading)return '';
-  var lbl=Sync.kind==='supa'&&Sync.uid?'계정에 자동 저장된 날짜별 백업 (최근 30일)':'이 기기에 자동 저장된 날짜별 백업 (최근 30일)';
-  var latest=dates.slice().sort().reverse();
-  var lab=function(k){var p=k.split('~'),d=parseKey(p[0]),t=(d.getMonth()+1)+'/'+d.getDate();return p[1]?t+' '+p[1].slice(0,2)+':'+p[1].slice(2)+' 덮기 전':t;};
-  return '<p class="lbl" style="margin-top:14px">'+lbl+'</p><div class="snaplist">'+latest.map(function(k){return '<button class="tbtn" data-act="load-snap" data-k="'+esc(k)+'">'+esc(lab(k))+'</button>';}).join('')+(loading?'<span class="tbtn" style="opacity:.5">불러오는 중…</span>':'')+'</div><p class="hint">최근 백업만 보여줘요. 날짜를 눌러 칸에 불러온 다음, 지금 걸 지키려면 \'합치기\'를 눌러요</p>';
+  var lab=function(k){
+    if(k.indexOf('h:')===0){var p=k.slice(2).split('~'),d=parseKey(p[0]);return (d.getMonth()+1)+'/'+d.getDate()+' '+p[1]+':00';}
+    if(k.indexOf('d:')===0){var d=parseKey(k.slice(2));return (d.getMonth()+1)+'/'+d.getDate();}
+    if(k.indexOf('m:')===0)return k.slice(2)+' 월 보관본';
+    var p=k.split('~'),d=parseKey(p[0]);return (d.getMonth()+1)+'/'+d.getDate()+(p[1]?' '+p[1].slice(0,2)+':'+p[1].slice(2):'');
+  };
+  var section=function(title,arr,max){arr=arr.slice().sort().reverse().slice(0,max);if(!arr.length)return '';return '<p class="lbl" style="margin-top:14px">'+title+'</p><div class="snaplist">'+arr.map(function(k){return '<button class="tbtn" data-act="load-snap" data-k="'+esc(k)+'">'+esc(lab(k))+'</button>';}).join('')+'</div>';};
+  var h=dates.filter(function(k){return k.indexOf('h:')===0;}),d=dates.filter(function(k){return k.indexOf('d:')===0;}),m=dates.filter(function(k){return k.indexOf('m:')===0;}),legacy=dates.filter(function(k){return !/^[hdm]:/.test(k);});
+  var html='<p class="lbl" style="margin-top:14px">복구센터 · 계정 복원 지점</p><p class="hint">지금 상태는 건드리지 않고 원하는 시점의 백업을 먼저 불러와 확인할 수 있어요.</p>';
+  html+=section('최근 24시간 · 시간별',h,24)+section('최근 30일 · 일별',d.concat(legacy),30)+section('최근 12개월 · 월별',m,12);
+  if(loading)html+='<span class="tbtn" style="opacity:.5">불러오는 중…</span>';
+  return html;
 }
 function push(){
   Sync.timer=null;
+  if(!plannerStateValid(S)){setSyncUI('error');Sync.diag='손상 가능성이 있는 데이터의 클라우드 업로드를 차단했어요.';return Promise.resolve();}
   if(!Sync.db)return Promise.resolve();
   if(Sync.busy||(Sync.kind==='supa'&&!Sync.pulled)){Sync.dirty=true;return Promise.resolve();}
   Sync.busy=true;
@@ -3087,13 +3179,13 @@ function push(){
     if(snap.exists){r=snap.data()||{};try{rem=normalize(JSON.parse(r.json));}catch(e){rem=null;}}
     if(r&&!Sync.forceRestore){
       if((+r.updatedAt||0)!==Sync.lastSeen){try{reconcile(r);}catch(e){}}
-      else if(!Sync.base&&rem){var m0=mergeState(S,rem,null);if(itemCount(m0)!==itemCount(S)){m0.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);S=m0;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(Sync.uid)saveAccountState(Sync.uid,S);if(!M.type)render();}}
+      else if(!Sync.base&&rem){var m0=mergeStateV2(S,rem);if(itemCount(m0)!==itemCount(S)){m0.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);S=m0;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(Sync.uid)saveAccountState(Sync.uid,S);if(!M.type)render();}}
       /* 빈 플래너로 내용 있는 계정을 덮지 않아요 */
       if(rem&&hasPlannerData(rem)&&!hasPlannerData(S)){applyRemote(rem,+r.updatedAt||0);Sync.lastSeen=+r.updatedAt||0;Sync.base=idsOf(S);saveMeta();return;}
     }
     /* 항목이 많이 줄어드는 저장은 덮기 전에 계정에 사본을 하나 남겨요 */
     var guard=(r&&rem&&itemCount(rem)-itemCount(S)>=5)?cloudGuardSnap(r.json):Promise.resolve();
-    return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();if(Sync.uid)vaultPut(Sync.uid,S);setSyncUI('ok');});
+    return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();if(Sync.uid)vaultPut(Sync.uid,S);setSyncUI('ok');mirrorPush();});
   }).catch(function(e){setSyncUI('error');Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
     .then(function(){
       Sync.busy=false;
@@ -3121,7 +3213,7 @@ function pull(){
       if(remNow){
         var primary=remoteAt>localAt?remNow:S;
         var secondary=remoteAt>localAt?S:remNow;
-        var joined=mergeState(primary,secondary,null);
+        var joined=mergeStateV2(primary,secondary);
         var differsRemote=JSON.stringify(joined)!==JSON.stringify(remNow);
         var differsLocal=JSON.stringify(joined)!==JSON.stringify(S);
         if(differsLocal||differsRemote){
@@ -3151,12 +3243,13 @@ function applyTheme(){
   var t=accountPending?'auto':((typeof S!=='undefined'&&S.settings&&S.settings.theme)||lsGet('planner.theme')||'auto');
   if(t==='auto')document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme',t);
-  var dc=accountPending?'#ffffff':((typeof S!=='undefined'&&S.settings&&S.settings.defColor)||'#dce9f7');
+  var chosenColor=!accountPending&&typeof S!=='undefined'&&S.settings&&S.settings.defColor?S.settings.defColor:'';
+  var dc=chosenColor||'#ffffff';
   document.documentElement.style.setProperty('--planner-color',dc);
   /* 이름 기본 색은 단순 UI 포인트색이 아니라 플래너 항목의 공통색이에요.
      클라우드에서 예전 개별 색이 다시 내려와도 화면을 그릴 때 현재 기본색으로 맞춥니다. */
   if(!accountPending&&typeof S!=='undefined'&&S.settings&&typeof applyDefaultColorToPlanner==='function')applyDefaultColorToPlanner();
-  var bg=accountPending?'plain':((typeof S!=='undefined'&&S.settings&&S.settings.bg)||lsGet('planner.bg')||'rainbow');
+  var bg=accountPending?'plain':(!chosenColor?'plain':((typeof S!=='undefined'&&S.settings&&S.settings.bg)||lsGet('planner.bg')||'rainbow'));
   if(bg==='plain')document.documentElement.removeAttribute('data-bg');
   else document.documentElement.setAttribute('data-bg',bg);
 }
@@ -3173,8 +3266,18 @@ function privacyKeyName(uid){return 'planner.privateKey.'+uid;}
 function privacyRaw(uid,create){var v=lsGet(privacyKeyName(uid));if(v)return v;if(!create)return '';var a=new Uint8Array(32);crypto.getRandomValues(a);v=b64u(a);lsSet(privacyKeyName(uid),v);try{alert('개인 플래너 암호화를 켰어요.\n\n복구키를 안전한 곳에 저장해 주세요. 새 기기에서 로그인할 때 필요해요.\n\n'+v+'\n\n이 키는 서버에 저장되지 않아 운영자도 볼 수 없어요.');}catch(e){}return v;}
 function importPrivacyKey(uid){var v='';try{v=prompt('이 계정의 플래너는 암호화되어 있어요.\n다른 기기에서 받은 복구키를 입력해 주세요.\n\n복구키가 없으면 운영자도 내용을 복구할 수 없어요.')||'';}catch(e){}v=v.trim();if(!v)return '';try{if(unb64u(v).length!==32)throw 0;lsSet(privacyKeyName(uid),v);return v;}catch(e){try{alert('복구키 형식이 맞지 않아요.');}catch(_){}return '';}}
 function cryptoKey(uid,create){var raw=privacyRaw(uid,create);if(!raw)return Promise.reject(new Error('암호화 복구키가 필요해요'));return crypto.subtle.importKey('raw',unb64u(raw),{name:'AES-GCM'},false,['encrypt','decrypt']);}
-function encryptCloudValue(txt){if(!Sync.uid)return Promise.resolve(txt);return cryptoKey(Sync.uid,true).then(function(k){var iv=new Uint8Array(12);crypto.getRandomValues(iv);return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(String(txt))).then(function(buf){return PRIV_PREFIX+b64u(iv)+'.'+b64u(new Uint8Array(buf));});});}
-function decryptCloudValue(txt){txt=String(txt||'');if(txt.indexOf(PRIV_PREFIX)!==0){Sync.needsEncryptMigration=true;return Promise.resolve(txt);}var z=txt.slice(PRIV_PREFIX.length).split('.');if(z.length!==2)return Promise.reject(new Error('암호화 데이터 형식이 올바르지 않아요'));if(!privacyRaw(Sync.uid,false)){var asked=Sync.keyAsked;Sync.keyAsked=true;if(asked||!importPrivacyKey(Sync.uid)){Sync.keyNeeded=true;return Promise.reject(new Error('암호화 복구키가 필요해요'));}}return cryptoKey(Sync.uid,false).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64u(z[0])},k,unb64u(z[1])).then(function(buf){return new TextDecoder().decode(buf);});}).then(function(t){Sync.keyNeeded=false;return t;},function(){try{localStorage.removeItem(privacyKeyName(Sync.uid));}catch(e){}Sync.keyNeeded=true;Sync.keyAsked=true;throw new Error('복구키가 맞지 않아 계정 데이터를 열 수 없어요');});}
+/* 계정 자동 복구 모드. 새 저장은 계정 서버에 JSON으로 저장하며 복구키가 필요 없어요.
+   기존 enc:v1 데이터는 이 기기에 남은 예전 키로 한 번 열어 자동 이전합니다. */
+function encryptCloudValue(txt){return Promise.resolve(String(txt));}
+function decryptCloudValue(txt){
+  txt=String(txt||'');
+  if(txt.indexOf(PRIV_PREFIX)!==0)return Promise.resolve(txt);
+  var z=txt.slice(PRIV_PREFIX.length).split('.');
+  if(z.length!==2)return Promise.reject(new Error('예전 암호화 데이터 형식이 올바르지 않아요'));
+  if(!privacyRaw(Sync.uid,false)){Sync.keyNeeded=true;return Promise.reject(new Error('예전 암호화 데이터예요. 기존 데이터가 보이는 기기에서 이 버전을 한 번 열어 자동 이전해주세요.'));}
+  return cryptoKey(Sync.uid,false).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64u(z[0])},k,unb64u(z[1])).then(function(buf){return new TextDecoder().decode(buf);});})
+    .then(function(t){Sync.keyNeeded=false;Sync.needsPlainMigration=true;return t;},function(){Sync.keyNeeded=true;throw new Error('예전 암호화 데이터를 열지 못했어요. 기존 데이터가 정상적으로 보이는 기기에서 먼저 이전해주세요.');});
+}
 function privacyRecoveryKey(){if(!Sync.uid){inAppToast('먼저 로그인해주세요');return;}
   var show=function(v){try{prompt('이 복구키를 안전한 곳에 복사해 두세요.\n다른 기기에서 \'복구키 입력\'에 넣으면 돼요.\n운영자도 대신 복구할 수 없어요.',v);}catch(e){}};
   var have=privacyRaw(Sync.uid,false);if(have){show(have);return;}
@@ -3192,7 +3295,7 @@ function retrySync(){if(!Sync.db){inAppToast('먼저 로그인해주세요');ret
   Sync.busy=false;Sync.pulled=false;setSyncUI('saving');
   pull().then(function(){Sync.pulled=true;if(SyncUI.state!=='error'){Sync.diag='';setSyncUI('ok');inAppToast('계정과 다시 맞췄어요');}if(!M.type)render();},function(){Sync.pulled=true;if(!M.type)render();});}
 function syncReason(){var d=Sync.diag||'';if(!d)return '';
-  if(Sync.keyNeeded||/복구키/.test(d))return '이 기기에 암호화 복구키가 없거나 달라서 계정 데이터를 못 열었어요. 동기화가 잘 되는 기기에서 설정 → 암호화 복구키 → 보기로 키를 복사해 아래 \'복구키 입력\'에 넣어주세요.';
+  if(Sync.keyNeeded||/복구키/.test(d)||/예전 암호화/.test(d))return '예전 복구키 방식 데이터가 아직 서버에 남아 있어요. 기존 플래너가 정상적으로 보이는 기기에서 이 버전을 한 번 열면 자동 복구 방식으로 이전돼요.';
   if(/JWT|jwt|expired|401|refresh|session/i.test(d))return '로그인이 만료됐어요. 로그아웃 후 다시 로그인해주세요.';
   if(/Failed to fetch|Load failed|NetworkError|network/i.test(d))return '인터넷 연결이 불안정해서 서버에 닿지 못했어요. 연결을 확인하고 다시 시도해주세요.';
   if(/permission|row-level|42501/i.test(d))return '서버 권한 설정에 막혔어요. (자세히: '+d+')';
@@ -3231,11 +3334,11 @@ function supaAttach(session){
   if(M.type==='login')closeModal();
   Sync.loading=true;if(!M.type)render(true);
   var myUid=Sync.uid;
-  restoreCurrentVault(myUid).catch(function(){return false;}).then(function(){return pull();}).catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
+  restoreCurrentVault(myUid).catch(function(){return false;}).then(function(){return pull();}).catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){return mirrorRescueIfUseful();}).then(function(){
     if(Sync.uid!==myUid)return;
     Sync.loading=false;Sync.on=true;Sync.pulled=true;if(SyncUI.state!=='error')setSyncUI('ok');
-    /* 예전 평문 클라우드 데이터는 현재 상태를 암호화해 다시 저장하고, 평문 스냅샷은 제거해요. */
-    if(Sync.needsEncryptMigration){Sync.needsEncryptMigration=false;try{Sync.sb.from('planner_snapshots').delete().eq('user_id',Sync.uid).then(function(){});}catch(e){}S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);save();}
+    /* 기존 복구키 방식 데이터는 현재 기기에서 한 번 열리면 자동 복구 형식으로 다시 저장해요. */
+    if(Sync.needsPlainMigration){Sync.needsPlainMigration=false;S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);save();}
     /* 이 계정에서 온보딩을 한 번 끝냈다면 다시 학교/색을 묻지 않아요.
        예전 버전에서 로컬 표식만 남고 cloud flag가 빠진 경우도 여기서 복구해 계정에 저장합니다. */
     /* 온보딩은 계정당 딱 한 번만. 예전 버전에서 완료 플래그가 클라우드에 빠졌어도
@@ -3271,7 +3374,7 @@ function autoMerge(r,remoteAt){
   try{
     if(hasPlannerData(S))savePrevBackup(S);
     var rem=normalize(JSON.parse(r.json)),before=itemCount(S),rb=itemCount(rem);
-    var m=mergeState(S,rem,null);m.updatedAt=Math.max(Date.now(),(+remoteAt||0)+1);
+    var m=mergeStateV2(S,rem);m.updatedAt=Math.max(Date.now(),(+remoteAt||0)+1);
     applyRemote(m,m.updatedAt);if(Sync.uid)saveAccountState(Sync.uid,S);
     lsSet('planner.syncedUser',Sync.uid);Sync.lastSeen=+remoteAt||0;Sync.base=null;saveMeta();Sync.on=true;
     if(before&&rb&&itemCount(S)>Math.min(before,rb)&&typeof inAppToast==='function')inAppToast('이 기기와 계정 내용을 합쳤어요. 사라진 건 없어요');
@@ -4640,7 +4743,7 @@ function viewSettings(){
     '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속을 만드는 버튼만 숨겨요. 기존 약속·받은 요청은 지워지지 않아요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div></section>';
-  var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?(Sync.keyNeeded||/복구키/.test(Sync.diag||'')?'<button class="b-ghost" data-act="privacy-key-enter">복구키 입력</button>':'')+'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
+  var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div><div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
     '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
@@ -4675,7 +4778,7 @@ function viewSettings(){
   var dataHTML='<section class="card"><div class="card-h"><h3>데이터</h3></div>'+
     '<div class="setrow"><span>저장 상태<small>'+syncTxt+'</small></span></div>'+
     '<div class="setrow"><span>백업·복원</span><button class="tbtn" data-act="backup">열기</button></div>'+
-    (Sync.uid?'<div class="setrow"><span>암호화 복구키<small>서버에는 저장되지 않아요</small></span><button class="tbtn" data-act="privacy-key">보기</button></div>':'')+
+    (Sync.uid?'<div class="setrow"><span>계정 자동 복구<small>같은 이메일 계정으로 로그인하면 다른 기기에서도 자동으로 불러와요</small></span><b style="font-size:12px;color:var(--sub)">켜짐</b></div>':'')+
     '<div class="setrow"><span>시간표 비우기<small>수업·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
@@ -5056,11 +5159,11 @@ function saveSchoolCustom(){
   var id='custom-school:'+uid(),p={id:id,name:n,campuses:[camp],links:links};
   S.settings.customSchools.push(p);setSchool(id,camp);
   var fromOnboard=M.fromOnboard;closeModal();
-  if(fromOnboard){M={type:'onboard',step:0,school:id,campus:camp,color:S.settings.defColor||defCol()};drawOnboard();}
+  if(fromOnboard){M={type:'onboard',step:0,school:id,campus:camp,color:S.settings.defColor||''};drawOnboard();}
   else render(true);
 }
 function openOnboard(){
-  M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||defCol()};
+  M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||''};
   drawOnboard();
 }
 function drawOnboard(){
@@ -5076,11 +5179,11 @@ function drawOnboard(){
   if(M.step===0){
     body='<span class="lbl">학교 이름 검색</span><input class="fld" id="f-on-school" list="f-school-list" placeholder="학교를 검색해요" value="'+esc(schoolName(M.school))+'"><datalist id="f-school-list">'+schoolDatalist()+'</datalist><button class="tbtn" data-act="school-add-onboard" style="width:100%;margin:0 0 10px">+ 내 학교 직접 추가</button><span class="lbl">캠퍼스</span><select class="sel" id="f-on-campus" style="width:100%">'+schoolProfile(M.school).campuses.map(function(c){return '<option value="'+esc(c)+'"'+(c===M.campus?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>';
   }else if(M.step===1){
-    body='<span class="lbl">이름</span><input class="fld" id="f-on-name" maxlength="20" placeholder="친구에게 보일 이름" value="'+esc((S.settings.profileName||''))+'">'+(darkNow?'<div class="onboard-demo">다크 모드에서는 포인트 색이 흰색으로 고정돼요.</div>':'<div class="defpal">'+palHTML(M.color,'기본 색상')+'</div>');
+    body='<span class="lbl">이름</span><input class="fld" id="f-on-name" maxlength="20" placeholder="친구에게 보일 이름" value="'+esc((S.settings.profileName||''))+'"><div class="defpal">'+palHTML(M.color,'기본 색상')+'</div>'+(darkNow?'<p class="hint">다크 모드에서도 색을 미리 정할 수 있고, 밝은 화면에서 그대로 적용돼요.</p>':'');
   }else if(M.step===2){
     body='<div class="onboard-demo" style="display:block;padding:16px"><b>시간표 캡처로 빠르게 등록</b><small style="display:block;color:var(--sub);font-weight:500;margin-top:6px">JPG · PNG · HEIC 사진을 사용할 수 있어요.</small><button class="b-save" data-act="onboard-scan" style="width:100%;margin-top:12px">시간표 사진 등록</button></div>';
   }else{
-    body='<span class="lbl">첫 할 일 (선택)</span><input class="fld" id="f-on-first-todo" maxlength="80" placeholder="예: 미적분 과제 1쪽 풀기"><div class="onboard-demo">아래 <b>친구</b> 탭에서 초대코드나 링크로 약속을 잡아봐요. 내 시간표 기준으로 비는 시간만 골라줘요.</div>';
+    body='<span class="lbl">첫 할 일 (선택)</span><input class="fld" id="f-on-first-todo" maxlength="80" placeholder="예: 미적분 과제 1쪽 풀기"><div class="onboard-demo">설정 → <b>친구</b>에서 초대코드나 링크로 약속을 잡아봐요. 내 시간표 기준으로 비는 시간만 골라줘요.</div>';
   }
   openModal('<div class="onboard"><div class="onboard-dots">'+steps.map(function(_,i){return '<i class="'+(i===M.step?'on':'')+'"></i>';}).join('')+'</div><h3>'+st.title+'</h3><p class="hint">'+st.desc+'</p>'+body+'<div class="acts"><button class="b-ghost" data-act="onboard-skip">나중에</button><button class="b-save" data-act="onboard-next">'+(last?'플래너 시작':'다음')+'</button></div></div>');
 }
@@ -5583,15 +5686,15 @@ function drawBackupSlots(){
   });
   bkRingList().then(function(rows){
     var box=$('#bk-ring');if(!box||M.type!=='backup')return;
-    rows=rows.filter(function(x){return hasPlannerData(x.data)&&itemCount(x.data)>0&&(!o||!x.owner||x.owner===o);}).slice(0,1);
+    rows=rows.filter(function(x){return hasPlannerData(x.data)&&itemCount(x.data)>0&&(!o||!x.owner||x.owner===o);}).slice(0,12);
     if(!rows.length){box.innerHTML='';return;}
-    box.innerHTML='<p class="lbl" style="margin-top:14px">최근 자동 백업</p><div class="snaplist">'+rows.map(function(r){var n='';try{n=' · '+itemCount(normalize(r.data))+'개';}catch(e){}return '<button class="tbtn" data-act="load-ring" data-id="'+r.id+'">'+ringLabel(r)+n+'</button>';}).join('')+'</div><p class="hint">데이터가 1개 이상인 가장 최근 백업만 보여줘요.</p>';
+    box.innerHTML='<p class="lbl" style="margin-top:14px">이 기기 최근 자동 백업</p><div class="snaplist">'+rows.map(function(r){var n='';try{n=' · '+itemCount(normalize(r.data))+'개';}catch(e){}return '<button class="tbtn" data-act="load-ring" data-id="'+r.id+'">'+ringLabel(r)+n+'</button>';}).join('')+'</div><p class="hint">최근 복원 지점을 최대 12개 보여줘요. 기기에는 최대 24시간 분량을 보관해요.</p>';
   });
 }
 function openBackup(){
   M={type:'backup'};
   if(Sync.kind==='supa'&&Sync.uid){fetchCloudSnaps().then(function(dates){var box=$('#snapbox');if(box&&M.type==='backup')box.innerHTML=snapBoxHTML(dates,false);});}
-  openModal('<h3>백업·복원</h3><button class="b-save" style="width:100%;margin:4px 0 6px" data-act="recover-all">사라진 내용 되살리기</button><p class="hint" style="margin-bottom:14px">계정에 남은 날짜별 백업과 이 기기 백업을 전부 지금 플래너에 합쳐요. 지금 내용은 그대로 두고 빠진 것만 채워요.</p><p class="hint">‘복사’를 누르면 전체 데이터가 복사돼요. 메모 앱에 붙여넣어 보관하고, 복원할 때는 아래 칸에 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
+  openModal('<h3>복구센터</h3><button class="b-save" style="width:100%;margin:4px 0 6px" data-act="recover-all">사라진 내용 되살리기</button><p class="hint" style="margin-bottom:14px">계정에 남은 날짜별 백업과 이 기기 백업을 전부 지금 플래너에 합쳐요. 지금 내용은 그대로 두고 빠진 것만 채워요.</p><p class="hint">‘복사’를 누르면 전체 데이터가 복사돼요. 메모 앱에 붙여넣어 보관하고, 복원할 때는 아래 칸에 붙여넣고 ‘불러오기’를 눌러요. 불러오면 지금 내용이 바뀌어요.</p>'+ 
     '<textarea class="ta" id="f-backup" spellcheck="false" placeholder="복원할 백업 글자를 여기에 붙여넣어요"></textarea>'+ 
     '<div class="acts"><button class="b-ghost" data-act="copy-backup">복사</button><button class="b-save" data-act="import-backup">불러오기</button></div>'+ 
     '<div class="acts"><button class="b-ghost" data-act="merge-backup">합치기 (지금 내용 유지)</button></div>'+ 
@@ -5607,7 +5710,7 @@ function openBackup(){
 }
 function recoverAll(){
   bkMsg('백업을 모으는 중…');var t0=Date.now(),before=itemCount(S),cands=[];
-  var cloud=(Sync.kind==='supa'&&Sync.uid&&Sync.sb)?Sync.sb.from('planner_snapshots').select('date,json').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(60).then(function(res){(res&&res.data||[]).forEach(function(x){cands.push(x.json);});},function(){}):Promise.resolve();
+  var cloud=(Sync.kind==='supa'&&Sync.uid&&Sync.sb)?Sync.sb.from('planner_snapshots').select('date,json').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(200).then(function(res){(res&&res.data||[]).forEach(function(x){cands.push(x.json);});},function(){}):Promise.resolve();
   var o=bkOwner(),keys=['logout','lastGood','remote','prev'].map(function(n){return o?n+'.'+o:n;});
   var local=Promise.all(keys.map(function(k){return bkFirst([k]).then(function(rec){if(rec&&rec.raw)cands.push(rec.raw);},function(){});})).then(function(){return bkRingList().then(function(rows){rows.slice(0,40).forEach(function(x){if(x.data&&(!o||!x.owner||x.owner===o))cands.push(x.data);});});});
   var acc=(Sync.uid&&lsGet(accountKey(Sync.uid)));if(acc)cands.push(acc);
@@ -6098,7 +6201,7 @@ function act(a,e){
     }
     case 'toggle-done-list':U.showDone=!U.showDone;render();break;
     case 'clear-done':if(armed(a)){S.todos=S.todos.filter(function(t){return !t.done;});save();render();}break;
-    case 'close':{var wl=M.type==='login',wo=M.type==='onboard',wc=!!M.fromChat||M.type==='chat-add-room'||M.type==='chat-room-menu'||M.type==='chat-room-rename',ws=M.type==='school-add',wso=ws&&M.fromOnboard; if(wo)finishOnboard();closeModal();if(wl||wo)render();if(wc)drawChat();if(ws){if(wso){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||defCol()};drawOnboard();}else render(true);}break;}
+    case 'close':{var wl=M.type==='login',wo=M.type==='onboard',wc=!!M.fromChat||M.type==='chat-add-room'||M.type==='chat-room-menu'||M.type==='chat-room-rename',ws=M.type==='school-add',wso=ws&&M.fromOnboard; if(wo)finishOnboard();closeModal();if(wl||wo)render();if(wc)drawChat();if(ws){if(wso){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||''};drawOnboard();}else render(true);}break;}
     case 'onboard-skip':finishOnboard();closeModal();render();break;
     case 'school-add-onboard':openSchoolAdd(true);break;
     case 'school-add-settings':openSchoolAdd(false);break;
@@ -6111,7 +6214,7 @@ function act(a,e){
       if(M.step===1){
         var onName=$('#f-on-name');if(onName)S.settings.profileName=(onName.value||'').trim().slice(0,20);
         var onDark=document.documentElement.getAttribute('data-theme')==='dark'||(document.documentElement.getAttribute('data-theme')!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if(!onDark){S.settings.defColor=M.color;lsSet('planner.defColor',M.color);applyDefaultColorToPlanner();}
+        if(M.color){S.settings.defColor=M.color;lsSet('planner.defColor',M.color);applyDefaultColorToPlanner();}
         save();
       }
       if(M.step>=3){
@@ -6251,7 +6354,7 @@ document.addEventListener('click',function(e){
   var a=e.target.closest('[data-act]');
   if(a){var dn=a.dataset.act,before=isDeleteAction(dn)?JSON.stringify(S):null,bc=before?itemCount(S):0;act(a,e);if(before)setTimeout(function(){if(itemCount(S)<bc||dn==='profile-photo-remove'||dn==='memo-photo-del'||dn==='notice-clear')showUndo(before);},0);refreshDates();return;}
   if(e.target.id==='modal'&&M.type==='focus')return;
-  if(e.target.id==='modal'){var wl2=M.type==='login',wc2=!!M.fromChat||M.type==='chat-room-menu'||M.type==='chat-add-room'||M.type==='chat-room-rename',ws2=M.type==='school-add',wso2=ws2&&M.fromOnboard;closeModal();if(wl2)render();if(wc2)drawChat();if(ws2){if(wso2){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||defCol()};drawOnboard();}else render(true);}return;}
+  if(e.target.id==='modal'){var wl2=M.type==='login',wc2=!!M.fromChat||M.type==='chat-room-menu'||M.type==='chat-add-room'||M.type==='chat-room-rename',ws2=M.type==='school-add',wso2=ws2&&M.fromOnboard;closeModal();if(wl2)render();if(wc2)drawChat();if(ws2){if(wso2){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||''};drawOnboard();}else render(true);}return;}
   var col=e.target.closest('.tt-col');
   if(col&&e.target===col){
     var r=col.getBoundingClientRect(),lo=Number(col.dataset.lo),hh=Number(col.dataset.hh);
@@ -6323,7 +6426,7 @@ function endDrag(){
 document.addEventListener('pointerup',endDrag);
 document.addEventListener('pointercancel',endDrag);
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'&&M.type){var et=M.type,ef=et==='school-add'&&M.fromOnboard,ec=!!M.fromChat||et==='chat-room-menu'||et==='chat-add-room'||et==='chat-room-rename';closeModal();if(ec)drawChat();if(et==='school-add'){if(ef){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||defCol()};drawOnboard();}else render(true);}return;}
+  if(e.key==='Escape'&&M.type){var et=M.type,ef=et==='school-add'&&M.fromOnboard,ec=!!M.fromChat||et==='chat-room-menu'||et==='chat-add-room'||et==='chat-room-rename';closeModal();if(ec)drawChat();if(et==='school-add'){if(ef){M={type:'onboard',step:0,school:S.settings.school||'skku',campus:S.settings.schoolCampus||schoolProfile(S.settings.school||'skku').campuses[0],color:S.settings.defColor||''};drawOnboard();}else render(true);}return;}
   if(e.key!=='Enter'||e.isComposing||e.keyCode===229)return;
   if(e.target.id==='f-global-search'){
     e.preventDefault();
@@ -6456,6 +6559,8 @@ document.addEventListener('drop',function(e){
   else if(memo){e.preventDefault();addMemoPhotos(memo.dataset.memoDrop,files);}
 });
 window.addEventListener('pagehide',flush);
+window.addEventListener('offline',function(){setSyncUI('local');try{inAppToast('오프라인이에요. 이 기기에 계속 저장할게요');}catch(e){}});
+window.addEventListener('online',function(){if(Sync.db){setSyncUI('saving');retrySync();}else setSyncUI('local');});
 document.addEventListener('visibilitychange',function(){
   if(document.hidden)flush();
   else{updateNow();if(F&&M.type==='focus'){catchUp();tickFocus();}if(Sync.db&&!memoTimer&&!Sync.timer&&!Sync.busy)pull();if(Sync.kind==='supa'&&Sync.uid)friendRequestLoad();}
@@ -6464,6 +6569,7 @@ setInterval(updateNow,60000);
 setInterval(tickFocus,500);
 setInterval(checkReminders,60000);
 setInterval(function(){if(Sync.db&&!document.hidden&&!Sync.busy&&!Sync.timer&&!memoTimer&&!M.type){pull();if(Sync.kind==='supa')friendLoad();}},45000);
+registerSW();
 if(typeof S!=='undefined'&&S.settings&&S.settings.friendNotify)registerSW();
 var friendPollTick=0;
 setInterval(function(){if(Sync.kind!=='supa'||!Sync.uid)return;friendPollTick++;if(document.hidden&&friendPollTick%2)return;friendRequestLoad();},12000);
