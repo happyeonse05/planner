@@ -305,9 +305,17 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 /* ===== 하루 마감 · 시험 준비 ===== */
 .dayclose-banner{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;margin:10px 0;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--edge));border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--card));text-align:left}.dayclose-banner span{flex:1;min-width:0}.dayclose-banner b{display:block;font-size:14px}.dayclose-banner small{display:block;color:var(--sub);font-size:12px;margin-top:2px}.close-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.close-summary div{padding:11px 8px;border-radius:12px;background:var(--soft);text-align:center}.close-summary b{display:block;font-size:18px}.close-summary small{color:var(--sub);font-size:11px}.exam-prep{margin:8px 0 12px;padding:10px;border-radius:12px;background:var(--soft)}.exam-prep-row{display:flex;align-items:center;gap:8px;padding:6px 0}.exam-prep-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}.exam-prep-row input[type=text]{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);font-size:14px}.exam-prep-add{display:flex;gap:6px;margin-top:6px}.exam-prep-add input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:0 10px;font-size:16px}.exam-prep-add button{height:38px;padding:0 11px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:700}.prep-progress{font-size:11px;color:var(--sub);margin-left:6px}.exam-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.exam-meta .fld{margin:0}.prep-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.prep-head .tbtn{height:30px;font-size:12px}.prep-meter{height:4px;background:var(--line);border-radius:999px;overflow:hidden;margin:7px 0 9px}.prep-meter i{display:block;height:100%;background:var(--accent)}.home-smart{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.home-smart button{height:32px;padding:0 10px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.month-review{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;scrollbar-width:none}.month-review::-webkit-scrollbar{display:none}.month-review>div{flex:0 0 auto;min-width:110px;padding:9px 10px;border-radius:10px;background:var(--soft)}.month-review small{display:block;color:var(--sub);font-size:10px}.month-review b{display:block;margin-top:2px;font-size:13px}
 .close-word{margin:10px 0 12px}.close-word .lbl{font-size:13px;color:var(--ink);font-weight:700}.close-word input{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:0 13px;font-size:16px;color:var(--ink)}.close-word input:focus{outline:2px solid var(--accent);border-color:transparent}.month-review{margin:0 0 10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 20%,var(--edge))}.month-review b{font-size:14px}.month-review small{display:block;color:var(--sub);font-size:12px;margin-top:3px}.month-words{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.month-words span{padding:4px 8px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:11px}.home-priority{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.home-priority button{height:34px;padding:0 10px;border-radius:10px;background:var(--soft);font-size:12px;font-weight:700}.home-priority button.primary{background:var(--accent);color:var(--accent-ink)}.exam-auto{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}.exam-auto .fld{margin:0}.exam-auto-btn{width:100%;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:12px;font-weight:700;margin-bottom:6px}
+
+/* ===== 일기장 · 책 보기 ===== */
+.diary-library{max-width:720px;margin:0 auto}.diary-library-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}.diary-library-head>div{flex:1}.diary-library-head h3{margin:0;font-size:20px}.diary-library-head small{color:var(--sub)}
+.diary-datebar{display:flex;align-items:center;gap:8px;margin:8px 0 14px}.diary-datebar input{flex:1;min-width:0;height:42px;border:1px solid var(--edge);border-radius:12px;background:var(--soft);padding:0 12px;color:var(--ink);font:inherit}.diary-datebar button{height:42px;padding:0 14px;border-radius:12px;background:var(--soft);font-weight:700;color:var(--ink)}
+.diary-book{position:relative;background:var(--card);border:1px solid var(--edge);border-radius:18px;padding:22px 20px 24px;min-height:390px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--edge) 35%,transparent)}.diary-book:before{content:'';position:absolute;left:46px;top:0;bottom:0;width:1px;background:color-mix(in srgb,var(--planner-color) 42%,transparent)}.diary-book-date{position:relative;margin-left:42px;padding-bottom:12px;border-bottom:1px solid var(--line)}.diary-book-date b{font-size:19px}.diary-book-date small{display:block;color:var(--sub);margin-top:3px}.diary-book-body{position:relative;margin-left:42px;padding-top:12px;line-height:1.9;white-space:pre-wrap;font-size:16px;min-height:210px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 29px,color-mix(in srgb,var(--line) 68%,transparent) 30px)}.diary-book-note{position:relative;margin:18px 0 0 42px;padding:12px 14px;border-radius:12px;background:var(--soft);white-space:pre-wrap;line-height:1.65}.diary-book-note:empty{display:none}.diary-book-nav{display:flex;justify-content:space-between;gap:8px;margin-top:12px}.diary-book-nav button{height:40px;padding:0 14px;border-radius:11px;background:var(--soft);font-weight:700;color:var(--ink)}.diary-book-nav button:disabled{opacity:.35}.diary-book-empty{display:grid;place-items:center;min-height:300px;text-align:center;color:var(--sub);line-height:1.6}.diary-library-shortcut{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left}.diary-library-shortcut small{display:block;color:var(--sub);margin-top:3px}
+@media(max-width:520px){.diary-book{padding:18px 14px 20px}.diary-book:before{left:31px}.diary-book-date,.diary-book-body,.diary-book-note{margin-left:27px}}
+
 /* ===== 10분 일기 ===== */
+.settings-group-head{margin:22px 4px 8px;padding-top:4px}.settings-group-head b{display:block;font-size:17px;letter-spacing:-.02em}.settings-group-head small{display:block;margin-top:2px;color:var(--sub);font-size:12px;font-weight:500}
 .diary-banner{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 48%,var(--card));border:1px solid color-mix(in srgb,var(--planner-color,#dce9f7) 75%,var(--edge));text-align:left}.diary-banner b{display:block;font-size:14px}.diary-banner small{display:block;margin-top:2px;color:var(--sub);font-size:12px}.diary-banner .chev{font-size:22px;color:var(--sub)}
-.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:var(--accent)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--accent);color:var(--accent-ink)}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background:var(--soft);padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text:focus{outline:2px solid var(--accent)}.diary-note{min-height:100px;margin-top:9px}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}
+.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:color-mix(in srgb,var(--planner-color,#dce9f7) 72%,#111)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--planner-color,#dce9f7);color:#1d1d1f}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background:var(--soft);padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text:focus{outline:2px solid var(--planner-color,#dce9f7)}.diary-note{min-height:100px;margin-top:9px}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--planner-color,#dce9f7);color:#1d1d1f;font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}
 
 /* ===== 테마: 화이트 미니멀 ===== */
 :root{
@@ -905,6 +913,30 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .home-evening{display:flex;align-items:center;margin-top:5px;padding-top:8px;border-top:1px solid var(--line)}.home-evening button{flex:1;height:36px;background:transparent;font-size:12px;font-weight:700;color:var(--ink)}.home-evening span{width:1px;height:16px;background:var(--line)}
 .home-focus{flex:0 0 auto;height:36px!important;padding:0 10px!important;background:var(--soft)!important;color:var(--ink)!important}
 @media(max-width:380px){.home-clean{padding:11px 12px}.home-focus{padding:0 8px!important}.home-line b{font-size:13px}}
+/* ===== UI polish: theme color coherence + monochrome dark mode ===== */
+:root[data-theme="light"]{--accent:var(--planner-color,#dce9f7);--accent-ink:#1c1c1e}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--accent:var(--planner-color,#dce9f7);--accent-ink:#1c1c1e}}
+.b-save,.plus,.fc-pri,.diary-actions .primary,.diary-finish{background:var(--accent);color:var(--accent-ink)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.sw.on{box-shadow:0 0 0 2px var(--accent)}
+.switch.on{background:var(--accent)}
+.lin input:focus{border-color:var(--accent)}
+.bgsw.on{box-shadow:0 0 0 2px var(--accent)}
+.toplist{overflow:hidden;min-height:0}.trow{min-height:48px}
+:root[data-theme="dark"]{--planner-color:#ffffff;--accent:#ffffff;--accent-ink:#000000}
+:root[data-theme="dark"] body{background:#000!important;background-image:none!important}
+:root[data-theme="dark"] .defc,:root[data-theme="dark"] .defpal{display:none!important}
+:root[data-theme="dark"] .bgs{opacity:.45;pointer-events:none}
+:root[data-theme="dark"] .bgsw.on{box-shadow:0 0 0 1px var(--edge)}
+:root[data-theme="dark"] .diary-time.extra{color:#fff}
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){--planner-color:#ffffff;--accent:#ffffff;--accent-ink:#000000}
+:root:not([data-theme="light"]) body{background:#000!important;background-image:none!important}
+:root:not([data-theme="light"]) .defc,:root:not([data-theme="light"]) .defpal{display:none!important}
+:root:not([data-theme="light"]) .bgs{opacity:.45;pointer-events:none}
+:root:not([data-theme="light"]) .bgsw.on{box-shadow:0 0 0 1px var(--edge)}
+:root:not([data-theme="light"]) .diary-time.extra{color:#fff}
+}
 </style>
 </head>
 <body>
@@ -2293,21 +2325,23 @@ function friendPlannerDetailHTML(p){
 }
 /* 친구 화면과 '내 화면 미리보기'가 같은 함수로 그려져서 보이는 범위가 항상 같아요 */
 function friendViewHTML(o){
-  var badges=['시간표','시험 기간'];if(o.cal)badges.push('공유 일정');if(o.planner)badges.push('상세 플래너');
+  var badges=[];if(o.tt)badges.push('시간표');if(o.exams)badges.push('시험');if(o.cal)badges.push('일정');
+  var body='';
+  if(o.tt)body+=friendTimetableHTML(o.tt);
+  if(o.exams)body+=friendExamHTML(o.exams);
+  if(o.cal)body+=friendCalendarHTML(o.cal);
+  if(!body)body='<div class="empty" style="margin-top:12px">공개한 일정 정보가 없어요.</div>';
   return '<div class="share-preview-head">'+friendAvatar(o.name,o.photo,'lg')+'<div><b>'+esc(o.name)+'</b><small>'+esc(o.sub||'')+'</small></div></div>'+
-    '<div class="share-preview-badges">'+badges.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>'+
-    friendTimetableHTML(o.tt||{})+friendExamHTML(o.tt||{})+(o.cal?friendCalendarHTML(o.cal):'')+(o.planner?friendPlannerDetailHTML(o.planner):'');
+    (badges.length?'<div class="share-preview-badges">'+badges.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>':'')+body;
 }
 function openFriendPlanner(id){
   var f=FriendSync.friends.find(function(x){return x.id===id;});
   M={type:'friend-planner',id:id};
   if(!f){openModal('<h3>친구 플래너</h3><div class="empty">친구 연결 정보를 찾지 못했어요.</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');return;}
   var row=function(kind){return FriendSync.incoming.find(function(x){return x.owner_id===id&&x.kind===kind;});};
-  var trow=row('timetable'),crow=row('calendar'),prow=row('planner'),tt=(trow&&trow.payload)||(prow&&prow.payload)||null,label=friendLabel(f);
-  var html='<h3>'+esc(label)+'님 플래너</h3><p class="hint">친구가 로그아웃해도 마지막으로 저장된 시간표·시험 기간이 그대로 보여요.</p>';
-  if(!tt)html+='<div class="empty">친구 시간표가 아직 서버에 올라오지 않았어요. 친구가 앱을 한 번 열면 자동으로 저장돼요.</div>';
-  else html+='<div class="share-preview">'+friendViewHTML({name:label,photo:f.photo,sub:lastMetInfo(id),tt:tt,cal:f.inCalendar&&crow?crow.payload:null,planner:f.inPlanner&&prow?prow.payload:null})+'</div>'+
-    (!f.inCalendar&&!f.inPlanner?'<p class="hint">일정·할 일은 친구가 공개를 켠 경우에만 보여요.</p>':'');
+  var trow=row('timetable'),erow=row('exam'),crow=row('calendar'),label=friendLabel(f);
+  var tt=trow&&trow.payload,exams=erow&&erow.payload,cal=f.inCalendar&&crow?crow.payload:null;
+  var html='<h3>'+esc(label)+'님 플래너</h3><p class="hint">친구가 공개한 항목만 보여요.</p><div class="share-preview">'+friendViewHTML({name:label,photo:f.photo,sub:lastMetInfo(id),tt:tt,exams:exams,cal:cal})+'</div>';
   openModal(html+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="friend-meet" data-id="'+esc(id)+'">약속 잡기</button></div>');
 }
 function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if(U.tab==='settings'&&!M.type)render();}
@@ -4357,7 +4391,8 @@ function viewSettings(){
     '<div class="setrow"><span>시간표 비우기<small>수업·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
-  return chatHTML+profileHTML()+friendHTML()+schoolHTML+linkHTML+syncHTML+supportHTML+logPrefHTML+viewHTML+acct+dataHTML;
+  var diaryShortcut='<section class="card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>날짜를 골라 지난 일기를 책처럼 읽어요</small></span><span class="chev">›</span></button></section>';
+  return chatHTML+diaryShortcut+profileHTML()+friendHTML()+schoolHTML+linkHTML+syncHTML+supportHTML+logPrefHTML+viewHTML+acct+dataHTML;
 }
 function openLink(l){
   var x=l||{name:'',url:''};
@@ -4533,10 +4568,10 @@ function invitePhoto(id){return (FriendSync.invitePhotos||{})[id]||'';}
 function openFriendSharePreview(id){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
   var n=(S.settings.profileName||'').trim()||myDisplayName();
-  var html='<h3>'+esc(friendLabel(f))+'님에게 보이는 내 화면</h3><p class="hint">지금 공개 설정 그대로 친구 화면과 똑같이 보여줘요. 여기 없는 건 이 친구에게 안 보여요.</p>'+
-    '<div class="fc-share" style="margin:0 0 10px"><span>공개 범위</span><span class="chipt on" aria-disabled="true">시간표·시험 기간</span><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+esc(id)+'" data-mode="calendar">공유 일정</button><button class="chipt'+(f.outPlanner?' on':'')+'" data-act="friend-toggle-share" data-id="'+esc(id)+'" data-mode="planner">상세 플래너</button></div>'+
-    '<div class="share-preview">'+friendViewHTML({name:n,photo:S.settings.profilePhoto||'',sub:'친구 화면 미리보기',tt:friendPayload('timetable'),cal:f.outCalendar?friendPayload('calendar'):null,planner:f.outPlanner?friendPayload('planner'):null})+
-    '<div class="share-preview-private">🔒 항상 비공개 · 메모 · 나와의 채팅 · 생활 기록 · 회고 · 사진</div></div>'+
+  var html='<h3>'+esc(friendLabel(f))+'님에게 보이는 내 화면</h3><p class="hint">공개할 항목을 눌러 켜거나 끌 수 있어요. 모두 끄면 프로필만 보여요.</p>'+
+    '<div class="fc-share" style="margin:0 0 10px"><span>공개 범위</span><button class="chipt'+(f.outTimetable?' on':'')+'" data-act="friend-toggle-share" data-id="'+esc(id)+'" data-mode="timetable">시간표</button><button class="chipt'+(f.outExams?' on':'')+'" data-act="friend-toggle-share" data-id="'+esc(id)+'" data-mode="exams">시험</button><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+esc(id)+'" data-mode="calendar">일정</button></div>'+
+    '<div class="share-preview">'+friendViewHTML({name:n,photo:S.settings.profilePhoto||'',sub:'친구 화면 미리보기',tt:f.outTimetable?friendPayload('timetable'):null,exams:f.outExams?friendPayload('exam'):null,cal:f.outCalendar?friendPayload('calendar'):null})+
+    '<div class="share-preview-private">항상 비공개 · 메모 · 나와의 채팅 · 생활 기록 · 회고 · 사진</div></div>'+
     '<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
   M={type:'friend-share-preview',friendId:id};openModal(html);
 }
@@ -4545,10 +4580,10 @@ function friendHTML(){
   var myCode=FriendSync.code||storedFriendCode()||'생성 중';
   var invIn=(FriendSync.invitesIn||[]).map(function(x){var n=inviteName(x.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.from_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 요청을 보냈어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn fc-pri b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div></div>';}).join('');
   var reqIn=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).map(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user),rf=FriendSync.friends.find(function(y){return y.id===r.from_user;});return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,rf&&rf.photo)+'<div class="fc-name"><b>'+esc(n)+' · '+esc(p.what||p.title||'약속')+'</b><small>'+esc([p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'',p.place].filter(function(x){return !!x;}).join(' · ')||'약속 요청')+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div></div>';}).join('');
-  var rows=sortedFriends().map(function(f){var pinned=friendPinIndex(f.id)>=0,n=friendLabel(f),inc=[f.inCalendar?'공유 일정':'',f.inPlanner?'상세 플래너':''].filter(function(x){return !!x;});
-    return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,f.photo)+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small><small>시간표 공개'+(inc.length?' · '+inc.join(' · '):' · 상세 일정은 비공개')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★ 고정됨':'☆ 고정')+'</button></div>'+
+  var rows=sortedFriends().map(function(f){var pinned=friendPinIndex(f.id)>=0,n=friendLabel(f),inc=[f.inCalendar?'일정':''].filter(function(x){return !!x;});
+    return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,f.photo)+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small><small>'+(inc.length?'친구가 공개: '+inc.join(' · '):'친구 공개 범위에 따라 표시')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★ 고정됨':'☆ 고정')+'</button></div>'+
       '<div class="fc-main"><button class="tbtn pri" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너 보기</button><button class="tbtn" data-act="friend-share-preview" data-id="'+f.id+'">내 화면 미리보기</button></div>'+
-      '<div class="fc-share"><span>내가 공개</span><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">공유 일정</button><button class="chipt'+(f.outPlanner?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="planner">상세 플래너</button><button class="fc-rm" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
+      '<div class="fc-share"><span>내가 공개</span><button class="chipt'+(f.outTimetable?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="timetable">시간표</button><button class="chipt'+(f.outExams?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="exams">시험</button><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">일정</button><button class="fc-rm" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
   var invOut=(FriendSync.invitesOut||[]).map(function(x){var n=inviteName(x.to_user);return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.to_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>수락 기다리는 중</small></div><button class="tbtn" data-act="friend-invite-cancel" data-id="'+x.id+'">요청 취소</button></div></div>';}).join('');
   var av=meetAvail(),availRow='<div class="setrow"><span>약속 가능 시간<small>친구는 이 시간 안에서만 약속을 신청할 수 있어요</small></span><div class="row" style="margin:0;flex:none;align-items:center">'+meetAvailSelHTML('set-meet-s',av[0],0,23)+'<span>~</span>'+meetAvailSelHTML('set-meet-e',av[1],1,24)+'</div></div>';
   var ferr=[FriendSync.error,FriendSync.inviteError,FriendSync.busyError].filter(function(x){return !!x;}).filter(function(x,i,a){return a.indexOf(x)===i;}).map(function(x){return '<p class="hint" style="color:var(--now)">'+esc(x)+'</p>';}).join('');
@@ -4704,18 +4739,25 @@ function openOnboard(){
   drawOnboard();
 }
 function drawOnboard(){
+  var darkNow=document.documentElement.getAttribute('data-theme')==='dark'||(document.documentElement.getAttribute('data-theme')!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
   var steps=[
-    {title:'학교를 골라보세요',desc:'학교를 고르면 공지·학식·기숙사 검색 바로가기가 학교에 맞게 바뀌어요. 실시간 자동 수집이 아니라 공식 사이트로 연결돼요.'},
-    {title:'플래너 색을 골라보세요',desc:'일정과 시간표에 사용할 기본 색을 먼저 정해요.'},
-    {title:'D-day와 시험을 한눈에',desc:'중요한 날은 위에 고정해두고, 시험은 달력에 따로 표시할 수 있어요.'},
-    {title:'약속과 일정을 간단하게',desc:'약속은 누구랑 무엇을 할지, 일정은 하루종일인지 시간별인지 골라요.'},
-    {title:'하루를 기록해보세요',desc:'하루 메모에는 사진을 여러 장 남기고, 나와의 채팅은 검색·삭제·사진 첨부까지 할 수 있어요.'},
-    {title:'시간표와 데이터도 안전하게',desc:'시간표 탭에서 수업을 붙여넣고, 설정의 백업·복원에서 데이터를 파일로 보관할 수 있어요.'}
+    {title:'학교부터 설정할게요',desc:'학교를 고르면 홈의 학교 바로가기가 맞춰져요.'},
+    {title:'내 플래너로 만들어요',desc:'친구에게 보일 이름과 플래너 기본 색만 정하면 돼요.'},
+    {title:'시간표를 바로 넣을까요?',desc:'시간표 캡처가 있다면 AI로 읽어 등록할 수 있어요. 지금 건너뛰어도 나중에 시간표에서 할 수 있어요.'},
+    {title:'준비 끝',desc:'이제 오늘 할 일 하나만 적어보면 바로 시작할 수 있어요.'}
   ];
-  var s=steps[M.step],last=M.step===steps.length-1;
-  openModal('<div class="onboard"><div class="onboard-dots">'+steps.map(function(_,i){return '<i class="'+(i===M.step?'on':'')+'"></i>';}).join('')+'</div><h3>'+s.title+'</h3><p class="hint">'+s.desc+'</p>'+
-    (M.step===0?'<span class="lbl">학교 이름 검색</span><input class="fld" id="f-on-school" list="f-school-list" placeholder="학교를 검색해요" value="'+esc(schoolName(M.school))+'"><datalist id="f-school-list">'+schoolDatalist()+'</datalist><button class="tbtn" data-act="school-add-onboard" style="width:100%;margin:0 0 10px">+ 내 학교 직접 추가</button><span class="lbl">캠퍼스</span><select class="sel" id="f-on-campus" style="width:100%">'+schoolProfile(M.school).campuses.map(function(c){return '<option value="'+esc(c)+'"'+(c===M.campus?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>':M.step===1?palHTML(M.color,'기본 색상'):'<div class="onboard-demo">'+(M.step===2?'★ D-day · 시험 기간':M.step===3?'약속 · 일정 · 하루종일 · 시간별':M.step===4?'하루 메모 · 나와의 채팅':'시간표 붙여넣기 · 백업·복원')+'</div>')+
-    '<div class="acts"><button class="b-ghost" data-act="onboard-skip">나중에</button><button class="b-save" data-act="onboard-next">'+(last?'시작하기':'다음')+'</button></div></div>');
+  var st=steps[M.step],last=M.step===steps.length-1;
+  var body='';
+  if(M.step===0){
+    body='<span class="lbl">학교 이름 검색</span><input class="fld" id="f-on-school" list="f-school-list" placeholder="학교를 검색해요" value="'+esc(schoolName(M.school))+'"><datalist id="f-school-list">'+schoolDatalist()+'</datalist><button class="tbtn" data-act="school-add-onboard" style="width:100%;margin:0 0 10px">+ 내 학교 직접 추가</button><span class="lbl">캠퍼스</span><select class="sel" id="f-on-campus" style="width:100%">'+schoolProfile(M.school).campuses.map(function(c){return '<option value="'+esc(c)+'"'+(c===M.campus?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>';
+  }else if(M.step===1){
+    body='<span class="lbl">이름</span><input class="fld" id="f-on-name" maxlength="20" placeholder="친구에게 보일 이름" value="'+esc((S.settings.profileName||''))+'">'+(darkNow?'<div class="onboard-demo">다크 모드에서는 포인트 색이 흰색으로 고정돼요.</div>':'<div class="defpal">'+palHTML(M.color,'기본 색상')+'</div>');
+  }else if(M.step===2){
+    body='<div class="onboard-demo" style="display:block;padding:16px"><b>시간표 캡처로 빠르게 등록</b><small style="display:block;color:var(--sub);font-weight:500;margin-top:6px">JPG · PNG · HEIC 사진을 사용할 수 있어요.</small><button class="b-save" data-act="onboard-scan" style="width:100%;margin-top:12px">시간표 사진 등록</button></div>';
+  }else{
+    body='<span class="lbl">첫 할 일 (선택)</span><input class="fld" id="f-on-first-todo" maxlength="80" placeholder="예: 미적분 과제 1쪽 풀기"><div class="onboard-demo">나머지 기능은 필요할 때 하나씩 발견하면 돼요.</div>';
+  }
+  openModal('<div class="onboard"><div class="onboard-dots">'+steps.map(function(_,i){return '<i class="'+(i===M.step?'on':'')+'"></i>';}).join('')+'</div><h3>'+st.title+'</h3><p class="hint">'+st.desc+'</p>'+body+'<div class="acts"><button class="b-ghost" data-act="onboard-skip">나중에</button><button class="b-save" data-act="onboard-next">'+(last?'플래너 시작':'다음')+'</button></div></div>');
 }
 function palHTML(sel,label){
   return '<span class="lbl">'+(label||'색상')+'</span><div class="pal">'+PALETTE.map(function(c){return '<button class="sw '+(c===sel?'on':'')+'" style="--c:'+c+'" data-act="pick-color" data-v="'+c+'" aria-label="색상 선택"></button>';}).join('')+'</div>';
@@ -5038,28 +5080,48 @@ function pendingChatPhotosHTML(){
   var ps=U.chatPhotos||[];
   return ps.length?'<div class="chat-pending">'+ps.map(function(p){return '<img src="'+p+'" alt="보낼 사진">';}).join('')+'</div>':'';
 }
-function diaryFmtMs(ms){
-  var sec=Math.max(0,Math.floor(ms/1000)),m=Math.floor(sec/60),s=sec%60;
-  if(sec>600){var x=sec-600;return '10m+'+Math.floor(x/60)+'m'+(x%60)+'s';}
-  return m+'m'+(s?s+'s':'');
+function diaryMinutes(){var n=Number(S.settings.diaryMinutes||10);return [7,10,20,30].indexOf(n)>=0?n:10;}
+function diaryLimitMs(){return diaryMinutes()*60000;}
+function diaryFmtMs(ms,targetMin){
+  var sec=Math.max(0,Math.floor(ms/1000)),m=Math.floor(sec/60),ss=sec%60,t=Number(targetMin||10),base=t*60;
+  if(sec>base){var x=sec-base;return t+'m+'+Math.floor(x/60)+'m'+(x%60)+'s';}
+  return m+'m'+(ss?ss+'s':'');
 }
 function diaryElapsed(){var r=U.diaryRun;if(!r)return 0;return r.acc+(r.running&&!document.hidden?(Date.now()-r.since):0);}
-function diaryClockText(){var ms=diaryElapsed(),left=Math.max(0,600000-ms);if(ms<=600000){var sec=Math.ceil(left/1000);return pad(Math.floor(sec/60))+':'+pad(sec%60);}var x=Math.floor((ms-600000)/1000);return '+'+pad(Math.floor(x/60))+':'+pad(x%60);}
-function diaryTick(){if(M.type!=='diary')return;var t=$('#diary-time'),st=$('#diary-status');if(t){var ms=diaryElapsed();t.textContent=diaryClockText();t.classList.toggle('extra',ms>600000);if(st)st.textContent=!U.diaryRun?'10분 타이머를 시작해도 되고 그냥 써도 돼요':(U.diaryRun.running?(ms>600000?'10분 완료 · 추가 시간 기록 중':'집중해서 쓰는 중'):'일시정지');}clearTimeout(U.diaryTimer);U.diaryTimer=setTimeout(diaryTick,250);}
+function diaryClockText(){var ms=diaryElapsed(),lim=diaryLimitMs(),left=Math.max(0,lim-ms);if(ms<=lim){var sec=Math.ceil(left/1000);return pad(Math.floor(sec/60))+':'+pad(sec%60);}var x=Math.floor((ms-lim)/1000);return '+'+pad(Math.floor(x/60))+':'+pad(x%60);}
+function diaryTick(){if(M.type!=='diary')return;var t=$('#diary-time'),st=$('#diary-status'),lim=diaryLimitMs(),mins=diaryMinutes();if(t){var ms=diaryElapsed();t.textContent=diaryClockText();t.classList.toggle('extra',ms>lim);if(st)st.textContent=!U.diaryRun?mins+'분 타이머를 시작해도 되고 그냥 써도 돼요':(U.diaryRun.running?(ms>lim?mins+'분 완료 · 추가 시간 기록 중':'집중해서 쓰는 중'):'일시정지');}clearTimeout(U.diaryTimer);U.diaryTimer=setTimeout(diaryTick,250);}
 function diaryPause(){var r=U.diaryRun;if(r&&r.running){r.acc+=Date.now()-r.since;r.running=false;}}
 function diaryResume(){var r=U.diaryRun;if(r&&!r.running){r.since=Date.now();r.running=true;}}
-function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0))+'</em><p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
+function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em><p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
+function diaryDateKey(x){return dkey(new Date(x.finishedAt));}
+function diaryLibraryRows(){return (S.diaries||[]).slice().sort(function(a,b){return a.finishedAt-b.finishedAt;});}
+function openDiaryLibrary(dateKey){
+  var rows=diaryLibraryRows(),wanted=dateKey||todayKey(),ix=-1;
+  if(rows.length){ix=rows.findIndex(function(x){return diaryDateKey(x)===wanted;});if(ix<0){for(var i=rows.length-1;i>=0;i--){if(diaryDateKey(rows[i])<=wanted){ix=i;break;}}if(ix<0)ix=rows.length-1;}}
+  M={type:'diary-library',diaryIndex:ix,diaryDate:wanted};drawDiaryLibrary();
+}
+function drawDiaryLibrary(){
+  var rows=diaryLibraryRows(),ix=M.diaryIndex;
+  if(ix>=rows.length)ix=rows.length-1;if(ix<0&&rows.length)ix=rows.length-1;M.diaryIndex=ix;
+  var x=ix>=0?rows[ix]:null,key=x?diaryDateKey(x):(M.diaryDate||todayKey()),date=x?new Date(x.finishedAt):parseKey(key);
+  var book=x?'<div class="diary-book"><div class="diary-book-date"><b>'+mdTxt(date)+'</b><small>'+pad(date.getHours())+':'+pad(date.getMinutes())+' · '+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</small></div><div class="diary-book-body">'+esc(x.text||'')+'</div><div class="diary-book-note">'+esc(x.note||'')+'</div></div>':'<div class="diary-book"><div class="diary-book-empty">아직 저장된 일기가 없어요.<br>나와의 채팅에서 첫 일기를 써보세요.</div></div>';
+  var nav=x?'<div class="diary-book-nav"><button data-act="diary-lib-prev"'+(ix<=0?' disabled':'')+'>‹ 이전 일기</button><button data-act="diary-lib-next"'+(ix>=rows.length-1?' disabled':'')+'>다음 일기 ›</button></div>':'';
+  openModal('<div class="diary-library"><div class="diary-library-head"><button class="ibtn" data-act="close">‹</button><div><h3>일기장</h3><small>지난 기록을 한 장씩 읽어요</small></div></div><div class="diary-datebar"><input type="date" id="f-diary-library-date" value="'+esc(key)+'"><button data-act="diary-lib-date">이동</button></div>'+book+nav+'</div>');
+  $('#modal').classList.add('full');
+}
+function diaryLibraryMove(dir){var rows=diaryLibraryRows();if(!rows.length)return;M.diaryIndex=Math.max(0,Math.min(rows.length-1,(M.diaryIndex<0?rows.length-1:M.diaryIndex)+dir));M.diaryDate=diaryDateKey(rows[M.diaryIndex]);drawDiaryLibrary();}
+function diaryLibraryGoDate(){var el=$('#f-diary-library-date'),k=el&&el.value;if(!k)return;var rows=diaryLibraryRows(),same=[];rows.forEach(function(x,i){if(diaryDateKey(x)===k)same.push(i);});if(same.length){M.diaryIndex=same[same.length-1];M.diaryDate=k;drawDiaryLibrary();return;}inAppToast('그 날짜에는 저장된 일기가 없어요');}
 function drawDiary(){
-  M={type:'diary'};var r=U.diaryRun;
-  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>10분 일기</h3><small>오늘을 10분만 적어봐요</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">10:00</div><div class="diary-status" id="diary-status">10분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'10분 시작')+'</button>'+(r?'<button data-act="diary-reset">다시 재기</button>':'')+'</div><textarea class="diary-text" id="f-diary" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
+  M={type:'diary'};var r=U.diaryRun,mins=diaryMinutes();
+  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>오늘을 '+mins+'분만 적어봐요</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text" id="f-diary" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
   $('#modal').classList.add('full');diaryTick();setTimeout(function(){var x=$('#f-diary');if(x)x.focus();},30);
 }
 function saveDiaryDraft(){var x=$('#f-diary'),n=$('#f-diary-note');if(x)U.diaryDraft=x.value;if(n)U.diaryNote=n.value;}
-function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0;S.diaries=S.diaries||[];S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,finishedAt:Date.now()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed));drawDiary();}
+function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:Date.now()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));drawDiary();}
 
 function drawChat(){
   M={type:'chat'};
-  openModal('<div class="chatpage"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+(U.chatRoom==='general'?'<button class="diary-banner" data-act="open-diary"><span><b>10분 일기</b><small>타이머 켜고 오늘을 기록해요</small></span><span class="chev">›</span></button>':'')+chatRoomsHTML()+
+  openModal('<div class="chatpage"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+(U.chatRoom==='general'?'<button class="diary-banner" data-act="open-diary"><span><b>'+diaryMinutes()+'분 일기</b><small>타이머 켜고 오늘을 기록해요</small></span><span class="chev">›</span></button>':'')+chatRoomsHTML()+
     '<input class="chat-search" id="f-chat-search" placeholder="대화 검색" value="'+esc(U.chatQuery||'')+'">'+
     '<div class="clist" id="clist">'+chatListHTML()+'</div>'+
     pendingChatPhotosHTML()+
@@ -5404,6 +5466,9 @@ function act(a,e){
     case 'appointment-accept':respondAppointmentRequest(true);break;
     case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
+    case 'toggle-home-school':S.settings.showSchoolLinks=S.settings.showSchoolLinks===false;save();render();break;
+    case 'toggle-home-todo':S.settings.showNextTodo=S.settings.showNextTodo===false;save();render();break;
+    case 'set-diary-minutes':S.settings.diaryMinutes=Number(a.dataset.v)||10;save();render();break;
     case 'toggle-top-show':S.settings.topShow=S.settings.topShow===false;save();render();break;
     case 'top-up':moveTopItem(a.dataset.id,-1);break;
     case 'top-down':moveTopItem(a.dataset.id,1);break;
@@ -5413,7 +5478,7 @@ function act(a,e){
     case 'rsel':{var sg=a.dataset.g,one=a.dataset.v==='1';document.querySelectorAll('#'+sg+' button').forEach(function(b){b.classList.toggle('on',b===a);});
       var wrap=sg==='f-erange'?$('#f-eew'):$('#f-adew');if(wrap)wrap.style.display=one?'none':'';if(sg==='f-erange')M.single=one;break;}
     case 'toggle-holi':S.settings.holiOff=!S.settings.holiOff;save();render();break;
-    case 'set-defcolor':{var dc2=a.dataset.v;S.settings.defColor=dc2;lsSet('planner.defColor',dc2);applyDefaultColorToPlanner();save();render();break;}
+    case 'set-defcolor':{var activeTheme=S.settings.theme||lsGet('planner.theme')||'auto',sysDark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(activeTheme==='dark'||(activeTheme==='auto'&&sysDark))break;var dc2=a.dataset.v;S.settings.defColor=dc2;lsSet('planner.defColor',dc2);applyDefaultColorToPlanner();save();applyTheme();render();break;}
     case 'tp':{if(a.classList.contains('busy'))break;var th=Number(a.dataset.h);
       if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
       else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
@@ -5430,10 +5495,13 @@ function act(a,e){
     case 'exam-prep-auto':{var rg=$('#f-prep-range')?$('#f-prep-range').value.trim():'',mt=$('#f-prep-material')?$('#f-prep-material').value.trim():'',box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add');if(box&&add){var vals=[];if(rg){rg.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 복습');});}if(mt){mt.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 보기');});}vals.push('헷갈리는 부분 다시 보기','예상문제·연습문제 풀기','시험 전 최종 복습');var existing=Array.from(box.querySelectorAll('[data-prep-text]')).map(function(x){return x.value.trim();});vals.filter(function(v,i,a){return v&&a.indexOf(v)===i&&existing.indexOf(v)<0;}).forEach(function(v){var rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(v)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);});}break;}
     case 'exam-prep-add':{var pi=$('#f-prep-new'),pv=pi&&pi.value.trim();if(pv){var box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add'),rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(pv)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);pi.value='';}break;}
     case 'exam-prep-del':{var pr=a.closest('.exam-prep-row');if(pr)pr.remove();break;}
+    case 'open-diary-library':openDiaryLibrary();break;
+    case 'diary-lib-prev':diaryLibraryMove(-1);break;
+    case 'diary-lib-next':diaryLibraryMove(1);break;
+    case 'diary-lib-date':diaryLibraryGoDate();break;
     case 'open-diary':saveDiaryDraft();drawDiary();break;
     case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);drawChat();break;
     case 'diary-toggle':saveDiaryDraft();if(!U.diaryRun)U.diaryRun={acc:0,since:Date.now(),running:true};else if(U.diaryRun.running)diaryPause();else diaryResume();drawDiary();break;
-    case 'diary-reset':saveDiaryDraft();U.diaryRun={acc:0,since:Date.now(),running:true};drawDiary();break;
     case 'diary-finish':finishDiary();break;
     case 'open-chat':U.chatRoom='general';U.chatQuery='';U.chatSel=null;drawChat();break;
     case 'chat-room':U.chatRoom=a.dataset.room||'general';U.chatQuery='';U.chatSel=null;drawChat();break;
@@ -5668,11 +5736,22 @@ function act(a,e){
     case 'school-add-onboard':openSchoolAdd(true);break;
     case 'school-add-settings':openSchoolAdd(false);break;
     case 'save-school':saveSchoolCustom();break;
+    case 'onboard-scan':
+      if(M.step===2){finishOnboard();closeModal();U.tab='timetable';render();setTimeout(openTimetableScan,0);}
+      break;
     case 'onboard-next':
       if(M.step===0){setSchool(M.school,M.campus);}
-      if(M.step===1){S.settings.defColor=M.color;lsSet('planner.defColor',M.color);applyDefaultColorToPlanner();save();}
-      if(M.step>=5){finishOnboard();closeModal();render();}
-      else{M.step++;drawOnboard();}
+      if(M.step===1){
+        var onName=$('#f-on-name');if(onName)S.settings.profileName=(onName.value||'').trim().slice(0,20);
+        var onDark=document.documentElement.getAttribute('data-theme')==='dark'||(document.documentElement.getAttribute('data-theme')!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if(!onDark){S.settings.defColor=M.color;lsSet('planner.defColor',M.color);applyDefaultColorToPlanner();}
+        save();
+      }
+      if(M.step>=3){
+        var ft=$('#f-on-first-todo'),txt=ft?(ft.value||'').trim():'';
+        if(txt){S.todos.push({id:uid(),title:txt,date:iso(U.sel||new Date()),done:false,color:defCol(),createdAt:Date.now()});}
+        finishOnboard();closeModal();save();render();
+      }else{M.step++;drawOnboard();}
       break;
     case 'save-event':saveEvent();break;
     case 'save-appointment':saveAppointment();break;
