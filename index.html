@@ -776,6 +776,83 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .postmeet.compact{margin:6px 0}
 .share-preview-head small{display:block;color:var(--sub);font-size:12px}
 .friend-plan-item em.dd{font-style:normal;font-size:11px;padding:1px 6px;border-radius:999px;margin-left:4px}
+
+/* ===== 링크 약속 · 추억 사진 · 리포트 ===== */
+.mc.heat{background:color-mix(in srgb,#3f9d6b var(--h),var(--soft));border-color:transparent}
+.meetlegend i.heat{background:color-mix(in srgb,#3f9d6b 70%,var(--soft))}
+.mc.heat i{color:#fff;text-align:center;font-size:10px}
+.lk-entry{display:flex;gap:6px;margin:4px 0}
+.lk-entry .tbtn{height:38px;padding:0 14px}
+.lk-url{display:block;font-size:13px;word-break:break-all;margin-top:4px;font-weight:600}
+.lk-row{width:100%;text-align:left}
+.lk-full{display:block;width:100%;height:48px;margin-top:10px;border-radius:12px;font-weight:700;font-size:15px;text-align:center}
+.acts .lk-a{flex:1;display:grid;place-items:center;height:44px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;color:var(--ink)}
+.lk-head .meet-head{background:transparent;padding:0;margin:0 0 8px}
+.lk-cta b{display:block;font-size:15px}
+.photo-pick{display:inline-grid;place-items:center;height:38px;padding:0 14px;margin:0 0 10px}
+.mem-new-photo{position:relative;margin:0 0 10px}
+.mem-new-photo img{width:100%;max-height:260px;object-fit:cover;border-radius:14px;display:block}
+.mem-new-photo .pp-x{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff}
+.mc-body{flex:1;min-width:0}
+.mem-photo{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:8px}
+.mem-addphoto{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer}
+.report-cta{display:block;width:100%;text-align:left;margin:14px 0 0;padding:13px 14px;border-radius:16px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 65%,var(--card));border:1.5px dashed color-mix(in srgb,var(--ink) 18%,transparent)}
+.report-cta b{display:block;font-size:15px}.report-cta small{display:block;color:var(--sub);font-size:12px;margin-top:2px}
+.report-box img{width:100%;border-radius:16px;display:block;box-shadow:0 1px 0 var(--line)}
+.report-box{margin:6px 0 4px}
+
+.group-status{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:var(--soft);font-size:10px;font-weight:800;margin-left:5px;white-space:nowrap}
+.group-people{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 2px}
+.group-person{display:inline-flex;align-items:center;gap:3px;padding:5px 8px;border-radius:999px;background:var(--soft);font-size:11px;font-weight:700}
+
+.top-slots{margin:8px 0 12px;padding:10px;border-radius:12px;background:var(--soft)}
+.top-slots>b{display:block;font-size:12px;margin-bottom:7px}.top-slots>div{display:flex;gap:6px;overflow-x:auto}
+.poll-deadline{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.shared-checklist{margin:10px 0;padding:11px;border-radius:12px;background:var(--soft)}
+.shared-checklist>b{display:block;font-size:12px;margin-bottom:6px}
+.shared-check{width:100%;display:grid;grid-template-columns:22px 1fr auto;gap:7px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:12px}
+.shared-check em{font-style:normal;text-align:left}.shared-check small{color:var(--sub)}.shared-check.on em{text-decoration:line-through;color:var(--sub)}
+.memory-photo-card{overflow:hidden;border:1px solid var(--edge);border-radius:14px;background:var(--card);margin:8px 0}
+.memory-photo-card img{display:block;width:100%;max-height:220px;object-fit:cover}.memory-photo-card>div{padding:10px 12px}.memory-photo-card b,.memory-photo-card small{display:block}.memory-photo-card small{color:var(--sub);margin-top:3px}
+
+.meet-activity-picks{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 10px}
+.activity-chip,.person-drag{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:700}
+.activity-chip.on{background:var(--accent-soft);border-color:var(--accent)}
+.task-assign-wrap{margin:10px 0;padding:10px;border-radius:14px;background:var(--soft)}
+.task-pool,.person-pool{display:flex;gap:6px;flex-wrap:wrap;min-height:38px;padding:5px;border:1px dashed var(--line);border-radius:11px}
+.person-drag{cursor:grab}.person-drag:active{cursor:grabbing}
+.task-row{display:grid;grid-template-columns:1fr minmax(110px,auto);gap:8px;align-items:center;margin-top:7px}
+.task-drop{min-height:36px;padding:5px;border:1px dashed var(--line);border-radius:10px;display:flex;gap:4px;flex-wrap:wrap}
+.task-drop.over{outline:2px solid var(--accent)}
+.moilkka-options{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
+
+.place-reco{margin:10px 0;padding:12px;border:1px solid var(--edge);border-radius:14px;background:var(--soft)}
+.place-reco-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.place-reco-person{display:grid;grid-template-columns:minmax(70px,.7fr) 1.3fr 92px;gap:6px;align-items:center;margin:6px 0}
+.place-reco-person b{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.place-reco-card{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px;margin-top:7px;border-radius:12px;background:var(--card);border:1px solid var(--edge)}
+.place-reco-card small{display:block;color:var(--sub);margin-top:3px;line-height:1.4}
+.place-reco-actions{display:flex;gap:5px;align-items:center}
+@media(max-width:430px){.place-reco-person{grid-template-columns:1fr 92px}.place-reco-person b{grid-column:1/-1}}
+
+
+.geo-row{display:flex;gap:7px;align-items:center;margin:-3px 0 10px}
+.geo-row .tbtn{flex:none}.geo-row small{color:var(--sub);font-size:11px;line-height:1.35}
+.input-progress{height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0 4px}
+.input-progress i{display:block;height:100%;background:var(--accent);border-radius:inherit}
+.reco-wait{padding:10px;border-radius:11px;background:var(--card);border:1px dashed var(--line);font-size:12px;color:var(--sub)}
+
+.ttscan-preview{display:flex;gap:8px;align-items:center;margin:8px 0 12px}
+.ttscan-preview img{width:92px;height:92px;object-fit:cover;border-radius:12px;background:var(--soft)}
+.ttscan-list{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.ttscan-card{padding:10px;border:1px solid var(--edge);border-radius:12px;background:var(--card)}
+.ttscan-card.bad{border-color:var(--now)}
+.ttscan-grid{display:grid;grid-template-columns:1.4fr .7fr 1fr 1fr;gap:6px}
+.ttscan-grid .fld{margin:0;height:38px;font-size:13px;padding:0 8px}
+.ttscan-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.ttscan-meta .fld{margin:0;height:38px;font-size:13px;padding:0 8px}
+.ttscan-warn{font-size:11px;color:var(--now);margin-top:6px}
+@media(max-width:430px){.ttscan-grid{grid-template-columns:1fr 72px}.ttscan-grid .ttscan-time{grid-column:auto}.ttscan-meta{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1057,7 +1134,7 @@ var DEFAULT_CLASSES=[];
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -1070,6 +1147,7 @@ function normalize(s){
   if(typeof o.settings.profileName!=='string')o.settings.profileName='';
   o.settings.profileName=o.settings.profileName.trim().slice(0,20);
   if(typeof o.settings.profilePhoto!=='string')o.settings.profilePhoto='';
+  if(typeof o.settings.homeStation!=='string')o.settings.homeStation='';
   if(o.settings.schoolConfigured===undefined)o.settings.schoolConfigured=hadSavedSchool;
   if(o.settings.onboardDone===undefined)o.settings.onboardDone=hadSavedSchool;
   if(!o.settings.notified||typeof o.settings.notified!=='object')o.settings.notified={};
@@ -1433,6 +1511,87 @@ function regionDistricts(region,city){var x=KOREA_REGIONS[region];return !Array.
 function euro(w){w=String(w||'');var c=w.charCodeAt(w.length-1);if(c<0xAC00||c>0xD7A3)return w+'(으)로';var j=(c-0xAC00)%28;return w+(j===0||j===8?'로':'으로');}
 function mdTxt(d){return (d.getMonth()+1)+'월\u00a0'+d.getDate()+'일';}
 function normalizePlaceText(v){return String(v||'').replace(/\s+/g,' ').trim();}
+
+var MOILKKA_STATIONS=[{"name":"홍대입구역","short":"홍대","lat":37.5572,"lng":126.9245,"zone":"west"},{"name":"신촌역","short":"신촌","lat":37.5551,"lng":126.9368,"zone":"west"},{"name":"디지털미디어시티역","short":"DMC","lat":37.5766,"lng":126.9009,"zone":"west"},{"name":"김포공항역","short":"김포공항","lat":37.5625,"lng":126.801,"zone":"west"},{"name":"목동역","short":"목동","lat":37.5261,"lng":126.8643,"zone":"west"},{"name":"영등포역","short":"영등포","lat":37.5155,"lng":126.9076,"zone":"west"},{"name":"구로디지털단지역","short":"구디","lat":37.4852,"lng":126.9016,"zone":"west"},{"name":"공덕역","short":"공덕","lat":37.544,"lng":126.9513,"zone":"center"},{"name":"여의도역","short":"여의도","lat":37.5216,"lng":126.9242,"zone":"center"},{"name":"서울역","short":"서울역","lat":37.5547,"lng":126.9707,"zone":"center"},{"name":"용산역","short":"용산","lat":37.5299,"lng":126.9648,"zone":"center"},{"name":"종로3가역","short":"종로3가","lat":37.5715,"lng":126.9919,"zone":"center"},{"name":"을지로3가역","short":"을지로","lat":37.5663,"lng":126.9919,"zone":"center"},{"name":"동대문역사문화공원역","short":"동대문","lat":37.5651,"lng":127.0079,"zone":"center"},{"name":"혜화역","short":"혜화","lat":37.5823,"lng":127.0019,"zone":"north"},{"name":"왕십리역","short":"왕십리","lat":37.5612,"lng":127.0371,"zone":"east"},{"name":"성신여대입구역","short":"성신여대","lat":37.5928,"lng":127.0165,"zone":"north"},{"name":"노원역","short":"노원","lat":37.6551,"lng":127.0611,"zone":"north"},{"name":"건대입구역","short":"건대","lat":37.5404,"lng":127.0692,"zone":"east"},{"name":"잠실역","short":"잠실","lat":37.5133,"lng":127.1002,"zone":"east"},{"name":"천호역","short":"천호","lat":37.5386,"lng":127.1238,"zone":"east"},{"name":"이태원역","short":"이태원","lat":37.5345,"lng":126.9946,"zone":"center"},{"name":"신사역","short":"신사","lat":37.5164,"lng":127.0203,"zone":"south"},{"name":"강남역","short":"강남","lat":37.4979,"lng":127.0276,"zone":"south"},{"name":"고속터미널역","short":"고속터미널","lat":37.5048,"lng":127.0048,"zone":"south"},{"name":"사당역","short":"사당","lat":37.4766,"lng":126.9816,"zone":"south"},{"name":"선릉역","short":"선릉","lat":37.5045,"lng":127.049,"zone":"south"},{"name":"인천터미널역","short":"인천터미널","lat":37.4418,"lng":126.7011,"zone":"gyeonggi"},{"name":"정발산역","short":"정발산","lat":37.6595,"lng":126.7732,"zone":"gyeonggi"},{"name":"부천시청역","short":"부천시청","lat":37.5046,"lng":126.7635,"zone":"gyeonggi"},{"name":"범계역","short":"범계","lat":37.3898,"lng":126.9508,"zone":"gyeonggi"},{"name":"수원역","short":"수원","lat":37.2661,"lng":126.9999,"zone":"gyeonggi"},{"name":"판교역","short":"판교","lat":37.3948,"lng":127.1112,"zone":"gyeonggi"},{"name":"서현역","short":"서현","lat":37.385,"lng":127.1231,"zone":"gyeonggi"},{"name":"구리역","short":"구리","lat":37.6034,"lng":127.1439,"zone":"gyeonggi"}];
+var MOILKKA_ZONE_LABEL={west:'서부',center:'도심',north:'북부',east:'동부',south:'강남·남부',gyeonggi:'경기·인천'};
+
+function nearestMoStation(lat,lng){
+  var here={lat:+lat,lng:+lng},best=null,bd=Infinity;
+  MOILKKA_STATIONS.forEach(function(st){var d=moDist(here,st);if(d<bd){bd=d;best=st;}});
+  return best?{station:best,distance:bd}:null;
+}
+function requestNearestStation(done,msgEl){
+  if(!navigator.geolocation){if(msgEl)msgEl.textContent='이 기기에서는 현재 위치를 사용할 수 없어요.';return;}
+  if(msgEl)msgEl.textContent='현재 위치 확인 중…';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var z=nearestMoStation(pos.coords.latitude,pos.coords.longitude);
+    if(!z){if(msgEl)msgEl.textContent='가까운 역을 찾지 못했어요.';return;}
+    if(msgEl)msgEl.textContent='가장 가까운 지원 역 · '+z.station.name+' (직선 약 '+(z.distance<1?Math.round(z.distance*1000)+'m':z.distance.toFixed(1)+'km')+')';
+    done(z.station.name,z);
+  },function(err){
+    if(msgEl)msgEl.textContent=err&&err.code===1?'위치 권한이 꺼져 있어요. 브라우저 설정에서 위치를 허용해주세요.':'현재 위치를 불러오지 못했어요.';
+  },{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
+}
+function linkMetaSlots(slots,origin,cap){
+  var a=(slots||[]).filter(function(x){return !/^@(?:origin|cap):/.test(x);});
+  if(origin)a.push('@origin:'+origin);if(+cap)a.push('@cap:'+(+cap));return a;
+}
+function linkAnswerMeta(a){
+  var o='',cap=0;(a&&a.slots||[]).forEach(function(x){if(x.indexOf('@origin:')===0)o=x.slice(8);else if(x.indexOf('@cap:')===0)cap=+x.slice(5)||0;});
+  return {origin:o,cap:cap};
+}
+function linkRealSlots(a){return (a&&a.slots||[]).filter(function(x){return x.indexOf('@')!==0;});}
+function linkPlacePeople(p,answers){
+  var out=[{id:'owner',name:p.ownerName||'나',origin:p.ownerStation||'',cap:+p.ownerCap||0}];
+  (answers||[]).forEach(function(a){var m=linkAnswerMeta(a);out.push({id:a.id,name:a.name||'친구',origin:m.origin,cap:m.cap});});
+  return out;
+}
+function linkPlaceRecoHTML(p,answers){
+  if(!p.placeRecommend)return '';
+  var people=linkPlacePeople(p,answers),filled=people.filter(function(x){return moStation(x.origin);}).length,total=Math.max(+p.expectedPeople||0,people.length),rec=moFairRecommendations(people);
+  var progress=total?Math.min(100,Math.round(filled/total*100)):0;
+  return '<div class="place-reco"><div class="place-reco-head"><b>약속장소 추천받기</b><small>'+filled+'/'+total+'명 출발역 입력</small></div>'+
+    '<div class="input-progress"><i style="width:'+progress+'%"></i></div>'+
+    (rec.length?rec.map(function(r,i){return '<div class="place-reco-card"><div><b>'+(i+1)+'순위 · '+esc(r.station.name)+'</b><small>최대 '+r.max+'분 · 사람 간 차이 '+r.spread+'분 · 평균 '+r.avg+'분</small><small>'+esc(r.times.map(function(x){return x.name+' '+x.time+'분';}).join(' · '))+'</small></div><div class="place-reco-actions"><button class="tbtn" data-act="lk-place-pick" data-st="'+esc(r.station.name)+'">장소로 선택</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+encodeURIComponent(r.station.name)+'">길찾기</a></div></div>';}).join(''):'<div class="reco-wait">출발역을 2명 이상 입력하면 추천이 시작돼요.</div>')+
+    '<p class="hint">역 좌표 기반 대중교통 추정치예요. 실제 이동시간은 길찾기로 확인해주세요.</p></div>';
+}
+function moStation(name){name=stationName(name);return MOILKKA_STATIONS.find(function(x){return x.name===name;})||null;}
+function moDist(a,b){var R=6371,rad=function(v){return v*Math.PI/180;},dLat=rad(b.lat-a.lat),dLng=rad(b.lng-a.lng),h=Math.sin(dLat/2)**2+Math.sin(dLng/2)**2*Math.cos(rad(a.lat))*Math.cos(rad(b.lat));return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
+function moTravel(a,b){var d=moDist(a,b),long=d>15?6:0;return Math.round(9+d*2.35+long);}
+function moFairRecommendations(people){
+  var valid=(people||[]).map(function(p){return Object.assign({},p,{station:moStation(p.origin)});}).filter(function(p){return p.station;});
+  if(valid.length<2)return [];
+  return MOILKKA_STATIONS.map(function(st){
+    var times=valid.map(function(p){return {id:p.id,name:p.name,time:moTravel(p.station,st),cap:+p.cap||0};});
+    var max=Math.max.apply(null,times.map(function(x){return x.time;})),min=Math.min.apply(null,times.map(function(x){return x.time;}));
+    var avg=Math.round(times.reduce(function(a,x){return a+x.time;},0)/times.length);
+    var capOk=times.every(function(x){return !x.cap||x.time<=x.cap;});
+    return {station:st,times:times,max:max,min:min,avg:avg,spread:max-min,capOk:capOk};
+  }).filter(function(x){return x.capOk;}).sort(function(a,b){return a.spread-b.spread||a.max-b.max||a.avg-b.avg;}).slice(0,3);
+}
+function moStationOptions(selected){
+  var order=['west','center','north','east','south','gyeonggi'];
+  return '<option value="">출발역 선택</option>'+order.map(function(z){return '<optgroup label="'+MOILKKA_ZONE_LABEL[z]+'">'+MOILKKA_STATIONS.filter(function(x){return x.zone===z;}).map(function(x){return '<option value="'+esc(x.name)+'"'+(stationName(selected)===x.name?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'</optgroup>';}).join('');
+}
+function meetPlacePeople(){
+  var me={id:Sync.uid||'me',name:myDisplayName()||'나',origin:(S.settings.homeStation||''),cap:60};
+  return [me].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f),origin:f.homeStation||'',cap:60};}));
+}
+function placeRecoPanelHTML(){
+  var people=(M.placePeople||meetPlacePeople());M.placePeople=people;
+  return '<div class="place-reco"><div class="place-reco-head"><b>약속장소 추천받기</b><small class="hint" style="margin:0">이동 부담이 비슷한 역</small></div>'+
+    people.map(function(p,i){return '<div class="place-reco-person"><b>'+esc(p.name)+(p.id===(Sync.uid||'me')?' (나)':'')+'</b><select class="sel" data-place-origin="'+i+'">'+moStationOptions(p.origin)+'</select><select class="sel" data-place-cap="'+i+'"><option value="0">상한 없음</option>'+[30,45,60,90].map(function(v){return '<option value="'+v+'"'+(+p.cap===v?' selected':'')+'>'+v+'분 이하</option>';}).join('')+'</select></div>';}).join('')+
+    '<div class="acts"><button class="b-save" data-act="place-reco-run">공평한 장소 찾기</button></div><div id="place-reco-results"></div><p class="hint">대중교통 기준 추정치예요. 실제 이동시간은 길찾기로 한 번 더 확인해주세요.</p></div>';
+}
+function placeRecoResultsHTML(){
+  var rec=moFairRecommendations(M.placePeople||[]);
+  if(!rec.length)return '<p class="hint">출발역을 2명 이상 입력해주세요. 편도 상한 때문에 후보가 없으면 상한을 늘려보세요.</p>';
+  return rec.map(function(r,i){
+    var detail=r.times.map(function(x){return x.name+' '+x.time+'분';}).join(' · ');
+    var q=encodeURIComponent(r.station.name);
+    return '<div class="place-reco-card"><div><b>'+(i+1)+'순위 · '+esc(r.station.name)+'</b><small>최대 '+r.max+'분 · 차이 '+r.spread+'분 · 평균 '+r.avg+'분</small><small>'+esc(detail)+'</small></div><div class="place-reco-actions"><button class="tbtn" data-act="place-reco-pick" data-st="'+esc(r.station.name)+'">여기로</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+q+'">길찾기</a></div></div>';
+  }).join('');
+}
 function stationName(s){s=normalizePlaceText(s);return s?(/역$/.test(s)?s:s+'역'):'';}
 function stationStem(s){return normalizePlaceText(s).replace(/역$/,'');}
 function placeLeaf(v){var a=normalizePlaceText(v).split(/\s*·\s*|\s*>\s*/).filter(Boolean);return a[a.length-1]||'';}
@@ -1635,8 +1794,14 @@ function sharedPatch(rid,fn){
   var sb=friendDb();if(!sb)return Promise.reject(new Error('로그인이 필요해요'));
   return sb.from('planner_shared_appointments').select('request_id,user_a,user_b,payload').eq('request_id',rid).maybeSingle().then(function(x){
     if(x.error)throw x.error;if(!x.data)throw new Error('약속을 찾지 못했어요');
-    var p=JSON.parse(JSON.stringify(x.data.payload||{})),res=fn(p,x.data);
-    return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',rid).then(function(y){if(y.error)throw y.error;var loc=latestShared(rid);if(loc)loc.payload=p;return {p:p,res:res};});
+    var p=JSON.parse(JSON.stringify(x.data.payload||{})),res=fn(p,x.data),gid=p.groupId||'';
+    if(!gid)return sb.from('planner_shared_appointments').update({payload:p,updated_at:new Date().toISOString()}).eq('request_id',rid).then(function(y){if(y.error)throw y.error;var loc=latestShared(rid);if(loc)loc.payload=p;return {p:p,res:res};});
+    var groupRows=(FriendSync.shared||[]).filter(function(r){return r.payload&&r.payload.groupId===gid;});
+    if(!groupRows.length)groupRows=[x.data];
+    return Promise.all(groupRows.map(function(gr){
+      var gp=Object.assign({},gr.payload||{},p);
+      return sb.from('planner_shared_appointments').update({payload:gp,updated_at:new Date().toISOString()}).eq('request_id',gr.request_id).then(function(y){if(y.error)throw y.error;var loc=latestShared(gr.request_id);if(loc)loc.payload=gp;});
+    })).then(function(){return {p:p,res:res};});
   });
 }
 function updateSharedPayload(r,fn,msg){
@@ -1660,20 +1825,22 @@ function drawPlaceDecision(){
   drawCandidateCommon();
 }
 function drawCandidateCommon(){
-  if(M.type!=='place-decision')return;var r=latestShared(M.requestId),box=$('#candidate-common');if(!r||!box)return;
-  var p=r.payload||{},other=(p.candidateSelections||{})[sharedFriendOf(r)]||[],common=(M.selected||[]).filter(function(x){return other.indexOf(x)>=0;});
-  box.innerHTML=common.length?'<span class="lbl">둘 다 괜찮다고 한 곳 · 눌러서 확정</span><div class="candidate-picks">'+common.map(function(x){return '<button class="candidate-pick final" data-act="candidate-final" data-v="'+esc(x)+'">'+esc(euro(x))+' 확정</button>';}).join('')+'</div>':'<p class="hint">아직 둘이 겹친 후보가 없어요. 고르고 저장하면 친구에게 알림이 가요.</p>';
+  var box=$('#candidate-common');if(!box)return;var r=(FriendSync.shared||[]).find(function(x){return x.request_id===M.requestId;});if(!r)return;
+  var p=r.payload||{},cs=p.candidateSelections||{},members=(p.groupMembers&&p.groupMembers.length?p.groupMembers:[r.user_a,r.user_b]),lists=members.map(function(uid){return cs[uid]||[];}).filter(function(a){return a.length;});
+  var common=lists.length?lists[0].filter(function(x){return lists.every(function(a){return a.indexOf(x)>=0;});}):[];
+  box.innerHTML=common.length?'<p class="hint">현재 선택을 보낸 사람들 모두 겹치는 후보예요.</p>'+common.map(function(x){return '<button class="candidate-pick on" data-act="candidate-final" data-v="'+esc(x)+'">✓ '+esc(x)+'로 확정</button>';}).join(''):'<p class="hint">아직 모두 겹치는 후보가 없어요. 여러 개 골라도 돼요.</p>';
 }
 function saveCandidateSelection(){
   var r=latestShared(M.requestId);if(!r)return;
   var sel=cleanCandidates(M.selected||[]),added=(M.added||[]).slice(),me=Sync.uid;closeModal();
   updateSharedPayload(r,function(p,row){
-    var fid=row.user_a===me?row.user_b:row.user_a,cs=p.candidateSelections||{};
-    p.placeCandidates=cleanCandidates((p.placeCandidates||[]).concat(added));cs[me]=sel;p.candidateSelections=cs;p.candidateBy=me;p.candidateAt=Date.now();
-    var common=p.place?[]:sel.filter(function(x){return (cs[fid]||[]).indexOf(x)>=0;});
-    if(common.length===1){p.place=common[0];p.placeInfo=placeInfoFromText(common[0]);p.placePending=false;p.placeConfirmedBy=me;}
-    return common;
-  },function(o){var c=o.res||[];return c.length===1?euro(c[0])+' 장소를 확정했어요. 두 사람 캘린더에 같이 바뀌어요':c.length>1?'겹친 곳이 '+c.length+'곳이에요. 알림에서 하나를 눌러 확정해요':'장소 후보 선택을 저장했어요';});
+    var cs=p.candidateSelections||{};p.placeCandidates=cleanCandidates((p.placeCandidates||[]).concat(added));cs[me]=sel;p.candidateSelections=cs;p.candidateBy=me;p.candidateAt=Date.now();
+    var members=(p.groupMembers&&p.groupMembers.length?p.groupMembers:[row.user_a,row.user_b]),lists=members.map(function(uid){return cs[uid]||[];}).filter(function(a){return a.length;});
+    var allAnswered=members.every(function(uid){return (cs[uid]||[]).length>0;});
+    var common=lists.length?lists[0].filter(function(x){return lists.every(function(a){return a.indexOf(x)>=0;});}):[];
+    if(!p.place&&allAnswered&&common.length===1){p.place=common[0];p.placeInfo=placeInfoFromText(common[0]);p.placePending=false;p.placeConfirmedBy=me;}
+    return {common:common,allAnswered:allAnswered};
+  },function(o){var z=o.res||{},c=z.common||[];return z.allAnswered&&c.length===1?euro(c[0])+' 장소를 확정했어요. 그룹 캘린더에 같이 바뀌어요':c.length>1?'겹친 곳이 '+c.length+'곳이에요. 하나를 눌러 확정해요':'장소 후보 선택을 저장했어요';});
 }
 function finalizeCandidate(v){
   var r=latestShared(M.requestId);if(!r)return;closeModal();
@@ -1730,6 +1897,263 @@ function autoMemoryFromShared(){
   if(!jobs.length)return Promise.resolve();
   return Promise.all(jobs).then(function(){return friendLoadMemories();}).then(function(){autoMemoryFromShared();softRender();}).catch(function(){});
 }
+/* ---------- 링크 약속: 앱 없는 친구·여러 명(팀플·동아리)도 링크로 시간 고르기 ---------- */
+var LinkSync={links:[],answers:{},loaded:false,error:''};
+function linkUrl(t){return location.origin+location.pathname+'#m='+t;}
+function linkBusy(p,k,m){var b=p.busy&&p.busy[k];if(!b)return false;if(b==='a')return true;return b.some(function(r){return r[0]<m+30&&r[1]>m;});}
+function linkDays(p){var out=[],f=parseKey(p.from);for(var i=0;i<(p.days||14);i++)out.push(dkey(addDays(f,i)));return out;}
+function linkCounts(answers,skipId){var c={},who={};(answers||[]).forEach(function(a){if(skipId&&a.id===skipId)return;linkRealSlots(a).forEach(function(s){c[s]=(c[s]||0)+1;(who[s]=who[s]||[]).push(a.name||'친구');});});return {c:c,who:who};}
+function linkBestRuns(p,answers){
+  var cw=linkCounts(answers),runs=[],tk=dkey(new Date());
+  linkDays(p).forEach(function(k){if(k<tk)return;var cur=null;
+    for(var m=p.lo;m<=p.hi;m+=30){var n=m<p.hi?(cw.c[k+'|'+m]||0):0;
+      if(cur&&n===cur.n){cur.e=m+30;continue;}
+      if(cur)runs.push(cur);
+      cur=n>0?{date:k,s:m,e:m+30,n:n}:null;}
+  });
+  return runs.sort(function(a,b){return b.n-a.n||(b.e-b.s)-(a.e-a.s)||a.date.localeCompare(b.date);}).slice(0,3);
+}
+function linkGridHTML(p,answers,o){
+  var days=linkDays(p),start=o.week*7,tk=dkey(new Date()),now=new Date(),nm=now.getHours()*60+now.getMinutes(),cw=linkCounts(answers,o.skipId),total=(answers||[]).filter(function(a){return !o.skipId||a.id!==o.skipId;}).length,max=0;
+  Object.keys(cw.c).forEach(function(k){if(cw.c[k]>max)max=cw.c[k];});
+  var cols=[];for(var i=0;i<7;i++)cols.push(days[start+i]||null);
+  var h='<div class="mgh"></div>'+cols.map(function(k){if(!k)return '<div class="mgh"></div>';var d=parseKey(k);return '<div class="mgh'+(k===tk?' td':'')+'">'+DAYS[dow(d)]+'<b>'+d.getDate()+'</b></div>';}).join('');
+  for(var m=p.lo;m<p.hi;m+=30){
+    h+='<span class="mt">'+(m%60===0?m/60:'')+'</span>';
+    cols.forEach(function(k){
+      if(!k){h+='<span class="mc past" aria-hidden="true"></span>';return;}
+      var key=k+'|'+m,past=k<tk||(k===tk&&m+30<=nm),busy=linkBusy(p,k,m),n=cw.c[key]||0;
+      var mine=o.mode==='guest'&&o.mine&&o.mine[key],sel=o.mode==='owner'&&o.sel&&o.sel.date===k&&m>=o.sel.s&&m<o.sel.e;
+      var cls='mc'+(past?' past':'')+(busy&&o.mode==='guest'?' fb':'')+(busy&&o.mode==='owner'?' mb':'')+(mine||sel?' pick':'')+(n&&!mine&&!sel?' heat':'');
+      var st=n&&!mine&&!sel?' style="--h:'+Math.round(35+65*n/Math.max(max,1))+'%"':'';
+      h+='<button class="'+cls+'"'+st+' data-act="'+(o.mode==='guest'?'lk-cell':'lk-ocell')+'" data-k="'+k+'" data-m="'+m+'"'+(past||(busy&&o.mode==='guest')?' aria-disabled="true"':'')+' aria-label="'+esc(slotText(k,m,m+30)+(n?' · '+n+'명 가능':''))+'">'+(n&&o.mode==='owner'&&!sel?'<i>'+n+'</i>':'')+'</button>';
+    });
+  }
+  var pages=Math.ceil(days.length/7),a=parseKey(cols[0]),lastK=cols.filter(Boolean).pop(),b=parseKey(lastK);
+  return '<div class="meetnav"><button class="tbtn" data-act="lk-week" data-v="-1"'+(o.week>0?'':' disabled')+'>‹</button><b>'+mdTxt(a)+' – '+mdTxt(b)+'</b><button class="tbtn" data-act="lk-week" data-v="1"'+(o.week<pages-1?'':' disabled')+'>›</button></div>'+
+    '<div class="meetlegend">'+(o.mode==='guest'?'<span><i class="fb"></i>'+esc(p.ownerName||'친구')+' 안 되는 시간</span><span><i class="pick"></i>내가 된다고 한 시간</span>':'<span><i class="mb"></i>내 일정</span><span><i class="pick"></i>고른 시간</span>')+(total?'<span><i class="heat" style="--h:80%"></i>다른 사람 가능 (진할수록 많이)</span>':'')+'</div>'+
+    '<div class="meetgrid">'+h+'</div>';
+}
+/* ----- 만드는 쪽 (로그인한 나) ----- */
+function openLinkCreate(){
+  if(!friendDb()){openLogin('링크 약속은 로그인 후 만들 수 있어요');return;}
+  M={type:'link-create',pp:ppNew(null,{allowUndecided:true}),days:14};
+  openModal('<h3>링크로 약속 잡기</h3><p class="hint">앱이 없는 친구도, 여러 명(팀플·동아리·모임)도 링크만 열면 되는 시간을 골라요. 내 일정은 제목 없이 “안 되는 시간”으로만 보여요.</p>'+
+    '<span class="lbl">무엇을</span><input class="fld" id="f-lkwhat" maxlength="40" placeholder="예: 팀플 회의, 동아리 회식, 저녁">'+
+    '<span class="lbl">장소</span><div id="pp">'+ppHTML(M.pp)+'</div>'+
+    '<div class="card" style="margin:8px 0"><label class="ck" style="margin-bottom:8px"><input type="checkbox" id="f-lk-place-reco" checked> 출발역으로 약속장소 추천받기</label>'+
+    '<span class="lbl">총 몇 명이 답할 예정이야? <em>(나 포함)</em></span><input class="fld" id="f-lk-expected" type="number" min="2" max="30" value="3">'+
+    '<span class="lbl">내 출발역</span><select class="fld" id="f-lk-origin">'+moStationOptions(S.settings.homeStation||'')+'</select>'+
+    '<div class="geo-row"><button class="tbtn" data-act="lk-current">현재 위치에서 찾기</button><small id="lk-geo-msg">프로필의 내 동네 역이 자동으로 들어가요.</small></div>'+
+    '<span class="lbl">내 편도 상한 <em>(선택)</em></span><select class="fld" id="f-lk-cap"><option value="0">상한 없음</option><option value="30">30분 이하</option><option value="45">45분 이하</option><option value="60">60분 이하</option><option value="90">90분 이하</option></select></div>'+
+    '<span class="lbl">언제까지 물어볼까</span><div class="seg" id="lk-days">'+[[7,'1주'],[14,'2주'],[21,'3주']].map(function(x){return '<button data-act="lk-days" data-v="'+x[0]+'" class="'+(x[0]===14?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>'+
+    '<p class="hint">시간 범위는 내 약속 가능 시간('+meetAvail()[0]+':00~'+meetAvail()[1]+':00)을 따라요. 설정 → 친구에서 바꿀 수 있어요.</p>'+
+    '<p class="hint" id="lk-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="lk-create">링크 만들기</button></div>');
+}
+function createLink(){
+  var sb=friendDb();if(!sb)return;
+  var info=ppInfo(M.pp),msg=$('#lk-msg');
+  if(M.pp.mode!=='undecided'&&!info){if(msg)msg.textContent='장소를 고르거나 “미정”을 눌러주세요';return;}
+  var what=$('#f-lkwhat').value.trim(),days=M.days||14,av=meetAvail(),busy={},t=new Date(),
+      placeRecommend=!!($('#f-lk-place-reco')&&$('#f-lk-place-reco').checked),
+      expectedPeople=Math.max(2,Math.min(30,+($('#f-lk-expected')&&$('#f-lk-expected').value)||2)),
+      ownerStation=($('#f-lk-origin')&&$('#f-lk-origin').value)||S.settings.homeStation||'',
+      ownerCap=+($('#f-lk-cap')&&$('#f-lk-cap').value)||0;
+  for(var i=0;i<days;i++){var k=dkey(addDays(t,i)),b=myBusyOn(k);if(b.allday)busy[k]='a';else if(b.r.length)busy[k]=b.r.map(function(r){return [r[0],r[1]];});}
+  var payload={v:1,ownerName:myDisplayName(),ownerPhoto:S.settings.profilePhoto||'',what:what,place:placeInfoText(info),placeInfo:info,from:dkey(t),days:days,lo:av[0]*60,hi:av[1]*60,busy:busy,placeRecommend:placeRecommend,expectedPeople:expectedPeople,ownerStation:ownerStation,ownerCap:ownerCap};
+  if(msg)msg.textContent='만드는 중…';
+  sb.from('planner_meet_links').insert({owner_id:Sync.uid,payload:payload,status:'open'}).select().single().then(function(r){
+    if(r.error)throw r.error;LinkSync.links.unshift(r.data);LinkSync.answers[r.data.token]=[];openLinkShare(r.data.token,true);
+  }).catch(function(e){if(msg)msg.textContent=(/does not exist|schema cache|Could not find/i.test(e&&e.message||'')?'Supabase에서 planner-friends.sql을 한 번 더 실행해주세요. ':'링크를 만들지 못했어요. ')+'('+(e&&e.message||'')+')';});
+}
+function linkShareText(l){var p=l.payload||{};return (p.ownerName||'친구')+'님이 '+(p.what?'“'+p.what+'” ':'약속 ')+'시간을 물어봐요! 되는 시간 눌러줘 👉 '+linkUrl(l.token);}
+function openLinkShare(t,fresh){
+  var l=LinkSync.links.find(function(x){return x.token===t;});if(!l)return;
+  M={type:'link-share',token:t};
+  openModal('<h3>'+(fresh?'링크가 만들어졌어요':'링크 공유')+'</h3><p class="hint">카톡방에 보내면 앱이 없어도 링크만 열어서 되는 시간을 골라요. 여러 명한테 같은 링크를 보내도 돼요.</p><div class="codebox" style="display:block"><small>약속 링크</small><span class="lk-url">'+esc(linkUrl(t))+'</span></div>'+
+    '<div class="acts"><button class="b-ghost" data-act="lk-copy" data-id="'+t+'">복사</button>'+(navigator.share?'<button class="b-save" data-act="lk-share" data-id="'+t+'">공유하기</button>':'<button class="b-save" data-act="lk-detail" data-id="'+t+'">답 확인하기</button>')+'</div>'+
+    (navigator.share?'<button class="tbtn" style="width:100%;margin-top:8px" data-act="lk-detail" data-id="'+t+'">답 확인하기</button>':'')+'<p class="hint" id="lk-msg"></p>');
+}
+function linkLoad(){
+  var sb=friendDb();if(!sb)return Promise.resolve();
+  return sb.from('planner_meet_links').select('token,payload,status,final,created_at').eq('owner_id',Sync.uid).order('created_at',{ascending:false}).limit(30).then(function(r){
+    if(r.error)throw r.error;LinkSync.links=r.data||[];var ts=LinkSync.links.map(function(x){return x.token;});
+    if(!ts.length){LinkSync.answers={};return;}
+    return sb.from('planner_meet_answers').select('id,token,name,slots,created_at').in('token',ts).then(function(a){if(a.error)throw a.error;var m={};(a.data||[]).forEach(function(x){(m[x.token]=m[x.token]||[]).push(x);});LinkSync.answers=m;});
+  }).then(function(){
+    LinkSync.loaded=true;LinkSync.error='';
+    if(!S.settings.linkSeen)S.settings.linkSeen={};var seen=S.settings.linkSeen,first=!LinkSync.ready,ch=false;
+    Object.keys(LinkSync.answers).forEach(function(t){var l=LinkSync.links.find(function(x){return x.token===t;});(LinkSync.answers[t]||[]).forEach(function(a){var sig=a.id+':'+(a.slots||[]).length;if(seen[a.id]===sig)return;var isNew=!seen[a.id];seen[a.id]=sig;ch=true;if(first&&!l)return;if(l&&l.status==='open'){var tx=(a.name||'친구')+'님이 '+((l.payload||{}).what?'“'+l.payload.what+'” ':'링크 약속에 ')+(isNew?'되는 시간을 보냈어요':'시간을 고쳤어요');pushNotice('friend',tx);if(document.hidden)sysNotify('링크 약속',tx,'lk:'+a.id);else if(M.type!=='notices')inAppToast(tx);}});});
+    LinkSync.ready=true;if(ch)save();
+    if(M.type==='link-detail')drawLinkDetail();else if(M.type==='link-list')openLinkList();
+  }).catch(function(e){LinkSync.error=e&&e.message||'';});
+}
+function openLinkList(){
+  M={type:'link-list'};
+  var rows=LinkSync.links.map(function(l){var p=l.payload||{},n=(LinkSync.answers[l.token]||[]).length,f=l.final;return '<button class="setrow lk-row" data-act="lk-detail" data-id="'+l.token+'"><span>'+esc(p.what||'약속')+(p.place?' · '+esc(p.place):'')+'<small>'+(l.status==='open'?esc(n?n+'명 답함 · 누르면 겹치는 시간을 봐요':'아직 답이 없어요'):'확정 · '+esc(f&&f.date?slotText(f.date,toMin(f.start),toMin(f.end)):''))+'</small></span><span class="chev">›</span></button>';}).join('');
+  openModal('<h3>링크 약속</h3>'+(rows||'<div class="empty">아직 만든 링크가 없어요.</div>')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="lk-new">새 링크 만들기</button></div>');
+}
+function openLinkDetail(t){M={type:'link-detail',token:t,week:0,sel:null,tap:null};drawLinkDetail();linkLoad();}
+function drawLinkDetail(){
+  var l=LinkSync.links.find(function(x){return x.token===M.token;});if(!l){closeModal();return;}
+  var p=l.payload||{},ans=LinkSync.answers[l.token]||[],sc=document.querySelector('#lk-grid .meetgrid'),top=sc?sc.scrollTop:0;
+  if(l.status!=='open'){var f=l.final||{};openModal('<h3>'+esc(p.what||'약속')+'</h3><div class="requestbox"><b>확정된 약속</b><small>'+esc([f.date?slotText(f.date,toMin(f.start),toMin(f.end)):'',f.place||'장소 미정',(f.names||[]).join(', ')].filter(Boolean).join(' · '))+'</small></div><p class="hint">링크를 연 사람들도 확정된 시간을 볼 수 있어요.</p><div class="acts"><button class="b-del" data-act="lk-delete" data-id="'+l.token+'">링크 삭제</button><button class="b-ghost" data-act="lk-copy" data-id="'+l.token+'">링크 복사</button><button class="b-save" data-act="close">닫기</button></div>');return;}
+  var best=linkBestRuns(p,ans),cw=linkCounts(ans),tapWho=M.tap?(cw.who[M.tap]||[]):null,s=M.sel;
+  openModal('<h3>'+esc(p.what||'링크 약속')+'</h3><p class="hint">'+(ans.length?((ans.length+1)+'/'+Math.max(+p.expectedPeople||0,ans.length+1)+'명 입력 완료 · '+esc(ans.map(function(a){return a.name;}).join(', '))):('1/'+Math.max(+p.expectedPeople||2,2)+'명 입력 완료 · 아직 친구 답이 없어요.'))+'</p>'+
+    (best.length?'<div class="meetsug"><span>제일 많이 겹치는 시간</span><div class="meetsug-row">'+best.map(function(x){var on=s&&s.date===x.date&&s.s===x.s&&s.e===x.e;return '<button class="sugchip'+(on?' on':'')+'" data-act="lk-best" data-k="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'">'+x.n+'/'+ans.length+'명 · '+esc(slotText(x.date,x.s,x.e))+'</button>';}).join('')+'</div></div>':'')+
+    linkPlaceRecoHTML(p,ans)+'<div id="lk-grid">'+linkGridHTML(p,ans,{mode:'owner',week:M.week,sel:s})+'</div>'+
+    '<p class="hint" id="lk-sel">'+(tapWho?esc(slotText(M.tap.split('|')[0],+M.tap.split('|')[1],+M.tap.split('|')[1]+30))+' 가능 · '+(tapWho.length?esc(tapWho.join(', ')):'아무도 없어요')+'<br>':'')+(s?'고른 시간 · '+esc(slotText(s.date,s.s,s.e))+(s.step===1?' · 한 번 더 누르면 끝 시간':''):'칸을 눌러 누가 되는지 보고, 시작·끝을 골라 확정해요')+'</p>'+
+    '<div class="acts"><button class="b-ghost" data-act="lk-copy" data-id="'+l.token+'">링크 복사</button><button class="b-save" data-act="lk-confirm"'+(s&&s.step===2?'':' disabled')+'>이 시간으로 확정</button></div>'+
+    '<button class="tbtn" style="width:100%;margin-top:8px;color:var(--now)" data-act="lk-delete" data-id="'+l.token+'">링크 삭제</button>');
+  var g=document.querySelector('#lk-grid .meetgrid');if(g)g.scrollTop=top;
+}
+function linkOwnerTap(k,m){
+  var s=M.sel;M.tap=k+'|'+m;
+  if(s&&s.step===1&&s.date===k&&m>=s.s)M.sel={date:k,s:s.s,e:m+30,step:2};else M.sel={date:k,s:m,e:m+30,step:1};
+  drawLinkDetail();
+}
+function confirmLink(){
+  var sb=friendDb(),l=LinkSync.links.find(function(x){return x.token===M.token;}),s=M.sel;if(!sb||!l||!s||s.step!==2)return;
+  var p=l.payload||{},ans=LinkSync.answers[l.token]||[],names=ans.filter(function(a){for(var m=s.s;m<s.e;m+=30)if(linkRealSlots(a).indexOf(s.date+'|'+m)<0)return false;return true;}).map(function(a){return a.name;});
+  if(!names.length)names=ans.map(function(a){return a.name;});
+  var f={date:s.date,start:hm(s.s),end:hm(Math.min(s.e,1439)),what:p.what||'',place:p.place||'',placeInfo:p.placeInfo||null,names:names};
+  sb.from('planner_meet_links').update({status:'closed',final:f,updated_at:new Date().toISOString()}).eq('token',l.token).then(function(r){
+    if(r.error)throw r.error;l.status='closed';l.final=f;
+    S.events.push({id:uid(),kind:'appointment',title:f.what||names.join(', ')||'약속',what:f.what,person:names.join(', '),place:f.place,placeInfo:f.placeInfo,date:f.date,start:f.start,end:f.end,color:defCol(),linkToken:l.token});
+    save();closeModal();U.date=parseKey(f.date);render();inAppToast('확정했어요. 내 캘린더에 넣었고, 링크를 연 사람들도 확정 시간을 봐요');
+  }).catch(function(){var e=$('#lk-sel');if(e)e.textContent='확정하지 못했어요. 잠시 뒤 다시 해주세요';});
+}
+function deleteLink(t){var sb=friendDb();if(!sb)return;sb.from('planner_meet_links').delete().eq('token',t).then(function(r){if(r.error)throw r.error;LinkSync.links=LinkSync.links.filter(function(x){return x.token!==t;});delete LinkSync.answers[t];openLinkList();}).catch(function(){inAppToast('삭제하지 못했어요');});}
+function copyLink(t){var l=LinkSync.links.find(function(x){return x.token===t;});if(!l)return;copyTextSafe(linkShareText(l),function(){inAppToast('링크를 복사했어요. 카톡에 붙여넣어요');},function(){var m=$('#lk-msg');if(m)m.textContent=linkUrl(t);});}
+function shareLink(t){var l=LinkSync.links.find(function(x){return x.token===t;});if(!l)return;try{navigator.share({title:'약속 시간 고르기',text:linkShareText(l).replace(linkUrl(t),'').trim(),url:linkUrl(t)}).catch(function(){});}catch(e){copyLink(t);}}
+function linkOpenAnswersCount(){return LinkSync.links.filter(function(l){return l.status==='open'&&(LinkSync.answers[l.token]||[]).length;}).length;}
+/* ----- 받는 쪽 (링크를 연 사람, 로그인 필요 없음) ----- */
+function guestKey(t){return 'planner.meet.'+t;}
+function guestSaved(t){try{return JSON.parse(lsGet(guestKey(t))||'null');}catch(e){return null;}}
+function guestLoad(){
+  var G=U.guest;if(!G)return;
+  if(!Sync.sb||!Sync.sb.rpc){G.state='error';G.msg='연결 도구를 불러오지 못했어요. 인터넷을 확인하고 새로고침해주세요.';render();return;}
+  Sync.sb.rpc('planner_meet_get',{t:G.token}).then(function(r){
+    if(r.error)throw r.error;if(!r.data){G.state='error';G.msg='링크가 삭제됐거나 주소가 잘못됐어요.';render();return;}
+    G.link=r.data;G.answers=r.data.answers||[];var sv=guestSaved(G.token);
+    if(G.state==='loading'){G.mine={};if(sv){G.aid=sv.id;G.sec=sv.secret;G.name=sv.name||'';G.origin=sv.origin||'';G.cap=+sv.cap||0;(sv.slots||[]).forEach(function(s){if(s.indexOf('@')!==0)G.mine[s]=1;});}if(!G.name)G.name=(S.settings.profileName||'').trim();if(!G.origin)G.origin=S.settings.homeStation||'';}
+    G.state='ready';render();
+  }).catch(function(e){G.state='error';G.msg=/does not exist|Could not find/i.test(e&&e.message||'')?'링크 약속 기능이 아직 서버에 설정되지 않았어요. 링크를 보낸 친구에게 알려주세요.':'링크를 불러오지 못했어요. 잠시 뒤 새로고침해주세요.';render();});
+}
+function gcalUrl(f,p){var d=f.date.replace(/-/g,''),a=f.start.replace(':','')+'00',b=(f.end||f.start).replace(':','')+'00';return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(f.what||((p.ownerName||'친구')+'님과 약속'))+'&dates='+d+'T'+a+'/'+d+'T'+b+'&ctz=Asia/Seoul'+(f.place?'&location='+encodeURIComponent(f.place):'');}
+function guestHTML(){
+  var G=U.guest;
+  if(G.state==='loading')return '<div class="note">약속 링크를 불러오는 중…</div>';
+  if(G.state==='error')return '<section class="card"><div class="card-h"><h3>링크를 열 수 없어요</h3></div><p class="hint">'+esc(G.msg||'')+'</p><button class="b-save lk-full" data-act="lk-leave">플래너 열기</button></section>';
+  var L=G.link,p=L.payload||{},who=p.ownerName||'친구',ans=G.answers||[];
+  var expected=Math.max(+p.expectedPeople||0,ans.length+1),answered=ans.length+1;
+  var head='<section class="card lk-head"><div class="meet-head">'+friendAvatar(who,p.ownerPhoto,'lg')+'<div><b class="meet-days-big">'+esc(who)+'님이 약속 시간을 물어봐요</b><span class="meet-days">'+esc([p.what||'약속',p.place||'장소는 같이 정해요'].join(' · '))+'</span></div></div>'+
+    '<p class="hint" style="margin:0">'+answered+'/'+expected+'명 입력 완료'+(ans.length?' · '+esc(ans.map(function(a){return a.name;}).join(', ')):'')+'</p><div class="input-progress"><i style="width:'+Math.min(100,Math.round(answered/expected*100))+'%"></i></div></section>';
+  if(L.status!=='open'){var f=L.final||{};
+    return head+'<section class="card"><div class="card-h"><h3>약속이 정해졌어요</h3></div><div class="requestbox"><b>'+esc(f.date?slotText(f.date,toMin(f.start),toMin(f.end)):'')+'</b><small>'+esc([f.place||'장소 미정',(f.names||[]).length?'함께 · '+f.names.join(', '):''].filter(Boolean).join(' · '))+'</small></div>'+
+      '<div class="acts"><a class="b-ghost lk-a" href="'+esc(gcalUrl(f,p))+'" target="_blank" rel="noopener">구글 캘린더에 추가</a><button class="b-save" data-act="lk-add-mine">내 플래너에 넣기</button></div></section>'+guestCtaHTML();}
+  var cnt=Object.keys(G.mine||{}).length;
+  return head+'<section class="card"><span class="lbl">내 이름</span><input class="fld" id="lk-name" maxlength="20" placeholder="친구들이 알아볼 이름" value="'+esc(G.name||'')+'">'+
+    (p.placeRecommend?'<span class="lbl">어디서 출발해?</span><select class="fld" id="lk-origin">'+moStationOptions(G.origin||'')+'</select><div class="geo-row"><button class="tbtn" data-act="guest-current">현재 위치에서 찾기</button><small id="guest-geo-msg">좌표는 저장하지 않고 가까운 역만 사용해요.</small></div><span class="lbl">편도 상한 <em>(선택)</em></span><select class="fld" id="lk-cap"><option value="0">상한 없음</option>'+[30,45,60,90].map(function(v){return '<option value="'+v+'"'+(+G.cap===v?' selected':'')+'>'+v+'분 이하</option>';}).join('')+'</select>':'')+
+    '<span class="lbl">되는 시간을 모두 눌러줘</span><p class="hint">회색은 '+esc(who)+'님이 안 되는 시간이라 못 골라요. 다시 누르면 빠져요.</p><div id="lk-grid">'+linkGridHTML(p,ans,{mode:'guest',week:G.week||0,mine:G.mine,skipId:G.aid})+'</div>'+
+    '<p class="hint" id="lk-gmsg">'+(G.sent?'보냈어요! '+esc(who)+'님이 시간을 정하면 이 링크에서 바로 볼 수 있어요. 고치고 싶으면 다시 눌러서 보내요.':cnt?cnt+'칸 골랐어요 ('+(cnt*30>=60?Math.floor(cnt*30/60)+'시간 ':'')+(cnt*30%60?'30분':'')+')':'')+'</p>'+
+    '<button class="b-save lk-full" data-act="lk-send">'+(G.aid?'고쳐서 다시 보내기':'보내기')+'</button></section>'+guestCtaHTML();
+}
+function guestCtaHTML(){return '<section class="card lk-cta"><b>나도 이 플래너 써볼래?</b><p class="hint">친구 시간표를 보고 빈 시간에 약속을 잡으면, 만난 곳이 추억으로 쌓여요.</p><button class="b-ghost lk-full" data-act="lk-leave">플래너 열어보기</button></section>';}
+function guestDrawGrid(){var G=U.guest,box=$('#lk-grid');if(!box||!G||!G.link)return;var g=box.querySelector('.meetgrid'),top=g?g.scrollTop:0;box.innerHTML=linkGridHTML(G.link.payload||{},G.answers,{mode:'guest',week:G.week||0,mine:G.mine,skipId:G.aid});var g2=box.querySelector('.meetgrid');if(g2)g2.scrollTop=top;var cnt=Object.keys(G.mine).length,m=$('#lk-gmsg');if(m&&!G.sent)m.textContent=cnt?cnt+'칸 골랐어요':'';}
+function guestSend(){
+  var G=U.guest,nm=$('#lk-name'),name=nm?nm.value.trim():'',m=$('#lk-gmsg'),slots=Object.keys(G.mine||{}),
+      p=(G.link&&G.link.payload)||{},origin=($('#lk-origin')&&$('#lk-origin').value)||G.origin||'',cap=+($('#lk-cap')&&$('#lk-cap').value)||0;
+  if(!name){if(nm){nm.classList.add('bad');nm.focus();}if(m)m.textContent='이름을 먼저 적어줘';return;}
+  if(p.placeRecommend&&!origin){if(m)m.textContent='출발역도 골라줘';return;}if(!slots.length){if(m)m.textContent='되는 시간을 한 칸 이상 눌러줘';return;}G.origin=origin;G.cap=cap;var sendSlots=linkMetaSlots(slots,origin,cap);
+  G.name=name;if(m)m.textContent='보내는 중…';
+  Sync.sb.rpc('planner_meet_answer',{t:G.token,n:name,s:sendSlots,aid:G.aid||null,sec:G.sec||null}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};G.aid=d.id;G.sec=d.secret;lsSet(guestKey(G.token),JSON.stringify({id:d.id,secret:d.secret,name:name,slots:slots,origin:origin,cap:cap}));G.sent=true;guestLoad();
+  }).catch(function(e){if(m)m.textContent=/closed/i.test(e&&e.message||'')?'이미 시간이 정해진 약속이에요. 새로고침해서 확인해줘':'보내지 못했어요. 잠시 뒤 다시 눌러줘';});
+}
+function guestAddMine(){
+  var G=U.guest,L=G&&G.link,f=L&&L.final,p=L&&L.payload||{};if(!f)return;
+  if(S.events.some(function(e){return e.linkToken===G.token;})){inAppToast('이미 내 플래너에 있어요');return;}
+  S.events.push({id:uid(),kind:'appointment',title:f.what||'약속',what:f.what||'',person:p.ownerName||'',place:f.place||'',placeInfo:f.placeInfo||null,date:f.date,start:f.start,end:f.end,color:defCol(),linkToken:G.token});
+  save();inAppToast('내 플래너에 넣었어요');guestLeave(parseKey(f.date));
+}
+function guestLeave(d){U.guest=null;try{history.replaceState(null,'',location.pathname+location.search);}catch(e){location.hash='';}$('#nav').style.display='';if(d){U.date=d;U.tab='day';}render(true);}
+function renderGuest(){
+  $('#top').classList.remove('navtop');$('#top').innerHTML='<div class="ttl"><h1>약속 시간 고르기</h1><small>로그인 없이 바로 골라요</small></div>';
+  $('#nav').style.display='none';$('#app').classList.remove('wide');
+  var ae=document.activeElement,keep=ae&&ae.id==='lk-name'?ae.value:null;if(U.guest){var go=$('#lk-origin'),gc=$('#lk-cap');if(go)U.guest.origin=go.value;if(gc)U.guest.cap=+gc.value||0;}
+  $('#main').innerHTML=guestHTML();
+  if(keep!=null&&$('#lk-name')){$('#lk-name').value=keep;}
+}
+/* ----- 추억 사진 ----- */
+function shrinkTo(file,max,q,cb){var fr=new FileReader();fr.onload=function(){var img=new Image();img.onload=function(){var w=img.width,h=img.height,r=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*r));c.height=Math.max(1,Math.round(h*r));c.getContext('2d').drawImage(img,0,0,c.width,c.height);try{cb(c.toDataURL('image/jpeg',q));}catch(e){cb(null);}};img.onerror=function(){cb(null);};img.src=fr.result;};fr.onerror=function(){cb(null);};fr.readAsDataURL(file);}
+function setMemoryPhoto(file,memId){
+  shrinkTo(file,900,0.72,function(url){
+    if(!url){inAppToast('사진을 읽지 못했어요');return;}
+    if(!memId){M.mphoto=url;drawFriendMemories();return;}
+    var row=(FriendSync.memories||[]).find(function(x){return x.id===memId;}),sb=friendDb();
+    if(!row||!sb){var lr=(S.settings.friendMemories||[]).find(function(x){return x.id===memId;});if(lr){lr.photo=url;save();drawFriendMemories();}return;}
+    sb.from('planner_friend_memories').update({photo:url}).eq('id',memId).then(function(r){if(r.error)throw r.error;row.photo=url;drawFriendMemories();inAppToast('사진을 넣었어요');}).catch(function(e){inAppToast(/photo|column/i.test(e&&e.message||'')?'사진 칸이 서버에 없어요. planner-friends.sql을 실행해주세요':'사진을 저장하지 못했어요');});
+  });
+}
+/* ----- 우리 추억 리포트 (인스타 스토리용 이미지) ----- */
+function reportRange(period){
+  var tk=dkey(new Date()),y=+tk.slice(0,4);
+  if(period==='year')return {from:y+'-01-01',to:y+'-12-31',label:y+'년'};
+  if(period==='all')return {from:'0000',to:'9999',label:'지금까지'};
+  var s=semOf(tk);return s.t===1?{from:s.y+'-03-01',to:s.y+'-08-31',label:semTxt(s)}:{from:s.y+'-09-01',to:(s.y+1)+'-02-31',label:semTxt(s)};
+}
+function reportData(fid,period){
+  var R=reportRange(period),inR=function(k){return k&&k>=R.from&&k<=R.to;};
+  var mem=friendMemoryRows(fid).filter(function(x){return inR(x.visited_at||String(x.created_at||'').slice(0,10));});
+  var days={};mem.forEach(function(x){days[x.visited_at||String(x.created_at).slice(0,10)]=1;});sharedMetDates(fid).forEach(function(k){if(inR(k))days[k]=1;});
+  var cnt={};mem.forEach(function(x){var k=memoryKey(x);if(k)cnt[k]=(cnt[k]||0)+1;});
+  var top=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}).slice(0,3).map(function(k){return {k:k,n:cnt[k]};});
+  var ds=Object.keys(days).sort();
+  return {range:R,mem:mem,met:ds.length,top:top,first:ds[0]||'',last:ds[ds.length-1]||'',photos:mem.filter(function(x){return x.photo;}).slice(0,4).map(function(x){return x.photo;})};
+}
+function drawReport(fid,period,cb){
+  var f=FriendSync.friends.find(function(x){return x.id===fid;}),D=reportData(fid,period),W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;var g=c.getContext('2d');
+  var FONT='-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif',base=S.settings.defColor||'#dce9f7';
+  var rr=function(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();};
+  var txt=function(t,x,y,size,weight,color,align){g.font=(weight||500)+' '+size+'px '+FONT;g.fillStyle=color||'#1c1c1e';g.textAlign=align||'left';g.fillText(t,x,y);};
+  var imgs=D.photos.map(function(src){return new Promise(function(res){var i=new Image();i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});});
+  Promise.all(imgs).then(function(ph){
+    ph=ph.filter(Boolean);
+    g.fillStyle=base;g.fillRect(0,0,W,H);
+    g.fillStyle='rgba(255,255,255,.55)';for(var yy=30;yy<H;yy+=60)for(var xx=((yy/60)%2?30:60);xx<W;xx+=60){g.beginPath();g.arc(xx,yy,4,0,7);g.fill();}
+    g.fillStyle='#ffffff';rr(60,60,W-120,H-120,48);g.fill();
+    var me=(S.settings.profileName||'').trim()||'나',you=friendLabel(f);
+    txt(D.range.label+' 우리 기록',110,160,38,600,'#8e8e93');
+    txt(me+' × '+you,110,245,76,800);
+    var bx=[['만난 날',D.met+'번'],['추억',D.mem.length+'개'],['제일 자주 간 곳',D.top[0]?D.top[0].k:'-']];
+    bx.forEach(function(b,i){var x=110+i*292,w=270;g.fillStyle=i===2?base:'#f4f4f6';rr(x,300,w,190,32);g.fill();txt(b[0],x+28,354,30,600,'#6e6e73');var v=b[1];var sz=v.length>6?40:58;txt(v,x+28,448,sz,800);});
+    var py=540,ph_h=D.top.length>1?420:500;
+    if(ph.length){var n=ph.length,gw=W-220,cols=n===1?1:2,rows=n>2?2:1,cw=(gw-(cols-1)*16)/cols,chh=(ph_h-(rows-1)*16)/rows;
+      ph.forEach(function(im,i){var cx=110+(i%cols)*(cw+16),cy=py+Math.floor(i/cols)*(chh+16),s=Math.max(cw/im.width,chh/im.height),sw=cw/s,sh=chh/s;g.save();rr(cx,cy,cw,chh,26);g.clip();g.drawImage(im,(im.width-sw)/2,(im.height-sh)/2,sw,sh,cx,cy,cw,chh);g.restore();});}
+    else{g.setLineDash([14,12]);g.strokeStyle='#c7c7cc';g.lineWidth=4;rr(110,py,W-220,ph_h,32);g.stroke();g.setLineDash([]);txt('추억에 사진을 남기면 여기에 모여요',W/2,py+ph_h/2+12,34,600,'#8e8e93','center');}
+    var ly=py+ph_h+80;
+    if(D.top.length>1){txt('많이 간 곳',110,ly,32,700,'#6e6e73');txt(D.top.map(function(x){return x.k+' '+x.n+'번';}).join('   '),110,ly+56,42,800);ly+=130;}
+    if(D.first)txt('처음 '+mdTxt(parseKey(D.first)).replace('\u00a0',' ')+(D.last&&D.last!==D.first?'  ·  최근 '+mdTxt(parseKey(D.last)).replace('\u00a0',' '):''),110,Math.min(ly,H-150),34,600,'#3a3a3c');
+    txt('내 플래너',W-110,H-100,28,700,'#aeaeb2','right');
+    cb(c,D);
+  });
+}
+function openMemoryReport(fid,period){
+  period=period||'sem';M={type:'memory-report',friendId:fid,period:period};
+  var D=reportData(fid,period),seg='<div class="seg">'+[['sem','이번 학기'],['year','올해'],['all','전체']].map(function(x){return '<button data-act="report-period" data-v="'+x[0]+'" class="'+(x[0]===period?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>';
+  if(!D.mem.length&&!D.met){openModal('<h3>우리 추억 리포트</h3>'+seg+'<div class="empty">'+esc(D.range.label)+'에는 아직 기록이 없어요. 만나고 “웅” 하거나 추억을 남기면 리포트가 만들어져요.</div><div class="acts"><button class="b-save" data-act="friend-memories" data-id="'+esc(fid)+'">추억으로 돌아가기</button></div>');return;}
+  openModal('<h3>우리 추억 리포트</h3>'+seg+'<div class="report-box"><div class="note">만드는 중…</div></div><div class="acts"><button class="b-ghost" data-act="friend-memories" data-id="'+esc(fid)+'">돌아가기</button><button class="b-save" data-act="report-save">이미지 저장·공유</button></div>');
+  drawReport(fid,period,function(c){if(M.type!=='memory-report'||M.period!==period)return;M.canvas=c;var b=$('.report-box');if(b)b.innerHTML='<img src="'+c.toDataURL('image/png')+'" alt="우리 추억 리포트">';});
+}
+function saveReport(){
+  var c=M.canvas;if(!c)return;
+  c.toBlob(function(bl){if(!bl)return;var name='우리기록.png';
+    try{var file=new File([bl],name,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'우리 추억 리포트'}).catch(function(){});return;}}catch(e){}
+    var u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},4000);inAppToast('이미지를 저장했어요');
+  },'image/png');
+}
+
 function eyeSVG(open){return open?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 5.9A10.4 10.4 0 0 1 12 5.8c6.2 0 9.5 6.2 9.5 6.2a17 17 0 0 1-3.4 3.9M6.6 6.8C4.1 8.2 2.5 12 2.5 12s3.3 6 9.5 6c1.4 0 2.7-.3 3.8-.8"/></svg>'}
 function friendDb(){return Sync.kind==='supa'&&Sync.sb&&Sync.uid?Sync.sb:null;}
 function makeFriendCode(){var out='';for(var i=0;i<8;i++)out+=FRIEND_CODE_ALPH[Math.floor(Math.random()*FRIEND_CODE_ALPH.length)];return out;}
@@ -1829,7 +2253,7 @@ function openFriendPlanner(id){
 function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if(U.tab==='settings'&&!M.type)render();}
 function friendPayload(kind){
   var cp=function(a){return (a||[]).map(function(e){return Object.assign({},e);});};
-  if(kind==='profile')return {name:(S.settings.profileName||'').trim(),photo:S.settings.profilePhoto||''};
+  if(kind==='profile')return {name:(S.settings.profileName||'').trim(),photo:S.settings.profilePhoto||'',homeStation:S.settings.homeStation||''};
   if(kind==='timetable')return {classes:cp(S.classes),exams:(S.exams||[]).map(function(e){return {id:e.id,name:e.name||'',kind:e.kind||'',start:e.start,end:e.end||e.start};}),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null,school:S.settings.school||'',schoolCampus:S.settings.schoolCampus||''};
   if(kind==='calendar')return {events:cp(S.events),allday:cp(S.allday)};
   return {classes:cp(S.classes),events:cp(S.events),allday:cp(S.allday),todos:cp(S.todos),routines:cp(S.routines),exams:cp(S.exams),ddays:cp(S.ddays),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null};
@@ -1895,7 +2319,7 @@ function friendLoad(){
       rawData.forEach(function(x){if(x.kind==='profile')profiles[x.owner_id]=x.payload||{};});
       FriendSync.friends=ids.map(function(id){
         var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{},info=cm[id]||{},pr=profiles[id]||{};
-        return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:(pr.name||info.name||'').trim(),photo:pr.photo||info.photo||'',outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};
+        return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:(pr.name||info.name||'').trim(),photo:pr.photo||info.photo||'',homeStation:pr.homeStation||'',outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};
       });
       FriendSync.incoming=rawData.filter(function(x){
         var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});if(!f)return false;
@@ -1903,15 +2327,16 @@ function friendLoad(){
         return x.kind==='calendar'?f.inCalendar:(x.kind==='planner'&&f.inPlanner);
       });
     });
-  }).then(function(){FriendSync.loaded=true;var ch=JSON.stringify([(S.settings.profileName||'').trim(),(S.settings.profilePhoto||'').length]);if(lsGet('planner.codeSync.'+Sync.uid)!==ch)syncProfileToCodes().then(function(r){if(!r||!r.error)lsSet('planner.codeSync.'+Sync.uid,ch);},function(){});return friendBusyLoad().then(friendLoadMemories);}).then(function(){return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. friend-sharing-schema.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. friend-sharing-schema.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')';if(U.tab==='settings'&&!M.type)render();});
+  }).then(function(){FriendSync.loaded=true;var ch=JSON.stringify([(S.settings.profileName||'').trim(),(S.settings.profilePhoto||'').length,S.settings.homeStation||'']);if(lsGet('planner.codeSync.'+Sync.uid)!==ch)syncProfileToCodes().then(function(r){if(!r||!r.error)lsSet('planner.codeSync.'+Sync.uid,ch);},function(){});return friendBusyLoad().then(friendLoadMemories);}).then(function(){return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. friend-sharing-schema.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. friend-sharing-schema.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')';if(U.tab==='settings'&&!M.type)render();});
 }
 function friendLoadMemories(){
   var sb=friendDb();if(!sb||!FriendSync.friends.length){FriendSync.memories=[];return Promise.resolve();}
   var ids=FriendSync.friends.map(function(f){return f.id;});
+  var cols=FriendSync.noMemPhoto?'id,owner_id,friend_id,line,station,visited_at,place,what,created_at':'id,owner_id,friend_id,line,station,visited_at,place,what,photo,created_at';
   return Promise.all([
-    sb.from('planner_friend_memories').select('id,owner_id,friend_id,line,station,visited_at,place,what,created_at').eq('owner_id',Sync.uid).in('friend_id',ids),
-    sb.from('planner_friend_memories').select('id,owner_id,friend_id,line,station,visited_at,place,what,created_at').eq('friend_id',Sync.uid).in('owner_id',ids)
-  ]).then(function(rs){var out=[],seen={};rs.forEach(function(r){if(r.error)throw r.error;(r.data||[]).forEach(function(x){if(!seen[x.id]){seen[x.id]=1;out.push(x);}});});FriendSync.memories=out;}).catch(function(e){FriendSync.memories=[];FriendSync.memoryError=e&&e.message||'친구 추억을 불러오지 못했어요';});
+    sb.from('planner_friend_memories').select(cols).eq('owner_id',Sync.uid).in('friend_id',ids),
+    sb.from('planner_friend_memories').select(cols).eq('friend_id',Sync.uid).in('owner_id',ids)
+  ]).then(function(rs){var pe=rs.find(function(r){return r.error&&/photo/i.test(r.error.message||'');});if(pe&&!FriendSync.noMemPhoto){FriendSync.noMemPhoto=true;throw {retry:1};}var out=[],seen={};rs.forEach(function(r){if(r.error)throw r.error;(r.data||[]).forEach(function(x){if(!seen[x.id]){seen[x.id]=1;out.push(x);}});});FriendSync.memories=out;}).catch(function(e){if(e&&e.retry)return friendLoadMemories();FriendSync.memories=[];FriendSync.memoryError=e&&e.message||'친구 추억을 불러오지 못했어요';});
 }
 function friendMemoryRows(id){return friendMemoryRows0(id).sort(function(a,b){return String(b.visited_at||b.created_at||'').localeCompare(String(a.visited_at||a.created_at||''));});}
 function friendMemoryRows0(id){
@@ -1922,18 +2347,19 @@ function friendMemoryRows0(id){
 function openFriendMemories(id,pre){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
   var info=pre&&(pre.info||(pre.place?placeInfoFromText(pre.place):null));
-  M={type:'friend-memories',friendId:id,pp:ppNew(info,{friendId:id}),memoryDate:(pre&&pre.date)||dkey(new Date()),mplace:'',mwhat:(pre&&pre.what)||''};
+  M={type:'friend-memories',friendId:id,pp:ppNew(info,{friendId:id}),memoryDate:(pre&&pre.date)||dkey(new Date()),mplace:'',mwhat:(pre&&pre.what)||'',mphoto:''};
   drawFriendMemories();
 }
 function drawFriendMemories(){
   if($('#f-mdate')){M.memoryDate=$('#f-mdate').value;M.mplace=$('#f-mplace').value;M.mwhat=$('#f-mwhat').value;}
   var id=M.friendId,f=FriendSync.friends.find(function(x){return x.id===id;}),rows=friendMemoryRows(id);
-  var list=rows.length?rows.slice(0,30).map(function(x){var i=memoryInfo(x);return '<div class="memory-card">'+(i?placeIcon(i.kind):'')+'<div><b>'+esc(memoryAreaLabel(x))+'</b><small>'+esc([x.visited_at?mdTxt(parseKey(x.visited_at)):'',x.place,x.what].filter(function(v){return !!v;}).join(' · ')||'기록만 남김')+'</small></div></div>';}).join(''):'<div class="memory-empty">아직 함께 남긴 추억이 없어요. 첫 추억을 남겨봐요.</div>';
+  var list=rows.length?rows.slice(0,30).map(function(x){var i=memoryInfo(x);return '<div class="memory-card">'+(i?placeIcon(i.kind):'')+'<div class="mc-body"><b>'+esc(memoryAreaLabel(x))+'</b><small>'+esc([x.visited_at?mdTxt(parseKey(x.visited_at)):'',x.place,x.what].filter(function(v){return !!v;}).join(' · ')||'기록만 남김')+'</small>'+(x.photo?'<img class="mem-photo" src="'+esc(x.photo)+'" alt="추억 사진" loading="lazy">':(!FriendSync.noMemPhoto?'<label class="mem-addphoto">+ 사진 넣기<input type="file" accept="image/*" data-memphoto="'+esc(x.id)+'" hidden></label>':''))+'</div></div>';}).join(''):'<div class="memory-empty">아직 함께 남긴 추억이 없어요. 첫 추억을 남겨봐요.</div>';
   openModal('<h3>'+esc(friendLabel(f))+'님과의 추억</h3>'+relationSummaryHTML(id)+friendMemoryBanners(id)+
     '<span class="lbl">어디였어?</span><div id="pp">'+ppHTML(M.pp)+'</div>'+
     '<span class="lbl">언제</span><input class="fld" type="date" id="f-mdate" value="'+esc(M.memoryDate||'')+'"><span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-mplace" maxlength="50" placeholder="카페, 공원, 식당 이름 등" value="'+esc(M.mplace||'')+'"><span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mwhat" maxlength="80" placeholder="같이 한 일" value="'+esc(M.mwhat||'')+'">'+
+    '<span class="lbl">사진 <em>(선택)</em></span>'+(M.mphoto?'<div class="mem-new-photo"><img src="'+esc(M.mphoto)+'" alt=""><button class="pp-x" data-act="mem-photo-clear" aria-label="사진 빼기">✕</button></div>':'<label class="tbtn photo-pick">사진 고르기<input type="file" accept="image/*" data-memphoto="" hidden></label>')+
     '<p class="hint" id="memory-msg">'+(FriendSync.memoryError?'서버에 저장이 안 되면 이 기기에 먼저 저장해요.':'')+'</p><div class="acts"><button class="b-ghost" data-act="memory-appointment">이 장소로 약속 잡기</button><button class="b-save" data-act="save-friend-memory">추억 저장</button></div>'+
-    '<span class="lbl" style="margin-top:16px">지난 추억 '+rows.length+'개</span><div class="memory-list">'+list+'</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');
+    (rows.length?'<button class="report-cta" data-act="report-open" data-id="'+esc(id)+'"><b>우리 추억 리포트 만들기</b><small>이번 학기 만난 횟수·자주 간 곳·사진을 한 장으로</small></button>':'')+'<span class="lbl" style="margin-top:16px">지난 추억 '+rows.length+'개</span><div class="memory-list">'+list+'</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');
 }
 function memoryLineOf(info){
   if(info.kind==='station')return {line:'지하철',station:stationName(info.station)};
@@ -1946,9 +2372,10 @@ function saveFriendMemory(){
   var id=M.friendId,date=$('#f-mdate').value||null,place=$('#f-mplace').value.trim(),what=$('#f-mwhat').value.trim(),lk=memoryLineOf(info);
   var k=placeKeyOf(info),n=(friendPlaceCounts(id)[k]||0)+1,done='추억을 남겼어요 · '+k+'에서 '+(n===1?'첫':n+'번째')+' 추억이에요!';
   var row={id:'local-memory-'+uid(),owner_id:Sync.uid,friend_id:id,line:lk.line,station:lk.station,visited_at:date,place:place,what:what,created_at:new Date().toISOString()};
-  var reset=function(){M.pp=ppNew(null,{friendId:id});M.mplace='';M.mwhat='';M.memoryDate=dkey(new Date());drawFriendMemories();var m2=$('#memory-msg');if(m2)m2.textContent=done;};
+  var photo=M.mphoto||'';var reset=function(){M.pp=ppNew(null,{friendId:id});M.mplace='';M.mwhat='';M.mphoto='';M.memoryDate=dkey(new Date());drawFriendMemories();var m2=$('#memory-msg');if(m2)m2.textContent=done;};
   var sb=friendDb();
-  if(sb){sb.from('planner_friend_memories').insert({owner_id:row.owner_id,friend_id:row.friend_id,line:row.line,station:row.station,visited_at:row.visited_at,place:row.place,what:row.what}).select().single().then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);FriendSync.memoryError='';reset();inAppToast(done);}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';reset();var msg=$('#memory-msg');if(msg)msg.textContent='이 기기에 먼저 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
+  row.photo=photo;var ins={owner_id:row.owner_id,friend_id:row.friend_id,line:row.line,station:row.station,visited_at:row.visited_at,place:row.place,what:row.what};if(photo&&!FriendSync.noMemPhoto)ins.photo=photo;
+  if(sb){sb.from('planner_friend_memories').insert(ins).select().single().then(function(r){if(r.error&&ins.photo&&/photo/i.test(r.error.message||'')){FriendSync.noMemPhoto=true;delete ins.photo;inAppToast('사진은 SQL 실행 후에 저장돼요. 기록은 남겼어요');return sb.from('planner_friend_memories').insert(ins).select().single();}return r;}).then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);FriendSync.memoryError='';reset();inAppToast(done);}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';reset();var msg=$('#memory-msg');if(msg)msg.textContent='이 기기에 먼저 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
   else{S.settings.friendMemories.push(row);save();FriendSync.memories.push(row);reset();inAppToast(done);}
 }
 function friendAdd(code){
@@ -1971,14 +2398,30 @@ function friendRemove(id){
   Promise.all([sb.from('planner_friendships').delete().eq('user_a',pair[0]).eq('user_b',pair[1]),sb.from('planner_friend_shares').delete().eq('owner_id',Sync.uid).eq('friend_id',id),sb.from('planner_friend_data').delete().eq('owner_id',Sync.uid).eq('friend_id',id)]).then(function(rs){rs.forEach(function(r){if(r.error)throw r.error;});return friendLoad();}).then(function(){friendNote('친구 연결을 해제했어요');}).catch(function(e){friendNote(e&&e.message||'친구 연결 해제에 실패했어요');});
 }
 function requestFriendCode(id){var f=FriendSync.friends.find(function(x){return x.id===id;});return friendLabel(f);}
-function appointmentRequestText(p){return [p.what,p.place,p.date?mdTxt(parseKey(p.date)):'',p.start?timeShort(p.start):'시간 미정'].filter(function(x){return !!x;}).join(' · ')||'약속';}
+function appointmentRequestText(p){var t=[p.groupNames&&p.groupNames.length>2?(p.groupNames.length+'명 약속'):'',p.what,p.place,p.date?mdTxt(parseKey(p.date)):'',p.start?timeShort(p.start):'시간 미정'].filter(function(x){return !!x;}).join(' · ')||'약속';var g=groupAppointmentStatus(p);return t+(g?' · '+g:'');}
 function mergeSharedAppointments(rows){
-  var accepted={},changed=false;(rows||[]).forEach(function(r){var p=Object.assign({},r.payload||{});if(p.fromUser){var mine=p.fromUser===Sync.uid?p.fromName:p.toName;p.person=p.fromUser===Sync.uid?(p.toName||p.person):(p.fromName||requestFriendCode(p.fromUser));if(!p.what&&(!p.title||p.title===mine||p.title===p.toName||p.title===p.fromName))p.title=p.place||p.person||'약속';}p.friendId=r.user_a===Sync.uid?r.user_b:r.user_a;p.id='shared:'+r.request_id;p.sharedRequestId=r.request_id;p.shared=true;p.kind='appointment';accepted[r.request_id]=1;var old=S.events.find(function(e){return e.sharedRequestId===r.request_id;});if(old){var bf=JSON.stringify(old);Object.assign(old,p);if(JSON.stringify(old)!==bf)changed=true;}else{S.events.push(p);changed=true;}});
-  var before=S.events.length;S.events=S.events.filter(function(e){return !e.sharedRequestId||accepted[e.sharedRequestId];});if(before!==S.events.length)changed=true;
+  var accepted={},changed=false,groups={};
+  (rows||[]).forEach(function(r){
+    var p=Object.assign({},r.payload||{}),g=p.groupId||'';
+    if(g&&groups[g]){
+      groups[g].groupRequestIds.push(r.request_id);accepted[r.request_id]=1;return;
+    }
+    if(p.fromUser){
+      var mine=p.fromUser===Sync.uid?p.fromName:p.toName;
+      p.person=p.groupNames&&p.groupNames.length?p.groupNames.filter(function(n){return n&&n!==myDisplayName();}).join(', '):(p.fromUser===Sync.uid?(p.toName||p.person):(p.fromName||requestFriendCode(p.fromUser)));
+      if(!p.what&&(!p.title||p.title===mine||p.title===p.toName||p.title===p.fromName))p.title=p.place||p.person||'약속';
+    }
+    p.friendId=r.user_a===Sync.uid?r.user_b:r.user_a;p.id='shared:'+r.request_id;p.sharedRequestId=r.request_id;p.groupRequestIds=[r.request_id];p.shared=true;p.kind='appointment';accepted[r.request_id]=1;
+    if(g)groups[g]=p;
+    var old=S.events.find(function(e){return g?e.groupId===g:e.sharedRequestId===r.request_id;});
+    if(old){var bf=JSON.stringify(old);Object.assign(old,p);if(JSON.stringify(old)!==bf)changed=true;}else{S.events.push(p);changed=true;}
+  });
+  var validGroups={};Object.keys(groups).forEach(function(g){validGroups[g]=1;});
+  var before=S.events.length;S.events=S.events.filter(function(e){if(e.groupId)return !!validGroups[e.groupId];return !e.sharedRequestId||accepted[e.sharedRequestId];});if(before!==S.events.length)changed=true;
   if(changed){S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storageOK=false;}scheduleSync();}
 }
 function showNextAppointmentRequest(){
-  if(M.type||!Sync.uid)return;
+  if(M.type||!Sync.uid||U.guest)return;
   var r=FriendSync.requests.find(function(x){return x.to_user===Sync.uid&&x.status==='pending'&&!FriendSync.shown[x.id];});if(!r)return;
   openAppointmentRequest(r);
 }
@@ -1994,12 +2437,12 @@ function openAppointmentRequest(r){
     (info?placeCountBanner(r.from_user,info,true):'')+
     (c.length?'<span class="lbl">장소 후보 · 괜찮은 곳을 골라줘 <em>(여러 개 가능)</em></span><div class="candidate-picks">'+c.map(function(x){return '<button class="candidate-pick" data-act="request-candidate-toggle" data-v="'+esc(x)+'">'+esc(x)+'</button>';}).join('')+'</div><p class="hint">하나만 고르면 수락할 때 그곳으로 바로 확정돼요.</p>':'')+
     '<p class="hint">그 주의 내 일정(빗금)과 친구 일정(회색)이에요. 다른 빈 칸을 고르면 그 시간으로 다시 제안할 수 있어요.</p><div id="meetbox"></div><p class="hint" id="meet-sel"></p><p class="hint" id="request-msg"></p><div class="acts" id="meet-acts"></div>');
-  drawMeet();refreshMeetBusy();
+  drawMeet();var t3=$('#meet-top3');if(t3)t3.innerHTML=groupTopSlotsHTML();refreshMeetBusy();
 }
 function friendRequestLoad(){
   if(!Sync.on)return Promise.resolve();
   var sb=friendDb();if(!sb){FriendSync.requests=[];FriendSync.shared=[];return Promise.resolve();}
-  friendInviteLoad();
+  friendInviteLoad();linkLoad();
   return Promise.all([
     sb.from('planner_appointment_requests').select('id,from_user,to_user,payload,status,created_at').eq('to_user',Sync.uid).eq('status','pending'),
     sb.from('planner_appointment_requests').select('id,from_user,to_user,payload,status,created_at').eq('from_user',Sync.uid).eq('status','pending'),
@@ -2028,9 +2471,10 @@ function respondAppointmentRequest(accept){
 function sharedAppointmentPayload(e){var p=Object.assign({},e);delete p.id;delete p.shared;delete p.sharedRequestId;return p;}
 function updateSharedAppointment(e){
   if(!friendDb()||!e||!e.sharedRequestId)return Promise.resolve();
-  return sharedPatch(e.sharedRequestId,function(p){['what','place','placeInfo','date','start','end','title'].forEach(function(k){p[k]=e[k]===undefined?null:e[k];});if(p.place)p.placePending=false;}).then(function(){return friendRequestLoad();});
+  var ids=(e.groupRequestIds&&e.groupRequestIds.length?e.groupRequestIds:[e.sharedRequestId]).slice();
+  return Promise.all(ids.map(function(rid){return sharedPatch(rid,function(p){['what','place','placeInfo','date','start','end','title'].forEach(function(k){p[k]=e[k]===undefined?null:e[k];});if(p.place)p.placePending=false;});})).then(function(){return friendRequestLoad();});
 }
-function cancelSharedAppointment(e){var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();return sb.from('planner_appointment_requests').update({status:'cancelled',responded_at:new Date().toISOString()}).eq('id',e.sharedRequestId).then(function(r){if(r.error)throw r.error;return sb.from('planner_shared_appointments').delete().eq('request_id',e.sharedRequestId);}).then(function(r){if(r.error)throw r.error;});}
+function cancelSharedAppointment(e){var sb=friendDb();if(!sb||!e||!e.sharedRequestId)return Promise.resolve();var ids=(e.groupRequestIds&&e.groupRequestIds.length?e.groupRequestIds:[e.sharedRequestId]).filter(Boolean);return sb.from('planner_appointment_requests').update({status:'cancelled',responded_at:new Date().toISOString()}).in('id',ids).then(function(r){if(r.error)throw r.error;return sb.from('planner_shared_appointments').delete().in('request_id',ids);}).then(function(r){if(r.error)throw r.error;});}
 /* ---------- 친구 요청(수락제) · 약속 가능 시간 · 약속 잡기 ---------- */
 function meetAvail(){var a=S.settings.meetStart,b=S.settings.meetEnd;a=a==null?9:+a;b=b==null?22:+b;if(b<=a)b=Math.min(24,a+1);return [a,b];}
 function hm(m){return pad(Math.floor(m/60))+':'+pad(m%60);}
@@ -2080,7 +2524,7 @@ function friendInviteLoad(){
   }).catch(function(e){FriendSync.inviteError=friendSqlHint(e);});
 }
 function showNextFriendInvite(){
-  if(M.type||!Sync.uid)return;
+  if(M.type||!Sync.uid||U.guest)return;
   var r=(FriendSync.invitesIn||[]).find(function(x){return !FriendSync.shown['inv:'+x.id];});if(!r)return;
   FriendSync.shown['inv:'+r.id]=1;M={type:'friend-invite',invite:r};
   openModal('<h3>새 친구 요청</h3><p class="hint">수락하면 서로 약속을 신청하고 추억을 함께 기록할 수 있어요. 일정 내용은 공유를 켜기 전까지 안 보이고, 바쁜 시간만 회색으로 보여요.</p><div class="requestbox"><b>'+esc(inviteName(r.from_user))+'</b><small>친구 연결을 요청했어요</small></div><p class="hint" id="invite-msg"></p><div class="acts"><button class="b-del" data-act="friend-invite-decline" data-id="'+r.id+'">거절</button><button class="b-save" data-act="friend-invite-accept" data-id="'+r.id+'">수락</button></div>');
@@ -2099,18 +2543,82 @@ function friendInviteCancel(id){
   sb.from('planner_friend_invites').update({status:'cancelled',responded_at:new Date().toISOString()}).eq('id',id).eq('from_user',Sync.uid).then(function(x){if(x.error)throw x.error;FriendSync.invitesOut=FriendSync.invitesOut.filter(function(y){return y.id!==id;});friendNote('친구 요청을 취소했어요');}).catch(function(e){friendNote(friendSqlHint(e));});
 }
 function meetHeadHTML(f){return '<div class="meet-head">'+friendAvatar(friendLabel(f),f.photo)+'<div><b class="meet-days-big">'+esc(lastMetInfo(f.id))+'</b><span class="meet-days">'+esc(friendLabel(f))+'님과 다음 약속을 잡아봐요</span></div></div>';}
+function meetFriendIds(){return (M.friendIds&&M.friendIds.length?M.friendIds:[M.friendId]).filter(Boolean);}
+function meetFriends(){return meetFriendIds().map(function(id){return FriendSync.friends.find(function(f){return f.id===id;});}).filter(Boolean);}
+function meetGroupNames(){return meetFriends().map(friendLabel);}
+function meetGroupLabel(){var n=meetGroupNames();return n.length?n.join(', '):'친구';}
+function meetFriendPickerHTML(){
+  var ids=meetFriendIds();
+  return '<span class="lbl">같이 만날 친구 <em>(여러 명 선택 가능)</em></span><div class="group-friends">'+
+    FriendSync.friends.map(function(f){var on=ids.indexOf(f.id)>=0;return '<button class="group-friend'+(on?' on':'')+'" data-act="meet-friend-toggle" data-id="'+esc(f.id)+'">'+esc(friendLabel(f))+'</button>';}).join('')+
+    '</div><div class="group-summary"><b>'+ids.length+'명과 약속</b> · 선택한 모든 사람 + 나까지 전부 비는 시간만 흰색으로 보여요. 수락 현황은 약속 카드에서 확인할 수 있어요.</div>';
+}
+function meetGroupBusyOn(k){
+  var all=[],ids=meetFriendIds(),allday=false;
+  ids.forEach(function(id){
+    var b=friendBusyOn(id,k),f=FriendSync.friends.find(function(x){return x.id===id;}),nm=f?friendLabel(f):'친구';
+    if(b.allday)allday=true;
+    (b.r||[]).forEach(function(r){all.push([r[0],r[1],r[2]&&r[2]!=='일정 있음'?nm+' · '+r[2]:nm+' 일정']);});
+  });
+  return {allday:allday,r:all};
+}
+function meetGroupAvail(){
+  var ids=meetFriendIds(),mine=meetAvail(),lo=mine[0],hi=mine[1];
+  ids.forEach(function(id){var a=friendAvail(id);lo=Math.max(lo,a[0]);hi=Math.min(hi,a[1]);});
+  if(hi<=lo)return [0,0];
+  return [lo,hi];
+}
+function redrawFriendMeetShell(){
+  if(M.type!=='friend-meet')return;
+  var av=meetGroupAvail();M.lo=av[0]*60;M.hi=av[1]*60;
+  var p=$('#meet-friend-picker');if(p)p.innerHTML=meetFriendPickerHTML();
+  var h=$('#meet-group-hint');if(h)h.textContent=av[1]>av[0]?'모두 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · '+meetGroupLabel():'설정한 약속 가능 시간이 서로 겹치지 않아요.';
+  drawMeet();refreshMeetBusy();setTimeout(function(){refreshTaskAssign();bindTaskDrag();},0);
+}
+function groupAppointmentRows(p){
+  if(!p||!p.groupId)return [];
+  return (FriendSync.requests||[]).filter(function(r){return r.payload&&r.payload.groupId===p.groupId;});
+}
+function groupAppointmentStatus(p){
+  if(!p||!p.groupId)return '';
+  var rows=groupAppointmentRows(p),total=(p.groupMembers&&p.groupMembers.length?Math.max(0,p.groupMembers.length-1):rows.length),ok=0,no=0,wait=0;
+  rows.forEach(function(r){if(r.status==='accepted')ok++;else if(r.status==='declined'||r.status==='rejected')no++;else wait++;});
+  if(!rows.length)return total?'0/'+total+'명 응답':'';
+  return ok+'/'+total+'명 수락'+(no?' · '+no+'명 거절':'')+(wait?' · '+wait+'명 대기':'');
+}
+function groupAppointmentStatusHTML(p){
+  var t=groupAppointmentStatus(p);return t?'<span class="group-status">'+esc(t)+'</span>':'';
+}
+function groupPersonStatusHTML(p){
+  if(!p||!p.groupId)return '';
+  var rows=groupAppointmentRows(p),by={};
+  rows.forEach(function(r){var uid=r.to_user||r.user_b||'',nm=(r.payload&&r.payload.toName)||requestFriendCode(uid)||'친구';by[uid]={name:nm,status:r.status};});
+  var me=myDisplayName()||'나',out=['<span class="group-person">'+esc(me)+' ✓</span>'];
+  (p.groupMembers||[]).forEach(function(uid){
+    if(uid===Sync.uid)return;var z=by[uid],nm=z?z.name:requestFriendCode(uid),st=z?z.status:'pending';
+    out.push('<span class="group-person">'+esc(nm||'친구')+' '+(st==='accepted'?'✓':(st==='declined'||st==='rejected'?'✕':'대기'))+'</span>');
+  });
+  return '<div class="group-people">'+out.join('')+'</div>';
+}
+
 function openFriendMeet(id,pre){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
-  var av=friendAvail(id),known=!!(FriendSync.busyMap&&FriendSync.busyMap[id]),mon=weekMon(new Date());
-  var wk=mon;if(pre&&pre.date&&pre.date>=dkey(new Date()))wk=weekMon(parseKey(pre.date));
+  var mon=weekMon(new Date()),wk=mon;if(pre&&pre.date&&pre.date>=dkey(new Date()))wk=weekMon(parseKey(pre.date));
   var info=pre&&(pre.info||(pre.place?placeInfoFromText(pre.place):null));
-  M={type:'friend-meet',friendId:id,week:wk,minWeek:mon,sel:null,lo:av[0]*60,hi:av[1]*60,pp:ppNew(info,{allowUndecided:true,friendId:id,future:true})};
-  openModal('<h3>약속 잡기 · '+esc(friendLabel(f))+'</h3>'+meetHeadHTML(f)+relationSummaryHTML(id,true)+friendMemoryBanners(id)+
-    '<p class="hint">친구 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · 빈 칸을 눌러 시작·끝을 골라요</p>'+
-    (known?'':'<p class="hint warn2">친구가 아직 새 버전을 열지 않아서 바쁜 시간을 몰라요. 신청은 되고, 친구가 수락할 때 확인해요.</p>')+
-    '<div id="meetbox"></div><p class="hint" id="meet-sel"></p><span class="lbl">장소</span><div id="pp">'+ppHTML(M.pp)+'</div><div id="appointment-candidates"'+(M.pp.mode==='undecided'?'':' style="display:none"')+'>'+candidateInputsHTML([])+'</div>'+
-    '<span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mtwhat" maxlength="60" placeholder="같이 할 일">'+
-    '<p class="hint" id="appointment-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="meet-send">약속 신청</button></div>');
+  M={type:'friend-meet',friendId:id,friendIds:[id],week:wk,minWeek:mon,sel:null,lo:9*60,hi:22*60,pp:ppNew(info,{allowUndecided:true,friendId:id,future:true})};
+  var av=meetGroupAvail();M.lo=av[0]*60;M.hi=av[1]*60;
+  openModal('<h3>약속 잡기</h3>'+meetHeadHTML(f)+relationSummaryHTML(id,true)+
+    '<div id="meet-friend-picker">'+meetFriendPickerHTML()+'</div>'+
+    '<p class="hint" id="meet-group-hint">'+(av[1]>av[0]?'모두 약속 가능 시간 '+av[0]+':00~'+av[1]+':00 · '+esc(meetGroupLabel()):'설정한 약속 가능 시간이 서로 겹치지 않아요. 친구 설정을 확인해주세요.')+'</p>'+
+    '<p class="hint">회색 칸은 선택한 사람 중 한 명이라도 일정이 있는 시간이에요. 흰 칸만 모두 가능한 시간이에요.</p>'+
+    '<div id="meetbox"></div><div id="meet-top3">'+groupTopSlotsHTML()+'</div><p class="hint" id="meet-sel"></p><span class="lbl">장소</span><div id="pp">'+ppHTML(M.pp)+'</div><div id="appointment-candidates"'+(M.pp.mode==='undecided'?'':' style="display:none"')+'>'+candidateInputsHTML([])+'</div>'+
+    '<button class="tbtn" style="width:100%;margin:4px 0 8px;text-align:center" data-act="place-reco-toggle">약속장소 추천받기</button><div id="place-reco-panel" style="display:none">'+placeRecoPanelHTML()+'</div>'+'<span class="lbl">뭐 할지 <em>(여러 개 선택 가능)</em></span>'+activityPickerHTML()+
+    '<span class="lbl">직접 적기 <em>(선택)</em></span><input class="fld" id="f-mtwhat" maxlength="60" placeholder="예: 성수에서 밥 먹고 카페">'+
+    '<div class="moilkka-options"><select class="fld" id="f-min-duration"><option value="60">최소 1시간</option><option value="120">최소 2시간</option><option value="180">최소 3시간</option><option value="240">최소 4시간</option></select><select class="fld" id="f-area-pref"><option value="">권역 상관없음</option><option>서울 동쪽</option><option>서울 서쪽</option><option>서울 남쪽</option><option>서울 북쪽</option><option>경기</option></select></div>'+
+    '<span class="lbl">투표 마감 <em>(선택)</em></span><input class="fld" id="f-poll-deadline" type="datetime-local">'+
+    '<span class="lbl">같이 준비할 것 <em>(선택 · 쉼표로 구분)</em></span><input class="fld" id="f-checklist" maxlength="180" placeholder="예: 예약하기, 케이크 사기, 선물 챙기기">'+
+    '<div id="task-assign">'+taskAssignHTML()+'</div>'+
+    '<p class="hint" id="appointment-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="meet-send">모두에게 약속 신청</button></div>');
   if(pre&&pre.what)$('#f-mtwhat').value=pre.what;
   drawMeet();refreshMeetBusy();
 }
@@ -2119,7 +2627,7 @@ function refreshMeetBusy(){var m0=M;friendBusyLoad().then(function(){if(M===m0&&
 function meetState(k,m){
   var now=new Date(),tk=dkey(now);
   if(k<tk||(k===tk&&m+30<=now.getHours()*60+now.getMinutes()))return 'past';
-  var fb=friendBusyOn(M.friendId,k);if(fb.allday||fb.r.some(function(r){return r[0]<m+30&&r[1]>m;}))return 'fb';
+  var fb=M.type==='friend-meet'?meetGroupBusyOn(k):friendBusyOn(M.friendId,k);if(fb.allday||fb.r.some(function(r){return r[0]<m+30&&r[1]>m;}))return 'fb';
   var mb=myBusyOn(k);if(mb.allday||mb.r.some(function(r){return r[0]<m+30&&r[1]>m;}))return 'mb';
   return '';
 }
@@ -2127,7 +2635,7 @@ function meetGridHTML(){
   var ws=M.week,tk=dkey(new Date()),now=new Date(),nowM=now.getHours()*60+now.getMinutes(),cols=[];
   for(var i=0;i<7;i++){var d=addDays(ws,i),k=dkey(d);
     var pend=M.type==='friend-meet'?FriendSync.requests.filter(function(r){return r.status==='pending'&&r.from_user===Sync.uid&&r.to_user===M.friendId&&r.payload&&r.payload.date===k&&r.payload.start;}).map(function(r){var a=toMin(r.payload.start);return [a,r.payload.end?toMin(r.payload.end):a+60];}):[];
-    cols.push({d:d,k:k,fb:friendBusyOn(M.friendId,k),mb:myBusyOn(k),pend:pend});}
+    cols.push({d:d,k:k,fb:(M.type==='friend-meet'?meetGroupBusyOn(k):friendBusyOn(M.friendId,k)),mb:myBusyOn(k),pend:pend});}
   var hit=function(rs,m){return rs.some(function(r){return r[0]<m+30&&r[1]>m;});};
   var h='<div class="mgh"></div>'+cols.map(function(c,i){return '<div class="mgh'+(c.k===tk?' td':'')+'">'+DAYS[i]+'<b>'+c.d.getDate()+'</b>'+(c.fb.allday||c.mb.allday?'<em>종일</em>':'')+'</div>';}).join('');
   for(var m=M.lo;m<M.hi;m+=30){
@@ -2180,15 +2688,97 @@ function meetTap(k,m){
   }else M.sel={date:k,s:m,e:m+30,step:1};
   drawMeet();
 }
+
+function meetPollDeadline(){
+  var el=document.querySelector('#f-poll-deadline');return el&&el.value?el.value:'';
+}
+function checklistClean(a){
+  return (a||[]).map(function(x){return typeof x==='string'?{id:'ck_'+Math.random().toString(36).slice(2),text:x,owner:'all',doneBy:[]}:x;})
+    .filter(function(x){return x&&String(x.text||'').trim();});
+}
+function checklistHTML(p){
+  var a=checklistClean(p&&p.checklist||[]);if(!a.length)return '';
+  return '<div class="shared-checklist"><b>같이 준비하기</b>'+a.map(function(x){
+    var done=(x.doneBy||[]).indexOf(Sync.uid)>=0;
+    return '<button class="shared-check '+(done?'on':'')+'" data-act="group-check" data-rid="'+esc(p.sharedRequestId||'')+'" data-id="'+esc(x.id)+'"><span>'+(done?'✓':'○')+'</span><em>'+esc(x.text)+'</em><small>'+esc(x.owner==='all'?'같이':x.owner)+'</small></button>';
+  }).join('')+'</div>';
+}
+function groupTopSlots(limit){
+  limit=limit||3;if(M.type!=='friend-meet')return [];
+  var out=[],base=M.week||weekMon(new Date()),lo=M.lo||540,hi=M.hi||1320;
+  for(var di=0;di<7;di++){
+    var d=addDays(base,di),k=dkey(d);
+    var dur=+(($('#f-min-duration')&&$('#f-min-duration').value)||60);
+    for(var m=lo;m+dur<=hi;m+=30){
+      var ok=true;for(var q=m;q<m+dur;q+=30){if(meetState(k,q)!==''){ok=false;break;}}
+      if(ok){out.push({date:k,s:m,e:m+dur});if(out.length>=limit)return out;}
+    }
+  }
+  return out;
+}
+function groupTopSlotsHTML(){
+  var a=groupTopSlots(3);if(!a.length)return '<p class="hint">이번 주에는 모두가 1시간 이상 비는 시간이 없어요.</p>';
+  return '<div class="top-slots"><b>모두 되는 시간 Top '+a.length+'</b><div>'+a.map(function(x,i){
+    return '<button class="sugchip" data-act="meet-top-slot" data-date="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'">'+(i+1)+'순위 · '+mdTxt(parseKey(x.date))+' '+hm(x.s)+'</button>';
+  }).join('')+'</div></div>';
+}
+function memoryPhotoCardHTML(m){
+  if(!m||!m.photo)return '';
+  return '<div class="memory-photo-card"><img src="'+esc(m.photo)+'" alt=""><div><b>'+esc(m.visited_at||'')+' · '+esc(memoryAreaLabel(m)||m.place||'추억')+'</b><small>'+esc(m.what||'함께한 시간')+'</small></div></div>';
+}
+
+var MEET_ACTIVITIES=['밥','카페','술','산책','공부','쇼핑','전시','영화','운동','여행','기타'];
+function selectedMeetActivities(){
+  return Array.from(document.querySelectorAll('.activity-chip.on')).map(function(x){return x.dataset.v;});
+}
+function activityPickerHTML(){
+  return '<div class="meet-activity-picks">'+MEET_ACTIVITIES.map(function(x){return '<button type="button" class="activity-chip" data-act="meet-activity" data-v="'+esc(x)+'">'+esc(x)+'</button>';}).join('')+'</div>';
+}
+function parseMeetTasks(){
+  var raw=String(($('#f-checklist')&&$('#f-checklist').value)||''),old=(M&&M.taskAssign)||{};
+  return raw.split(',').map(function(x){return x.trim();}).filter(Boolean).map(function(x,i){
+    var id='task_'+i+'_'+x.replace(/\s+/g,'_').slice(0,20),prev=old[id]||[];
+    return {id:id,text:x,ownerIds:prev.slice(),doneBy:[]};
+  });
+}
+function taskAssignHTML(){
+  var people=[{id:Sync.uid,name:myDisplayName()||'나'}].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f)};}));
+  var tasks=parseMeetTasks();M.taskAssign=M.taskAssign||{};
+  return '<div class="task-assign-wrap"><b>할 일 담당 정하기</b><p class="hint">사람을 아래 할 일 칸으로 드래그해요. 한 일에 여러 명도 가능해요.</p>'+
+    '<div class="person-pool">'+people.map(function(p){return '<span class="person-drag" draggable="true" data-uid="'+esc(p.id)+'" data-name="'+esc(p.name)+'">'+esc(p.name)+'</span>';}).join('')+'</div>'+
+    '<div>'+tasks.map(function(t){var ids=M.taskAssign[t.id]||[];return '<div class="task-row"><span>'+esc(t.text)+'</span><div class="task-drop" data-task="'+esc(t.id)+'">'+ids.map(function(uid){var p=people.find(function(z){return z.id===uid;});return p?'<span class="person-drag" draggable="true" data-uid="'+esc(uid)+'" data-name="'+esc(p.name)+'">'+esc(p.name)+' ✓</span>':'';}).join('')+'</div></div>';}).join('')+'</div></div>';
+}
+function refreshTaskAssign(){var x=$('#task-assign');if(x)x.innerHTML=taskAssignHTML();}
+function bindTaskDrag(){
+  document.querySelectorAll('.person-drag').forEach(function(el){el.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({uid:el.dataset.uid,name:el.dataset.name}));};});
+  document.querySelectorAll('.task-drop').forEach(function(el){
+    el.ondragover=function(e){e.preventDefault();el.classList.add('over');};
+    el.ondragleave=function(){el.classList.remove('over');};
+    el.ondrop=function(e){e.preventDefault();el.classList.remove('over');try{var z=JSON.parse(e.dataTransfer.getData('text/plain')),id=el.dataset.task;M.taskAssign=M.taskAssign||{};M.taskAssign[id]=M.taskAssign[id]||[];if(M.taskAssign[id].indexOf(z.uid)<0)M.taskAssign[id].push(z.uid);refreshTaskAssign();bindTaskDrag();}catch(_){}};});
+}
+function assignedChecklist(){
+  var tasks=parseMeetTasks(),people=[{id:Sync.uid,name:myDisplayName()||'나'}].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f)};}));
+  return tasks.map(function(t){var ids=(M.taskAssign&&M.taskAssign[t.id])||[],names=ids.map(function(uid){var p=people.find(function(z){return z.id===uid;});return p&&p.name;}).filter(Boolean);return {id:t.id,text:t.text,ownerIds:ids,owner:names.length?names.join(', '):'같이',doneBy:[]};});
+}
 function meetSend(){
-  var f=FriendSync.friends.find(function(x){return x.id===M.friendId;}),s=M.sel,msg=$('#appointment-msg');
-  if(!s){var i=$('#meet-sel');if(i)i.textContent='먼저 빈 칸을 눌러 시간을 골라주세요';if(msg)msg.textContent='위 표에서 시간을 먼저 골라주세요';return;}
+  var ids=meetFriendIds(),s0=M.sel,msg=$('#appointment-msg'),activities=selectedMeetActivities(),minDuration=+(($('#f-min-duration')&&$('#f-min-duration').value)||60),areaPref=(($('#f-area-pref')&&$('#f-area-pref').value)||''),pollDeadline=($('#f-poll-deadline')&&$('#f-poll-deadline').value)||'',checklist=assignedChecklist();if(!ids.length){if(msg)msg.textContent='약속에 초대할 친구를 한 명 이상 골라주세요';return;}
+  if(!s0){var i=$('#meet-sel');if(i)i.textContent='먼저 모두 비는 흰 칸을 눌러 시간을 골라주세요';if(msg)msg.textContent='위 표에서 시간을 먼저 골라주세요';return;}
   var info=ppInfo(M.pp);
   if(M.pp.mode!=='undecided'&&!info){if(msg)msg.textContent='장소를 고르거나 “미정”을 눌러주세요';return;}
-  var place=placeInfoText(info),what=$('#f-mtwhat').value.trim(),name=friendLabel(f);
+  var place=placeInfoText(info),what=$('#f-mtwhat').value.trim(),names=meetGroupNames(),deadline=meetPollDeadline(),
+      checklist=String(($('#f-checklist')&&$('#f-checklist').value)||'').split(',').map(function(x){return x.trim();}).filter(Boolean).map(function(x){return {id:'ck_'+Math.random().toString(36).slice(2),text:x,owner:'all',doneBy:[]};});
   var candidates=info?[]:cleanCandidates(Array.from(document.querySelectorAll('.f-place-candidate')).map(function(x){return x.value;})),cs={};
   if(candidates.length)cs[Sync.uid]=candidates.slice();
-  sendAppointmentRequest(M.friendId,{kind:'appointment',title:what||place||name||'약속',what:what,person:name,place:place,placeInfo:info,placePending:!place,placeCandidates:candidates,candidateSelections:cs,date:s.date,start:hm(s.s),end:hm(Math.min(s.e,1439)),color:defCol(),fromUser:Sync.uid,fromName:myDisplayName(),toName:name});
+  var groupId='grp_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),sb=friendDb();
+  if(!sb){if(msg)msg.textContent='로그인 후 사용할 수 있어요';return;}
+  var rows=ids.map(function(id){
+    var f=FriendSync.friends.find(function(x){return x.id===id;}),name=friendLabel(f);
+    return {from_user:Sync.uid,to_user:id,status:'pending',payload:{kind:'appointment',title:what||place||(names.join(', ')+' 약속'),what:what,person:names.join(', '),place:place,placeInfo:info,placePending:!place,placeCandidates:candidates,candidateSelections:JSON.parse(JSON.stringify(cs)),date:s0.date,start:hm(s0.s),end:hm(Math.min(s0.e,1439)),color:defCol(),fromUser:Sync.uid,fromName:myDisplayName(),toName:name,groupId:groupId,groupMembers:[Sync.uid].concat(ids),groupNames:[myDisplayName()].concat(names),pollDeadline:pollDeadline,checklist:checklist,activities:activities,minDuration:minDuration,areaPref:areaPref}};
+  });
+  Promise.all(rows.map(function(row){return sb.from('planner_appointment_requests').insert(row);})).then(function(rs){
+    var bad=rs.find(function(r){return r.error;});if(bad)throw bad.error;
+    friendNote(ids.length+'명에게 약속 요청을 보냈어요');closeModal();render();return friendRequestLoad();
+  }).catch(function(e){if(msg)msg.textContent=e&&e.message||'약속 요청을 보내지 못했어요';});
 }
 function counterAppointment(){
   var r=M.request,s=M.sel,sb=friendDb();if(!sb||!r||!s)return;
@@ -2229,13 +2819,13 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','hourNotes','routineDone'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
   if((+rs.prefsAt||0)>(+ls.prefsAt||0)){PREF_KEYS.forEach(function(k){if(rs[k]!==undefined)ls[k]=JSON.parse(JSON.stringify(rs[k]));});ls.prefsAt=rs.prefsAt;}
   if(rs.schoolConfigured||rs.onboardDone){if(!ls.schoolConfigured&&rs.school){ls.school=rs.school;ls.schoolCampus=rs.schoolCampus;}ls.schoolConfigured=true;ls.onboardDone=true;}
-  ['profileName','profilePhoto','defColor'].forEach(function(k){if(!ls[k]&&rs[k])ls[k]=rs[k];});
+  ['profileName','profilePhoto','homeStation','defColor'].forEach(function(k){if(!ls[k]&&rs[k])ls[k]=rs[k];});
   var byId=function(a,b){var seen={},out=[];(a||[]).concat(b||[]).forEach(function(x){var id=x&&(x.id||JSON.stringify(x));if(!id||seen[id])return;seen[id]=1;out.push(x);});return out;};
   ls.customSchools=byId(ls.customSchools,rs.customSchools);ls.friendMemories=byId(ls.friendMemories,rs.friendMemories);
   ls.memToasted=Object.assign({},rs.memToasted||{},ls.memToasted||{});
@@ -2440,6 +3030,7 @@ function initSupa(){
   if(!supaReady())return false;
   Sync.kind='supa';
   try{Sync.sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}catch(e){Sync.kind=null;Sync.diag='로그인 연결 설정이 잘못됐어요.';return false;}
+  if(U.guest)guestLoad();
   Sync.sb.auth.getSession().then(function(r){Sync.ready=true;var ss=r.data&&r.data.session;supaAttach(ss);if(!ss&&!M.type)render();}).catch(function(){Sync.ready=true;if(!M.type)render();});
   Sync.sb.auth.onAuthStateChange(function(ev,session){setTimeout(function(){supaAttach(session);},0);});
   return true;
@@ -2502,6 +3093,7 @@ function initSync(){
     else if(!window.supabase)Sync.diag='로그인 도구를 못 불러왔어요. 인터넷 연결을 확인하고 새로고침해주세요.';
   }
   if(initSupa())return;
+  if(U.guest){U.guest.state='error';U.guest.msg='연결 설정을 찾지 못했어요. 링크를 보낸 친구에게 알려주세요.';render();}
   try{
     if(!window.claude||typeof window.claude.use!=='function')return;
     Promise.all([window.claude.use('db'),window.claude.use('user')]).then(function(r){
@@ -3456,6 +4048,85 @@ function parsePastedClasses(raw){
   });
   return out;
 }
+
+var TTScan={file:null,preview:'',rows:[],loading:false};
+function openTimetableScan(){
+  TTScan={file:null,preview:'',rows:[],loading:false};M={type:'tt-scan'};
+  openModal('<h3>📷 시간표 캡처로 등록</h3><p class="hint">요일과 시간이 보이도록 시간표 전체를 캡처해 올려주세요. 분석 결과는 바로 저장하지 않고 먼저 확인할 수 있어요.</p>'+
+    '<input id="ttscan-file" type="file" accept="image/*,.heic,.heif" style="display:none">'+
+    '<button class="b-ghost" style="width:100%;height:46px;border-radius:12px;font-weight:700" data-act="ttscan-pick">사진 선택</button>'+
+    '<div id="ttscan-preview"></div><p class="hint" id="ttscan-msg">JPG · PNG · HEIC 등 휴대폰 사진을 선택할 수 있어요.</p>'+
+    '<div id="ttscan-results"></div><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="ttscan-analyze">시간표 분석하기</button></div>');
+  setTimeout(function(){var f=$('#ttscan-file');if(f)f.onchange=ttscanFileChanged;},0);
+}
+function ttscanFileChanged(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;TTScan.file=f;TTScan.rows=[];
+  if(TTScan.preview)try{URL.revokeObjectURL(TTScan.preview);}catch(_){}
+  TTScan.preview=URL.createObjectURL(f);
+  var p=$('#ttscan-preview');if(p)p.innerHTML='<div class="ttscan-preview"><img src="'+TTScan.preview+'" alt="시간표 캡처"><div><b>'+esc(f.name||'시간표 이미지')+'</b><small style="display:block;color:var(--sub);margin-top:4px">'+Math.round(f.size/1024)+'KB</small></div></div>';
+  var m=$('#ttscan-msg');if(m)m.textContent='사진을 골랐어요. 이제 시간표 분석하기를 눌러주세요.';
+  var r=$('#ttscan-results');if(r)r.innerHTML='';
+}
+function ttscanNormRow(x){
+  var days={월:0,화:1,수:2,목:3,금:4,토:5,일:6},d=x.day;
+  if(typeof d==='string')d=days[d.replace('요일','').trim()];
+  return {id:uid(),name:String(x.title||x.name||'').trim(),day:Number.isInteger(+d)?+d:-1,start:String(x.start||'').slice(0,5),end:String(x.end||'').slice(0,5),professor:String(x.professor||'').trim(),room:String(x.room||x.location||'').trim(),color:defCol()};
+}
+function ttscanProblems(x){
+  var p=[],sm=toMin(x.start),em=toMin(x.end);
+  if(!x.name)p.push('과목명이 비어 있어요');
+  if(x.day<0||x.day>6)p.push('요일을 확인해주세요');
+  if(!/^\d\d:\d\d$/.test(x.start)||!/^\d\d:\d\d$/.test(x.end)||em<=sm)p.push('시간을 다시 확인해주세요');
+  else if(em-sm>360)p.push('수업 시간이 너무 길어요');
+  var dup=S.classes.some(function(c){return c.name===x.name&&+c.day===+x.day&&c.start===x.start&&c.end===x.end;});
+  if(dup)p.push('이미 등록된 수업');
+  return p;
+}
+function drawTTScan(){
+  var box=$('#ttscan-results');if(!box)return;
+  if(!TTScan.rows.length){box.innerHTML='';return;}
+  box.innerHTML='<p class="hint"><b>'+TTScan.rows.length+'개 수업을 찾았어요.</b> 틀린 부분은 수정하고 필요 없는 수업은 삭제해주세요.</p><div class="ttscan-list">'+TTScan.rows.map(function(x,i){
+    var pr=ttscanProblems(x),sub=[x.professor,x.room].filter(Boolean).join(' · ');
+    return '<div class="ttscan-card'+(pr.length?' bad':'')+'" data-scan-i="'+i+'"><div class="ttscan-grid">'+
+      '<input class="fld" data-scan-f="name" value="'+esc(x.name)+'" placeholder="과목명">'+
+      '<select class="fld" data-scan-f="day">'+DAYS.map(function(d,di){return '<option value="'+di+'"'+(di===x.day?' selected':'')+'>'+d+'</option>';}).join('')+'</select>'+
+      '<input class="fld ttscan-time" type="time" data-scan-f="start" value="'+esc(x.start)+'">'+
+      '<input class="fld ttscan-time" type="time" data-scan-f="end" value="'+esc(x.end)+'"></div>'+
+      '<div class="ttscan-meta"><input class="fld" data-scan-f="professor" value="'+esc(x.professor)+'" placeholder="교수명 (선택)"><input class="fld" data-scan-f="room" value="'+esc(x.room)+'" placeholder="강의실 (선택)"></div>'+
+      (pr.length?'<div class="ttscan-warn">⚠ '+esc(pr.join(' · '))+'</div>':'')+
+      '<button class="tbtn" style="margin-top:7px" data-act="ttscan-remove" data-i="'+i+'">삭제</button></div>';
+  }).join('')+'</div><div class="acts"><button class="b-ghost" data-act="ttscan-analyze">다시 분석</button><button class="b-save" data-act="ttscan-import">전체 등록</button></div>';
+  box.querySelectorAll('[data-scan-f]').forEach(function(el){el.onchange=function(){var card=el.closest('[data-scan-i]'),i=+card.dataset.scanI,f=el.dataset.scanF;if(TTScan.rows[i])TTScan.rows[i][f]=f==='day'?+el.value:el.value;drawTTScan();};});
+}
+async function analyzeTimetableImage(){
+  var m=$('#ttscan-msg');if(!TTScan.file){if(m)m.textContent='먼저 시간표 캡처를 선택해주세요.';return;}
+  if(TTScan.loading)return;TTScan.loading=true;if(m)m.textContent='시간표 읽는 중…';
+  try{
+    var fd=new FormData();fd.append('image',TTScan.file);
+    var sbBase=(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:(typeof SB_URL!=='undefined'?SB_URL:'')),
+        sbKey=(typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:(typeof SB_KEY!=='undefined'?SB_KEY:'')));
+    if(!sbBase)throw new Error('Supabase URL 설정을 찾지 못했어요.');
+    var hdr={};if(sbKey)hdr.apikey=sbKey;
+    var res=await fetch(sbBase.replace(/\/$/,'')+'/functions/v1/timetable-vision',{method:'POST',headers:hdr,body:fd});
+    var data=await res.json().catch(function(){return {};});
+    if(!res.ok)throw new Error(data.error||'분석 실패');
+    var rows=(data.classes||[]).map(ttscanNormRow).filter(function(x){return x.name||x.start||x.end;});
+    if(!rows.length){if(m)m.textContent='시간표를 정확히 읽지 못했어요. 요일과 시간이 보이도록 캡처해서 다시 시도해주세요.';return;}
+    var seen={};TTScan.rows=rows.filter(function(x){var k=x.name+'|'+x.day+'|'+x.start+'|'+x.end;if(seen[k])return false;seen[k]=1;return true;});
+    if(m)m.textContent='분석이 끝났어요. 등록 전에 내용을 확인해주세요.';drawTTScan();
+  }catch(e){if(m)m.textContent='시간표 분석에 실패했어요. '+(e&&e.message?e.message:'다시 시도해주세요.');}
+  finally{TTScan.loading=false;}
+}
+function importTTScan(){
+  document.querySelectorAll('[data-scan-i]').forEach(function(card){var i=+card.dataset.scanI;card.querySelectorAll('[data-scan-f]').forEach(function(el){var f=el.dataset.scanF;if(TTScan.rows[i])TTScan.rows[i][f]=f==='day'?+el.value:el.value;});});
+  var good=TTScan.rows.filter(function(x){var p=ttscanProblems(x);return !p.length;});
+  if(!good.length){var m=$('#ttscan-msg');if(m)m.textContent='등록할 수 있는 수업이 없어요. 빨간 경고를 먼저 확인해주세요.';drawTTScan();return;}
+  good.forEach(function(x){
+    var sub=[x.professor,x.room].filter(Boolean).join(' · ');
+    S.classes.push({id:uid(),name:x.name,sub:sub,day:+x.day,start:x.start,end:x.end,color:x.color||defCol()});
+  });
+  save();scheduleSync();closeModal();render(true);inAppToast(good.length+'개 수업을 시간표에 등록했어요');
+}
 function openPasteTable(){
   M={type:'paste-table'};
   openModal('<h3>시간표 붙여넣기</h3><p class="hint">시간표를 글자로 복사해 한 줄에 한 수업씩 붙여넣어요.<br>예: <b>월 09:00~10:15 일반물리학1</b><br>또는 <b>일반물리학1 · 월 · 09:00~10:15</b></p><textarea class="ta" id="f-tpaste" spellcheck="false" placeholder="월 09:00~10:15 일반물리학1\n화 13:00~14:15 미적분학1"></textarea><p class="hint" id="paste-msg">요일과 시작·끝 시간이 있는 줄만 가져와요.</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="import-paste">추가하기</button></div><button class="b-del" style="width:100%;height:42px;margin-top:8px" data-act="replace-paste">기존 시간표를 지우고 교체</button>');
@@ -3537,7 +4208,7 @@ function viewTable(){
       return order.map(function(c){return '<div class="exgrp"><div class="exgh"><i class="cdot" style="--c:'+(c==='과목 미지정'||c==='기타'?'#ebebee':courseColor(c))+';margin:0"></i>'+esc(c)+'<span class="cnt">'+g[c].length+'</span></div>'+g[c].map(function(e){return examRow(e,true);}).join('')+'</div>';}).join('');
     })():ex.map(function(e){return examRow(e);}).join(''))
       :'<div class="empty">이 학기엔 등록된 시험이 없어요</div>')+'</section>';
-  return '<section class="card"><div class="card-h"><h3>수업·고정 일정</h3><div class="tt-actions"><button class="tbtn" data-act="paste-table">붙여넣기</button><button class="tbtn" data-act="all-color">전체 색</button></div></div>'+
+  return '<section class="card"><div class="card-h"><h3>수업·고정 일정</h3><div class="tt-actions"><button class="tbtn" data-act="ttscan-open">📷 캡처 등록</button><button class="tbtn" data-act="paste-table">붙여넣기</button><button class="tbtn" data-act="all-color">전체 색</button></div></div>'+
     '<div class="semrow"><span>학기 기간</span><input type="date" id="set-ss" value="'+(S.settings.semStart||'')+'"><span>~</span><input type="date" id="set-se" value="'+(S.settings.semEnd||'')+'"></div><p class="hint">개강~종강을 넣으면 방학엔 수업이 안 뜨고, 주간 제목이 "개강 N주차"로 바뀌어요</p>'+
     '<p class="hint">동그라미는 과목별, 시간표 블록은 그 시간만 바꿀 수 있어요</p>'+list+
     '<div class="acts" style="margin-top:10px"><button class="b-ghost" data-act="add-block">+ 수업·일정 추가</button></div></section>'+ddHTML+adHTML+exHTML;
@@ -3631,7 +4302,7 @@ function profileHTML(){
   var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',initial=(n||'?').charAt(0);
   return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div>'+
     '<div class="profile-photo-row"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="프로필 사진">':esc(initial))+'</div><div class="profile-photo-actions"><label class="tbtn" style="display:grid;place-items:center;padding:0 12px">사진 선택<input type="file" accept="image/*" data-profile-photo hidden></label>'+(photo?'<button class="tbtn" data-act="profile-photo-remove">사진 삭제</button>':'')+'</div></div>'+
-    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div><div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">저장</button></div></section>';
+    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div><div class="setrow"><span>내 동네 역<small>친구와 약속장소 추천할 때 출발역으로 자동 사용해요.</small></span></div><select class="fld" id="f-home-station">'+moStationOptions(S.settings.homeStation||'')+'</select><div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">좌표는 저장하지 않고 가까운 역 이름만 저장해요.</small></div><div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">저장</button></div></section>';
 }
 function syncProfileToCodes(){
   var sb=friendDb();if(!sb)return Promise.resolve();
@@ -3643,7 +4314,7 @@ function syncProfileToCodes(){
 }
 function saveProfile(){
   var el=$('#f-profile-name'),name=el?el.value.trim().slice(0,20):'';
-  S.settings.profileName=name;save();
+  S.settings.profileName=name;var hs=$('#f-home-station');if(hs)S.settings.homeStation=hs.value||'';save();
   if(!friendDb()){friendNote('프로필을 이 기기에 저장했어요. 친구에게 표시하려면 로그인해주세요');return;}
   syncProfileToCodes().then(function(r){
     if(r&&r.error&&/display_name|column|schema cache/i.test(r.error.message||'')){friendNote('이 기기에는 저장했어요. 친구에게 이름을 보이려면 planner-friends.sql을 한 번 실행해주세요.');return;}
@@ -3726,6 +4397,7 @@ function drawNotices(){
   inv.forEach(function(x){var n=inviteName(x.from_user);todo+='<div class="ntc">'+friendAvatar(n,invitePhoto(x.from_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 연결을 요청했어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div>';});
   req.forEach(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user),f=FriendSync.friends.find(function(y){return y.id===r.from_user;});todo+='<div class="ntc">'+friendAvatar(n,f&&f.photo)+'<div class="fc-name"><b>'+esc(n)+' · 약속 요청</b><small>'+esc([p.what,p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'시간 미정',p.place||'장소 미정'].filter(Boolean).join(' · '))+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div>';});
   upcomingPlaceDecisions().forEach(function(r){var p=r.payload||{},fid=sharedFriendOf(r),n=requestFriendCode(fid),f=FriendSync.friends.find(function(y){return y.id===fid;});todo+='<div class="ntc">'+friendAvatar(n,f&&f.photo)+'<div class="fc-name"><b>'+esc(n)+'님과 장소 정하기</b><small>'+esc((p.date?mdTxt(parseKey(p.date))+' 약속 · ':'')+'후보 '+cleanCandidates(p.placeCandidates).length+'곳')+'</small></div><button class="tbtn b-save" data-act="place-decide-open" data-id="'+esc(r.request_id)+'">고르기</button></div>';});
+  LinkSync.links.filter(function(l){return l.status==='open'&&(LinkSync.answers[l.token]||[]).length;}).forEach(function(l){var an=LinkSync.answers[l.token];todo+='<div class="ntc"><span class="fav fav-ic">'+ICO.friend+'</span><div class="fc-name"><b>'+esc((l.payload||{}).what||'링크 약속')+' · '+an.length+'명 답함</b><small>'+esc(an.map(function(a){return a.name;}).join(', '))+'</small></div><button class="tbtn b-save" data-act="lk-detail" data-id="'+l.token+'">시간 정하기</button></div>';});
   var pm=pendingPostMeets().map(function(r){return postMeetRowHTML(r,true);}).join('');
   var L=noticeLog(),log=L.map(function(n){var ic=n.kind==='ok'?ICO.check:n.kind==='no'?ICO.x:n.kind==='friend'?ICO.friend:ICO.bell;return '<div class="ntc'+(n.read?'':' unread')+'"><span class="fav fav-ic k-'+esc(n.kind)+'">'+ic+'</span><div class="fc-name"><b>'+esc(n.text)+'</b><small>'+agoText(n.at)+'</small></div>'+(n.date?'<button class="tbtn" data-act="notice-go" data-v="'+esc(n.date)+'">보기</button>':'')+'</div>';}).join('');
   var sysRow=notifySupported()&&Notification.permission!=='denied'?'<div class="setrow" style="margin-top:12px"><span>휴대폰 알림으로도 받기<small>앱을 닫지 않고 다른 화면에 있을 때 알려줘요</small></span><button class="tbtn'+(friendNotifyOn()?' on':'')+'" data-act="friend-notify">'+(friendNotifyOn()?'켜짐':'켜기')+'</button></div>':'';
@@ -3737,7 +4409,7 @@ function drawNotices(){
     sysRow+'<p class="hint" id="invite-msg"></p><div class="acts">'+(log?'<button class="b-ghost" data-act="notice-clear">기록 지우기</button>':'')+'<button class="b-save" data-act="close">닫기</button></div>');
   var ch=false;L.forEach(function(n){if(!n.read){n.read=true;ch=true;}});if(ch){save();var tb=$('#top');if(tb&&typeof topHTML==='function')tb.innerHTML=topHTML();}
 }
-function friendAlertCount(){if(typeof FriendSync==='undefined'||!Sync.uid)return 0;return (FriendSync.invitesIn||[]).length+(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).length+upcomingPlaceDecisions().length+pendingPostMeets().length;}
+function friendAlertCount(){if(typeof FriendSync==='undefined'||!Sync.uid)return 0;return (FriendSync.invitesIn||[]).length+(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).length+upcomingPlaceDecisions().length+pendingPostMeets().length+linkOpenAnswersCount();}
 function friendAvatar(t,photo,size){var c=String(t||'?').trim().charAt(0)||'?';return '<span class="fav'+(size?' fav-'+size:'')+'">'+(photo?'<img src="'+esc(photo)+'" alt="">':esc(c))+'</span>';}
 function invitePhoto(id){return (FriendSync.invitePhotos||{})[id]||'';}
 
@@ -3769,7 +4441,8 @@ function friendHTML(){
     '<div class="row"><input class="fld" style="margin:0" id="f-friend-code" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="친구 초대코드 8자리"><button class="b-save" style="height:44px;padding:0 14px" data-act="friend-add">요청 보내기</button></div>'+
     '<p class="hint">상대가 수락하면 연결돼요. 메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p>'+ferr+(FriendSync.msg?'<p class="hint">'+esc(FriendSync.msg)+'</p>':'')+
     ((invIn||reqIn)?'<div class="fsec">새 알림</div>'+invIn+reqIn:'')+friendNotifyNudgeHTML()+
-    '<div class="fsec">친구 목록</div>'+(rows||'<div class="empty">아직 연결된 친구가 없어요. 초대코드를 주고받아 보세요.</div>')+
+    '<div class="fsec">링크 약속</div><div class="lk-entry"><button class="tbtn pri" data-act="lk-new">링크로 약속 잡기</button><button class="tbtn" data-act="lk-list">내 링크 '+LinkSync.links.length+'</button></div><p class="hint">앱이 없는 친구나 여러 명(팀플·동아리)은 링크 하나로 되는 시간을 모아요.</p>'+
+     '<div class="fsec">친구 목록</div>'+(rows||'<div class="empty">아직 연결된 친구가 없어요. 초대코드를 주고받아 보세요.</div>')+
     (invOut?'<div class="fsec">보낸 요청</div>'+invOut:'')+
     '<div class="fsec">약속 설정</div>'+availRow+
     '<div class="setrow"><span>친구 요청·약속 알림<small>'+(!notifySupported()?'이 브라우저는 알림을 지원하지 않아요 (아이폰은 홈 화면에 추가 후 사용)':notifySupported()&&Notification.permission==='denied'?'알림이 막혀 있어요. 브라우저·기기 설정에서 허용해주세요':'앱이 열려 있으면 팝업, 다른 화면에 있으면 시스템 알림으로 알려줘요')+'</small></span><button class="tbtn'+(friendNotifyOn()?' on':'')+'" data-act="friend-notify">'+(friendNotifyOn()?'켜짐':'꺼짐')+'</button></div></section>';
@@ -3845,6 +4518,7 @@ function openGlobalResult(a){
 /* ---------- 렌더 ---------- */
 function render(reset){
   applyTheme();
+  if(U.guest){renderGuest();return;}
   var main=$('#main'),st=reset?0:main.scrollTop;
   $('#top').innerHTML=topHTML();
   $('#top').classList.toggle('navtop',U.tab==='month'||U.tab==='week'||U.tab==='day');
@@ -3990,7 +4664,7 @@ function openAppointment(e,def){
   var friendPicker=!e?(FriendSync.friends.length?'<select class="sel" id="f-afriend"><option value="">직접 입력</option>'+sortedFriends().map(function(f){return '<option value="'+f.id+'"'+(M.friendId===f.id?' selected':'')+'>'+(friendPinIndex(f.id)>=0?'★ ':'')+esc(friendLabel(f))+'</option>';}).join('')+'</select>':'<button class="tbtn" data-act="open-settings" style="margin-bottom:10px">친구 연결하기</button>'):'',personHint=FriendSync.friends.length?'친구를 선택하면 수락 후 양쪽 플래너에 기록돼요. 공개된 바쁜 시간은 회색으로 막히고, 공개하지 않은 일정 제목은 보이지 않아요. 직접 입력은 나만 저장돼요.':'친구가 아니면 이름을 직접 입력해요. 이 약속은 나만 볼 수 있어요.';
   var shared=e&&e.sharedRequestId;
   openModal('<h3>'+(e?'약속 수정':'약속 추가')+'</h3>'+
-    (shared?'<p class="hint">친구와 함께 잡은 약속이에요. 바꾸면 친구 캘린더에도 같이 바뀌어요.</p>':'<span class="lbl">누구랑 <em>(선택)</em></span>'+friendPicker+(!e&&FriendSync.friends.length?'<button class="tbtn" style="width:100%;margin:0 0 10px" data-act="appointment-to-meet">친구 빈 시간 한 주 표로 고르기</button>':'')+'<input class="fld" id="f-aperson" maxlength="30" placeholder="직접 입력" value="'+esc(ap.person||'')+'"><p class="hint">'+personHint+'</p>')+
+    (shared?'<p class="hint">친구와 함께 잡은 약속이에요. 바꾸면 친구 캘린더에도 같이 바뀌어요.</p>':'<span class="lbl">누구랑 <em>(선택)</em></span>'+friendPicker+(!e&&FriendSync.friends.length?'<button class="tbtn" style="width:100%;margin:0 0 10px" data-act="appointment-to-meet">친구 빈 시간 한 주 표로 고르기</button>':'')+(!e?'<button class="tbtn" style="width:100%;margin:0 0 10px" data-act="lk-new">링크로 초대 · 앱 없는 친구·여러 명</button>':'')+'<input class="fld" id="f-aperson" maxlength="30" placeholder="직접 입력" value="'+esc(ap.person||'')+'"><p class="hint">'+personHint+'</p>')+
     '<span class="lbl">어디서 <em>(선택)</em></span><div id="pp">'+ppHTML(M.pp)+'</div>'+
     (shared&&!ap.place?'<button class="tbtn" style="width:100%;margin:0 0 10px" data-act="place-decide-open" data-id="'+esc(e.sharedRequestId)+'">장소 후보로 같이 정하기</button>':'')+
     '<span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-awhat" maxlength="60" value="'+esc(what)+'">'+
@@ -4503,6 +5177,17 @@ function act(a,e){
     case 'friend-meet':openFriendMeet(id);break;
     case 'meet-cell':meetTap(a.dataset.k,Number(a.dataset.m));break;
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
+    case 'meet-activity':
+      b.classList.toggle('on');break;
+    case 'meet-checklist-refresh':
+      refreshTaskAssign();bindTaskDrag();break;
+    case 'group-check':
+      var ev=S.events.find(function(e){return e.sharedRequestId===b.dataset.rid||(e.groupRequestIds||[]).indexOf(b.dataset.rid)>=0;});
+      if(ev){var ck=checklistClean(ev.checklist||[]),it=ck.find(function(x){return x.id===b.dataset.id;});if(it){it.doneBy=it.doneBy||[];var q=it.doneBy.indexOf(Sync.uid);if(q>=0)it.doneBy.splice(q,1);else it.doneBy.push(Sync.uid);ev.checklist=ck;updateSharedAppointment(ev).then(function(){render();});}}break;
+    case 'meet-top-slot':
+      if(M.type==='friend-meet'){M.sel={date:b.dataset.date,s:+b.dataset.s,e:+b.dataset.e};drawMeet();var z=$('#meet-sel');if(z)z.textContent='선택 · '+slotText(M.sel.date,M.sel.s,M.sel.e);}break;
+    case 'meet-friend-toggle':
+      if(M.type==='friend-meet'){var a0=M.friendIds||[M.friendId],ix=a0.indexOf(id);if(ix>=0){if(a0.length>1)a0.splice(ix,1);}else a0.push(id);M.friendIds=a0;M.friendId=a0[0];M.sel=null;redrawFriendMeetShell();}break;
     case 'meet-send':meetSend();break;
     case 'candidate-add':{var box=$('#appointment-candidates'),vals=Array.from(document.querySelectorAll('.f-place-candidate')).map(function(x){return x.value;});if(vals.length<5){vals.push('');box.innerHTML=candidateInputsHTML(vals);}break;}
     case 'candidate-remove':{var bx=$('#appointment-candidates'),vs=Array.from(document.querySelectorAll('.f-place-candidate')).map(function(x){return x.value;});vs.splice(Number(a.dataset.i),1);bx.innerHTML=candidateInputsHTML(vs);break;}
@@ -4510,6 +5195,42 @@ function act(a,e){
     case 'place-decide-open':openPlaceDecision(id);break;
     case 'candidate-toggle':{var cv=a.dataset.v,ca=M.selected||(M.selected=[]),ci=ca.indexOf(cv);if(ci>=0)ca.splice(ci,1);else ca.push(cv);drawPlaceDecision();break;}
     case 'candidate-new':{var cn=$('#f-cand-new'),cvv=cn?normalizePlaceText(cn.value):'';if(!cvv){if(cn)cn.classList.add('bad');break;}if(!M.added)M.added=[];M.added.push(cvv);if(M.selected.indexOf(cvv)<0)M.selected.push(cvv);drawPlaceDecision();break;}
+    case 'lk-new':openLinkCreate();break;
+    case 'lk-list':openLinkList();linkLoad();break;
+    case 'lk-days':M.days=Number(a.dataset.v);document.querySelectorAll('#lk-days button').forEach(function(b){b.classList.toggle('on',b===a);});break;
+    case 'lk-create':createLink();break;
+    case 'lk-copy':copyLink(id);break;
+    case 'lk-share':shareLink(id);break;
+    case 'lk-detail':openLinkDetail(id);break;
+    case 'lk-delete':if(armed(a))deleteLink(id);break;
+    case 'lk-ocell':linkOwnerTap(a.dataset.k,Number(a.dataset.m));break;
+    case 'lk-best':M.sel={date:a.dataset.k,s:Number(a.dataset.s),e:Number(a.dataset.e),step:2};M.tap=null;var bw=linkDays(LinkSync.links.find(function(x){return x.token===M.token;}).payload).indexOf(a.dataset.k);M.week=Math.max(0,Math.floor(bw/7));drawLinkDetail();break;
+    case 'lk-confirm':confirmLink();break;
+    case 'lk-week':if(U.guest){U.guest.week=Math.max(0,(U.guest.week||0)+Number(a.dataset.v));var nm0=$('#lk-name');if(nm0)U.guest.name=nm0.value;guestDrawGrid();}else if(M.type==='link-detail'){M.week=Math.max(0,M.week+Number(a.dataset.v));drawLinkDetail();}break;
+    case 'lk-cell':{if(a.getAttribute('aria-disabled'))break;var gk=a.dataset.k+'|'+a.dataset.m,G=U.guest;if(!G)break;if(G.mine[gk])delete G.mine[gk];else G.mine[gk]=1;G.sent=false;a.classList.toggle('pick',!!G.mine[gk]);a.classList.remove('heat');var gm=$('#lk-gmsg'),gc=Object.keys(G.mine).length;if(gm)gm.textContent=gc?gc+'칸 골랐어요':'';break;}
+    case 'lk-send':guestSend();break;
+    case 'lk-leave':guestLeave();break;
+    case 'lk-add-mine':guestAddMine();break;
+    case 'report-open':openMemoryReport(id);break;
+    case 'report-period':openMemoryReport(M.friendId,a.dataset.v);break;
+    case 'report-save':saveReport();break;
+    case 'mem-photo-clear':M.mphoto='';drawFriendMemories();break;
+    case 'home-current':
+      requestNearestStation(function(st){var el=$('#f-home-station');if(el)el.value=st;S.settings.homeStation=st;save();},$('#home-geo-msg'));break;
+    case 'lk-current':
+      requestNearestStation(function(st){var el=$('#f-lk-origin');if(el)el.value=st;},$('#lk-geo-msg'));break;
+    case 'guest-current':
+      requestNearestStation(function(st){var el=$('#lk-origin');if(el)el.value=st;if(U.guest)U.guest.origin=st;},$('#guest-geo-msg'));break;
+    case 'lk-place-pick':
+      if(M.type==='link-detail'){var ll=LinkSync.links.find(function(x){return x.token===M.token;});if(ll){ll.payload=ll.payload||{};ll.payload.place=a.dataset.st;ll.payload.placeInfo={kind:'station',station:a.dataset.st};var db=friendDb();if(db)db.from('planner_meet_links').update({payload:ll.payload,updated_at:new Date().toISOString()}).eq('token',ll.token).then(function(r){if(r.error)throw r.error;inAppToast(a.dataset.st+'을 약속 장소로 저장했어요');}).catch(function(){inAppToast('장소 저장에 실패했어요');});drawLinkDetail();}}break;
+    case 'place-reco-toggle':
+      var prp=$('#place-reco-panel');if(prp){prp.style.display=prp.style.display==='none'?'block':'none';}break;
+    case 'place-reco-run':
+      document.querySelectorAll('[data-place-origin]').forEach(function(x){var i=+x.dataset.placeOrigin;if(M.placePeople&&M.placePeople[i])M.placePeople[i].origin=x.value;});
+      document.querySelectorAll('[data-place-cap]').forEach(function(x){var i=+x.dataset.placeCap;if(M.placePeople&&M.placePeople[i])M.placePeople[i].cap=+x.value||0;});
+      var rr=$('#place-reco-results');if(rr)rr.innerHTML=placeRecoResultsHTML();break;
+    case 'place-reco-pick':
+      var st=a.dataset.st;M.pp=ppNew({kind:'station',station:st},{allowUndecided:true,friendId:M.friendId,future:true});var pp=$('#pp');if(pp)pp.innerHTML=ppHTML(M.pp);var pc=$('#appointment-candidates');if(pc)pc.style.display='none';friendNote(st+'을 약속 장소로 골랐어요');break;
     case 'pp-mode':case 'pp-region':case 'pp-tab':case 'pp-city':case 'pp-district':case 'pp-station':case 'pp-clear':case 'pp-pick':ppAct(name,a);break;
     case 'candidate-save':saveCandidateSelection();break;
     case 'candidate-final':finalizeCandidate(a.dataset.v);break;
@@ -4614,6 +5335,11 @@ function act(a,e){
         else dl();
       }catch(e){dl();}
       break;}
+    case 'ttscan-open':openTimetableScan();break;
+    case 'ttscan-pick':{var tf=$('#ttscan-file');if(tf)tf.click();break;}
+    case 'ttscan-analyze':analyzeTimetableImage();break;
+    case 'ttscan-remove':{var ti=+a.dataset.i;if(TTScan.rows[ti])TTScan.rows.splice(ti,1);drawTTScan();break;}
+    case 'ttscan-import':importTTScan();break;
     case 'paste-table':openPasteTable();break;
     case 'import-paste':importPastedTable(false,a);break;
     case 'replace-paste':importPastedTable(true,a);break;
@@ -5062,6 +5788,7 @@ document.addEventListener('change',function(e){
   if(e.target.id==='set-campus'){setSchool(S.settings.school,e.target.value);render();return;}
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
   if(e.target.dataset&&e.target.dataset.monthItem){S.settings.monthItems[e.target.dataset.monthItem]=e.target.checked;save();render();return;}
+  if(e.target.dataset&&e.target.dataset.memphoto!==undefined&&e.target.files&&e.target.files[0]){setMemoryPhoto(e.target.files[0],e.target.dataset.memphoto||null);e.target.value='';return;}
   if(e.target.dataset&&e.target.dataset.profilePhoto&&e.target.files&&e.target.files[0]){
     setProfilePhoto(e.target.files[0]);e.target.value='';return;
   }
@@ -5109,10 +5836,15 @@ applyTheme();
 carryOver();
 setTimeout(enhanceDates,0);
 pruneLetters();
+var gmatch=location.hash.match(/^#m=([0-9a-f-]{36})$/i);if(gmatch)U.guest={token:gmatch[1].toLowerCase(),state:'loading',mine:{},week:0};
+window.addEventListener('hashchange',function(){var g=location.hash.match(/^#m=([0-9a-f-]{36})$/i);if(g&&(!U.guest||U.guest.token!==g[1].toLowerCase())){closeModal();U.guest={token:g[1].toLowerCase(),state:'loading',mine:{},week:0};render(true);guestLoad();}});
 render(true);
 bkMigrate().then(recoverLocalBackup).then(initSync,function(){initSync();});
 restoreFocus();
 })();
+
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='f-checklist'){clearTimeout(window.__taskTimer);window.__taskTimer=setTimeout(function(){refreshTaskAssign();bindTaskDrag();},180);}});
+document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
 </script>
 </body>
 </html>
