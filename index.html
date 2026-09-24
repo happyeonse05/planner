@@ -2488,10 +2488,17 @@ function openFriendPlanner(id){
 function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if((U.tab==='settings'||U.tab==='friends')&&!M.type)render();}
 var DEV_MODE=(function(){try{return /[?&]debug\b/.test(location.search)||localStorage.getItem('planner.debug')==='1';}catch(e){return false;}})();
 function userMsg(friendly,dev){if(dev)try{console.warn('[planner]',dev);}catch(e){}return DEV_MODE&&dev?dev:friendly;}
+function friendSharePref(id){
+  S.settings.friendSharePrefs=S.settings.friendSharePrefs||{};
+  var p=S.settings.friendSharePrefs[id];
+  if(!p)p=S.settings.friendSharePrefs[id]={timetable:false,exams:false};
+  return p;
+}
 function friendPayload(kind){
   var cp=function(a){return (a||[]).map(function(e){return Object.assign({},e);});};
   if(kind==='profile')return {name:(S.settings.profileName||'').trim(),photo:S.settings.profilePhoto||'',homeStation:S.settings.homeStation||''};
-  if(kind==='timetable')return {classes:cp(S.classes),exams:(S.exams||[]).map(function(e){return {id:e.id,name:e.name||'',kind:e.kind||'',start:e.start,end:e.end||e.start};}),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null,school:S.settings.school||'',schoolCampus:S.settings.schoolCampus||''};
+  if(kind==='timetable')return {classes:cp(S.classes),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null,school:S.settings.school||'',schoolCampus:S.settings.schoolCampus||''};
+  if(kind==='exam')return (S.exams||[]).map(function(e){return {id:e.id,name:e.name||'',kind:e.kind||'',start:e.start,end:e.end||e.start};});
   if(kind==='calendar')return {events:cp(S.events),allday:cp(S.allday)};
   return {classes:cp(S.classes),events:cp(S.events),allday:cp(S.allday),todos:cp(S.todos),routines:cp(S.routines),exams:cp(S.exams),ddays:cp(S.ddays),semStart:S.settings.semStart||null,semEnd:S.settings.semEnd||null};
 }
@@ -2513,16 +2520,23 @@ function friendPush(){
   var sb=friendDb();if(!sb||!FriendSync.loaded||FriendSync.busy)return Promise.resolve();
   friendBusyPush();
   var rows=[],stamp=new Date().toISOString();
+  var clean=[];
   FriendSync.friends.forEach(function(f){
-    /* 프로필과 수업 시간표는 친구 연결 자체에 포함: 공유 토글과 무관하게 서버에 남겨요. */
+    var pref=friendSharePref(f.id);
+    /* 프로필은 항상 공유. 시간표·시험은 사용자가 켠 경우에만 서버에 둬요. */
     rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'profile',payload:friendPayload('profile'),updated_at:stamp});
-    rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'timetable',payload:friendPayload('timetable'),updated_at:stamp});
+    if(pref.timetable)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'timetable',payload:friendPayload('timetable'),updated_at:stamp});
+    else clean.push({friend_id:f.id,kind:'timetable'});
+    if(pref.exams)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'exam',payload:friendPayload('exam'),updated_at:stamp});
+    else clean.push({friend_id:f.id,kind:'exam'});
     if(f.outCalendar)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'calendar',payload:friendPayload('calendar'),updated_at:stamp});
     if(f.outPlanner)rows.push({owner_id:Sync.uid,friend_id:f.id,kind:'planner',payload:friendPayload('planner'),updated_at:stamp});
   });
-  if(!rows.length)return Promise.resolve();
+  if(!rows.length&&!clean.length)return Promise.resolve();
   FriendSync.busy=true;
-  return Promise.all(rows.map(function(row){return sb.from('planner_friend_data').upsert(row,{onConflict:'owner_id,friend_id,kind'});})).then(function(rs){
+  var jobs=rows.map(function(row){return sb.from('planner_friend_data').upsert(row,{onConflict:'owner_id,friend_id,kind'});});
+  clean.forEach(function(x){jobs.push(sb.from('planner_friend_data').delete().eq('owner_id',Sync.uid).eq('friend_id',x.friend_id).eq('kind',x.kind));});
+  return Promise.all(jobs).then(function(rs){
     var bad=rs.find(function(x){return x.error;});if(bad)throw bad.error;
   }).catch(function(e){FriendSync.error=e&&e.message||'친구 공유 저장에 실패했어요';}).then(function(){FriendSync.busy=false;});
 }
@@ -2556,7 +2570,8 @@ function friendLoad(){
       rawData.forEach(function(x){if(x.kind==='profile')profiles[x.owner_id]=x.payload||{};});
       FriendSync.friends=ids.map(function(id){
         var out=sm[Sync.uid+'|'+id]||{},inc=sm[id+'|'+Sync.uid]||{},info=cm[id]||{},pr=profiles[id]||{};
-        return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:(pr.name||info.name||'').trim(),photo:pr.photo||info.photo||'',homeStation:pr.homeStation||'',outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};
+        var pref=friendSharePref(id);
+        return {id:id,code:info.code||id.slice(0,6).toUpperCase(),name:(pr.name||info.name||'').trim(),photo:pr.photo||info.photo||'',homeStation:pr.homeStation||'',outTimetable:!!pref.timetable,outExams:!!pref.exams,outCalendar:!!out.share_calendar,outPlanner:!!out.share_planner,inCalendar:!!inc.share_calendar,inPlanner:!!inc.share_planner};
       });
       FriendSync.incoming=rawData.filter(function(x){
         var f=FriendSync.friends.find(function(y){return y.id===x.owner_id;});if(!f)return false;
@@ -2625,10 +2640,16 @@ function friendAdd(code){
   }).catch(function(e){friendNote(friendSqlHint(e));});
 }
 function friendToggle(id,mode){
-  var sb=friendDb(),f=FriendSync.friends.find(function(x){return x.id===id;});if(!sb||!f)return Promise.resolve();
+  var sb=friendDb(),f=FriendSync.friends.find(function(x){return x.id===id;});if(!sb||!f)return Promise.resolve(false);
+  if(mode==='timetable'||mode==='exams'){
+    var pref=friendSharePref(id),key=mode==='timetable'?'timetable':'exams';
+    pref[key]=!pref[key];f[mode==='timetable'?'outTimetable':'outExams']=pref[key];
+    save();
+    return friendPush().then(function(){friendNote((mode==='timetable'?'시간표':'시험')+' 공개를 '+(pref[key]?'켰어요':'껐어요'));return true;}).catch(function(e){pref[key]=!pref[key];f[mode==='timetable'?'outTimetable':'outExams']=pref[key];save();friendNote(e&&e.message||'공유 범위를 바꾸지 못했어요');return false;});
+  }
   var row={owner_id:Sync.uid,friend_id:id,share_calendar:mode==='calendar'?!f.outCalendar:f.outCalendar,share_planner:mode==='planner'?!f.outPlanner:f.outPlanner};
   f.outCalendar=row.share_calendar;f.outPlanner=row.share_planner;
-  return sb.from('planner_friend_shares').upsert(row,{onConflict:'owner_id,friend_id'}).then(function(r){if(r.error)throw r.error;return friendLoad();}).then(friendPush).catch(function(e){friendNote(e&&e.message||'공유 범위를 바꾸지 못했어요');});
+  return sb.from('planner_friend_shares').upsert(row,{onConflict:'owner_id,friend_id'}).then(function(r){if(r.error)throw r.error;return friendLoad();}).then(friendPush).then(function(){return true;}).catch(function(e){friendNote(e&&e.message||'공유 범위를 바꾸지 못했어요');return false;});
 }
 function friendRemove(id){
   var sb=friendDb(),pair=[Sync.uid,id].sort();if(!sb)return;
@@ -4936,10 +4957,17 @@ function moveTopItem(id,dir){
 }
 function profileHTML(){
   if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>프로필</h3></div><p class="hint">로그인하면 친구에게 보일 이름과 사진을 설정할 수 있어요.</p></section>';
-  var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',initial=(n||'?').charAt(0);
+  var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',home=(S.settings.homeStation||'').trim(),initial=(n||'?').charAt(0);
   return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div>'+
     '<div class="profile-photo-row"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="프로필 사진">':esc(initial))+'</div><div class="profile-photo-actions"><label class="tbtn" style="display:grid;place-items:center;padding:0 12px">사진 선택<input type="file" accept="image/*" data-profile-photo hidden></label>'+(photo?'<button class="tbtn" data-act="profile-photo-remove">사진 삭제</button>':'')+'</div></div>'+
-    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div>'+    '<div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">이름 저장</button></div>'+    '<div class="setrow"><span>내 출발 지역<small>지역이나 역을 입력해요. 예: 부산, 서울, 강남역, 수원역</small></span></div>'+    '<input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="지역 또는 역 검색" value="'+esc(S.settings.homeStation||'')+'">'+originDatalist()+    '<div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">좌표는 저장하지 않고 가까운 역 이름만 저장해요.</small></div>'+    '<div class="acts" style="margin-top:10px"><button class="b-save" data-act="save-profile">출발 지역 저장</button></div></section>';
+    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div>'+
+    '<div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile-name">이름 저장</button></div>'+
+    '<div id="profile-name-status" class="hint" style="margin-top:-4px">'+(n?'저장됨 ✓':'아직 저장된 이름이 없어요')+'</div>'+
+    '<div class="setrow"><span>내 출발 지역<small>지역이나 역을 입력해요. 예: 부산, 서울, 강남역, 수원역</small></span></div>'+
+    '<input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="지역 또는 역 검색" value="'+esc(home)+'">'+originDatalist()+
+    '<div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">좌표는 저장하지 않고 가까운 역 이름만 저장해요.</small></div>'+
+    '<div class="acts" style="margin-top:10px"><button class="b-save" data-act="save-home-station">출발 지역 저장</button>'+(home?'<button class="b-ghost" data-act="clear-home-station">초기화</button>':'')+'</div>'+
+    '<div id="home-station-status" class="hint" style="margin-top:8px">'+(home?'저장됨 ✓ · '+esc(home):'저장된 출발 지역 없음')+'</div></section>';
 }
 function syncProfileToCodes(){
   var sb=friendDb();if(!sb)return Promise.resolve();
@@ -4949,15 +4977,34 @@ function syncProfileToCodes(){
     return r;
   });
 }
-function saveProfile(){
+function setProfileSavedStatus(sel,msg){var el=$(sel);if(el)el.textContent=msg;}
+function saveProfileName(){
   var el=$('#f-profile-name'),name=el?el.value.trim().slice(0,20):'';
-  S.settings.profileName=name;var hs=$('#f-home-station');if(hs)S.settings.homeStation=hs.value||'';save();
-  if(!friendDb()){friendNote('프로필을 이 기기에 저장했어요. 친구에게 표시하려면 로그인해주세요');return;}
+  S.settings.profileName=name;save();
+  setProfileSavedStatus('#profile-name-status',name?'저장됨 ✓ · '+name:'이름을 비워 저장했어요 ✓');
+  inAppToast(name?'이름을 저장했어요':'이름을 비워 저장했어요');
+  if(!friendDb())return;
   syncProfileToCodes().then(function(r){
     if(r&&r.error&&/display_name|column|schema cache/i.test(r.error.message||'')){friendNote(userMsg('이 기기에는 저장했어요. 친구에게 보이는 이름은 잠시 뒤 다시 저장해주세요.','이 기기에는 저장했어요. 친구에게 이름을 보이려면 planner-friends.sql을 한 번 실행해주세요.'));return;}
-    return friendPush().then(function(){friendNote('친구에게 보일 프로필을 저장했어요');return friendLoad();});
-  }).catch(function(){friendNote('프로필은 저장했지만 친구 동기화를 다시 확인해주세요');});
+    return friendPush().then(function(){return friendLoad();});
+  }).catch(function(){friendNote('이름은 저장했지만 친구 동기화를 다시 확인해주세요');});
 }
+function saveHomeStation(){
+  var hs=$('#f-home-station'),v=hs?hs.value.trim():'';
+  S.settings.homeStation=v;save();
+  setProfileSavedStatus('#home-station-status',v?'저장됨 ✓ · '+v:'저장된 출발 지역 없음');
+  inAppToast(v?'출발 지역을 저장했어요':'출발 지역을 비웠어요');
+  if(typeof friendPush==='function')friendPush().catch(function(){});
+}
+function clearHomeStation(){
+  S.settings.homeStation='';var hs=$('#f-home-station');if(hs)hs.value='';save();
+  setProfileSavedStatus('#home-station-status','저장된 출발 지역 없음');
+  var msg=$('#home-geo-msg');if(msg)msg.textContent='출발 지역을 초기화했어요.';
+  inAppToast('출발 지역을 초기화했어요');
+  if(typeof friendPush==='function')friendPush().catch(function(){});
+  render();
+}
+function saveProfile(){saveProfileName();saveHomeStation();}
 function setProfilePhoto(file){
   if(!file)return;
   var fr=new FileReader();
@@ -5915,6 +5962,9 @@ function act(a,e){
     case 'login-mode':switchAuthMode(false);break;
     case 'toggle-password':togglePassword(a.dataset.target,a);break;
     case 'save-profile':saveProfile();break;
+    case 'save-profile-name':saveProfileName();break;
+    case 'save-home-station':saveHomeStation();break;
+    case 'clear-home-station':clearHomeStation();break;
     case 'profile-crop-save':saveProfileCrop();break;
     case 'profile-photo-remove':S.settings.profilePhoto='';save();friendPush().then(function(){friendNote('프로필 사진을 삭제했어요');render();});break;
     case 'friend-copy-code':friendCopyCode();break;
@@ -5969,7 +6019,7 @@ function act(a,e){
     case 'report-save':saveReport();break;
     case 'mem-photo-clear':M.mphoto='';drawFriendMemories();break;
     case 'home-current':
-      requestNearestStation(function(st){var el=$('#f-home-station');if(el)el.value=st;S.settings.homeStation=st;save();},$('#home-geo-msg'));break;
+      requestNearestStation(function(st){var el=$('#f-home-station');if(el)el.value=st;S.settings.homeStation=st;save();setProfileSavedStatus('#home-station-status','저장됨 ✓ · '+st);inAppToast('출발 지역을 저장했어요');if(typeof friendPush==='function')friendPush().catch(function(){});},$('#home-geo-msg'));break;
     case 'lk-current':
       requestNearestStation(function(st){var el=$('#f-lk-origin');if(el)el.value=st;},$('#lk-geo-msg'));break;
     case 'guest-current':
@@ -6004,7 +6054,7 @@ function act(a,e){
     case 'friend-invite-accept':friendInviteRespond(id,true);break;
     case 'friend-invite-decline':friendInviteRespond(id,false);break;
     case 'friend-invite-cancel':friendInviteCancel(id);break;
-    case 'friend-toggle-share':{var ftp=friendToggle(id,a.dataset.mode),inPrev=M.type==='friend-share-preview';if(inPrev){a.classList.toggle('on');ftp.then(function(){if(M.type==='friend-share-preview'&&M.friendId===id)openFriendSharePreview(id);});}break;}
+    case 'friend-toggle-share':{var inPrev=M.type==='friend-share-preview';friendToggle(id,a.dataset.mode).then(function(ok){if(!ok)return;if(inPrev&&M.type==='friend-share-preview'&&M.friendId===id)openFriendSharePreview(id);else if(!M.type)render();});break;}
     case 'friend-remove':if(armed(a))friendRemove(id);break;
     case 'save-friend-memory':saveFriendMemory();break;
     case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
