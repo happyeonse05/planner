@@ -1708,6 +1708,22 @@ var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null
 function mirrorPush(){return Promise.resolve(false);}
 function mirrorRescueIfUseful(){return Promise.resolve(false);}
 var SyncUI={state:'local',at:0};
+/* 동기화 진단: Supabase가 준 code/message/details/hint/status를 숨기지 않고 설정 화면에 표시해요. */
+function syncErrorText(e){
+  if(!e)return '';
+  var parts=[];
+  function add(k,v){if(v!==undefined&&v!==null&&String(v).trim())parts.push(k+': '+String(v).trim());}
+  add('message',e.message||(!e.code&&!e.details&&!e.hint?String(e):''));
+  add('code',e.code);add('details',e.details);add('hint',e.hint);add('status',e.status||e.statusCode);
+  return parts.join(' | ');
+}
+function setSyncError(prefix,e){
+  var raw=syncErrorText(e)||'알 수 없는 오류';
+  Sync.lastError=raw;
+  Sync.diag=(prefix||'계정 동기화에 실패했어요.')+' [실제 오류] '+raw;
+  setSyncUI('error');
+  try{console.error('[planner sync]',e);}catch(_){}
+}
 function setSyncUI(st){var was=SyncUI.state;SyncUI.state=st;SyncUI.at=Date.now();if(st==='error'&&was!=='error'&&Date.now()-(SyncUI.errDrawn||0)>30000&&(SyncUI.errDrawn=Date.now())&&typeof U!=='undefined'&&U.tab==='settings'&&typeof M!=='undefined'&&!M.type)setTimeout(function(){try{render();}catch(e){}},0);var el=document.getElementById('sync-state');if(el){el.className='sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'');el.innerHTML=syncStateHTML(true);}}
 function syncStateHTML(inner){var st=SyncUI.state;if(!Sync.uid)return (inner?'':'<div id="sync-state" class="sync-state">')+'<i class="sync-dot"></i>이 기기에 저장됨'+(inner?'':'</div>');var txt=st==='saving'?'계정에 저장 중…':st==='error'?'계정 동기화 실패':'계정 동기화 완료';return (inner?'':'<div id="sync-state" class="sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'')+'">')+'<i class="sync-dot"></i>'+txt+(inner?'':'</div>');}
 /* ---------- 친구 공유 동기화 ---------- */
@@ -3186,7 +3202,7 @@ function push(){
     /* 항목이 많이 줄어드는 저장은 덮기 전에 계정에 사본을 하나 남겨요 */
     var guard=(r&&rem&&itemCount(rem)-itemCount(S)>=5)?cloudGuardSnap(r.json):Promise.resolve();
     return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();if(Sync.uid)vaultPut(Sync.uid,S);setSyncUI('ok');mirrorPush();});
-  }).catch(function(e){setSyncUI('error');Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
+  }).catch(function(e){setSyncError('계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요.',e);})
     .then(function(){
       Sync.busy=false;
       if(Sync.dirty){Sync.dirty=false;scheduleSync();}
@@ -3234,7 +3250,7 @@ function pull(){
       }
       try{if(reconcile(r))push();}catch(e){}
     }else{if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);if(localAt>0)return push();}
-  }).catch(function(e){setSyncUI('error');Sync.diag='계정 동기화에 실패했어요. 이 기기 데이터는 그대로 보관돼요. '+(e&&e.message||'');throw e;});
+  }).catch(function(e){setSyncError('계정 동기화에 실패했어요. 이 기기 데이터는 그대로 보관돼요.',e);throw e;});
 }
 function applyTheme(){
   /* 계정 확인 전/로그아웃 상태에서는 특정 계정의 색·배경을 노출하지 않아요.
@@ -4743,7 +4759,7 @@ function viewSettings(){
     '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속을 만드는 버튼만 숨겨요. 기존 약속·받은 요청은 지워지지 않아요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div></section>';
-  var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
+  var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p><div class="note" style="word-break:break-word;user-select:text;-webkit-user-select:text"><b style="display:block;margin-bottom:5px">오류 상세</b>'+esc(Sync.lastError||Sync.diag||'오류 정보 없음')+'</div>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div><div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
     '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
