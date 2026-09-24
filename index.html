@@ -4021,9 +4021,13 @@ function topHTML(){
     t='할 일';s='남은 일 '+n+'개';
   }else if(U.tab==='friends'){
     var fn=(typeof FriendSync!=='undefined'&&FriendSync.friends)?FriendSync.friends.length:0;
+    if(U.friendsPage==='detail'&&U.friendDetailId){
+      return '<button class="ibtn" data-act="friends-home" aria-label="친구로 돌아가기">‹</button><div class="ttl"><h1>친구</h1></div>'+bellBtnHTML()+searchBtn;
+    }
     t='친구';s=fn?'친구 '+fn+'명 · 비는 시간에 약속 잡기':'시간표 기준으로 약속 잡고 추억 쌓기';
   }else if(U.tab==='settings'){
-    return '<button class="ibtn" data-act="back" aria-label="뒤로">‹</button><div class="ttl"><h1>설정</h1></div>'+bellBtnHTML()+searchBtn;
+    var settingsBackAct=U.settingsPage?'settings-home':'back';
+    return '<button class="ibtn" data-act="'+settingsBackAct+'" aria-label="뒤로">‹</button><div class="ttl"><h1>설정</h1></div>'+bellBtnHTML()+searchBtn;
   }else{
     t='시간표';s='매주 반복되는 수업·고정 일정';plus='add-block';
   }
@@ -4045,7 +4049,7 @@ function friendPendingCount(){
   return inv+req;
 }
 function viewFriends(){
-  if(U.friendsPage==='detail'&&U.friendDetailId)return '<section class="card"><button class="setrow chatrow" data-act="friends-home"><span>‹ 친구 목록</span></button></section>'+friendDetailHTML(U.friendDetailId);
+  if(U.friendsPage==='detail'&&U.friendDetailId)return friendDetailHTML(U.friendDetailId);
   return friendHTML();
 }
 
@@ -4678,10 +4682,10 @@ function viewSettings(){
   var diaryShortcut='<section class="card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>날짜를 골라 지난 일기를 책처럼 읽어요</small></span><span class="chev">›</span></button></section>';
   /* 설정 첫 화면은 메뉴만 보여주고, 복잡한 내용은 각각 별도 화면에서 열어요. */
   var settingsPage=U.settingsPage||'';
-  var back='<section class="card"><button class="setrow chatrow" data-act="settings-home"><span>‹ 설정으로 돌아가기</span></button></section>';
+  var back='';
   if(settingsPage==='profile')return back+profileHTML();
   if(settingsPage==='friends')return back+friendHTML();
-  if(settingsPage==='friend-detail')return '<section class="card"><button class="setrow chatrow" data-act="settings-friends"><span>‹ 친구 목록</span></button></section>'+friendDetailHTML(U.friendDetailId);
+  if(settingsPage==='friend-detail')return friendDetailHTML(U.friendDetailId);
   if(settingsPage==='school')return back+schoolHTML+linkHTML;
   if(settingsPage==='life')return back+logPrefHTML;
   if(settingsPage==='screen')return back+viewHTML;
