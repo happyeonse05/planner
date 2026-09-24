@@ -1602,8 +1602,23 @@ var SUPA_TABLE='planner';
 /* ---------- 기기 간 동기화 (사용 가능할 때만) ---------- */
 var Sync={db:null,path:null,on:false,busy:false,dirty:false,timer:null,kind:null,sb:null,email:'',uid:null,examGuardAt:0};
 var SyncUI={state:'local',at:0};
+function syncErrText(e){
+  if(!e)return '알 수 없는 오류';
+  var a=[];
+  if(e.message)a.push(String(e.message));
+  if(e.code)a.push('code: '+e.code);
+  if(e.details)a.push('details: '+e.details);
+  if(e.hint)a.push('hint: '+e.hint);
+  if(e.status)a.push('status: '+e.status);
+  if(!a.length){try{a.push(JSON.stringify(e));}catch(_){a.push(String(e));}}
+  return a.join(' · ');
+}
+function showSyncDiag(){
+  var d=(Sync&&Sync.diag)||'아직 기록된 동기화 오류가 없어요.';
+  try{alert('동기화 진단\n\n'+d+'\n\n※ 이 화면은 원인 확인용이며 기기 데이터는 삭제하지 않아요.');}catch(e){}
+}
 function setSyncUI(st){SyncUI.state=st;SyncUI.at=Date.now();var el=document.getElementById('sync-state');if(el){el.className='sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'');el.innerHTML=syncStateHTML(true);}}
-function syncStateHTML(inner){var st=SyncUI.state;if(!Sync.uid)return (inner?'':'<div id="sync-state" class="sync-state">')+'<i class="sync-dot"></i>이 기기에 저장됨'+(inner?'':'</div>');var txt=st==='saving'?'계정에 저장 중…':st==='error'?'계정 동기화 실패':'계정 동기화 완료';return (inner?'':'<div id="sync-state" class="sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'')+'">')+'<i class="sync-dot"></i>'+txt+(inner?'':'</div>');}
+function syncStateHTML(inner){var st=SyncUI.state;if(!Sync.uid)return (inner?'':'<div id="sync-state" class="sync-state">')+'<i class="sync-dot"></i>이 기기에 저장됨'+(inner?'':'</div>');var txt=st==='saving'?'계정에 저장 중…':st==='error'?'계정 동기화 실패 · 눌러서 원인 보기':'계정 동기화 완료';var click=st==='error'?' role="button" tabindex="0" onclick="showSyncDiag()" style="cursor:pointer"':'';return (inner?'':'<div id="sync-state" class="sync-state '+(st==='saving'?'saving':st==='ok'?'ok':st==='error'?'err':'')+'"'+click+'>')+'<i class="sync-dot"></i>'+txt+(inner?'':'</div>');}
 /* ---------- 친구 공유 동기화 ---------- */
 var FriendSync={invitesIn:[],invitesOut:[],inviteNames:{},inviteError:'',busyMap:{},busyError:'',lastBusy:'',code:'',friends:[],incoming:[],requests:[],shared:[],memories:[],shown:{},loaded:false,busy:false,msg:'',error:'',memoryError:''};
 var FRIEND_CODE_ALPH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -3059,7 +3074,7 @@ function push(){
     /* 항목이 많이 줄어드는 저장은 덮기 전에 계정에 사본을 하나 남겨요 */
     var guard=(r&&rem&&itemCount(rem)-itemCount(S)>=5)?cloudGuardSnap(r.json):Promise.resolve();
     return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();setSyncUI('ok');});
-  }).catch(function(e){setSyncUI('error');Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
+  }).catch(function(e){setSyncUI('error');Sync.diag='[저장 단계] '+syncErrText(e);})
     .then(function(){
       Sync.busy=false;
       if(Sync.dirty){Sync.dirty=false;scheduleSync();}
@@ -3107,7 +3122,7 @@ function pull(){
       }
       try{if(reconcile(r))push();}catch(e){}
     }else{if(Sync.kind==='supa')lsSet('planner.syncedUser',Sync.uid);if(localAt>0)return push();}
-  }).catch(function(e){setSyncUI('error');Sync.diag='계정 동기화에 실패했어요. 이 기기 데이터는 그대로 보관돼요. '+(e&&e.message||'');throw e;});
+  }).catch(function(e){setSyncUI('error');Sync.diag='[불러오기 단계] '+syncErrText(e);throw e;});
 }
 function applyTheme(){
   /* 계정 확인 전/로그아웃 상태에서는 특정 계정의 색·배경을 노출하지 않아요.
