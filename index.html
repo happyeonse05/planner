@@ -2462,7 +2462,7 @@ function drawFriendMemories(){
     '<span class="lbl">어디였어?</span><div id="pp">'+ppHTML(M.pp)+'</div>'+
     '<span class="lbl">언제</span><input class="fld" type="date" id="f-mdate" value="'+esc(M.memoryDate||'')+'"><span class="lbl">어디서 <em>(선택)</em></span><input class="fld" id="f-mplace" maxlength="50" placeholder="카페, 공원, 식당 이름 등" value="'+esc(M.mplace||'')+'"><span class="lbl">무엇을 <em>(선택)</em></span><input class="fld" id="f-mwhat" maxlength="80" placeholder="같이 한 일" value="'+esc(M.mwhat||'')+'">'+
     '<span class="lbl">사진 <em>(선택)</em></span>'+(M.mphoto?'<div class="mem-new-photo"><img src="'+esc(M.mphoto)+'" alt=""><button class="pp-x" data-act="mem-photo-clear" aria-label="사진 빼기">✕</button></div>':'<label class="tbtn photo-pick">사진 고르기<input type="file" accept="image/*" data-memphoto="" hidden></label>')+
-    '<p class="hint" id="memory-msg">'+(FriendSync.memoryError?'서버에 저장이 안 되면 이 기기에 먼저 저장해요.':'')+'</p><div class="acts"><button class="b-ghost" data-act="memory-appointment">이 장소로 약속 잡기</button><button class="b-save" data-act="save-friend-memory">추억 저장</button></div>'+
+    '<p class="hint" id="memory-msg">'+(FriendSync.memoryError?'서버에 저장이 안 되면 이 기기에 먼저 저장해요.':'')+'</p><div class="acts">'+(S.settings.showMeetMaker===false?'':'<button class="b-ghost" data-act="memory-appointment">이 장소로 약속 잡기</button>')+'<button class="b-save" data-act="save-friend-memory">추억 저장</button></div>'+
     (rows.length?'<button class="report-cta" data-act="report-open" data-id="'+esc(id)+'"><b>우리 추억 리포트 만들기</b><small>이번 학기 만난 횟수·자주 간 곳·사진을 한 장으로</small></button>':'')+'<span class="lbl" style="margin-top:16px">지난 추억 '+rows.length+'개</span><div class="memory-list">'+list+'</div><div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');
 }
 function memoryLineOf(info){
@@ -2916,7 +2916,7 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','hourNotes','routineDone'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
@@ -3950,7 +3950,7 @@ function viewWeek(){
   var mon=mondayOf(U.date),n=S.settings.weekend?7:5;
   var dates=[];for(var i=0;i<n;i++)dates.push(addDays(mon,i));
   var wk0=dkey(mon),wk6=dkey(addDays(mon,n-1)),un=S.classes.filter(function(c){return c.day==null;}),unA=S.events.filter(function(e){return e.kind==='appointment'&&!e.start&&e.date>=wk0&&e.date<=wk6;});
-  return '<section class="card tt-card"><div class="card-h"><h3>시간표</h3><div class="tt-actions"><button class="tbtn" data-act="week-export">이미지 저장</button><button class="tbtn" data-act="week-print">인쇄</button><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'주말 숨기기':'주말 보기')+'</button></div></div>'+ 
+  return '<section class="card tt-card"><div class="card-h"><h3>시간표</h3><div class="tt-actions"><button class="tbtn" data-act="week-export">주간표 이미지</button><button class="tbtn" data-act="week-print">인쇄</button><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'주말 숨기기':'주말 보기')+'</button></div></div>'+ 
     gridHTML(dates,{head:true})+'</section>'+ 
     (un.length?'<section class="card"><div class="card-h"><h3>시간 미정 수업</h3></div><div class="slots">'+
       un.map(function(c){return '<button class="slot c" style="--c:'+c.color+'" data-act="edit-block" data-id="'+c.id+'">'+esc(c.name)+'</button>';}).join('')+'</div></section>':'')+
@@ -4126,7 +4126,7 @@ function timelineHTML(d){
       '<div class="body">'+(chips.length?'<div class="hrow">'+chips.join('')+'</div>':'')+
       '<input class="hin" data-hnote="'+k+'|'+h+'" placeholder="메모" value="'+esc(notes[h]||'')+'"></div></div>';
   }
-  return '<section class="card tl"><div class="tl-h"><b>'+mdTxt(d)+'</b><span>'+DAYS[dow(d)]+'요일</span><div class="tl-acts"><button class="tbtn" data-act="add-dd" data-date="'+k+'">D-day</button><button class="tbtn" data-act="add-appointment" data-date="'+k+'">+ 약속</button><button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button></div></div>'+rows+specialRowsForDay(d)+'</section>';
+  return '<section class="card tl"><div class="tl-h"><b>'+mdTxt(d)+'</b><span>'+DAYS[dow(d)]+'요일</span><div class="tl-acts"><button class="tbtn" data-act="add-dd" data-date="'+k+'">D-day</button>'+(S.settings.showMeetMaker===false?'':'<button class="tbtn" data-act="add-appointment" data-date="'+k+'">+ 약속</button>')+'<button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button></div></div>'+rows+specialRowsForDay(d)+'</section>';
 }
 function schoolInfoCard(){
  var p=schoolProfile(S.settings.school),camp=canonicalCampus(p.id,S.settings.schoolCampus),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
@@ -4412,7 +4412,8 @@ function viewSettings(){
     '<div class="setrow"><span>기상 목표 시각<small>오늘 오전 9시가 지나면 오늘의 달성 버튼이 잠겨요</small></span><input class="sel" type="time" id="set-wake-goal" value="'+esc(S.settings.wakeGoal||'09:00')+'"></div>'+
     '<div class="setrow"><span>홈 학교 링크<small>학교 홈페이지·공지·식단 바로가기를 홈에 보여줘요</small></span><button class="tbtn" data-act="toggle-home-school">'+(S.settings.showSchoolLinks===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
-    '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div></section>';
+    '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
+    '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속을 만드는 버튼만 숨겨요. 기존 약속·받은 요청은 지워지지 않아요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div></section>';
   var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요.</p><div class="acts"><button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div><div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
@@ -4473,7 +4474,7 @@ function viewSettings(){
     '<section class="card">'+
       navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
       navRow('settings-life','생활 기록','기상 · 취침 · 공부 · 홈 표시')+
-      navRow('settings-screen','화면','홈 표시 · D-day · 색 · 배경 · 다크모드')+
+      navRow('settings-screen','화면','색 · 배경 · 다크모드 · 시간표 표시')+
     '</section>'+
     '<section class="card">'+
       navRow('settings-account','계정',Sync.uid?'로그인 · 동기화 · 데이터 · 도움':'로그인 · 동기화 · 데이터 · 도움')+
@@ -4666,7 +4667,7 @@ function friendDetailHTML(id){
   if(!f)return '<section class="card"><div class="empty">친구를 찾을 수 없어요.</div></section>';
   var n=friendLabel(f),pinned=friendPinIndex(f.id)>=0,inc=[f.inCalendar?'일정':''].filter(Boolean);
   return '<section class="card friend-detail-card"><div class="fc-top">'+friendAvatar(n,f.photo,'lg')+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small><small>'+(inc.length?'친구가 공개: '+inc.join(' · '):'친구 공개 범위에 따라 표시')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★':'☆')+'</button></div>'+ 
-    '<div class="friend-detail-actions"><button class="b-save" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button></div></section>'+ 
+    '<div class="friend-detail-actions">'+(S.settings.showMeetMaker===false?'':'<button class="b-save" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button>')+'<button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button></div></section>'+ 
     '<section class="card"><div class="card-h"><h3>이 친구에게 공개</h3><button class="tbtn" data-act="friend-share-preview" data-id="'+f.id+'">미리보기</button></div><p class="hint">아무것도 선택하지 않아도 돼요. 그 경우 프로필만 보여요.</p><div class="fc-share detail-share"><button class="chipt'+(f.outTimetable?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="timetable">시간표</button><button class="chipt'+(f.outExams?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="exams">시험</button><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">일정</button></div></section>'+ 
     '<section class="card"><button class="setrow chatrow danger-row" data-act="friend-remove" data-id="'+f.id+'"><span>친구 연결 해제<small>서로의 공유 정보가 더 이상 보이지 않아요</small></span><span class="chev">›</span></button></section>';
 }
@@ -4686,10 +4687,10 @@ function friendHTML(){
     '<div class="row"><input class="fld" style="margin:0" id="f-friend-code" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="친구 초대코드 8자리"><button class="b-save" style="height:44px;padding:0 14px" data-act="friend-add">요청 보내기</button></div>'+
     '<p class="hint">상대가 수락하면 연결돼요. 메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p>'+ferr+(FriendSync.msg?'<p class="hint">'+esc(FriendSync.msg)+'</p>':'')+
     ((invIn||reqIn)?'<div class="fsec">새 알림</div>'+invIn+reqIn:'')+friendNotifyNudgeHTML()+
-    '<div class="fsec">링크 약속</div><div class="lk-entry"><button class="tbtn pri" data-act="lk-new">링크로 약속 잡기</button><button class="tbtn" data-act="lk-list">내 링크 '+LinkSync.links.length+'</button></div><p class="hint">앱이 없는 친구나 여러 명(팀플·동아리)은 링크 하나로 되는 시간을 모아요.</p>'+
+    (S.settings.showMeetMaker===false?'':'<div class="fsec">링크 약속</div><div class="lk-entry"><button class="tbtn pri" data-act="lk-new">링크로 약속 잡기</button><button class="tbtn" data-act="lk-list">내 링크 '+LinkSync.links.length+'</button></div><p class="hint">앱이 없는 친구나 여러 명(팀플·동아리)은 링크 하나로 되는 시간을 모아요.</p>')+
      '<div class="fsec">친구 목록</div>'+(rows||'<div class="empty">아직 연결된 친구가 없어요. 초대코드를 주고받아 보세요.</div>')+
     (invOut?'<div class="fsec">보낸 요청</div>'+invOut:'')+
-    '<div class="fsec">약속 설정</div>'+availRow+
+    (S.settings.showMeetMaker===false?'':'<div class="fsec">약속 설정</div>'+availRow)+
     '<div class="setrow"><span>친구 요청·약속 알림<small>'+(!notifySupported()?'이 브라우저는 알림을 지원하지 않아요 (아이폰은 홈 화면에 추가 후 사용)':notifySupported()&&Notification.permission==='denied'?'알림이 막혀 있어요. 브라우저·기기 설정에서 허용해주세요':'앱이 열려 있으면 팝업, 다른 화면에 있으면 시스템 알림으로 알려줘요')+'</small></span><button class="tbtn'+(friendNotifyOn()?' on':'')+'" data-act="friend-notify">'+(friendNotifyOn()?'켜짐':'꺼짐')+'</button></div></section>';
 }
 function globalSearchDate(k){
@@ -5221,11 +5222,11 @@ function drawDiary(dateKey){
   $('#modal').classList.add('full');diaryTick();setTimeout(function(){var x=$('#f-diary');if(x)x.focus();},30);
 }
 function saveDiaryDraft(){var x=$('#f-diary'),n=$('#f-diary-note');if(x)U.diaryDraft=x.value;if(n)U.diaryNote=n.value;}
-function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else{U.diaryDate='';drawDiary();}}
+function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else if(U.diaryReturn==='chat'){U.diaryReturn='';U.diaryDate='';drawChat();}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}}
 
 function drawChat(){
   M={type:'chat'};
-  openModal('<div class="chatpage"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+(U.chatRoom==='general'?'<button class="diary-banner" data-act="open-diary"><span><b>'+diaryMinutes()+'분 일기</b><small>타이머 켜고 오늘을 기록해요</small></span><span class="chev">›</span></button>':'')+chatRoomsHTML()+
+  openModal('<div class="chatpage"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+chatRoomsHTML()+
     '<input class="chat-search" id="f-chat-search" placeholder="대화 검색" value="'+esc(U.chatQuery||'')+'">'+
     '<div class="clist" id="clist">'+chatListHTML()+'</div>'+
     pendingChatPhotosHTML()+
@@ -5458,6 +5459,7 @@ function act(a,e){
     }
     case 'add-schedule':openSchedule(null,{date:a.dataset.date||dkey(U.date)});break;
     case 'add-appointment':{
+      if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}
       openAppointment(null,{date:a.dataset.date});break;
     }
     case 'add-block':openBlock(null,{day:Math.min(dow(U.date),4)});break;
@@ -5487,7 +5489,7 @@ function act(a,e){
     case 'friend-view-planner':openFriendPlanner(id);break;
     case 'friend-share-preview':openFriendSharePreview(id);break;
     case 'friend-memories':openFriendMemories(id);break;
-    case 'friend-meet':openFriendMeet(id);break;
+    case 'friend-meet':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openFriendMeet(id);break;
     case 'meet-cell':meetTap(a.dataset.k,Number(a.dataset.m));break;
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
     case 'meet-activity':
@@ -5510,7 +5512,7 @@ function act(a,e){
     case 'place-decide-open':openPlaceDecision(id);break;
     case 'candidate-toggle':{var cv=a.dataset.v,ca=M.selected||(M.selected=[]),ci=ca.indexOf(cv);if(ci>=0)ca.splice(ci,1);else ca.push(cv);drawPlaceDecision();break;}
     case 'candidate-new':{var cn=$('#f-cand-new'),cvv=cn?normalizePlaceText(cn.value):'';if(!cvv){if(cn)cn.classList.add('bad');break;}if(!M.added)M.added=[];M.added.push(cvv);if(M.selected.indexOf(cvv)<0)M.selected.push(cvv);drawPlaceDecision();break;}
-    case 'lk-new':openLinkCreate();break;
+    case 'lk-new':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openLinkCreate();break;
     case 'lk-list':openLinkList();linkLoad();break;
     case 'lk-days':M.days=Number(a.dataset.v);document.querySelectorAll('#lk-days button').forEach(function(b){b.classList.toggle('on',b===a);});break;
     case 'lk-create':createLink();break;
@@ -5569,12 +5571,13 @@ function act(a,e){
     case 'friend-toggle-share':{var ftp=friendToggle(id,a.dataset.mode),inPrev=M.type==='friend-share-preview';if(inPrev){a.classList.toggle('on');ftp.then(function(){if(M.type==='friend-share-preview'&&M.friendId===id)openFriendSharePreview(id);});}break;}
     case 'friend-remove':if(armed(a))friendRemove(id);break;
     case 'save-friend-memory':saveFriendMemory();break;
-    case 'memory-appointment':{var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
+    case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
     case 'appointment-accept':respondAppointmentRequest(true);break;
     case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
     case 'toggle-home-school':S.settings.showSchoolLinks=S.settings.showSchoolLinks===false;save();render();break;
     case 'toggle-home-todo':S.settings.showNextTodo=S.settings.showNextTodo===false;save();render();break;
+    case 'toggle-meet-maker':S.settings.showMeetMaker=S.settings.showMeetMaker===false;save();render();break;
     case 'set-diary-minutes':S.settings.diaryMinutes=Number(a.dataset.v)||10;save();render();break;
     case 'toggle-top-show':S.settings.topShow=S.settings.topShow===false;save();render();break;
     case 'top-up':moveTopItem(a.dataset.id,-1);break;
@@ -5620,8 +5623,8 @@ function act(a,e){
     case 'diary-cal-today':diaryCalPick(todayKey());break;
     case 'diary-cal-day':diaryCalPick(t.dataset.date);break;
     case 'diary-write-date':U.diaryDraft='';U.diaryNote='';U.diaryRun=null;U.diaryDate=a.dataset.date||todayKey();U.diaryReturn='library';drawDiary(U.diaryDate);break;
-    case 'open-diary':saveDiaryDraft();U.diaryDate=todayKey();U.diaryReturn='chat';drawDiary(todayKey());break;
-    case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);if(U.diaryReturn==='library'){var backDate=U.diaryDate||todayKey();U.diaryReturn='';openDiaryLibrary(backDate);}else{U.diaryDate='';drawChat();}break;
+    case 'open-diary':saveDiaryDraft();U.diaryDate=todayKey();U.diaryReturn=(M.type==='chat'?'chat':'home');drawDiary(todayKey());break;
+    case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);if(U.diaryReturn==='library'){var backDate=U.diaryDate||todayKey();U.diaryReturn='';openDiaryLibrary(backDate);}else if(U.diaryReturn==='chat'){U.diaryReturn='';U.diaryDate='';drawChat();}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}break;
     case 'diary-toggle':saveDiaryDraft();if(!U.diaryRun)U.diaryRun={acc:0,since:Date.now(),running:true};else if(U.diaryRun.running)diaryPause();else diaryResume();drawDiary();break;
     case 'diary-finish':finishDiary();break;
     case 'open-chat':U.chatRoom='general';U.chatQuery='';U.chatSel=null;drawChat();break;
