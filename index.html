@@ -4039,7 +4039,7 @@ function topHTML(){
     '<button class="ibtn gear icog" data-act="open-settings" aria-label="설정">'+'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>';
 }
 function navHTML(){
-  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable','시간표'],['friends','친구']];
+  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable','시간표']];
   return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'">'+t[1]+dot+'</button>';}).join('');
 }
 function friendPendingCount(){
@@ -5849,7 +5849,7 @@ function act(a,e){
     case 'exam-prep-del':{var pr=a.closest('.exam-prep-row');if(pr)pr.remove();break;}
     case 'settings-home':U.settingsPage='';render();break;
     case 'settings-profile':U.settingsPage='profile';render();break;
-    case 'settings-friends':U.settingsPage='';U.tab='friends';U.friendsPage='';render(true);break;
+    case 'settings-friends':U.tab='settings';U.settingsPage='friends';U.friendsPage='';render(true);break;
     case 'settings-school':U.settingsPage='school';render();break;
     case 'settings-life':U.settingsPage='life';render();break;
     case 'settings-screen':U.settingsPage='screen';render();break;
