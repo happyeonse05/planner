@@ -937,6 +937,16 @@ body{word-break:keep-all;overflow-wrap:break-word}
 :root:not([data-theme="light"]) .bgsw.on{box-shadow:0 0 0 1px var(--edge)}
 :root:not([data-theme="light"]) .diary-time.extra{color:#fff}
 }
+
+/* custom diary calendar: avoids broken iOS native date picker layout */
+.diary-cal{background:var(--card);border:1px solid var(--edge);border-radius:18px;padding:14px;margin:8px 0 14px}.diary-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.diary-cal-head b{font-size:17px}.diary-cal-head button{width:38px;height:38px;border-radius:12px;background:var(--soft);font-size:22px}.diary-cal-week,.diary-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.diary-cal-week span{text-align:center;font-size:12px;color:var(--sub);padding:5px 0}.diary-cal-day{aspect-ratio:1/1;min-width:0;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:650;background:transparent;color:var(--ink);position:relative}.diary-cal-day.sun{color:#df7474}.diary-cal-day.sat{color:#769bd5}.diary-cal-day.out{visibility:hidden}.diary-cal-day.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.diary-cal-day.has:after{content:'';position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.65}.diary-cal-foot{display:flex;justify-content:flex-end;margin-top:8px}.diary-cal-foot button{height:36px;padding:0 13px;border-radius:11px;background:var(--soft);font-weight:700}
+
+/* 설정의 친구 목록은 요약만, 상세 기능은 친구 전용 화면에서 */
+.friend-list-row{display:block;width:100%;border:0;background:transparent;text-align:left;padding:14px 2px;cursor:pointer;color:inherit}
+.friend-list-row+.friend-list-row{border-top:1px solid var(--line)}
+.friend-list-tail{margin-left:auto;font-size:22px;color:var(--sub);white-space:nowrap}
+.friend-detail-card .fc-top{padding:4px 0 14px}.friend-detail-actions{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:8px;margin-top:8px}.friend-detail-actions>*{height:44px}.detail-share{padding-top:4px}.danger-row{color:var(--now)}
+
 </style>
 </head>
 <body>
@@ -4394,7 +4404,33 @@ function viewSettings(){
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
   var diaryShortcut='<section class="card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>날짜를 골라 지난 일기를 책처럼 읽어요</small></span><span class="chev">›</span></button></section>';
-  return chatHTML+diaryShortcut+profileHTML()+friendHTML()+schoolHTML+linkHTML+syncHTML+supportHTML+logPrefHTML+viewHTML+acct+dataHTML;
+  /* 설정 첫 화면은 메뉴만 보여주고, 복잡한 내용은 각각 별도 화면에서 열어요. */
+  var settingsPage=U.settingsPage||'';
+  var back='<section class="card"><button class="setrow chatrow" data-act="settings-home"><span>‹ 설정으로 돌아가기</span></button></section>';
+  if(settingsPage==='profile')return back+profileHTML();
+  if(settingsPage==='friends')return back+friendHTML();
+  if(settingsPage==='friend-detail')return '<section class="card"><button class="setrow chatrow" data-act="settings-friends"><span>‹ 친구 목록</span></button></section>'+friendDetailHTML(U.friendDetailId);
+  if(settingsPage==='school')return back+schoolHTML+linkHTML;
+  if(settingsPage==='life')return back+logPrefHTML;
+  if(settingsPage==='screen')return back+viewHTML;
+  if(settingsPage==='account')return back+acct+syncHTML+dataHTML+supportHTML;
+  if(settingsPage==='data')return back+acct+syncHTML+dataHTML+supportHTML;
+  if(settingsPage==='support')return back+acct+syncHTML+dataHTML+supportHTML;
+  function navRow(act,title,sub){return '<button class="setrow chatrow" data-act="'+act+'"><span>'+title+(sub?'<small>'+sub+'</small>':'')+'</span><span class="chev">›</span></button>';}
+  var main=chatHTML+diaryShortcut+
+    '<section class="card">'+
+      navRow('settings-profile','내 프로필','사진 · 친구에게 보일 이름 · 출발 지역')+
+      navRow('settings-friends','친구','친구 추가 · 공개 범위 · 약속 설정')+
+    '</section>'+
+    '<section class="card">'+
+      navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
+      navRow('settings-life','생활 기록','기상 · 취침 · 공부 기록 표시')+
+      navRow('settings-screen','화면','홈 표시 · D-day · 색 · 배경 · 다크모드')+
+    '</section>'+
+    '<section class="card">'+
+      navRow('settings-account','계정',Sync.uid?'로그인 · 동기화 · 데이터 · 도움':'로그인 · 동기화 · 데이터 · 도움')+
+    '</section>';
+  return main;
 }
 function openLink(l){
   var x=l||{name:'',url:''};
@@ -4577,15 +4613,22 @@ function openFriendSharePreview(id){
     '<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>';
   M={type:'friend-share-preview',friendId:id};openModal(html);
 }
+function friendDetailHTML(id){
+  var f=FriendSync.friends.find(function(x){return x.id===id;});
+  if(!f)return '<section class="card"><div class="empty">친구를 찾을 수 없어요.</div></section>';
+  var n=friendLabel(f),pinned=friendPinIndex(f.id)>=0,inc=[f.inCalendar?'일정':''].filter(Boolean);
+  return '<section class="card friend-detail-card"><div class="fc-top">'+friendAvatar(n,f.photo,'lg')+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small><small>'+(inc.length?'친구가 공개: '+inc.join(' · '):'친구 공개 범위에 따라 표시')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★':'☆')+'</button></div>'+ 
+    '<div class="friend-detail-actions"><button class="b-save" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button></div></section>'+ 
+    '<section class="card"><div class="card-h"><h3>이 친구에게 공개</h3><button class="tbtn" data-act="friend-share-preview" data-id="'+f.id+'">미리보기</button></div><p class="hint">아무것도 선택하지 않아도 돼요. 그 경우 프로필만 보여요.</p><div class="fc-share detail-share"><button class="chipt'+(f.outTimetable?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="timetable">시간표</button><button class="chipt'+(f.outExams?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="exams">시험</button><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">일정</button></div></section>'+ 
+    '<section class="card"><button class="setrow chatrow danger-row" data-act="friend-remove" data-id="'+f.id+'"><span>친구 연결 해제<small>서로의 공유 정보가 더 이상 보이지 않아요</small></span><span class="chev">›</span></button></section>';
+}
 function friendHTML(){
   if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>친구</h3></div><p class="hint">친구와 약속을 잡고 추억을 남기려면 먼저 로그인해주세요. 메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p><button class="tbtn" data-act="open-login">로그인하기</button></section>';
   var myCode=FriendSync.code||storedFriendCode()||'생성 중';
   var invIn=(FriendSync.invitesIn||[]).map(function(x){var n=inviteName(x.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.from_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 요청을 보냈어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn fc-pri b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div></div>';}).join('');
   var reqIn=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).map(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user),rf=FriendSync.friends.find(function(y){return y.id===r.from_user;});return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,rf&&rf.photo)+'<div class="fc-name"><b>'+esc(n)+' · '+esc(p.what||p.title||'약속')+'</b><small>'+esc([p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'',p.place].filter(function(x){return !!x;}).join(' · ')||'약속 요청')+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div></div>';}).join('');
-  var rows=sortedFriends().map(function(f){var pinned=friendPinIndex(f.id)>=0,n=friendLabel(f),inc=[f.inCalendar?'일정':''].filter(function(x){return !!x;});
-    return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,f.photo)+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small><small>'+(inc.length?'친구가 공개: '+inc.join(' · '):'친구 공개 범위에 따라 표시')+'</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★ 고정됨':'☆ 고정')+'</button></div>'+
-      '<div class="fc-main"><button class="tbtn pri" data-act="friend-meet" data-id="'+f.id+'">약속 잡기</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button><button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너 보기</button><button class="tbtn" data-act="friend-share-preview" data-id="'+f.id+'">내 화면 미리보기</button></div>'+
-      '<div class="fc-share"><span>내가 공개</span><button class="chipt'+(f.outTimetable?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="timetable">시간표</button><button class="chipt'+(f.outExams?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="exams">시험</button><button class="chipt'+(f.outCalendar?' on':'')+'" data-act="friend-toggle-share" data-id="'+f.id+'" data-mode="calendar">일정</button><button class="fc-rm" data-act="friend-remove" data-id="'+f.id+'">해제</button></div></div>';}).join('');
+  var rows=sortedFriends().map(function(f){var n=friendLabel(f),pinned=friendPinIndex(f.id)>=0;
+    return '<button class="fcard friend-list-row" data-act="friend-detail" data-id="'+f.id+'"><div class="fc-top">'+friendAvatar(n,f.photo)+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small></div><span class="friend-list-tail">'+(pinned?'★ ':'')+'›</span></div></button>';}).join('');
   var invOut=(FriendSync.invitesOut||[]).map(function(x){var n=inviteName(x.to_user);return '<div class="fcard"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.to_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>수락 기다리는 중</small></div><button class="tbtn" data-act="friend-invite-cancel" data-id="'+x.id+'">요청 취소</button></div></div>';}).join('');
   var av=meetAvail(),availRow='<div class="setrow"><span>약속 가능 시간<small>친구는 이 시간 안에서만 약속을 신청할 수 있어요</small></span><div class="row" style="margin:0;flex:none;align-items:center">'+meetAvailSelHTML('set-meet-s',av[0],0,23)+'<span>~</span>'+meetAvailSelHTML('set-meet-e',av[1],1,24)+'</div></div>';
   var ferr=[FriendSync.error,FriendSync.inviteError,FriendSync.busyError].filter(function(x){return !!x;}).filter(function(x,i,a){return a.indexOf(x)===i;}).map(function(x){return '<p class="hint" style="color:var(--now)">'+esc(x)+'</p>';}).join('');
@@ -5102,17 +5145,27 @@ function openDiaryLibrary(dateKey){
   if(rows.length){ix=rows.findIndex(function(x){return diaryDateKey(x)===wanted;});if(ix<0){for(var i=rows.length-1;i>=0;i--){if(diaryDateKey(rows[i])<=wanted){ix=i;break;}}if(ix<0)ix=rows.length-1;}}
   M={type:'diary-library',diaryIndex:ix,diaryDate:wanted};drawDiaryLibrary();
 }
+function diaryCalHTML(key){
+  var d=parseKey(key||todayKey()), y=d.getFullYear(), m=d.getMonth(), first=new Date(y,m,1), last=new Date(y,m+1,0).getDate(), offset=first.getDay();
+  var has={};diaryLibraryRows().forEach(function(x){has[diaryDateKey(x)]=1;});
+  var cells='';for(var i=0;i<42;i++){var n=i-offset+1;if(n<1||n>last){cells+='<span class="diary-cal-day out"></span>';continue;}var k=y+'-'+pad(m+1)+'-'+pad(n),dow=i%7;cells+='<button class="diary-cal-day '+(dow===0?'sun ':dow===6?'sat ':'')+(k===key?'on ':'')+(has[k]?'has':'')+'" data-act="diary-cal-day" data-date="'+k+'">'+n+'</button>';}
+  return '<div class="diary-cal"><div class="diary-cal-head"><button data-act="diary-cal-prev">‹</button><b>'+y+'년 '+(m+1)+'월</b><button data-act="diary-cal-next">›</button></div><div class="diary-cal-week"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="diary-cal-grid">'+cells+'</div><div class="diary-cal-foot"><button data-act="diary-cal-today">오늘</button></div></div>';
+}
 function drawDiaryLibrary(){
   var rows=diaryLibraryRows(),ix=M.diaryIndex;
   if(ix>=rows.length)ix=rows.length-1;if(ix<0&&rows.length)ix=rows.length-1;M.diaryIndex=ix;
-  var x=ix>=0?rows[ix]:null,key=x?diaryDateKey(x):(M.diaryDate||todayKey()),date=x?new Date(x.finishedAt):parseKey(key);
-  var book=x?'<div class="diary-book"><div class="diary-book-date"><b>'+mdTxt(date)+'</b><small>'+pad(date.getHours())+':'+pad(date.getMinutes())+' · '+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</small></div><div class="diary-book-body">'+esc(x.text||'')+'</div><div class="diary-book-note">'+esc(x.note||'')+'</div></div>':'<div class="diary-book"><div class="diary-book-empty">아직 저장된 일기가 없어요.<br>나와의 채팅에서 첫 일기를 써보세요.</div></div>';
-  var nav=x?'<div class="diary-book-nav"><button data-act="diary-lib-prev"'+(ix<=0?' disabled':'')+'>‹ 이전 일기</button><button data-act="diary-lib-next"'+(ix>=rows.length-1?' disabled':'')+'>다음 일기 ›</button></div>':'';
-  openModal('<div class="diary-library"><div class="diary-library-head"><button class="ibtn" data-act="close">‹</button><div><h3>일기장</h3><small>지난 기록을 한 장씩 읽어요</small></div></div><div class="diary-datebar"><input type="date" id="f-diary-library-date" value="'+esc(key)+'"><button data-act="diary-lib-date">이동</button></div>'+book+nav+'</div>');
+  var x=ix>=0?rows[ix]:null,key=M.diaryDate||(x?diaryDateKey(x):todayKey());
+  if(x&&M.diaryDate===diaryDateKey(x))key=M.diaryDate;
+  var shown=(x&&diaryDateKey(x)===key)?x:null,date=shown?new Date(shown.finishedAt):parseKey(key);
+  var book=shown?'<div class="diary-book"><div class="diary-book-date"><b>'+mdTxt(date)+'</b><small>'+pad(date.getHours())+':'+pad(date.getMinutes())+' · '+esc(diaryFmtMs(shown.elapsed||0,shown.targetMinutes||10))+'</small></div><div class="diary-book-body">'+esc(shown.text||'')+'</div><div class="diary-book-note">'+esc(shown.note||'')+'</div></div>':'<div class="diary-book"><div class="diary-book-empty">'+(rows.length?'이 날짜에는 저장된 일기가 없어요.':'아직 저장된 일기가 없어요.<br>나와의 채팅에서 첫 일기를 써보세요.')+'</div></div>';
+  var nav=shown?'<div class="diary-book-nav"><button data-act="diary-lib-prev"'+(ix<=0?' disabled':'')+'>‹ 이전 일기</button><button data-act="diary-lib-next"'+(ix>=rows.length-1?' disabled':'')+'>다음 일기 ›</button></div>':'';
+  openModal('<div class="diary-library"><div class="diary-library-head"><button class="ibtn" data-act="close">‹</button><div><h3>일기장</h3><small>지난 기록을 한 장씩 읽어요</small></div></div>'+diaryCalHTML(key)+book+nav+'</div>');
   $('#modal').classList.add('full');
 }
+function diaryCalShift(delta){var d=parseKey(M.diaryDate||todayKey());d=new Date(d.getFullYear(),d.getMonth()+delta,1);M.diaryDate=dkey(d);M.diaryIndex=-1;drawDiaryLibrary();}
+function diaryCalPick(k){M.diaryDate=k;var rows=diaryLibraryRows(),ix=-1;rows.forEach(function(x,i){if(diaryDateKey(x)===k)ix=i;});M.diaryIndex=ix;drawDiaryLibrary();}
 function diaryLibraryMove(dir){var rows=diaryLibraryRows();if(!rows.length)return;M.diaryIndex=Math.max(0,Math.min(rows.length-1,(M.diaryIndex<0?rows.length-1:M.diaryIndex)+dir));M.diaryDate=diaryDateKey(rows[M.diaryIndex]);drawDiaryLibrary();}
-function diaryLibraryGoDate(){var el=$('#f-diary-library-date'),k=el&&el.value;if(!k)return;var rows=diaryLibraryRows(),same=[];rows.forEach(function(x,i){if(diaryDateKey(x)===k)same.push(i);});if(same.length){M.diaryIndex=same[same.length-1];M.diaryDate=k;drawDiaryLibrary();return;}inAppToast('그 날짜에는 저장된 일기가 없어요');}
+function diaryLibraryGoDate(){diaryCalPick(M.diaryDate||todayKey());}
 function drawDiary(){
   M={type:'diary'};var r=U.diaryRun,mins=diaryMinutes();
   openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>오늘을 '+mins+'분만 적어봐요</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text" id="f-diary" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
@@ -5379,6 +5432,7 @@ function act(a,e){
     case 'friend-copy-code':friendCopyCode();break;
     case 'friend-add':friendAdd($('#f-friend-code')?$('#f-friend-code').value:'');break;
     case 'friend-pin':toggleFriendPin(id);break;
+    case 'friend-detail':U.friendDetailId=id;U.settingsPage='friend-detail';render();break;
     case 'friend-view-planner':openFriendPlanner(id);break;
     case 'friend-share-preview':openFriendSharePreview(id);break;
     case 'friend-memories':openFriendMemories(id);break;
@@ -5497,10 +5551,23 @@ function act(a,e){
     case 'exam-prep-auto':{var rg=$('#f-prep-range')?$('#f-prep-range').value.trim():'',mt=$('#f-prep-material')?$('#f-prep-material').value.trim():'',box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add');if(box&&add){var vals=[];if(rg){rg.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 복습');});}if(mt){mt.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 보기');});}vals.push('헷갈리는 부분 다시 보기','예상문제·연습문제 풀기','시험 전 최종 복습');var existing=Array.from(box.querySelectorAll('[data-prep-text]')).map(function(x){return x.value.trim();});vals.filter(function(v,i,a){return v&&a.indexOf(v)===i&&existing.indexOf(v)<0;}).forEach(function(v){var rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(v)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);});}break;}
     case 'exam-prep-add':{var pi=$('#f-prep-new'),pv=pi&&pi.value.trim();if(pv){var box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add'),rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(pv)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);pi.value='';}break;}
     case 'exam-prep-del':{var pr=a.closest('.exam-prep-row');if(pr)pr.remove();break;}
+    case 'settings-home':U.settingsPage='';render();break;
+    case 'settings-profile':U.settingsPage='profile';render();break;
+    case 'settings-friends':U.settingsPage='friends';render();break;
+    case 'settings-school':U.settingsPage='school';render();break;
+    case 'settings-life':U.settingsPage='life';render();break;
+    case 'settings-screen':U.settingsPage='screen';render();break;
+    case 'settings-account':U.settingsPage='account';render();break;
+    case 'settings-data':U.settingsPage='data';render();break;
+    case 'settings-support':U.settingsPage='support';render();break;
     case 'open-diary-library':openDiaryLibrary();break;
     case 'diary-lib-prev':diaryLibraryMove(-1);break;
     case 'diary-lib-next':diaryLibraryMove(1);break;
     case 'diary-lib-date':diaryLibraryGoDate();break;
+    case 'diary-cal-prev':diaryCalShift(-1);break;
+    case 'diary-cal-next':diaryCalShift(1);break;
+    case 'diary-cal-today':diaryCalPick(todayKey());break;
+    case 'diary-cal-day':diaryCalPick(t.dataset.date);break;
     case 'open-diary':saveDiaryDraft();drawDiary();break;
     case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);drawChat();break;
     case 'diary-toggle':saveDiaryDraft();if(!U.diaryRun)U.diaryRun={acc:0,since:Date.now(),running:true};else if(U.diaryRun.running)diaryPause();else diaryResume();drawDiary();break;
