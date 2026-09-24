@@ -1741,88 +1741,133 @@ function euro(w){w=String(w||'');var c=w.charCodeAt(w.length-1);if(c<0xAC00||c>0
 function mdTxt(d){return (d.getMonth()+1)+'월\u00a0'+d.getDate()+'일';}
 function normalizePlaceText(v){return String(v||'').replace(/\s+/g,' ').trim();}
 
-var MOILKKA_STATIONS=[{"name":"홍대입구역","short":"홍대","lat":37.5572,"lng":126.9245,"zone":"west"},{"name":"신촌역","short":"신촌","lat":37.5551,"lng":126.9368,"zone":"west"},{"name":"디지털미디어시티역","short":"DMC","lat":37.5766,"lng":126.9009,"zone":"west"},{"name":"김포공항역","short":"김포공항","lat":37.5625,"lng":126.801,"zone":"west"},{"name":"목동역","short":"목동","lat":37.5261,"lng":126.8643,"zone":"west"},{"name":"영등포역","short":"영등포","lat":37.5155,"lng":126.9076,"zone":"west"},{"name":"구로디지털단지역","short":"구디","lat":37.4852,"lng":126.9016,"zone":"west"},{"name":"공덕역","short":"공덕","lat":37.544,"lng":126.9513,"zone":"center"},{"name":"여의도역","short":"여의도","lat":37.5216,"lng":126.9242,"zone":"center"},{"name":"서울역","short":"서울역","lat":37.5547,"lng":126.9707,"zone":"center"},{"name":"용산역","short":"용산","lat":37.5299,"lng":126.9648,"zone":"center"},{"name":"종로3가역","short":"종로3가","lat":37.5715,"lng":126.9919,"zone":"center"},{"name":"을지로3가역","short":"을지로","lat":37.5663,"lng":126.9919,"zone":"center"},{"name":"동대문역사문화공원역","short":"동대문","lat":37.5651,"lng":127.0079,"zone":"center"},{"name":"혜화역","short":"혜화","lat":37.5823,"lng":127.0019,"zone":"north"},{"name":"왕십리역","short":"왕십리","lat":37.5612,"lng":127.0371,"zone":"east"},{"name":"성신여대입구역","short":"성신여대","lat":37.5928,"lng":127.0165,"zone":"north"},{"name":"노원역","short":"노원","lat":37.6551,"lng":127.0611,"zone":"north"},{"name":"건대입구역","short":"건대","lat":37.5404,"lng":127.0692,"zone":"east"},{"name":"잠실역","short":"잠실","lat":37.5133,"lng":127.1002,"zone":"east"},{"name":"천호역","short":"천호","lat":37.5386,"lng":127.1238,"zone":"east"},{"name":"이태원역","short":"이태원","lat":37.5345,"lng":126.9946,"zone":"center"},{"name":"신사역","short":"신사","lat":37.5164,"lng":127.0203,"zone":"south"},{"name":"강남역","short":"강남","lat":37.4979,"lng":127.0276,"zone":"south"},{"name":"고속터미널역","short":"고속터미널","lat":37.5048,"lng":127.0048,"zone":"south"},{"name":"사당역","short":"사당","lat":37.4766,"lng":126.9816,"zone":"south"},{"name":"선릉역","short":"선릉","lat":37.5045,"lng":127.049,"zone":"south"},{"name":"인천터미널역","short":"인천터미널","lat":37.4418,"lng":126.7011,"zone":"gyeonggi"},{"name":"정발산역","short":"정발산","lat":37.6595,"lng":126.7732,"zone":"gyeonggi"},{"name":"부천시청역","short":"부천시청","lat":37.5046,"lng":126.7635,"zone":"gyeonggi"},{"name":"범계역","short":"범계","lat":37.3898,"lng":126.9508,"zone":"gyeonggi"},{"name":"수원역","short":"수원","lat":37.2661,"lng":126.9999,"zone":"gyeonggi"},{"name":"판교역","short":"판교","lat":37.3948,"lng":127.1112,"zone":"gyeonggi"},{"name":"서현역","short":"서현","lat":37.385,"lng":127.1231,"zone":"gyeonggi"},{"name":"구리역","short":"구리","lat":37.6034,"lng":127.1439,"zone":"gyeonggi"}];
-var MOILKKA_ZONE_LABEL={west:'서부',center:'도심',north:'북부',east:'동부',south:'강남·남부',gyeonggi:'경기·인천'};
-var MOILKKA_REGIONS=[{name:'서울',lat:37.5665,lng:126.9780},{name:'부산',lat:35.1796,lng:129.0756},{name:'대구',lat:35.8714,lng:128.6014},{name:'인천',lat:37.4563,lng:126.7052},{name:'광주',lat:35.1595,lng:126.8526},{name:'대전',lat:36.3504,lng:127.3845},{name:'울산',lat:35.5384,lng:129.3114},{name:'세종',lat:36.4800,lng:127.2890},{name:'경기',lat:37.4138,lng:127.5183},{name:'강원',lat:37.8228,lng:128.1555},{name:'충북',lat:36.6357,lng:127.4917},{name:'충남',lat:36.6588,lng:126.6728},{name:'전북',lat:35.7175,lng:127.1530},{name:'전남',lat:34.8679,lng:126.9910},{name:'경북',lat:36.4919,lng:128.8889},{name:'경남',lat:35.4606,lng:128.2132},{name:'제주',lat:33.4996,lng:126.5312}];
+/* 플래너 전용 약속 장소 보조 추천
+   - 특정 서비스의 이동시간/공평성 점수 로직을 사용하지 않아요.
+   - 각 참여자의 출발 위치를 좌표로 바꾼 뒤, 그 위치들의 지리적 중심점과 가까운
+     교통 거점 후보를 보여주는 단순한 '중간 위치 힌트'예요.
+   - 실제 이동시간/환승/교통상황은 계산하지 않고 지도에서 최종 확인해요. */
+var PLANNER_MEET_POINTS=[
+  {name:'홍대입구역',lat:37.5572,lng:126.9245,area:'서울 서북'},
+  {name:'서울역',lat:37.5547,lng:126.9707,area:'서울 도심'},
+  {name:'여의도역',lat:37.5216,lng:126.9242,area:'서울 서남'},
+  {name:'신도림역',lat:37.5088,lng:126.8913,area:'서울 서남'},
+  {name:'왕십리역',lat:37.5612,lng:127.0371,area:'서울 동북'},
+  {name:'건대입구역',lat:37.5404,lng:127.0692,area:'서울 동북'},
+  {name:'노원역',lat:37.6551,lng:127.0611,area:'서울 동북'},
+  {name:'잠실역',lat:37.5133,lng:127.1002,area:'서울 동남'},
+  {name:'강남역',lat:37.4979,lng:127.0276,area:'서울 동남'},
+  {name:'고속터미널역',lat:37.5048,lng:127.0048,area:'서울 동남'},
+  {name:'사당역',lat:37.4766,lng:126.9816,area:'서울 남부'},
+  {name:'수원역',lat:37.2661,lng:126.9999,area:'경기 남부'},
+  {name:'판교역',lat:37.3948,lng:127.1112,area:'경기 남부'},
+  {name:'범계역',lat:37.3898,lng:126.9508,area:'경기 남부'},
+  {name:'부천시청역',lat:37.5046,lng:126.7635,area:'경기 서부'},
+  {name:'인천터미널역',lat:37.4418,lng:126.7011,area:'인천'},
+  {name:'천안아산역',lat:36.7946,lng:127.1045,area:'충청'},
+  {name:'오송역',lat:36.6200,lng:127.3273,area:'충청'},
+  {name:'대전역',lat:36.3321,lng:127.4344,area:'충청'},
+  {name:'전주역',lat:35.8498,lng:127.1618,area:'호남'},
+  {name:'광주송정역',lat:35.1377,lng:126.7915,area:'호남'},
+  {name:'동대구역',lat:35.8798,lng:128.6283,area:'영남'},
+  {name:'울산역',lat:35.5514,lng:129.1386,area:'영남'},
+  {name:'부산역',lat:35.1151,lng:129.0414,area:'영남'},
+  {name:'강릉역',lat:37.7640,lng:128.8995,area:'강원'},
+  {name:'제주공항',lat:33.5104,lng:126.4914,area:'제주'}
+];
+var PLANNER_REGION_POINTS=[
+  {name:'서울',lat:37.5665,lng:126.9780},{name:'부산',lat:35.1796,lng:129.0756},
+  {name:'대구',lat:35.8714,lng:128.6014},{name:'인천',lat:37.4563,lng:126.7052},
+  {name:'광주',lat:35.1595,lng:126.8526},{name:'대전',lat:36.3504,lng:127.3845},
+  {name:'울산',lat:35.5384,lng:129.3114},{name:'세종',lat:36.4800,lng:127.2890},
+  {name:'경기',lat:37.4138,lng:127.5183},{name:'강원',lat:37.8228,lng:128.1555},
+  {name:'충북',lat:36.6357,lng:127.4917},{name:'충남',lat:36.6588,lng:126.6728},
+  {name:'전북',lat:35.7175,lng:127.1530},{name:'전남',lat:34.8679,lng:126.9910},
+  {name:'경북',lat:36.4919,lng:128.8889},{name:'경남',lat:35.4606,lng:128.2132},
+  {name:'제주',lat:33.4996,lng:126.5312}
+];
 function originText(v){return normalizePlaceText(v).replace(/(특별시|광역시|특별자치시|특별자치도)$/,'');}
-function originPoint(name){var raw=normalizePlaceText(name),st=MOILKKA_STATIONS.find(function(x){return x.name===stationName(raw);});if(st)return st;var q=originText(raw).replace(/도$/,'');return MOILKKA_REGIONS.find(function(x){return x.name===q||x.name.replace(/도$/,'')===q;})||null;}
-function originDatalist(){return '<datalist id="origin-suggestions">'+MOILKKA_REGIONS.map(function(x){return '<option value="'+esc(x.name)+'">';}).join('')+MOILKKA_STATIONS.map(function(x){return '<option value="'+esc(x.name)+'">';}).join('')+'</datalist>';}
-
-function nearestMoStation(lat,lng){
+function plannerMeetPoint(name){
+  var raw=normalizePlaceText(name),stem=raw.replace(/역$/,'');
+  return PLANNER_MEET_POINTS.find(function(x){return x.name===raw||x.name.replace(/역$/,'')===stem;})||null;
+}
+function originPoint(name){
+  var raw=normalizePlaceText(name),pt=plannerMeetPoint(raw);if(pt)return pt;
+  var q=originText(raw).replace(/도$/,'');
+  return PLANNER_REGION_POINTS.find(function(x){return x.name===q||x.name.replace(/도$/,'')===q;})||null;
+}
+function originDatalist(){return '<datalist id="origin-suggestions">'+PLANNER_REGION_POINTS.map(function(x){return '<option value="'+esc(x.name)+'">';}).join('')+PLANNER_MEET_POINTS.map(function(x){return '<option value="'+esc(x.name)+'">';}).join('')+'</datalist>';}
+function plannerGeoDistance(a,b){var R=6371,rad=function(v){return v*Math.PI/180;},dLat=rad(b.lat-a.lat),dLng=rad(b.lng-a.lng),h=Math.sin(dLat/2)**2+Math.sin(dLng/2)**2*Math.cos(rad(a.lat))*Math.cos(rad(b.lat));return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
+function nearestPlannerMeetPoint(lat,lng){
   var here={lat:+lat,lng:+lng},best=null,bd=Infinity;
-  MOILKKA_STATIONS.forEach(function(st){var d=moDist(here,st);if(d<bd){bd=d;best=st;}});
+  PLANNER_MEET_POINTS.forEach(function(st){var d=plannerGeoDistance(here,st);if(d<bd){bd=d;best=st;}});
   return best?{station:best,distance:bd}:null;
 }
 function requestNearestStation(done,msgEl){
   if(!navigator.geolocation){if(msgEl)msgEl.textContent='이 기기에서는 현재 위치를 사용할 수 없어요.';return;}
   if(msgEl)msgEl.textContent='현재 위치 확인 중…';
   navigator.geolocation.getCurrentPosition(function(pos){
-    var z=nearestMoStation(pos.coords.latitude,pos.coords.longitude);
-    if(!z){if(msgEl)msgEl.textContent='가까운 역을 찾지 못했어요.';return;}
-    if(msgEl)msgEl.textContent='가장 가까운 지원 역 · '+z.station.name+' (직선 약 '+(z.distance<1?Math.round(z.distance*1000)+'m':z.distance.toFixed(1)+'km')+')';
+    var z=nearestPlannerMeetPoint(pos.coords.latitude,pos.coords.longitude);
+    if(!z){if(msgEl)msgEl.textContent='가까운 교통 거점을 찾지 못했어요.';return;}
+    if(msgEl)msgEl.textContent='가까운 지원 거점 · '+z.station.name+' (직선 약 '+(z.distance<1?Math.round(z.distance*1000)+'m':z.distance.toFixed(1)+'km')+')';
     done(z.station.name,z);
   },function(err){
     if(msgEl)msgEl.textContent=err&&err.code===1?'위치 권한이 꺼져 있어요. 브라우저 설정에서 위치를 허용해주세요.':'현재 위치를 불러오지 못했어요.';
   },{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
 }
-function linkMetaSlots(slots,origin,cap){
+function linkMetaSlots(slots,origin){
   var a=(slots||[]).filter(function(x){return !/^@(?:origin|cap):/.test(x);});
-  if(origin)a.push('@origin:'+origin);if(+cap)a.push('@cap:'+(+cap));return a;
+  if(origin)a.push('@origin:'+origin);return a;
 }
 function linkAnswerMeta(a){
-  var o='',cap=0;(a&&a.slots||[]).forEach(function(x){if(x.indexOf('@origin:')===0)o=x.slice(8);else if(x.indexOf('@cap:')===0)cap=+x.slice(5)||0;});
-  return {origin:o,cap:cap};
+  var o='';(a&&a.slots||[]).forEach(function(x){if(x.indexOf('@origin:')===0)o=x.slice(8);});
+  return {origin:o};
 }
 function linkRealSlots(a){return (a&&a.slots||[]).filter(function(x){return x.indexOf('@')!==0;});}
 function linkPlacePeople(p,answers){
-  var out=[{id:'owner',name:p.ownerName||'나',origin:p.ownerStation||'',cap:+p.ownerCap||0}];
-  (answers||[]).forEach(function(a){var m=linkAnswerMeta(a);out.push({id:a.id,name:a.name||'친구',origin:m.origin,cap:m.cap});});
+  var out=[{id:'owner',name:p.ownerName||'나',origin:p.ownerStation||''}];
+  (answers||[]).forEach(function(a){var m=linkAnswerMeta(a);out.push({id:a.id,name:a.name||'친구',origin:m.origin});});
   return out;
+}
+function plannerMeetingCandidates(people){
+  var valid=(people||[]).map(function(p){return {id:p.id,name:p.name,origin:p.origin,point:originPoint(p.origin)};}).filter(function(p){return p.point;});
+  if(valid.length<2)return [];
+  var center={lat:valid.reduce(function(a,p){return a+p.point.lat;},0)/valid.length,lng:valid.reduce(function(a,p){return a+p.point.lng;},0)/valid.length};
+  return PLANNER_MEET_POINTS.map(function(pt){
+    var centerKm=plannerGeoDistance(center,pt);
+    var originKm=valid.map(function(p){return {name:p.name,km:plannerGeoDistance(p.point,pt)};});
+    return {point:pt,centerKm:centerKm,originKm:originKm,count:valid.length};
+  }).sort(function(a,b){return a.centerKm-b.centerKm;}).slice(0,3);
+}
+function plannerMeetPointOptions(selected){
+  var areas=[];PLANNER_MEET_POINTS.forEach(function(x){if(areas.indexOf(x.area)<0)areas.push(x.area);});
+  var sel=normalizePlaceText(selected);
+  return '<option value="">출발 지역/거점 선택</option>'+areas.map(function(area){return '<optgroup label="'+esc(area)+'">'+PLANNER_MEET_POINTS.filter(function(x){return x.area===area;}).map(function(x){return '<option value="'+esc(x.name)+'"'+(x.name===sel||x.name.replace(/역$/,'')===sel.replace(/역$/,'')?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'</optgroup>';}).join('');
 }
 function linkPlaceRecoHTML(p,answers){
   if(!p.placeRecommend)return '';
-  var people=linkPlacePeople(p,answers),filled=people.filter(function(x){return moStation(x.origin);}).length,total=Math.max(+p.expectedPeople||0,people.length),rec=moFairRecommendations(people);
+  var people=linkPlacePeople(p,answers),filled=people.filter(function(x){return !!originPoint(x.origin);}).length,total=Math.max(+p.expectedPeople||0,people.length),rec=plannerMeetingCandidates(people);
   var progress=total?Math.min(100,Math.round(filled/total*100)):0;
-  return '<div class="place-reco"><div class="place-reco-head"><b>약속장소 추천받기</b><small>'+filled+'/'+total+'명 출발지 입력</small></div>'+
+  return '<div class="place-reco"><div class="place-reco-head"><b>출발지 중심 장소 후보</b><small>'+filled+'/'+total+'명 출발지 입력</small></div>'+
     '<div class="input-progress"><i style="width:'+progress+'%"></i></div>'+
-    (rec.length?rec.map(function(r,i){return '<div class="place-reco-card"><div><b>'+(i+1)+'순위 · '+esc(r.station.name)+'</b><small>최대 '+r.max+'분 · 사람 간 차이 '+r.spread+'분 · 평균 '+r.avg+'분</small><small>'+esc(r.times.map(function(x){return x.name+' '+x.time+'분';}).join(' · '))+'</small></div><div class="place-reco-actions"><button class="tbtn" data-act="lk-place-pick" data-st="'+esc(r.station.name)+'">장소로 선택</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+encodeURIComponent(r.station.name)+'">길찾기</a></div></div>';}).join(''):'<div class="reco-wait">출발 지역이나 역을 2명 이상 입력하면 추천이 시작돼요.</div>')+
-    '<p class="hint">역 좌표 기반 대중교통 추정치예요. 실제 이동시간은 길찾기로 확인해주세요.</p></div>';
-}
-function moStation(name){return originPoint(name);}
-function moDist(a,b){var R=6371,rad=function(v){return v*Math.PI/180;},dLat=rad(b.lat-a.lat),dLng=rad(b.lng-a.lng),h=Math.sin(dLat/2)**2+Math.sin(dLng/2)**2*Math.cos(rad(a.lat))*Math.cos(rad(b.lat));return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
-function moTravel(a,b){var d=moDist(a,b),long=d>15?6:0;return Math.round(9+d*2.35+long);}
-function moFairRecommendations(people){
-  var valid=(people||[]).map(function(p){return Object.assign({},p,{station:moStation(p.origin)});}).filter(function(p){return p.station;});
-  if(valid.length<2)return [];
-  return MOILKKA_STATIONS.map(function(st){
-    var times=valid.map(function(p){return {id:p.id,name:p.name,time:moTravel(p.station,st),cap:+p.cap||0};});
-    var max=Math.max.apply(null,times.map(function(x){return x.time;})),min=Math.min.apply(null,times.map(function(x){return x.time;}));
-    var avg=Math.round(times.reduce(function(a,x){return a+x.time;},0)/times.length);
-    var capOk=times.every(function(x){return !x.cap||x.time<=x.cap;});
-    return {station:st,times:times,max:max,min:min,avg:avg,spread:max-min,capOk:capOk};
-  }).filter(function(x){return x.capOk;}).sort(function(a,b){return a.spread-b.spread||a.max-b.max||a.avg-b.avg;}).slice(0,3);
-}
-function moStationOptions(selected){
-  var order=['west','center','north','east','south','gyeonggi'];
-  return '<option value="">출발역 선택</option>'+order.map(function(z){return '<optgroup label="'+MOILKKA_ZONE_LABEL[z]+'">'+MOILKKA_STATIONS.filter(function(x){return x.zone===z;}).map(function(x){return '<option value="'+esc(x.name)+'"'+(stationName(selected)===x.name?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'</optgroup>';}).join('');
+    (rec.length?rec.map(function(r,i){return '<div class="place-reco-card"><div><b>후보 '+(i+1)+' · '+esc(r.point.name)+'</b><small>'+r.count+'명의 출발 위치 중심에서 약 '+(r.centerKm<1?Math.round(r.centerKm*1000)+'m':r.centerKm.toFixed(1)+'km')+'</small><small>'+esc(r.point.area)+' · 실제 이동시간은 지도에서 확인</small></div><div class="place-reco-actions"><button class="tbtn" data-act="lk-place-pick" data-st="'+esc(r.point.name)+'">장소로 선택</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+encodeURIComponent(r.point.name)+'">지도 보기</a></div></div>';}).join(''):'<div class="reco-wait">출발 지역을 2명 이상 입력하면 중간 위치 후보가 보여요.</div>')+
+    '<p class="hint">플래너가 이동시간을 임의로 계산하지 않고, 입력한 출발 위치들의 지리적 중심과 가까운 교통 거점만 보조로 제안해요.</p></div>';
 }
 function meetPlacePeople(){
-  var me={id:Sync.uid||'me',name:myDisplayName()||'나',origin:(S.settings.homeStation||''),cap:60};
-  return [me].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f),origin:f.homeStation||'',cap:60};}));
+  var me={id:Sync.uid||'me',name:myDisplayName()||'나',origin:(S.settings.homeStation||'')};
+  return [me].concat(meetFriends().map(function(f){return {id:f.id,name:friendLabel(f),origin:f.homeStation||''};}));
 }
 function placeRecoPanelHTML(){
   var people=(M.placePeople||meetPlacePeople());M.placePeople=people;
-  return '<div class="place-reco"><div class="place-reco-head"><b>약속장소 추천받기</b><small class="hint" style="margin:0">이동 부담이 비슷한 역</small></div>'+
-    people.map(function(p,i){return '<div class="place-reco-person"><b>'+esc(p.name)+(p.id===(Sync.uid||'me')?' (나)':'')+'</b><select class="sel" data-place-origin="'+i+'">'+moStationOptions(p.origin)+'</select><select class="sel" data-place-cap="'+i+'"><option value="0">상한 없음</option>'+[30,45,60,90].map(function(v){return '<option value="'+v+'"'+(+p.cap===v?' selected':'')+'>'+v+'분 이하</option>';}).join('')+'</select></div>';}).join('')+
-    '<div class="acts"><button class="b-save" data-act="place-reco-run">공평한 장소 찾기</button></div><div id="place-reco-results"></div><p class="hint">대중교통 기준 추정치예요. 실제 이동시간은 길찾기로 한 번 더 확인해주세요.</p></div>';
+  return '<div class="place-reco"><div class="place-reco-head"><b>중간 위치 후보</b><small class="hint" style="margin:0">플래너에 저장된 출발지를 바탕으로 봐요</small></div>'+
+    people.map(function(p,i){return '<div class="place-reco-person"><b>'+esc(p.name)+(p.id===(Sync.uid||'me')?' (나)':'')+'</b><select class="sel" data-place-origin="'+i+'">'+plannerMeetPointOptions(p.origin)+'</select></div>';}).join('')+
+    '<div class="acts"><button class="b-save" data-act="place-reco-run">중간 위치 후보 보기</button></div><div id="place-reco-results"></div><p class="hint">이동시간 순위를 매기는 기능이 아니라 출발 위치들의 중심과 가까운 후보를 보여줘요. 실제 경로는 지도에서 확인해주세요.</p></div>';
 }
 function placeRecoResultsHTML(){
-  var rec=moFairRecommendations(M.placePeople||[]);
-  if(!rec.length)return '<p class="hint">출발 지역이나 역을 2명 이상 입력해주세요. 편도 상한 때문에 후보가 없으면 상한을 늘려보세요.</p>';
+  var rec=plannerMeetingCandidates(M.placePeople||[]);
+  if(!rec.length)return '<p class="hint">출발 지역을 2명 이상 입력해주세요.</p>';
   return rec.map(function(r,i){
-    var detail=r.times.map(function(x){return x.name+' '+x.time+'분';}).join(' · ');
-    var q=encodeURIComponent(r.station.name);
-    return '<div class="place-reco-card"><div><b>'+(i+1)+'순위 · '+esc(r.station.name)+'</b><small>최대 '+r.max+'분 · 차이 '+r.spread+'분 · 평균 '+r.avg+'분</small><small>'+esc(detail)+'</small></div><div class="place-reco-actions"><button class="tbtn" data-act="place-reco-pick" data-st="'+esc(r.station.name)+'">여기로</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+q+'">길찾기</a></div></div>';
+    var q=encodeURIComponent(r.point.name);
+    return '<div class="place-reco-card"><div><b>후보 '+(i+1)+' · '+esc(r.point.name)+'</b><small>'+r.count+'명 출발 위치 중심에서 '+(r.centerKm<1?Math.round(r.centerKm*1000)+'m':r.centerKm.toFixed(1)+'km')+'</small><small>'+esc(r.point.area)+'</small></div><div class="place-reco-actions"><button class="tbtn" data-act="place-reco-pick" data-st="'+esc(r.point.name)+'">여기로</button><a class="tbtn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/'+q+'">지도 보기</a></div></div>';
   }).join('');
 }
 function stationName(s){s=normalizePlaceText(s);return s?(/역$/.test(s)?s:s+'역'):'';}
@@ -2137,14 +2182,38 @@ function linkBusy(p,k,m){var b=p.busy&&p.busy[k];if(!b)return false;if(b==='a')r
 function linkDays(p){var out=[],f=parseKey(p.from);for(var i=0;i<(p.days||14);i++)out.push(dkey(addDays(f,i)));return out;}
 function linkCounts(answers,skipId){var c={},who={};(answers||[]).forEach(function(a){if(skipId&&a.id===skipId)return;linkRealSlots(a).forEach(function(s){c[s]=(c[s]||0)+1;(who[s]=who[s]||[]).push(a.name||'친구');});});return {c:c,who:who};}
 function linkBestRuns(p,answers){
-  var cw=linkCounts(answers),runs=[],tk=dkey(new Date());
+  var cw=linkCounts(answers),runs=[],tk=dkey(new Date()),total=(answers||[]).length+1;
   linkDays(p).forEach(function(k){if(k<tk)return;var cur=null;
-    for(var m=p.lo;m<=p.hi;m+=30){var n=m<p.hi?(cw.c[k+'|'+m]||0):0;
-      if(cur&&n===cur.n){cur.e=m+30;continue;}
+    for(var m=p.lo;m<=p.hi;m+=30){
+      var ownerOk=m<p.hi&&!linkBusy(p,k,m),n=ownerOk?((cw.c[k+'|'+m]||0)+1):0;
+      if(cur&&n===cur.n&&n>0){cur.e=m+30;continue;}
       if(cur)runs.push(cur);
-      cur=n>0?{date:k,s:m,e:m+30,n:n}:null;}
+      cur=n>0?{date:k,s:m,e:m+30,n:n,total:total}:null;
+    }
   });
-  return runs.sort(function(a,b){return b.n-a.n||(b.e-b.s)-(a.e-a.s)||a.date.localeCompare(b.date);}).slice(0,3);
+  runs=runs.filter(function(x){return x.e-x.s>=60;});
+  var out=[],seen={};
+  function add(x,label,why){if(!x)return;var k=x.date+'|'+x.s+'|'+x.e;if(seen[k])return;seen[k]=1;x.label=label;x.why=why;out.push(x);}
+  var all=runs.filter(function(x){return x.n===total;});
+  var longest=all.slice().sort(function(a,b){return (b.e-b.s)-(a.e-a.s)||a.date.localeCompare(b.date)||a.s-b.s;})[0];
+  var earliest=all.slice().sort(function(a,b){return a.date.localeCompare(b.date)||a.s-b.s||(b.e-b.s)-(a.e-a.s);})[0];
+  var most=runs.slice().sort(function(a,b){return b.n-a.n||(b.e-b.s)-(a.e-a.s)||a.date.localeCompare(b.date)||a.s-b.s;})[0];
+  add(longest,'전원 가능',longest?'전원 가능 · '+durText(longest.e-longest.s)+' 확보':'');
+  add(earliest,'가장 빠른 후보',earliest?'가장 이른 전원 가능 시간 · '+durText(earliest.e-earliest.s)+' 확보':'');
+  add(most,'가장 많이 겹침',most?most.n+'/'+total+'명 가능 · '+durText(most.e-most.s)+' 확보':'');
+  return out.slice(0,3);
+}
+function durText(min){min=Math.max(0,+min||0);var h=Math.floor(min/60),m=min%60;return (h?h+'시간 ':'')+(m?m+'분':'')||'0분';}
+function linkInviteeNames(p){return (p&&Array.isArray(p.inviteeNames)?p.inviteeNames:[]).map(function(x){return String(x||'').trim();}).filter(Boolean);}
+function linkUnanswered(p,answers){
+  var inv=linkInviteeNames(p),done=(answers||[]).map(function(a){return String(a.name||'').trim();});
+  if(inv.length)return inv.filter(function(n){return done.indexOf(n)<0;});
+  var expected=Math.max(+((p||{}).expectedPeople)||2,2),left=Math.max(0,expected-1-done.length),out=[];for(var i=0;i<left;i++)out.push('미응답 '+(i+1));return out;
+}
+function linkDeadlineNudge(){
+  if(!Sync.uid)return;if(!S.settings.linkDeadlineNudged)S.settings.linkDeadlineNudged={};var changed=false,now=Date.now();
+  LinkSync.links.forEach(function(l){var p=l.payload||{};if(l.status!=='open'||!p.responseDeadline)return;var t=new Date(p.responseDeadline).getTime(),left=t-now;if(!isFinite(t)||left<=0||left>86400000)return;var key=l.token+'|'+p.responseDeadline;if(S.settings.linkDeadlineNudged[key])return;var ua=linkUnanswered(p,LinkSync.answers[l.token]||[]);if(!ua.length)return;S.settings.linkDeadlineNudged[key]=1;changed=true;var who=linkInviteeNames(p).length?ua.join(', ')+' 미응답':ua.length+'명 미응답';var tx='“'+(p.what||'약속')+'” 응답 마감이 24시간 안에 있어요 · '+who;pushNotice('friend',tx);if(document.hidden)sysNotify('약속 응답 마감',tx,'lk-deadline:'+l.token);else inAppToast(tx);});
+  if(changed)save();
 }
 function linkGridHTML(p,answers,o){
   var days=linkDays(p),start=o.week*7,tk=dkey(new Date()),now=new Date(),nm=now.getHours()*60+now.getMinutes(),cw=linkCounts(answers,o.skipId),total=(answers||[]).filter(function(a){return !o.skipId||a.id!==o.skipId;}).length,max=0;
@@ -2188,11 +2257,12 @@ function openLinkCreate(){
   openModal('<h3>링크로 약속 잡기</h3><p class="hint">앱이 없는 친구도, 여러 명(팀플·동아리·모임)도 링크만 열면 되는 시간을 골라요. 내 일정은 제목 없이 “안 되는 시간”으로만 보여요.</p>'+
     '<span class="lbl">무엇을</span><input class="fld" id="f-lkwhat" maxlength="40" placeholder="예: 팀플 회의, 동아리 회식, 저녁">'+
     '<div class="meet-step">2. 장소 정하기 <small>지금 정하지 않아도 돼요.</small></div><div id="pp">'+ppHTML(M.pp)+'</div>'+
-    '<div class="card" style="margin:8px 0"><label class="ck" style="margin-bottom:8px"><input type="checkbox" id="f-lk-place-reco" checked> 출발역으로 약속장소 추천받기</label>'+
+    '<div class="card" style="margin:8px 0"><label class="ck" style="margin-bottom:8px"><input type="checkbox" id="f-lk-place-reco" checked> 출발지를 바탕으로 중간 장소 후보 받기</label>'+
     '<span class="lbl">총 몇 명이 답할 예정이야? <em>(나 포함)</em></span><input class="fld" id="f-lk-expected" type="number" min="2" max="30" value="3">'+
+    '<span class="lbl">응답할 사람 이름 <em>(선택)</em></span><input class="fld" id="f-lk-invitees" maxlength="160" placeholder="예: 민지, 지민, 서연"><p class="hint">이름을 적어두면 누가 아직 답하지 않았는지 보여줘요.</p>'+
     '<span class="lbl">내 출발 지역</span><input class="fld" id="f-lk-origin" list="origin-suggestions" autocomplete="off" placeholder="부산, 서울, 강남역처럼 검색" value="'+esc(S.settings.homeStation||'')+'">'+originDatalist()+
     '<div class="geo-row"><button class="tbtn" data-act="lk-current">현재 위치에서 찾기</button><small id="lk-geo-msg">프로필의 출발 지역이 자동으로 들어가요.</small></div>'+
-    '<span class="lbl">내 편도 상한 <em>(선택)</em></span><select class="fld" id="f-lk-cap"><option value="0">상한 없음</option><option value="30">30분 이하</option><option value="45">45분 이하</option><option value="60">60분 이하</option><option value="90">90분 이하</option></select></div>'+
+    '</div>'+
     '<span class="lbl">언제까지의 날짜를 물어볼까</span><div class="seg" id="lk-days">'+[[7,'1주'],[14,'2주'],[21,'3주']].map(function(x){return '<button data-act="lk-days" data-v="'+x[0]+'" class="'+(x[0]===14?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>'+
     '<span class="lbl">응답은 언제까지 받을까</span><input class="fld" id="f-lk-deadline" type="datetime-local" value="'+linkDeadlineDefault()+'">'+
     '<p class="hint">이 시간이 지나면 친구는 더 이상 답을 보내거나 수정할 수 없어요.</p>'+
@@ -2210,14 +2280,14 @@ function createLink(){
       responseDeadline=($('#f-lk-deadline')&&$('#f-lk-deadline').value)||'',
       placeRecommend=!!($('#f-lk-place-reco')&&$('#f-lk-place-reco').checked),
       expectedPeople=Math.max(2,Math.min(30,+($('#f-lk-expected')&&$('#f-lk-expected').value)||2)),
-      ownerStation=($('#f-lk-origin')&&$('#f-lk-origin').value)||S.settings.homeStation||'',
-      ownerCap=+($('#f-lk-cap')&&$('#f-lk-cap').value)||0;
+      inviteeNames=((($('#f-lk-invitees')&&$('#f-lk-invitees').value)||'').split(',').map(function(x){return x.trim();}).filter(Boolean)).slice(0,29),
+      ownerStation=($('#f-lk-origin')&&$('#f-lk-origin').value)||S.settings.homeStation||'';
   if(!Number.isFinite(linkStart))linkStart=av[0];if(!Number.isFinite(linkEnd))linkEnd=av[1];
   if(linkEnd<=linkStart){if(msg)msg.textContent='끝나는 시간은 시작 시간보다 뒤로 정해주세요';return;}
   if(responseDeadline){var rd=new Date(responseDeadline).getTime();if(!isFinite(rd)||rd<=Date.now()){if(msg)msg.textContent='응답 마감은 지금보다 뒤로 정해주세요';return;}}
   av=[linkStart,linkEnd];
   for(var i=0;i<days;i++){var k=dkey(addDays(t,i)),b=myBusyOn(k);if(b.allday)busy[k]='a';else if(b.r.length)busy[k]=b.r.map(function(r){return [r[0],r[1]];});}
-  var payload={v:1,ownerName:myDisplayName(),ownerPhoto:S.settings.profilePhoto||'',what:what,place:placeInfoText(info),placeInfo:info,from:dkey(t),days:days,lo:av[0]*60,hi:av[1]*60,busy:busy,responseDeadline:responseDeadline,placeRecommend:placeRecommend,expectedPeople:expectedPeople,ownerStation:ownerStation,ownerCap:ownerCap};
+  var payload={v:1,ownerName:myDisplayName(),ownerPhoto:S.settings.profilePhoto||'',what:what,place:placeInfoText(info),placeInfo:info,from:dkey(t),days:days,lo:av[0]*60,hi:av[1]*60,busy:busy,responseDeadline:responseDeadline,placeRecommend:placeRecommend,expectedPeople:expectedPeople,inviteeNames:inviteeNames,ownerStation:ownerStation};
   if(msg)msg.textContent='만드는 중…';
   sb.from('planner_meet_links').insert({owner_id:Sync.uid,payload:payload,status:'open'}).select().single().then(function(r){
     if(r.error)throw r.error;LinkSync.links.unshift(r.data);LinkSync.answers[r.data.token]=[];openLinkShare(r.data.token,true);
@@ -2241,13 +2311,13 @@ function linkLoad(){
     LinkSync.loaded=true;LinkSync.error='';
     if(!S.settings.linkSeen)S.settings.linkSeen={};var seen=S.settings.linkSeen,first=!LinkSync.ready,ch=false;
     Object.keys(LinkSync.answers).forEach(function(t){var l=LinkSync.links.find(function(x){return x.token===t;});(LinkSync.answers[t]||[]).forEach(function(a){var sig=a.id+':'+(a.slots||[]).length;if(seen[a.id]===sig)return;var isNew=!seen[a.id];seen[a.id]=sig;ch=true;if(first&&!l)return;if(l&&l.status==='open'){var tx=(a.name||'친구')+'님이 '+((l.payload||{}).what?'“'+l.payload.what+'” ':'링크 약속에 ')+(isNew?'되는 시간을 보냈어요':'시간을 고쳤어요');pushNotice('friend',tx);if(document.hidden)sysNotify('링크 약속',tx,'lk:'+a.id);else if(M.type!=='notices')inAppToast(tx);}});});
-    LinkSync.ready=true;if(ch)save();
+    LinkSync.ready=true;if(ch)save();linkDeadlineNudge();
     if(M.type==='link-detail')drawLinkDetail();else if(M.type==='link-list')openLinkList();
   }).catch(function(e){LinkSync.error=e&&e.message||'';});
 }
 function openLinkList(){
   M={type:'link-list'};
-  var rows=LinkSync.links.map(function(l){var p=l.payload||{},n=(LinkSync.answers[l.token]||[]).length,f=l.final;return '<button class="setrow lk-row" data-act="lk-detail" data-id="'+l.token+'"><span>'+esc(p.what||'약속')+(p.place?' · '+esc(p.place):'')+'<small>'+(l.status==='open'?esc((n?n+'명 답함':'아직 답이 없어요')+(p.responseDeadline?' · 응답 '+linkDeadlineText(p.responseDeadline)+'까지':'')+(linkDeadlinePassed(p)?' · 마감됨':' · 누르면 겹치는 시간을 봐요')):'확정 · '+esc(f&&f.date?slotText(f.date,toMin(f.start),toMin(f.end)):''))+'</small></span><span class="chev">›</span></button>';}).join('');
+  var rows=LinkSync.links.map(function(l){var p=l.payload||{},an=LinkSync.answers[l.token]||[],n=an.length,f=l.final,ua=linkUnanswered(p,an);return '<button class="setrow lk-row" data-act="lk-detail" data-id="'+l.token+'"><span>'+esc(p.what||'약속')+(p.place?' · '+esc(p.place):'')+'<small>'+(l.status==='open'?esc((n?n+'명 답함':'아직 답이 없어요')+(ua.length?' · '+ua.length+'명 미응답':'')+(p.responseDeadline?' · 응답 '+linkDeadlineText(p.responseDeadline)+'까지':'')+(linkDeadlinePassed(p)?' · 마감됨':' · 누르면 겹치는 시간을 봐요')):'확정 · '+esc(f&&f.date?slotText(f.date,toMin(f.start),toMin(f.end)):''))+'</small></span><span class="chev">›</span></button>';}).join('');
   openModal('<h3>링크 약속</h3>'+(rows||'<div class="empty">아직 만든 링크가 없어요.</div>')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="lk-new">새 링크 만들기</button></div>');
 }
 function openLinkDetail(t){M={type:'link-detail',token:t,week:0,sel:null,tap:null};drawLinkDetail();linkLoad();}
@@ -2255,9 +2325,9 @@ function drawLinkDetail(){
   var l=LinkSync.links.find(function(x){return x.token===M.token;});if(!l){closeModal();return;}
   var p=l.payload||{},ans=LinkSync.answers[l.token]||[],sc=document.querySelector('#lk-grid .meetgrid'),top=sc?sc.scrollTop:0;
   if(l.status!=='open'){var f=l.final||{};openModal('<h3>'+esc(p.what||'약속')+'</h3><div class="requestbox"><b>확정된 약속</b><small>'+esc([f.date?slotText(f.date,toMin(f.start),toMin(f.end)):'',f.place||'장소 미정',(f.names||[]).join(', ')].filter(Boolean).join(' · '))+'</small></div><p class="hint">링크를 연 사람들도 확정된 시간을 볼 수 있어요.</p><div class="acts"><button class="b-del" data-act="lk-delete" data-id="'+l.token+'">링크 삭제</button><button class="b-ghost" data-act="lk-copy" data-id="'+l.token+'">링크 복사</button><button class="b-save" data-act="close">닫기</button></div>');return;}
-  var best=linkBestRuns(p,ans),cw=linkCounts(ans),tapWho=M.tap?(cw.who[M.tap]||[]):null,s=M.sel;
-  openModal('<h3>'+esc(p.what||'링크 약속')+'</h3><p class="hint">'+(p.responseDeadline?'응답 마감 '+esc(linkDeadlineText(p.responseDeadline))+(linkDeadlinePassed(p)?' · 마감됨':'')+'<br>':'')+(ans.length?((ans.length+1)+'/'+Math.max(+p.expectedPeople||0,ans.length+1)+'명 입력 완료 · '+esc(ans.map(function(a){return a.name;}).join(', '))):('1/'+Math.max(+p.expectedPeople||2,2)+'명 입력 완료 · 아직 친구 답이 없어요.'))+'</p>'+
-    (best.length?'<div class="meetsug"><span>제일 많이 겹치는 시간</span><div class="meetsug-row">'+best.map(function(x){var on=s&&s.date===x.date&&s.s===x.s&&s.e===x.e;return '<button class="sugchip'+(on?' on':'')+'" data-act="lk-best" data-k="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'">'+x.n+'/'+ans.length+'명 · '+esc(slotText(x.date,x.s,x.e))+'</button>';}).join('')+'</div></div>':'')+
+  var best=linkBestRuns(p,ans),cw=linkCounts(ans),tapWho=M.tap?(cw.who[M.tap]||[]):null,s=M.sel,ua=linkUnanswered(p,ans),named=linkInviteeNames(p);
+  openModal('<h3>'+esc(p.what||'링크 약속')+'</h3><p class="hint">'+(p.responseDeadline?'응답 마감 '+esc(linkDeadlineText(p.responseDeadline))+(linkDeadlinePassed(p)?' · 마감됨':'')+'<br>':'')+(ans.length?((ans.length+1)+'/'+Math.max(+p.expectedPeople||0,ans.length+1)+'명 입력 완료 · '+esc(ans.map(function(a){return a.name;}).join(', '))):('1/'+Math.max(+p.expectedPeople||2,2)+'명 입력 완료 · 아직 친구 답이 없어요.'))+(ua.length?'<br><b style="color:var(--now)">'+esc(named.length?('미응답 · '+ua.join(', ')):(ua.length+'명 아직 미응답'))+'</b>':'')+'</p>'+
+    (best.length?'<div class="meetsug"><span>플래너 추천 후보</span><div class="meetsug-row">'+best.map(function(x){var on=s&&s.date===x.date&&s.s===x.s&&s.e===x.e;return '<button class="sugchip'+(on?' on':'')+'" data-act="lk-best" data-k="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'"><b>'+esc(x.label||'추천')+'</b> · '+esc(slotText(x.date,x.s,x.e))+'<small style="display:block;margin-top:2px">'+esc(x.why||'')+'</small></button>';}).join('')+'</div></div>':'')+
     linkPlaceRecoHTML(p,ans)+'<div id="lk-grid">'+linkGridHTML(p,ans,{mode:'owner',week:M.week,sel:s})+'</div>'+
     '<p class="hint" id="lk-sel">'+(tapWho?esc(slotText(M.tap.split('|')[0],+M.tap.split('|')[1],+M.tap.split('|')[1]+30))+' 가능 · '+(tapWho.length?esc(tapWho.join(', ')):'아무도 없어요')+'<br>':'')+(s?'고른 시간 · '+esc(slotText(s.date,s.s,s.e))+(s.step===1?' · 한 번 더 누르면 끝 시간':''):'칸을 눌러 누가 되는지 보고, 시작·끝을 골라 확정해요')+'</p>'+
     '<div class="acts"><button class="b-ghost" data-act="lk-copy" data-id="'+l.token+'">링크 복사</button><button class="b-save" data-act="lk-confirm"'+(s&&s.step===2?'':' disabled')+'>이 시간으로 확정</button></div>'+
@@ -2293,11 +2363,16 @@ function guestLoad(){
   Sync.sb.rpc('planner_meet_get',{t:G.token}).then(function(r){
     if(r.error)throw r.error;if(!r.data){G.state='error';G.msg='링크가 삭제됐거나 주소가 잘못됐어요.';render();return;}
     G.link=r.data;G.answers=r.data.answers||[];var sv=guestSaved(G.token);
-    if(G.state==='loading'){G.mine={};if(sv){G.aid=sv.id;G.sec=sv.secret;G.name=sv.name||'';G.origin=sv.origin||'';G.cap=+sv.cap||0;(sv.slots||[]).forEach(function(s){if(s.indexOf('@')!==0)G.mine[s]=1;});}if(!G.name)G.name=(S.settings.profileName||'').trim();if(!G.origin)G.origin=S.settings.homeStation||'';}
-    G.state='ready';render();
+    if(G.state==='loading'){G.mine={};if(sv){G.aid=sv.id;G.sec=sv.secret;G.name=sv.name||'';G.origin=sv.origin||'';(sv.slots||[]).forEach(function(s){if(s.indexOf('@')!==0)G.mine[s]=1;});}if(!G.name)G.name=(S.settings.profileName||'').trim();if(!G.origin)G.origin=S.settings.homeStation||'';}
+    G.state='ready';render();if(G.link&&G.link.status!=='open'&&Sync.uid&&G.aid)setTimeout(guestAutoAddConfirmed,0);
   }).catch(function(e){G.state='error';G.msg=/does not exist|Could not find/i.test(e&&e.message||'')?'링크 약속 기능이 아직 서버에 설정되지 않았어요. 링크를 보낸 친구에게 알려주세요.':'링크를 불러오지 못했어요. 잠시 뒤 새로고침해주세요.';render();});
 }
 function gcalUrl(f,p){var d=f.date.replace(/-/g,''),a=f.start.replace(':','')+'00',b=(f.end||f.start).replace(':','')+'00';return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(f.what||((p.ownerName||'친구')+'님과 약속'))+'&dates='+d+'T'+a+'/'+d+'T'+b+'&ctz=Asia/Seoul'+(f.place?'&location='+encodeURIComponent(f.place):'');}
+function guestAutoAddConfirmed(){
+  var G=U.guest;if(!G||!G.link||G.link.status==='open'||!Sync.uid||!G.aid)return false;var f=G.link.final||{},p=G.link.payload||{};if(!f.date)return false;
+  if((S.events||[]).some(function(e){return e.linkToken===G.token;}))return false;
+  S.events.push({id:uid(),kind:'appointment',title:f.what||p.what||'약속',what:f.what||p.what||'',person:(f.names||[]).join(', '),place:f.place||'',placeInfo:f.placeInfo||null,date:f.date,start:f.start,end:f.end,color:defCol(),linkToken:G.token});save();inAppToast('확정된 약속을 내 플래너에 자동으로 넣었어요');return true;
+}
 function guestHTML(){
   var G=U.guest;
   if(G.state==='loading')return '<div class="note">약속 링크를 불러오는 중…</div>';
@@ -2312,7 +2387,7 @@ function guestHTML(){
   if(linkDeadlinePassed(p))return head+'<section class="card"><div class="card-h"><h3>응답이 마감됐어요</h3></div><p class="hint">'+esc(linkDeadlineText(p.responseDeadline))+'까지 받는 약속이었어요. 이제 새 답을 보내거나 수정할 수 없어요.</p></section>'+guestCtaHTML();
   var cnt=Object.keys(G.mine||{}).length;
   return head+'<section class="card"><span class="lbl">내 이름</span><input class="fld" id="lk-name" maxlength="20" placeholder="친구들이 알아볼 이름" value="'+esc(G.name||'')+'">'+
-    (p.placeRecommend?'<span class="lbl">어디서 출발해?</span><select class="fld" id="lk-origin">'+moStationOptions(G.origin||'')+'</select><div class="geo-row"><button class="tbtn" data-act="guest-current">현재 위치에서 찾기</button><small id="guest-geo-msg">좌표는 저장하지 않고 가까운 역만 사용해요.</small></div><span class="lbl">편도 상한 <em>(선택)</em></span><select class="fld" id="lk-cap"><option value="0">상한 없음</option>'+[30,45,60,90].map(function(v){return '<option value="'+v+'"'+(+G.cap===v?' selected':'')+'>'+v+'분 이하</option>';}).join('')+'</select>':'')+
+    (p.placeRecommend?'<span class="lbl">어디서 출발해?</span><select class="fld" id="lk-origin">'+plannerMeetPointOptions(G.origin||'')+'</select><div class="geo-row"><button class="tbtn" data-act="guest-current">현재 위치에서 찾기</button><small id="guest-geo-msg">좌표는 저장하지 않고 가까운 교통 거점만 사용해요.</small></div>':'')+
     '<span class="lbl">되는 시간을 모두 눌러줘</span><p class="hint">회색은 '+esc(who)+'님이 안 되는 시간이라 못 골라요. 다시 누르면 빠져요.</p><div id="lk-grid">'+linkGridHTML(p,ans,{mode:'guest',week:G.week||0,mine:G.mine,skipId:G.aid})+'</div>'+
     '<p class="hint" id="lk-gmsg">'+(G.sent?'보냈어요! '+esc(who)+'님이 시간을 정하면 이 링크에서 바로 볼 수 있어요. 고치고 싶으면 다시 눌러서 보내요.':cnt?cnt+'칸 골랐어요 ('+(cnt*30>=60?Math.floor(cnt*30/60)+'시간 ':'')+(cnt*30%60?'30분':'')+')':'')+'</p>'+
     '<button class="b-save lk-full" data-act="lk-send">'+(G.aid?'고쳐서 다시 보내기':'보내기')+'</button></section>'+guestCtaHTML();
@@ -2322,12 +2397,12 @@ function guestDrawGrid(){var G=U.guest,box=$('#lk-grid');if(!box||!G||!G.link)re
 function guestSend(){
   var G=U.guest;if(G&&G.link&&linkDeadlinePassed(G.link.payload||{})){var mm=$('#lk-gmsg');if(mm)mm.textContent='응답 마감 시간이 지나서 더 이상 보낼 수 없어요';return;}
   var nm=$('#lk-name'),name=nm?nm.value.trim():'',m=$('#lk-gmsg'),slots=Object.keys(G.mine||{}),
-      p=(G.link&&G.link.payload)||{},origin=($('#lk-origin')&&$('#lk-origin').value)||G.origin||'',cap=+($('#lk-cap')&&$('#lk-cap').value)||0;
+      p=(G.link&&G.link.payload)||{},origin=($('#lk-origin')&&$('#lk-origin').value)||G.origin||'';
   if(!name){if(nm){nm.classList.add('bad');nm.focus();}if(m)m.textContent='이름을 먼저 적어줘';return;}
-  if(p.placeRecommend&&!origin){if(m)m.textContent='출발 지역이나 역을 입력해줘';return;}if(!slots.length){if(m)m.textContent='되는 시간을 한 칸 이상 눌러줘';return;}G.origin=origin;G.cap=cap;var sendSlots=linkMetaSlots(slots,origin,cap);
+  if(p.placeRecommend&&!origin){if(m)m.textContent='출발 지역이나 역을 입력해줘';return;}if(!slots.length){if(m)m.textContent='되는 시간을 한 칸 이상 눌러줘';return;}G.origin=origin;var sendSlots=linkMetaSlots(slots,origin);
   G.name=name;if(m)m.textContent='보내는 중…';
   Sync.sb.rpc('planner_meet_answer',{t:G.token,n:name,s:sendSlots,aid:G.aid||null,sec:G.sec||null}).then(function(r){
-    if(r.error)throw r.error;var d=r.data||{};G.aid=d.id;G.sec=d.secret;lsSet(guestKey(G.token),JSON.stringify({id:d.id,secret:d.secret,name:name,slots:slots,origin:origin,cap:cap}));G.sent=true;guestLoad();
+    if(r.error)throw r.error;var d=r.data||{};G.aid=d.id;G.sec=d.secret;lsSet(guestKey(G.token),JSON.stringify({id:d.id,secret:d.secret,name:name,slots:slots,origin:origin}));G.sent=true;guestLoad();
   }).catch(function(e){if(m)m.textContent=/closed/i.test(e&&e.message||'')?'이미 시간이 정해진 약속이에요. 새로고침해서 확인해줘':'보내지 못했어요. 잠시 뒤 다시 눌러줘';});
 }
 function guestAddMine(){
@@ -2340,7 +2415,7 @@ function guestLeave(d){U.guest=null;try{history.replaceState(null,'',location.pa
 function renderGuest(){
   $('#top').classList.remove('navtop');$('#top').innerHTML='<div class="ttl"><h1>약속 시간 고르기</h1><small>로그인 없이 바로 골라요</small></div>';
   $('#nav').style.display='none';$('#app').classList.remove('wide');
-  var ae=document.activeElement,keep=ae&&ae.id==='lk-name'?ae.value:null;if(U.guest){var go=$('#lk-origin'),gc=$('#lk-cap');if(go)U.guest.origin=go.value;if(gc)U.guest.cap=+gc.value||0;}
+  var ae=document.activeElement,keep=ae&&ae.id==='lk-name'?ae.value:null;if(U.guest){var go=$('#lk-origin');if(go)U.guest.origin=go.value;}
   $('#main').innerHTML=guestHTML();
   if(keep!=null&&$('#lk-name')){$('#lk-name').value=keep;}
 }
@@ -6056,7 +6131,6 @@ function act(a,e){
       var prp=$('#place-reco-panel');if(prp){prp.style.display=prp.style.display==='none'?'block':'none';}break;
     case 'place-reco-run':
       document.querySelectorAll('[data-place-origin]').forEach(function(x){var i=+x.dataset.placeOrigin;if(M.placePeople&&M.placePeople[i])M.placePeople[i].origin=x.value;});
-      document.querySelectorAll('[data-place-cap]').forEach(function(x){var i=+x.dataset.placeCap;if(M.placePeople&&M.placePeople[i])M.placePeople[i].cap=+x.value||0;});
       var rr=$('#place-reco-results');if(rr)rr.innerHTML=placeRecoResultsHTML();break;
     case 'place-reco-pick':
       var st=a.dataset.st;M.pp=ppNew({kind:'station',station:st},{allowUndecided:true,friendId:M.friendId,future:true});var pp=$('#pp');if(pp)pp.innerHTML=ppHTML(M.pp);var pc=$('#appointment-candidates');if(pc)pc.style.display='none';friendNote(st+'을 약속 장소로 골랐어요');break;
