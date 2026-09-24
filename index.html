@@ -5864,7 +5864,7 @@ function diarySessionClear(k){try{localStorage.removeItem(diarySessionKey(k||U.d
 function diarySessionRestore(k){var x=diarySessionLoad(k);U.diaryDraft=x&&typeof x.draft==='string'?x.draft:'';U.diaryNote=x&&typeof x.note==='string'?x.note:'';U.diaryRun=x&&x.run?{acc:Number(x.run.acc||0),since:Date.now(),running:!!x.run.running}:null;U.diaryResumeOnReturn=!!(x&&x.resumeOnReturn);if(U.diaryRun&&U.diaryResumeOnReturn){U.diaryRun.running=true;U.diaryRun.since=Date.now();U.diaryResumeOnReturn=false;diarySessionSave(k);}}
 function diaryElapsed(){var r=U.diaryRun;if(!r)return 0;return r.acc+(r.running&&!document.hidden?(Date.now()-r.since):0);}
 function diaryClockText(){var ms=diaryElapsed(),lim=diaryLimitMs(),left=Math.max(0,lim-ms);if(ms<=lim){var sec=Math.ceil(left/1000);return pad(Math.floor(sec/60))+':'+pad(sec%60);}var x=Math.floor((ms-lim)/1000);return '+'+pad(Math.floor(x/60))+':'+pad(x%60);}
-function diaryTick(){if(M.type!=='diary')return;var t=$('#diary-time'),st=$('#diary-status'),lim=diaryLimitMs(),mins=diaryMinutes();if(t){var ms=diaryElapsed();t.textContent=diaryClockText();t.classList.toggle('extra',ms>lim);if(st)st.textContent=!U.diaryRun?mins+'분 타이머를 시작해도 되고 그냥 써도 돼요':(U.diaryRun.running?(ms>lim?mins+'분 완료 · 추가 시간 기록 중':'집중해서 쓰는 중'):'일시정지');}clearTimeout(U.diaryTimer);U.diaryTimer=setTimeout(diaryTick,250);}
+function diaryTick(){if(M.type!=='diary')return;diaryCountUpdate();var t=$('#diary-time'),st=$('#diary-status'),lim=diaryLimitMs(),mins=diaryMinutes();if(t){var ms=diaryElapsed();t.textContent=diaryClockText();t.classList.toggle('extra',ms>lim);if(st)st.textContent=!U.diaryRun?mins+'분 타이머를 시작해도 되고 그냥 써도 돼요':(U.diaryRun.running?(ms>lim?mins+'분 완료 · 추가 시간 기록 중':'집중해서 쓰는 중'):'일시정지');}clearTimeout(U.diaryTimer);U.diaryTimer=setTimeout(diaryTick,250);}
 function diaryPause(){var r=U.diaryRun;if(r&&r.running){r.acc+=Date.now()-r.since;r.running=false;}}
 function diaryResume(){var r=U.diaryRun;if(r&&!r.running){r.since=Date.now();r.running=true;}}
 function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em><p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
@@ -5899,10 +5899,22 @@ function diaryLibraryMove(dir){var rows=diaryLibraryRows();if(!rows.length)retur
 function diaryLibraryGoDate(){diaryCalPick(M.diaryDate||todayKey());}
 function drawDiary(dateKey){
   var targetKey=dateKey||U.diaryDate||todayKey();U.diaryDate=targetKey;M={type:'diary'};var r=U.diaryRun,mins=diaryMinutes(),isToday=targetKey===todayKey(),targetDate=parseKey(targetKey);
-  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>'+(isToday?'오늘을 '+mins+'분만 적어봐요':mdTxt(targetDate)+'의 기록을 남겨요')+'</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text" id="f-diary" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><div class="diary-count" id="diary-count">'+String((U.diaryDraft||'').length)+'자</div><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
-  $('#modal').classList.add('full');diaryTick();setTimeout(function(){var x=$('#f-diary');if(x)x.focus();},30);
+  openModal('<div class="diarypage"><div class="diary-head"><button class="ibtn" data-act="diary-back">‹</button><div><h3>'+mins+'분 일기</h3><small>'+(isToday?'오늘을 '+mins+'분만 적어봐요':mdTxt(targetDate)+'의 기록을 남겨요')+'</small></div></div><div class="diary-clock"><div class="diary-time" id="diary-time">'+pad(mins)+':00</div><div class="diary-status" id="diary-status">'+mins+'분 타이머를 시작해도 되고 그냥 써도 돼요</div></div><div class="diary-actions"><button class="primary" data-act="diary-toggle">'+(r&&r.running?'일시정지':r?'계속':'시작')+'</button></div><textarea class="diary-text" id="f-diary" oninput="diaryLiveInput(this)" oncompositionend="diaryLiveInput(this)" placeholder="지금 떠오르는 생각을 그대로 써봐…">'+esc(U.diaryDraft||'')+'</textarea><div class="diary-count" id="diary-count">'+diaryCharCount(U.diaryDraft||'')+'자</div><textarea class="diary-text diary-note" id="f-diary-note" placeholder="노트 · 더 적어두고 싶은 것">'+esc(U.diaryNote||'')+'</textarea><button class="diary-finish" data-act="diary-finish">일기 마치기</button>'+diaryHistoryHTML()+'</div>');
+  $('#modal').classList.add('full');diaryTick();setTimeout(function(){
+    var x=$('#f-diary');
+    if(x){
+      var syncDiaryCount=function(){diaryLiveInput(x);};
+      x.addEventListener('input',syncDiaryCount);
+      x.addEventListener('compositionend',syncDiaryCount);
+      x.addEventListener('keyup',syncDiaryCount);
+      syncDiaryCount();
+      x.focus();
+    }
+  },30);
 }
-function diaryCountUpdate(){var x=$('#f-diary'),c=$('#diary-count');if(c)c.textContent=((x?x.value:U.diaryDraft||'').length)+'자';}
+function diaryCharCount(v){v=String(v==null?'':v);try{return Array.from(v).length;}catch(e){return v.length;}}
+function diaryLiveInput(el){if(el)U.diaryDraft=el.value||'';diaryCountUpdate();if(U.diaryDate)diarySessionSave(U.diaryDate);}
+function diaryCountUpdate(){var x=$('#f-diary'),c=$('#diary-count'),v=x?x.value:(U.diaryDraft||'');if(c)c.textContent=diaryCharCount(v)+'자';}
 function saveDiaryDraft(){var x=$('#f-diary'),n=$('#f-diary-note');if(x)U.diaryDraft=x.value;if(n)U.diaryNote=n.value;if(U.diaryDate)diarySessionSave(U.diaryDate);}
 function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});diarySessionClear(dk);U.diaryDraft='';U.diaryNote='';U.diaryRun=null;U.diaryResumeOnReturn=false;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}}
 
@@ -6685,11 +6697,11 @@ function dpClick(e){
 }
 try{new MutationObserver(function(){if(document.querySelector('input[type=date]:not([data-dx])'))enhanceDates();}).observe(document.body,{childList:true,subtree:true});}catch(x){}
 window.addEventListener('pagehide',function(){if(M.type==='diary'){saveDiaryDraft();diarySessionSave(U.diaryDate||todayKey());}});
-document.addEventListener('visibilitychange',function(){if(M.type==='diary'&&U.diaryRun){if(document.hidden){U.diaryAutoPaused=!!U.diaryRun.running;if(U.diaryAutoPaused)diaryPause();}else{if(U.diaryAutoPaused)diaryResume();U.diaryAutoPaused=false;}diaryTick();}});
+document.addEventListener('visibilitychange',function(){if(M.type==='diary'){saveDiaryDraft();if(U.diaryRun){if(document.hidden){U.diaryAutoPaused=!!U.diaryRun.running;if(U.diaryAutoPaused)diaryPause();}else{if(U.diaryAutoPaused)diaryResume();U.diaryAutoPaused=false;}diarySessionSave(U.diaryDate||todayKey());diaryTick();}else if(U.diaryDate)diarySessionSave(U.diaryDate);}});
 var TOPDR=null,topDragIgnore=0;
 document.addEventListener('input',function(e){
   if(e.target&&e.target.id==='pp-q'&&M.pp){M.pp.q=e.target.value;var z=$('#pp-results');if(z)z.innerHTML=ppResultsHTML(M.pp.q);}
-  if(e.target&&e.target.id==='f-diary'){U.diaryDraft=e.target.value;diaryCountUpdate();if(U.diaryDate)diarySessionSave(U.diaryDate);}
+  if(e.target&&e.target.id==='f-diary'){diaryLiveInput(e.target);}
   if(e.target&&e.target.id==='f-diary-note'){U.diaryNote=e.target.value;if(U.diaryDate)diarySessionSave(U.diaryDate);}
   if(e.target&&e.target.id==='pp-other'&&M.pp){M.pp.other=e.target.value;var pb=$('#pp');if(pb)pb.classList.remove('bad');}
 });
