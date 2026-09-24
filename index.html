@@ -2360,7 +2360,7 @@ function openFriendPlanner(id){
   var trow=row('timetable'),erow=row('exam'),crow=row('calendar'),label=friendLabel(f);
   var tt=trow&&trow.payload,exams=erow&&erow.payload,cal=f.inCalendar&&crow?crow.payload:null;
   var html='<h3>'+esc(label)+'님 플래너</h3><p class="hint">친구가 공개한 항목만 보여요.</p><div class="share-preview">'+friendViewHTML({name:label,photo:f.photo,sub:lastMetInfo(id),tt:tt,exams:exams,cal:cal})+'</div>';
-  openModal(html+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button>'+(S.settings.showMeetMaker===false?'':'<button class="b-save" data-act="friend-meet" data-id="'+esc(id)+'">약속 잡기</button>')+'</div>');
+  openModal(html+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="friend-meet" data-id="'+esc(id)+'">약속 잡기</button></div>');
 }
 function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if((U.tab==='settings'||U.tab==='friends')&&!M.type)render();}
 var DEV_MODE=(function(){try{return /[?&]debug\b/.test(location.search)||localStorage.getItem('planner.debug')==='1';}catch(e){return false;}})();
@@ -5622,7 +5622,7 @@ function act(a,e){
     }
     case 'add-schedule':openSchedule(null,{date:a.dataset.date||dkey(U.date)});break;
     case 'add-appointment':{
-      if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}
+      if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}
       openAppointment(null,{date:a.dataset.date});break;
     }
     case 'add-block':openBlock(null,{day:Math.min(dow(U.date),4)});break;
@@ -5653,7 +5653,7 @@ function act(a,e){
     case 'friend-view-planner':openFriendPlanner(id);break;
     case 'friend-share-preview':openFriendSharePreview(id);break;
     case 'friend-memories':openFriendMemories(id);break;
-    case 'friend-meet':if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}openFriendMeet(id);break;
+    case 'friend-meet':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openFriendMeet(id);break;
     case 'meet-cell':meetTap(a.dataset.k,Number(a.dataset.m));break;
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
     case 'meet-activity':
@@ -5676,7 +5676,7 @@ function act(a,e){
     case 'place-decide-open':openPlaceDecision(id);break;
     case 'candidate-toggle':{var cv=a.dataset.v,ca=M.selected||(M.selected=[]),ci=ca.indexOf(cv);if(ci>=0)ca.splice(ci,1);else ca.push(cv);drawPlaceDecision();break;}
     case 'candidate-new':{var cn=$('#f-cand-new'),cvv=cn?normalizePlaceText(cn.value):'';if(!cvv){if(cn)cn.classList.add('bad');break;}if(!M.added)M.added=[];M.added.push(cvv);if(M.selected.indexOf(cvv)<0)M.selected.push(cvv);drawPlaceDecision();break;}
-    case 'lk-new':if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}openLinkCreate();break;
+    case 'lk-new':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openLinkCreate();break;
     case 'lk-list':openLinkList();linkLoad();break;
     case 'lk-days':M.days=Number(a.dataset.v);document.querySelectorAll('#lk-days button').forEach(function(b){b.classList.toggle('on',b===a);});break;
     case 'lk-create':createLink();break;
@@ -5735,7 +5735,7 @@ function act(a,e){
     case 'friend-toggle-share':{var ftp=friendToggle(id,a.dataset.mode),inPrev=M.type==='friend-share-preview';if(inPrev){a.classList.toggle('on');ftp.then(function(){if(M.type==='friend-share-preview'&&M.friendId===id)openFriendSharePreview(id);});}break;}
     case 'friend-remove':if(armed(a))friendRemove(id);break;
     case 'save-friend-memory':saveFriendMemory();break;
-    case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
+    case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
     case 'appointment-accept':respondAppointmentRequest(true);break;
     case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
