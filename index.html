@@ -3141,14 +3141,34 @@ function snapshotIfNeeded(){
 }
 function cloudSnapshotTiers(now,json){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return;
-  /* 전문 앱식 소형 보존정책: 최근 24시간=시간별, 최근 30일=일별, 최근 12개월=월별 */
+  /* 전문 앱식 소형 보존정책: 최근 24시간=시간별, 최근 30일=일별, 최근 12개월=월별
+     - 시간별: 그 시간의 최신 상태로 갱신 (저장할 때마다가 아니라 10분에 한 번)
+     - 일별·월별: 그날/그달 처음 저장된 상태만 남기고 덮어쓰지 않아요.
+       (예전엔 저장할 때마다 오늘·이번 달 사본까지 덮어써서, 데이터가 날아가면 그 사본도 같이 날아갔어요) */
   var hour='h:'+dkey(now)+'~'+pad(now.getHours());
   var day='d:'+dkey(now);
   var month='m:'+now.getFullYear()+'-'+pad(now.getMonth()+1);
+  var tick=+lsGet('planner.cloudSnapAt.'+Sync.uid)||0;
+  var firstKey=lsGet('planner.cloudSnapDay.'+Sync.uid)!==day;
+  if(!firstKey&&Date.now()-tick<600000)return;
+  lsSet('planner.cloudSnapAt.'+Sync.uid,String(Date.now()));
+  var uid=Sync.uid,sb=Sync.sb;
   encryptCloudValue(json).then(function(cipher){
-    var rows=[hour,day,month].map(function(k){return {user_id:Sync.uid,date:k,json:cipher,updated_at:Date.now()};});
-    return Sync.sb.from('planner_snapshots').upsert(rows);
-  }).then(function(){pruneCloudSnapshotTiers();},function(){});
+    var row=function(k){return {user_id:uid,date:k,json:cipher,updated_at:Date.now()};};
+    return sb.from('planner_snapshots').upsert([row(hour)]).then(function(r1){
+      if(r1&&r1.error)throw r1.error;
+      return sb.from('planner_snapshots').upsert([row(day),row(month)],{ignoreDuplicates:true});
+    }).then(function(r2){
+      if(r2&&r2.error)throw r2.error;
+      lsSet('planner.cloudSnapDay.'+uid,day);
+      Sync.snapOk=Date.now();Sync.snapErr='';
+      pruneCloudSnapshotTiers();
+    });
+  }).catch(function(e){
+    Sync.snapErr=syncErrorText(e)||'알 수 없는 오류';
+    lsSet('planner.cloudSnapAt.'+uid,'0');
+    try{console.error('[planner snapshot]',e);}catch(_){}
+  });
 }
 function pruneCloudSnapshotTiers(){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return;
@@ -3162,14 +3182,14 @@ function pruneCloudSnapshotTiers(){
 function fetchCloudSnaps(){
   if(Sync.kind!=='supa'||!Sync.uid||!Sync.sb)return Promise.resolve([]);
   return Sync.sb.from('planner_snapshots').select('date').eq('user_id',Sync.uid).order('date',{ascending:false}).limit(200)
-    .then(function(res){return (res&&res.data)?res.data.map(function(r){return r.date;}):[];},function(){return [];});
+    .then(function(res){if(res&&res.error){Sync.snapErr=syncErrorText(res.error);return [];}return (res&&res.data)?res.data.map(function(r){return r.date;}):[];},function(e){Sync.snapErr=syncErrorText(e);return [];});
 }
 function loadCloudSnap(k){
   return Sync.sb.from('planner_snapshots').select('json').eq('user_id',Sync.uid).eq('date',k).maybeSingle()
     .then(function(res){return res&&res.data?decryptCloudValue(res.data.json):null;}).catch(function(){return null;});
 }
 function snapBoxHTML(dates,loading){
-  if(!dates.length&&!loading)return '';
+  if(!dates.length&&!loading&&!Sync.snapErr)return '';
   var lab=function(k){
     if(k.indexOf('h:')===0){var p=k.slice(2).split('~'),d=parseKey(p[0]);return (d.getMonth()+1)+'/'+d.getDate()+' '+p[1]+':00';}
     if(k.indexOf('d:')===0){var d=parseKey(k.slice(2));return (d.getMonth()+1)+'/'+d.getDate();}
@@ -3178,7 +3198,8 @@ function snapBoxHTML(dates,loading){
   };
   var section=function(title,arr,max){arr=arr.slice().sort().reverse().slice(0,max);if(!arr.length)return '';return '<p class="lbl" style="margin-top:14px">'+title+'</p><div class="snaplist">'+arr.map(function(k){return '<button class="tbtn" data-act="load-snap" data-k="'+esc(k)+'">'+esc(lab(k))+'</button>';}).join('')+'</div>';};
   var h=dates.filter(function(k){return k.indexOf('h:')===0;}),d=dates.filter(function(k){return k.indexOf('d:')===0;}),m=dates.filter(function(k){return k.indexOf('m:')===0;}),legacy=dates.filter(function(k){return !/^[hdm]:/.test(k);});
-  var html='<p class="lbl" style="margin-top:14px">복구센터 · 계정 복원 지점</p><p class="hint">지금 상태는 건드리지 않고 원하는 시점의 백업을 먼저 불러와 확인할 수 있어요.</p>';
+  var st=Sync.snapErr?'<p class="hint" style="color:var(--now);word-break:break-word">계정 복원 지점 저장이 실패하고 있어요. (자세히: '+esc(Sync.snapErr)+')</p>':Sync.snapOk?'<p class="hint">계정 복원 지점 마지막 저장: '+pad(new Date(Sync.snapOk).getHours())+':'+pad(new Date(Sync.snapOk).getMinutes())+'</p>':'';
+  var html='<p class="lbl" style="margin-top:14px">복구센터 · 계정 복원 지점</p><p class="hint">지금 상태는 건드리지 않고 원하는 시점의 백업을 먼저 불러와 확인할 수 있어요.</p>'+st;
   html+=section('최근 24시간 · 시간별',h,24)+section('최근 30일 · 일별',d.concat(legacy),30)+section('최근 12개월 · 월별',m,12);
   if(loading)html+='<span class="tbtn" style="opacity:.5">불러오는 중…</span>';
   return html;
