@@ -290,6 +290,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .seg button{padding:7px 13px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:600;color:var(--sub);text-align:center}
 .seg button.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
+.qscope-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;flex-wrap:nowrap}.qscope-tabs button{padding:8px 4px;min-width:0;white-space:nowrap}.routine-quick-add{width:100%;height:44px;border-radius:12px;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);font-weight:800;text-align:center}
 .ck{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 2px 14px}
 .ck input{width:18px;height:18px;accent-color:var(--accent)}
 .acts{display:flex;gap:8px;margin-top:6px}
@@ -4576,12 +4577,21 @@ function viewTodo(){
     ['앞으로',open.filter(fut),{tag:true}],
     ['언제든지',open.filter(function(t){return t.scope==='inbox';}),{}]
   ];
-  var qs=[['day','오늘'],['week','이번 주'],['month','이번 달'],['inbox','언제든지']];
-  var html='<section class="card"><div class="seg" style="margin-bottom:8px">'+
-    qs.map(function(q){return '<button data-act="qscope" data-v="'+q[0]+'" class="'+(U.qscope===q[0]?'on':'')+'">'+q[1]+'</button>';}).join('')+'</div>'+
-    '<div class="add" style="margin-top:0"><input data-draft="quick" placeholder="해야 할 일을 적어요" enterkeyhint="done" value="'+esc(U.drafts.quick||'')+'"><button data-act="add-quick">추가</button></div>'+
-    (U.qopt?'':'<button class="optlink" data-act="qopt">+ 과목·마감일</button>')+(U.qopt?'<div class="duebox"><span>과목</span>'+courseSelect('q-course',U.qcourse||'','sel')+'</div>':'')+
-    (U.qopt?'<div class="duebox"><span>마감일</span><input type="date" id="q-due" value="'+esc(U.qdue||'')+'">'+(U.qdue?'<button data-act="clear-qdue">없음</button>':'')+'</div>':'')+'</section>';
+  var qs=[['day','오늘'],['week','이번 주'],['month','이번 달'],['inbox','언제든지'],['routine','반복']];
+  var qtabs='<div class="seg qscope-tabs" style="margin-bottom:8px">'+
+    qs.map(function(q){return '<button data-act="qscope" data-v="'+q[0]+'" class="'+(U.qscope===q[0]?'on':'')+'">'+q[1]+'</button>';}).join('')+'</div>';
+  var quickBody=U.qscope==='routine'
+    ? '<button class="routine-quick-add" data-act="add-rt">+ 반복 할 일 추가</button><div class="hint" style="margin:8px 2px 0">요일을 골라두면 해당 날짜의 일간 화면에 자동으로 떠요.</div>'
+    : '<div class="add" style="margin-top:0"><input data-draft="quick" placeholder="해야 할 일을 적어요" enterkeyhint="done" value="'+esc(U.drafts.quick||'')+'"><button data-act="add-quick">추가</button></div>'+ 
+      (U.qopt?'':'<button class="optlink" data-act="qopt">+ 과목·마감일</button>')+(U.qopt?'<div class="duebox"><span>과목</span>'+courseSelect('q-course',U.qcourse||'','sel')+'</div>':'')+
+      (U.qopt?'<div class="duebox"><span>마감일</span><input type="date" id="q-due" value="'+esc(U.qdue||'')+'">'+(U.qdue?'<button data-act="clear-qdue">없음</button>':'')+'</div>':'');
+  var html='<section class="card">'+qtabs+quickBody+'</section>';
+  if(U.qscope==='routine'){
+    html+='<section class="card"><div class="card-h"><h3>반복 할 일</h3><span class="cnt">'+S.routines.length+'</span></div>'+ 
+      (S.routines.length?S.routines.map(function(r){
+        return '<div class="rt"><span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<small>↻ '+esc(daysText(r.days))+streakTxt(r)+'</small></span></div>';
+      }).join(''):'<div class="empty">아직 반복 할 일이 없어요. 위에서 추가해보세요.</div>')+'</section>';
+  }
   var any=false;
   groups.forEach(function(g){
     if(!g[1].length)return;
@@ -4590,10 +4600,6 @@ function viewTodo(){
       (g[2].keep?g[1]:sortTodos(g[1])).map(function(t){return todoItem(t,{tag:g[2].tag});}).join('')+'</ul></section>';
   });
   if(!any)html+='<div class="empty" style="text-align:center;padding:24px 0">남은 할 일이 없어요</div>';
-  html+='<section class="card"><div class="card-h"><h3>반복 할 일</h3><button class="tbtn" data-act="add-rt">+ 추가</button></div>'+
-    (S.routines.length?S.routines.map(function(r){
-      return '<div class="rt"><span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<small>↻ '+esc(daysText(r.days))+streakTxt(r)+'</small></span></div>';
-    }).join(''):'<div class="empty">매일·매주 하는 일을 한 번만 적어두면 일간 화면에 알아서 떠요</div>')+'</section>';
   var done=S.todos.filter(function(t){return t.done;});
   if(done.length){
     html+='<section class="card"><div class="card-h"><h3>완료한 일 '+done.length+'개</h3><button class="tbtn" data-act="toggle-done-list">'+(U.showDone?'접기':'보기')+'</button></div>';
@@ -6025,7 +6031,7 @@ function act(a,e){
       if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
       else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
       $('#f-start').classList.remove('bad');$('#f-end').classList.remove('bad');drawTpick();break;}
-    case 'skip-once':case 'unskip-once':{var sc=S.classes.find(function(x){return x.id===id;});if(sc){var dkk=a.dataset.date;/* 휴강 기록은 기간 제한 없이 보존. 선택한 날짜만 토글하고 과거 기록은 정리하지 않음. */sc.skip=(sc.skip||[]).filter(function(z){return z!==dkk;});if(name==='skip-once'&&sc.skip.indexOf(dkk)<0)sc.skip.push(dkk);save();closeModal();render();}break;}
+    case 'skip-once':case 'unskip-once':{var sc=S.classes.find(function(x){return x.id===id;});if(sc){var dkk=a.dataset.date;sc.skip=(sc.skip||[]).filter(function(z){return z!==dkk&&z>=dkey(addDays(new Date(),-60));});if(name==='skip-once')sc.skip.push(dkk);save();closeModal();render();}break;}
     case 'add-dd':openDD(null,{date:a.dataset.date});break;
     case 'edit-dd':{var dx=S.ddays.find(function(y){return y.id===id;});if(dx)openDD(dx);break;}
     case 'save-dd':saveDD();break;
