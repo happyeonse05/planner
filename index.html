@@ -1334,9 +1334,9 @@ function hasPlannerData(st){
   if(!st)return false;
   /* 기본 시간표·기본 기록 항목은 새 계정에도 들어 있어서 '내용'으로 치지 않아요.
      (예전엔 이것 때문에 빈 계정도 내용이 있는 걸로 판단돼, 빈 데이터가 덮어쓰는 걸 못 막았어요) */
-  return ['classes','events','todos','routines','exams','allday','ddays'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
-    ['memos','selfchat','logs','letters','hourNotes','retro','focus','fsess','routineDone'].some(function(k){return st[k]&&typeof st[k]==='object'&&Object.keys(st[k]).length>0;})||
-    !!(st.settings&&((st.settings.chatRooms||[]).length||(st.settings.friendMemories||[]).length));
+  return ['classes','events','todos','routines','exams','allday','ddays','selfchat','diaries','dayCloses'].some(function(k){return Array.isArray(st[k])&&st[k].length>0;})||
+    ['memos','logs','letters','hourNotes','retro','focus','fsess','routineDone'].some(function(k){return st[k]&&typeof st[k]==='object'&&Object.keys(st[k]).length>0;})||
+    !!(st.settings&&((st.settings.chatRooms||[]).length||(st.settings.friendMemories||[]).length||st.settings.schoolConfigured||st.settings.onboardDone||st.settings.profileName||st.settings.school));
 }
 /* 계정별 보관함
    localStorage의 planner.v1 하나만 공유하면 로그아웃 후 다른 계정의 빈 데이터가
@@ -1382,6 +1382,38 @@ function bkPut(k,raw){
     return new Promise(function(res){try{var tx=db.transaction('kv','readwrite');tx.objectStore('kv').put({at:Date.now(),raw:raw},k);tx.oncomplete=function(){res(true);};tx.onerror=tx.onabort=function(){res(false);};}catch(e){res(false);}});
   });
 }
+/* 계정별 현재 상태 금고: localStorage와 별개로 IndexedDB에도 최신 전체 상태를 보관해요.
+   시간이 지난 뒤 Safari/localStorage 또는 오래된 서버 상태가 문제를 일으켜도 이 사본과 합쳐 복구합니다. */
+function currentVaultKey(uid){return uid?'current.'+uid:'current.local';}
+function vaultPut(uid,st){
+  if(!st)return Promise.resolve(false);
+  var raw;try{raw=JSON.stringify(st);}catch(e){return Promise.resolve(false);}
+  return bkPut(currentVaultKey(uid),raw);
+}
+function vaultGet(uid){
+  return bkGetRec(currentVaultKey(uid)).then(function(rec){
+    if(!rec||!rec.raw)return null;
+    try{return normalize(JSON.parse(rec.raw));}catch(e){return null;}
+  });
+}
+function restoreCurrentVault(uid){
+  if(!uid)return Promise.resolve(false);
+  return vaultGet(uid).then(function(v){
+    if(!v)return false;
+    var before=itemCount(S),vn=itemCount(v);
+    /* 금고와 현재 상태를 항상 합쳐 한쪽에만 있는 항목을 보존합니다.
+       설정은 prefsAt 규칙을 그대로 사용해 더 최근 설정을 따릅니다. */
+    var joined=mergeState(S,v,null);
+    if(JSON.stringify(joined)===JSON.stringify(S))return false;
+    joined.updatedAt=Math.max(Date.now(),S.updatedAt||0,v.updatedAt||0);
+    S=joined;PREF_H=prefHash(S);
+    try{localStorage.setItem(KEY,JSON.stringify(S));storageOK=true;}catch(e){storageOK=false;}
+    saveAccountState(uid,S);
+    if(vn>before&&typeof inAppToast==='function')inAppToast('기기 안전 보관함에서 플래너를 복구했어요');
+    return true;
+  });
+}
+
 function bkGetRec(k){
   return bkOpen().then(function(db){
     if(!db){
@@ -1513,6 +1545,7 @@ function prepareAccount(uid){
     try{lsSet(KEY,JSON.stringify(S));}catch(e){}
   }
   lsSet('planner.activeUser',uid);
+  if(uid)vaultPut(uid,S);
   PREF_H=prefHash(S);
 }
 function backupCode(st){
@@ -1584,7 +1617,8 @@ function save(){
   /* 새 저장 전 상태를 '마지막 정상 상태'로 남겨요 (1분에 한 번) */
   if(previous&&previous!==json)bkLastGood(previous);
   var owner=Sync&&Sync.uid||lsGet('planner.activeUser');
-  if(owner&&!/^loggedout:/.test(owner))saveAccountState(owner,S);
+  if(owner&&!/^loggedout:/.test(owner)){saveAccountState(owner,S);vaultPut(owner,S);}
+  else vaultPut('',S);
   bkRingAdd(S,false);
   snapshotIfNeeded();
   setSyncUI(Sync.db?'saving':'local');
@@ -2962,7 +2996,8 @@ function applyRemote(st,at){
      시험·일정이 덮여도 되돌릴 수 있게 해요. */
   try{if(S&&hasPlannerData(S)){bkPut(bkOwner()?'remote.'+bkOwner():'remote',JSON.stringify(S));saveLocalBackupLayers(S);}}catch(e){}
   S=st;S.updatedAt=at;PREF_H=prefHash(S);
-  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  try{localStorage.setItem(KEY,JSON.stringify(S));storageOK=true;}catch(e){storageOK=false;}
+  if(Sync&&Sync.uid){saveAccountState(Sync.uid,S);vaultPut(Sync.uid,S);}
   var ae=document.activeElement;
   if(M.type==='login'){closeModal();ae=null;}
   if(!M.type&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))render();
@@ -3058,7 +3093,7 @@ function push(){
     }
     /* 항목이 많이 줄어드는 저장은 덮기 전에 계정에 사본을 하나 남겨요 */
     var guard=(r&&rem&&itemCount(rem)-itemCount(S)>=5)?cloudGuardSnap(r.json):Promise.resolve();
-    return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();setSyncUI('ok');});
+    return guard.then(function(){return ref.set({updatedAt:S.updatedAt,json:JSON.stringify(S)});}).then(function(){Sync.forceRestore=false;Sync.diag='';Sync.lastSeen=S.updatedAt;Sync.base=idsOf(S);saveMeta();if(Sync.uid)vaultPut(Sync.uid,S);setSyncUI('ok');});
   }).catch(function(e){setSyncUI('error');Sync.diag='계정 저장에 실패했어요. 이 기기 백업을 보관하고 다시 연결해주세요. '+(e&&e.message||'');})
     .then(function(){
       Sync.busy=false;
@@ -3140,40 +3175,6 @@ function importPrivacyKey(uid){var v='';try{v=prompt('이 계정의 플래너는
 function cryptoKey(uid,create){var raw=privacyRaw(uid,create);if(!raw)return Promise.reject(new Error('암호화 복구키가 필요해요'));return crypto.subtle.importKey('raw',unb64u(raw),{name:'AES-GCM'},false,['encrypt','decrypt']);}
 function encryptCloudValue(txt){if(!Sync.uid)return Promise.resolve(txt);return cryptoKey(Sync.uid,true).then(function(k){var iv=new Uint8Array(12);crypto.getRandomValues(iv);return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(String(txt))).then(function(buf){return PRIV_PREFIX+b64u(iv)+'.'+b64u(new Uint8Array(buf));});});}
 function decryptCloudValue(txt){txt=String(txt||'');if(txt.indexOf(PRIV_PREFIX)!==0){Sync.needsEncryptMigration=true;return Promise.resolve(txt);}var z=txt.slice(PRIV_PREFIX.length).split('.');if(z.length!==2)return Promise.reject(new Error('암호화 데이터 형식이 올바르지 않아요'));if(!privacyRaw(Sync.uid,false)){var asked=Sync.keyAsked;Sync.keyAsked=true;if(asked||!importPrivacyKey(Sync.uid)){Sync.keyNeeded=true;return Promise.reject(new Error('암호화 복구키가 필요해요'));}}return cryptoKey(Sync.uid,false).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64u(z[0])},k,unb64u(z[1])).then(function(buf){return new TextDecoder().decode(buf);});}).then(function(t){Sync.keyNeeded=false;return t;},function(){try{localStorage.removeItem(privacyKeyName(Sync.uid));}catch(e){}Sync.keyNeeded=true;Sync.keyAsked=true;throw new Error('복구키가 맞지 않아 계정 데이터를 열 수 없어요');});}
-function cryptoKeyFromRaw(raw){return crypto.subtle.importKey('raw',unb64u(raw),{name:'AES-GCM'},false,['encrypt','decrypt']);}
-function encryptWithRaw(txt,raw){return cryptoKeyFromRaw(raw).then(function(k){var iv=new Uint8Array(12);crypto.getRandomValues(iv);return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(String(txt))).then(function(buf){return PRIV_PREFIX+b64u(iv)+'.'+b64u(new Uint8Array(buf));});});}
-function decryptWithRaw(txt,raw){txt=String(txt||'');if(txt.indexOf(PRIV_PREFIX)!==0)return Promise.resolve(txt);var z=txt.slice(PRIV_PREFIX.length).split('.');if(z.length!==2)return Promise.reject(new Error('암호화 데이터 형식이 올바르지 않아요'));return cryptoKeyFromRaw(raw).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64u(z[0])},k,unb64u(z[1]));}).then(function(buf){return new TextDecoder().decode(buf);});}
-function rotatePrivacyKey(){
-  if(!Sync.uid||!Sync.sb){inAppToast('먼저 로그인해주세요');return;}
-  var uid=Sync.uid,oldRaw=privacyRaw(uid,false);if(!oldRaw){inAppToast('현재 복구키가 없어요');return;}
-  if(!confirm('새 복구키로 바꿀까요?\n\n현재 플래너와 서버 백업을 새 키로 다시 암호화합니다. 저장에 성공하기 전에는 기존 키를 바꾸지 않아요.'))return;
-  setSyncUI('saving');inAppToast('새 복구키로 안전하게 바꾸는 중…');
-  var a=new Uint8Array(32);crypto.getRandomValues(a);var newRaw=b64u(a),mainOld=null,snapsOld=[],mainNew=null,snapsNew=[];
-  Promise.all([
-    Sync.sb.from(SUPA_TABLE).select('json,updated_at').eq('user_id',uid).maybeSingle(),
-    Sync.sb.from('planner_snapshots').select('date,json,updated_at').eq('user_id',uid)
-  ]).then(function(rs){
-    if(rs[0].error)throw rs[0].error;if(rs[1].error)throw rs[1].error;
-    mainOld=rs[0].data||null;snapsOld=rs[1].data||[];
-    var mainPlain=mainOld?decryptWithRaw(mainOld.json,oldRaw):Promise.resolve(JSON.stringify(S));
-    return Promise.all([mainPlain,Promise.all(snapsOld.map(function(x){return decryptWithRaw(x.json,oldRaw);}))]);
-  }).then(function(pl){
-    return Promise.all([encryptWithRaw(pl[0],newRaw),Promise.all(pl[1].map(function(x){return encryptWithRaw(x,newRaw);} ))]);
-  }).then(function(en){
-    mainNew=en[0];snapsNew=en[1];
-    var upMain=Sync.sb.from(SUPA_TABLE).upsert({user_id:uid,json:mainNew,updated_at:Date.now()}).then(function(r){if(r.error)throw r.error;});
-    return upMain.then(function(){return Promise.all(snapsOld.map(function(x,i){return Sync.sb.from('planner_snapshots').upsert({user_id:uid,date:x.date,json:snapsNew[i],updated_at:x.updated_at||Date.now()}).then(function(r){if(r.error)throw r.error;});}));});
-  }).then(function(){
-    lsSet(privacyKeyName(uid),newRaw);Sync.keyNeeded=false;Sync.keyAsked=true;Sync.diag='';setSyncUI('ok');
-    try{prompt('새 복구키로 교체했어요.\n\n이 키를 안전한 곳에 저장해 주세요. 이전 키는 이제 사용하지 마세요.\n\n새 복구키:',newRaw);}catch(e){}
-    if(!M.type)render();
-  }).catch(function(err){
-    /* 일부 쓰기 뒤 실패했다면 가능한 범위에서 이전 암호문으로 되돌립니다. 로컬 키는 성공 전까지 절대 변경하지 않습니다. */
-    var jobs=[];if(mainOld)jobs.push(Sync.sb.from(SUPA_TABLE).upsert({user_id:uid,json:mainOld.json,updated_at:mainOld.updated_at||Date.now()}));
-    snapsOld.forEach(function(x){jobs.push(Sync.sb.from('planner_snapshots').upsert({user_id:uid,date:x.date,json:x.json,updated_at:x.updated_at||Date.now()}));});
-    Promise.all(jobs).finally(function(){Sync.diag=(err&&err.message)||String(err);setSyncUI('error');inAppToast('키 교체에 실패해서 기존 키를 그대로 유지했어요');if(!M.type)render();});
-  });
-}
 function privacyRecoveryKey(){if(!Sync.uid){inAppToast('먼저 로그인해주세요');return;}
   var show=function(v){try{prompt('이 복구키를 안전한 곳에 복사해 두세요.\n다른 기기에서 \'복구키 입력\'에 넣으면 돼요.\n운영자도 대신 복구할 수 없어요.',v);}catch(e){}};
   var have=privacyRaw(Sync.uid,false);if(have){show(have);return;}
@@ -3230,7 +3231,7 @@ function supaAttach(session){
   if(M.type==='login')closeModal();
   Sync.loading=true;if(!M.type)render(true);
   var myUid=Sync.uid;
-  pull().catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
+  restoreCurrentVault(myUid).catch(function(){return false;}).then(function(){return pull();}).catch(function(e){Sync.diag='계정 불러오기에 실패했어요. '+(e&&e.message||'');}).then(function(){
     if(Sync.uid!==myUid)return;
     Sync.loading=false;Sync.on=true;Sync.pulled=true;if(SyncUI.state!=='error')setSyncUI('ok');
     /* 예전 평문 클라우드 데이터는 현재 상태를 암호화해 다시 저장하고, 평문 스냅샷은 제거해요. */
@@ -4670,7 +4671,7 @@ function viewSettings(){
   var dataHTML='<section class="card"><div class="card-h"><h3>데이터</h3></div>'+
     '<div class="setrow"><span>저장 상태<small>'+syncTxt+'</small></span></div>'+
     '<div class="setrow"><span>백업·복원</span><button class="tbtn" data-act="backup">열기</button></div>'+
-    (Sync.uid?'<div class="setrow"><span>암호화 복구키<small>서버에는 저장되지 않아요</small></span><div style="display:flex;gap:6px"><button class="tbtn" data-act="privacy-key">보기</button><button class="tbtn" data-act="privacy-key-rotate">새 키 발급</button></div></div>':'')+
+    (Sync.uid?'<div class="setrow"><span>암호화 복구키<small>서버에는 저장되지 않아요</small></span><button class="tbtn" data-act="privacy-key">보기</button></div>':'')+
     '<div class="setrow"><span>시간표 비우기<small>수업·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
@@ -6151,7 +6152,6 @@ function act(a,e){
       $('#f-tdate-w').style.display=M.scope==='inbox'?'none':'';break;
     case 'clear-due':$('#f-due').value='';break;
     case 'privacy-key':privacyRecoveryKey();break;
-    case 'privacy-key-rotate':rotatePrivacyKey();break;
     case 'privacy-key-enter':enterPrivacyKey();break;
     case 'sync-retry':retrySync();break;
     case 'backup':openBackup();break;
