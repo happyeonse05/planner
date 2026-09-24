@@ -3272,9 +3272,9 @@ function applyTheme(){
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function supaReady(){return !!(/^https:\/\/.+/.test(SUPABASE_URL)&&SUPABASE_ANON_KEY.length>20&&window.supabase&&window.supabase.createClient);}
-/* ---------- 개인 플래너 클라이언트 암호화 ----------
-   암호화 키는 이 브라우저에만 저장하고 Supabase에는 보내지 않아요.
-   새 기기에서 암호화된 계정을 열면 복구키를 한 번 입력해야 해요. */
+/* ---------- 예전 암호화 데이터 호환 ----------
+   신규 저장은 이메일 계정 자동복구용 일반 JSON을 사용합니다.
+   과거 enc:v1 데이터는 기존 키가 있으면 해독하고, 키가 없지만 정상 로컬 사본이 있으면 안전 이전합니다. */
 var PRIV_PREFIX='enc:v1:';
 function b64u(bytes){var s='';bytes.forEach(function(b){s+=String.fromCharCode(b);});return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function unb64u(s){s=String(s||'').replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var x=atob(s),a=new Uint8Array(x.length);for(var i=0;i<x.length;i++)a[i]=x.charCodeAt(i);return a;}
@@ -3321,7 +3321,29 @@ function supaAdapter(sb,uid){
     get:function(){
       return sb.from(SUPA_TABLE).select('json,updated_at').eq('user_id',uid).maybeSingle().then(function(res){
         if(res.error)throw res.error;var row=res.data;if(!row)return {exists:false,data:function(){}};
-        return decryptCloudValue(row.json).then(function(plain){return {exists:true,data:function(){return {updatedAt:row.updated_at,json:plain};}};});
+        var raw=String(row.json||'');
+        /* 자동복구 전환: 서버가 예전 enc:v1 형식인데 이 기기에 옛 키가 없어도,
+           현재 기기에 정상 플래너가 보이면 그 사본을 기준으로 안전하게 새 형식으로 이전합니다.
+           덮어쓰기 직전 현재 사본과 예전 암호문을 기기에 별도 보관하고, 서버 재읽기로 검증합니다. */
+        if(raw.indexOf(PRIV_PREFIX)===0&&!privacyRaw(uid,false)&&hasPlannerData(S)){
+          try{
+            saveAccountState(uid,S);vaultPut(uid,S);bkRingAdd(S,true);
+            lsSet('planner.legacyCipher.'+uid,raw);
+            lsSet('planner.legacyCipherAt.'+uid,String(Date.now()));
+          }catch(_e){}
+          var plainNow=JSON.stringify(S),at=Math.max(Date.now(),+S.updatedAt||0,+row.updated_at||0);
+          return sb.from(SUPA_TABLE).upsert({user_id:uid,json:plainNow,updated_at:at}).then(function(w){
+            if(w.error)throw w.error;
+            return sb.from(SUPA_TABLE).select('json,updated_at').eq('user_id',uid).maybeSingle();
+          }).then(function(v){
+            if(v.error)throw v.error;
+            if(!v.data||String(v.data.json||'')!==plainNow)throw new Error('자동 이전 검증에 실패했어요. 기존 기기 데이터는 그대로 보관했어요.');
+            Sync.keyNeeded=false;Sync.needsPlainMigration=false;Sync.diag='';
+            lsSet('planner.autoMigrated.'+uid,String(Date.now()));
+            return {exists:true,data:function(){return {updatedAt:+v.data.updated_at||at,json:plainNow};}};
+          });
+        }
+        return decryptCloudValue(raw).then(function(plain){return {exists:true,data:function(){return {updatedAt:row.updated_at,json:plain};}};});
       });
     },
     set:function(v){
