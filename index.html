@@ -692,7 +692,7 @@ main{padding:0 14px 24px}
 .dpw,.dpg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .dpw span{text-align:center;font-size:11px;color:var(--sub);font-weight:700;padding:4px 0}
 .dpw .sun{color:#e5747a}.dpw .sat{color:#6f9bd6}
-.dpd{height:36px;border-radius:50%;font-size:14px;font-weight:600;text-align:center;position:relative;font-variant-numeric:tabular-nums;transition:background .12s}
+.dpd{width:36px;min-width:36px;height:36px;padding:0;border-radius:50%;font-size:14px;font-weight:600;text-align:center;position:relative;font-variant-numeric:tabular-nums;transition:background .12s;white-space:nowrap;word-break:keep-all;line-height:36px;justify-self:center;overflow:hidden}
 .dpd:hover{background:var(--soft)}
 .dpd.sun{color:#e5747a}.dpd.sat{color:#6f9bd6}
 .dpd.tdy::after{content:"";position:absolute;left:50%;bottom:4px;width:4px;height:4px;border-radius:50%;background:currentColor;transform:translateX(-50%)}
@@ -4939,7 +4939,7 @@ function profileHTML(){
   var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',initial=(n||'?').charAt(0);
   return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div>'+
     '<div class="profile-photo-row"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="프로필 사진">':esc(initial))+'</div><div class="profile-photo-actions"><label class="tbtn" style="display:grid;place-items:center;padding:0 12px">사진 선택<input type="file" accept="image/*" data-profile-photo hidden></label>'+(photo?'<button class="tbtn" data-act="profile-photo-remove">사진 삭제</button>':'')+'</div></div>'+
-    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div><div class="setrow"><span>내 출발 지역<small>지역이나 역을 입력해요. 예: 부산, 서울, 강남역, 수원역</small></span></div><input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="지역 또는 역 검색" value="'+esc(S.settings.homeStation||'')+'">'+originDatalist()+'<div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">좌표는 저장하지 않고 가까운 역 이름만 저장해요.</small></div><div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">저장</button></div></section>';
+    '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div>'+    '<div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile">이름 저장</button></div>'+    '<div class="setrow"><span>내 출발 지역<small>지역이나 역을 입력해요. 예: 부산, 서울, 강남역, 수원역</small></span></div>'+    '<input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="지역 또는 역 검색" value="'+esc(S.settings.homeStation||'')+'">'+originDatalist()+    '<div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">좌표는 저장하지 않고 가까운 역 이름만 저장해요.</small></div>'+    '<div class="acts" style="margin-top:10px"><button class="b-save" data-act="save-profile">출발 지역 저장</button></div></section>';
 }
 function syncProfileToCodes(){
   var sb=friendDb();if(!sb)return Promise.resolve();
@@ -6031,7 +6031,7 @@ function act(a,e){
       if(M.tpA!=null&&th>=M.tpA){$('#f-start').value=pad(M.tpA)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';M.tpA=null;}
       else{M.tpA=th;$('#f-start').value=pad(th)+':00';$('#f-end').value=th>=23?'23:59':pad(th+1)+':00';}
       $('#f-start').classList.remove('bad');$('#f-end').classList.remove('bad');drawTpick();break;}
-    case 'skip-once':case 'unskip-once':{var sc=S.classes.find(function(x){return x.id===id;});if(sc){var dkk=a.dataset.date;sc.skip=(sc.skip||[]).filter(function(z){return z!==dkk&&z>=dkey(addDays(new Date(),-60));});if(name==='skip-once')sc.skip.push(dkk);save();closeModal();render();}break;}
+    case 'skip-once':case 'unskip-once':{var sc=S.classes.find(function(x){return x.id===id;});if(sc){var dkk=a.dataset.date;sc.skip=(sc.skip||[]).filter(function(z){return z!==dkk;});if(name==='skip-once')sc.skip.push(dkk);save();closeModal();render();}break;}
     case 'add-dd':openDD(null,{date:a.dataset.date});break;
     case 'edit-dd':{var dx=S.ddays.find(function(y){return y.id===id;});if(dx)openDD(dx);break;}
     case 'save-dd':saveDD();break;
