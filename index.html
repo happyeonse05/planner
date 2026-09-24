@@ -78,7 +78,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .ttl small{display:block;color:var(--sub);font-size:12px;margin-top:2px;white-space:nowrap}
 .ibtn{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--soft);font-size:19px;line-height:1;flex:none;text-align:center}
 .tbtn{height:34px;padding:0 12px;border-radius:10px;background:var(--soft);font-size:13px;font-weight:600;flex:none;text-align:center}
-.plus{background:var(--ink);color:var(--bg)}
+.plus{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-scrolling:touch}
 .nav{flex:none;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px 8px 8px;border-top:1px solid var(--line);background:var(--card)}
 .nav button{padding:9px 0;border-radius:10px;font-size:13px;color:var(--sub);font-weight:600;text-align:center}
@@ -86,11 +86,11 @@ main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}
 .friendrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-.friendrow>div:first-child{min-width:0}.friendrow b,.friendrow small{display:block}.friendrow small{font-size:12px;color:var(--sub);margin-top:3px}.friendacts{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.friendacts .tbtn{height:30px;padding:0 8px;font-size:11px}.friendacts .tbtn.on{background:var(--ink);color:var(--bg)}.friend-plan{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.friend-plan small{color:var(--sub)}
+.friendrow>div:first-child{min-width:0}.friendrow b,.friendrow small{display:block}.friendrow small{font-size:12px;color:var(--sub);margin-top:3px}.friendacts{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.friendacts .tbtn{height:30px;padding:0 8px;font-size:11px}.friendacts .tbtn.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.friend-plan{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.friend-plan small{color:var(--sub)}
 .friend-plan-day{padding:10px 0;border-top:1px solid var(--line)}.friend-plan-day>b{display:block;margin-bottom:6px;font-size:14px}.friend-plan-item{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border-radius:8px;background:var(--soft);margin-top:4px;font-size:13px}.friend-plan-item small{color:var(--sub);white-space:nowrap}
-.memory-lines{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 10px}.memory-lines button,.station-grid button{height:32px;padding:0 9px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.memory-lines button.on,.station-grid button.on{background:var(--ink);color:var(--bg)}.station-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:210px;overflow:auto;margin-bottom:12px}.station-grid button{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.memory-card{padding:10px;border-radius:12px;background:var(--soft);margin:7px 0}.memory-card b,.memory-card small{display:block}.memory-card small{color:var(--sub);margin-top:4px;line-height:1.45}.memory-empty{padding:14px 0;color:var(--sub);font-size:13px}
-.place-search{display:flex;gap:7px;margin:8px 0}.place-search .fld{margin:0}.place-results{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 12px}.place-result{padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-result.on{background:var(--ink);color:var(--bg)}
-.memory-banners{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:6px 0 12px;padding-bottom:2px}.memory-banners::-webkit-scrollbar{display:none}.memory-banner{flex:none;max-width:230px;padding:9px 12px;border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 18%,var(--edge));font-size:12px;line-height:1.35}.memory-banner b{display:block;font-size:13px;margin-bottom:2px}.meet-history{padding:10px 12px;border-radius:14px;background:var(--soft);font-size:13px;margin:0 0 12px}.meet-history b{font-size:14px}.place-mode{display:flex;gap:6px;margin:0 0 8px}.place-mode button{padding:7px 11px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-mode button.on{background:var(--ink);color:var(--bg)}
+.memory-lines{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 10px}.memory-lines button,.station-grid button{height:32px;padding:0 9px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.memory-lines button.on,.station-grid button.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.station-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:210px;overflow:auto;margin-bottom:12px}.station-grid button{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.memory-card{padding:10px;border-radius:12px;background:var(--soft);margin:7px 0}.memory-card b,.memory-card small{display:block}.memory-card small{color:var(--sub);margin-top:4px;line-height:1.45}.memory-empty{padding:14px 0;color:var(--sub);font-size:13px}
+.place-search{display:flex;gap:7px;margin:8px 0}.place-search .fld{margin:0}.place-results{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 12px}.place-result{padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-result.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
+.memory-banners{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:6px 0 12px;padding-bottom:2px}.memory-banners::-webkit-scrollbar{display:none}.memory-banner{flex:none;max-width:230px;padding:9px 12px;border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 18%,var(--edge));font-size:12px;line-height:1.35}.memory-banner b{display:block;font-size:13px;margin-bottom:2px}.meet-history{padding:10px 12px;border-radius:14px;background:var(--soft);font-size:13px;margin:0 0 12px}.meet-history b{font-size:14px}.place-mode{display:flex;gap:6px;margin:0 0 8px}.place-mode button{padding:7px 11px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}.place-mode button.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 .postmeet{margin:10px 0;padding:13px 14px;border-radius:16px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid var(--edge)}.postmeet b{display:block;font-size:14px}.postmeet small{display:block;color:var(--sub);margin:4px 0 10px}.postmeet .acts{margin:0}.postmeet .acts button{height:38px;font-size:13px}.pwrow{display:flex;align-items:center;gap:6px;margin:8px 0}.pwrow .fld{margin:0;flex:1}.pw-eye{width:42px;height:42px;border-radius:11px;background:var(--soft);display:grid;place-items:center}.pw-eye svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
 .fav img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}.profile-photo-row{display:flex;align-items:center;gap:12px;margin:6px 0 12px}.profile-photo{width:64px;height:64px;border-radius:50%;background:var(--soft);overflow:hidden;display:grid;place-items:center;font-size:24px;font-weight:800;flex:none}.profile-photo img{width:100%;height:100%;object-fit:cover}.profile-photo-actions{display:flex;gap:6px;flex-wrap:wrap}.region-path{padding:9px 11px;border-radius:10px;background:var(--soft);font-size:12px;color:var(--sub);margin:0 0 10px}.region-path b{color:var(--ink)}
 .gsearch{display:flex;align-items:center;gap:8px;margin:0 0 12px}.gsearch input{flex:1;min-width:0;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px}.gsearch input:focus{border-color:var(--accent);outline:none}.gsearch-close{height:36px;padding:0 10px;border-radius:10px;background:var(--soft);font-size:13px;font-weight:600;flex:none}.gresult-count{font-size:12px;color:var(--sub);margin:0 2px 8px}.gresults{display:flex;flex-direction:column;gap:6px;max-height:58vh;overflow-y:auto}.gresult{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;background:var(--soft);text-align:left}.gresult:active{background:var(--line)}.gresult-type{flex:none;min-width:44px;color:var(--sub);font-size:11px;font-weight:700}.gresult-main{min-width:0;flex:1}.gresult-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700}.gresult-meta{display:block;margin-top:3px;color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gresult-arrow{flex:none;color:var(--sub);font-size:17px}
@@ -100,7 +100,7 @@ main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-
 .fc-top .tbtn{height:30px;padding:0 10px;font-size:12px}.fc-pin{border-radius:999px;color:var(--sub)}.fc-pin.on{color:var(--star)}
 .fc-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.fc-main .tbtn{height:38px;padding:0 4px;font-size:13px}.fc-main .tbtn.pri{background:var(--accent);color:var(--accent-ink)}
 .fc-share{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--sub);flex-wrap:wrap}
-.chipt{white-space:nowrap;height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:12px;font-weight:600;color:var(--sub)}.chipt.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}.chipt.on::before{content:'✓ '}
+.chipt{white-space:nowrap;height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:12px;font-weight:600;color:var(--sub)}.chipt.on{background:var(--planner-color);border-color:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.chipt.on::before{content:'✓ '}
 .fc-rm{margin-left:auto;height:28px;padding:0 4px;background:none;border:0;font-size:12px;color:var(--sub);text-decoration:underline}.fc-rm.armed{color:var(--now)}
 .fsec{font-size:12px;font-weight:700;color:var(--sub);margin:14px 0 2px}
 .codebox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-radius:14px;background:var(--soft);margin:8px 0}.codebox small{display:block;font-size:12px;color:var(--sub)}.codebox .code{font-size:20px;font-weight:800;letter-spacing:.12em;font-variant-numeric:tabular-nums}
@@ -227,7 +227,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .tag{font-style:normal;font-size:11px;color:var(--sub);background:var(--soft);border-radius:6px;padding:1px 6px;margin-left:6px;white-space:nowrap;text-decoration:none;display:inline-block}
 .star{flex:none;font-size:18px;color:var(--line);line-height:1;padding:2px;text-align:center}
 .star.on{color:var(--star)}
-.mini{flex:none;font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px;background:var(--soft);text-align:center}.mini.on{background:var(--ink);color:var(--bg)}.mini:disabled{opacity:.48;cursor:not-allowed}
+.mini{flex:none;font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px;background:var(--soft);text-align:center}.mini.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.mini:disabled{opacity:.48;cursor:not-allowed}
 .tododel{width:24px;height:24px;padding:0;border-radius:50%;font-size:16px;line-height:24px;color:var(--sub)}
 .empty{color:var(--sub);font-size:13px;padding:8px 2px}
 .bar{height:5px;border-radius:3px;background:var(--soft);overflow:hidden;margin:0 2px 4px}
@@ -235,7 +235,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .add{display:flex;gap:8px;margin-top:8px}
 .add input{flex:1;min-width:0;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px}
 .add input:focus{border-color:var(--accent);outline:none}
-.add button{height:42px;padding:0 15px;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;text-align:center}
+.add button{height:42px;padding:0 15px;border-radius:12px;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);font-weight:700;font-size:14px;text-align:center}
 .memo{width:100%;min-height:96px;resize:vertical;border:0;border-radius:12px;background:var(--bg);padding:10px 12px;font-size:16px;line-height:1.5}
 .memo:focus{outline:2px solid var(--accent)}
 .memo-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -289,12 +289,12 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .sw.on{box-shadow:0 0 0 2px var(--ink)}
 .seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .seg button{padding:7px 13px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:600;color:var(--sub);text-align:center}
-.seg button.on{background:var(--ink);color:var(--bg)}
+.seg button.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 .ck{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 2px 14px}
 .ck input{width:18px;height:18px;accent-color:var(--accent)}
 .acts{display:flex;gap:8px;margin-top:6px}
 .acts button{flex:1;height:44px;border-radius:12px;font-weight:700;font-size:15px;text-align:center}
-.b-save{background:var(--ink);color:var(--bg)}
+.b-save{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 .b-ghost{background:var(--soft)}
 .b-del{background:var(--soft);color:#c9524a;flex:0 0 auto!important;padding:0 16px}
 .b-del.armed{background:#c9524a;color:#fff}
@@ -545,7 +545,7 @@ main{padding:0 14px 24px}
 .fseg{justify-content:center;margin-bottom:auto}
 .fseg button:disabled{opacity:.4}
 .factions{width:100%;display:flex;gap:10px;margin-top:24px}
-.fbig{flex:1;height:54px;border-radius:16px;background:var(--ink);color:var(--bg);font-size:16px;font-weight:700;text-align:center}
+.fbig{flex:1;height:54px;border-radius:16px;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);font-size:16px;font-weight:700;text-align:center}
 .fbig.ghost{background:var(--soft);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.rbar{transition:none}}
 
@@ -562,7 +562,7 @@ main{padding:0 14px 24px}
 .home>div{display:block}
 .hrow1{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
 .hbar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:8px}
-.hbar i{display:block;height:100%;border-radius:4px;background:var(--ink);transition:width .3s}
+.hbar i{display:block;height:100%;border-radius:4px;background:var(--planner-color);transition:width .3s}
 @media (prefers-reduced-motion:reduce){.hbar i{transition:none}}
 
 .flate{font-size:13px!important;margin:0 0 6px!important}
@@ -592,7 +592,7 @@ main{padding:0 14px 24px}
 .chatrow{width:100%;border-bottom:0;text-align:left}
 .chatrow .chev{font-size:22px;color:var(--sub);flex:none}
 .chatpage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}
-.chatrooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:2px 0 8px}.chatroom{min-height:44px;padding:8px 11px;border-radius:12px;background:var(--soft);color:var(--sub);font-size:13px;font-weight:600;white-space:normal;text-align:left;overflow:hidden;text-overflow:ellipsis}.chatroom.on{background:var(--ink);color:var(--bg)}.chatroom.addroom{min-height:44px;padding:0;font-size:20px;text-align:center;color:var(--ink)}
+.chatrooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:2px 0 8px}.chatroom{min-height:44px;padding:8px 11px;border-radius:12px;background:var(--soft);color:var(--sub);font-size:13px;font-weight:600;white-space:normal;text-align:left;overflow:hidden;text-overflow:ellipsis}.chatroom.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.chatroom.addroom{min-height:44px;padding:0;font-size:20px;text-align:center;color:var(--ink)}
 .chat-archive{padding:9px 0 2px;border-top:1px solid var(--line)}.chat-archive-title{font-size:12px;color:var(--sub);margin:0 2px 7px}.chat-archive-list{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.chat-archive-list::-webkit-scrollbar{display:none}.chat-archive button{flex:none;height:30px;padding:0 11px;border:1px dashed var(--line);border-radius:15px;background:transparent;color:var(--sub);font-size:12px;white-space:nowrap}
 .clist{flex:1;overflow-y:auto;padding:12px 2px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
 .cdate{align-self:center;font-size:12px;color:var(--sub);background:var(--soft);border-radius:999px;padding:3px 10px;margin:10px 0 4px}
@@ -618,7 +618,7 @@ main{padding:0 14px 24px}
 .chat-pending{display:flex;gap:6px;overflow-x:auto;padding:6px 0 0}
 .chat-pending img{width:46px;height:46px;object-fit:cover;border-radius:8px}
 .cinput textarea:focus{outline:2px solid var(--ink)}
-.csend{flex:none;width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.csend{flex:none;width:42px;height:42px;border-radius:50%;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);display:grid;place-items:center}
 
 .ddbar{display:flex;gap:6px;overflow-x:auto;margin:10px 0 0;padding-bottom:2px;scrollbar-width:none}
 .ddbar::-webkit-scrollbar{display:none}
@@ -745,7 +745,7 @@ main{padding:0 14px 24px}
 
 .share-preview{padding:12px;border:1px solid var(--edge);border-radius:16px;background:var(--soft);margin:10px 0}.share-preview-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}.share-preview-head .profile-photo{width:42px;height:42px}.share-preview-badges{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 10px}.share-preview-badges span{font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:var(--card);border:1px solid var(--edge)}.share-preview-private{font-size:12px;color:var(--sub);padding:8px 10px;border-radius:12px;background:var(--card)}.share-preview .friend-plan-day{background:var(--card)}
 
-.place-candidates{margin:10px 0}.place-candidates .candrow{display:flex;gap:6px;margin:6px 0}.place-candidates .candrow input{margin:0}.candidate-picks{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.candidate-pick{padding:8px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--edge);font-size:12px;font-weight:750}.candidate-pick.on{background:var(--ink);color:var(--bg)}.relation-summary{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:8px 0 12px}.relation-summary::-webkit-scrollbar{display:none}.relation-chip{flex:none;padding:9px 11px;border-radius:14px;background:var(--soft);font-size:12px}.relation-chip b{display:block;font-size:14px}.appt-check{margin:10px 0;padding:12px 13px;border-radius:16px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid var(--edge)}.appt-check b{display:block}.appt-check small{display:block;color:var(--sub);margin-top:3px}.appt-check .acts{margin-top:8px}
+.place-candidates{margin:10px 0}.place-candidates .candrow{display:flex;gap:6px;margin:6px 0}.place-candidates .candrow input{margin:0}.candidate-picks{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.candidate-pick{padding:8px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--edge);font-size:12px;font-weight:750}.candidate-pick.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.relation-summary{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:8px 0 12px}.relation-summary::-webkit-scrollbar{display:none}.relation-chip{flex:none;padding:9px 11px;border-radius:14px;background:var(--soft);font-size:12px}.relation-chip b{display:block;font-size:14px}.appt-check{margin:10px 0;padding:12px 13px;border-radius:16px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid var(--edge)}.appt-check b{display:block}.appt-check small{display:block;color:var(--sub);margin-top:3px}.appt-check .acts{margin-top:8px}
 
 /* ===== 날짜 줄바꿈 방지 ===== */
 .tl-h{flex-wrap:wrap;row-gap:6px}.tl-acts{margin-left:auto;display:flex;gap:6px;flex:none}.tl-acts .tbtn+.tbtn{margin-left:0}.tl-h b,.tl-h span{white-space:nowrap}
@@ -762,7 +762,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 }
 .region-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
 .region-chips button{height:32px;padding:0 12px;border-radius:999px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 55%,var(--card));border:1px solid color-mix(in srgb,var(--planner-color,#dce9f7) 80%,var(--edge));font-size:13px;font-weight:700;color:var(--ink)}
-.region-chips button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.region-chips button.on{background:var(--planner-color);border-color:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 .pp-tabs{margin:0 0 8px}
 #pp.bad{outline:2px solid var(--now);outline-offset:4px;border-radius:12px}
 .pp-sel{display:flex;align-items:center;gap:8px;padding:10px 8px 10px 12px;border-radius:14px;background:var(--soft);font-size:14px;font-weight:700;margin:4px 0 8px}
@@ -786,7 +786,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .fav-lg{width:46px;height:46px;font-size:18px}
 .meet-head .fav{width:44px;height:44px}
 .candidate-pick em{font-style:normal;font-weight:600;font-size:11px;opacity:.75;margin-left:6px}
-.candidate-pick.final{background:var(--ink);color:var(--bg)}
+.candidate-pick.final{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 .appt-list{list-style:none;padding:0;margin:8px 0 0;font-size:13px}
 .appt-list li{padding:3px 0 3px 18px;position:relative;color:var(--ink)}
 .appt-list li::before{content:'✓';position:absolute;left:0;color:var(--sub);font-size:12px}
@@ -3484,7 +3484,7 @@ function streakTxt(r){
 function todayClose(){var k=todayKey();return (S.dayCloses||[]).find(function(x){return x.key===k;})||null;}
 function dayCloseStats(k){var d=parseKey(k),todos=S.todos.filter(function(t){return t.scope==='day'&&t.key===k;}),rr=routinesFor(d),done=todos.filter(function(t){return t.done;}).length+rr.filter(function(r){return routineDone(r,k);}).length,total=todos.length+rr.length,classes=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped;}).length,focus=S.focus[k]||0;return {done:done,total:total,classes:classes,focus:focus};}
 function dayCloseBanner(){var h=new Date().getHours(),c=todayClose();if(h<17&&!c)return '';return '<button class="dayclose-banner" data-act="open-day-close"><span><b>'+(c?'오늘 마감 완료':'하루 마감')+'</b><small>'+(c?'오늘 기록을 다시 볼 수 있어요':'오늘 한 일을 한 번에 정리해요')+'</small></span><span class="chev">›</span></button>';}
-function openDayClose(){var k=todayKey(),st=dayCloseStats(k),c=todayClose(),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt))===k;}),mins=Math.round((st.focus||0)/60000);M={type:'day-close'};openModal('<h3>하루 마감</h3><div class="close-summary"><div><b>'+st.done+'/'+st.total+'</b><small>할 일</small></div><div><b>'+st.classes+'</b><small>수업</small></div><div><b>'+mins+'분</b><small>집중</small></div></div><p class="hint">'+(di.length?'10분 일기 '+di.length+'개도 오늘 기록에 함께 남아 있어요.':'오늘 기록을 이 상태로 마감해요.')+'</p><span class="lbl">오늘을 한 단어로 표현하면?</span><input class="fld" id="f-close-word" maxlength="12" placeholder="예: 뿌듯, 정신없음, 몰입" value="'+esc(c&&c.word||'')+'"><textarea class="memo" id="f-close-note" placeholder="더 남기고 싶은 말 · 선택사항">'+esc(c&&c.note||'')+'</textarea><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="save-day-close">'+(c?'다시 저장':'오늘 마감')+'</button></div>');}
+function openDayClose(){var k=todayKey(),st=dayCloseStats(k),c=todayClose(),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt))===k;}),mins=Math.round((st.focus||0)/60000);M={type:'day-close'};openModal('<h3>하루 마감</h3><div class="close-summary"><div><b>'+st.done+'/'+st.total+'</b><small>할 일</small></div><div><b>'+st.classes+'</b><small>수업</small></div><div><b>'+mins+'분</b><small>집중</small></div></div><p class="hint">'+(di.length?diaryTargetMinutes()+'분 일기 '+di.length+'개도 오늘 기록에 함께 남아 있어요.':'오늘 기록을 이 상태로 마감해요.')+'</p><span class="lbl">오늘을 한 단어로 표현하면?</span><input class="fld" id="f-close-word" maxlength="12" placeholder="예: 뿌듯, 정신없음, 몰입" value="'+esc(c&&c.word||'')+'"><textarea class="memo" id="f-close-note" placeholder="더 남기고 싶은 말 · 선택사항">'+esc(c&&c.note||'')+'</textarea><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="save-day-close">'+(c?'다시 저장':'오늘 마감')+'</button></div>');}
 function saveDayClose(){var k=todayKey(),st=dayCloseStats(k),note=$('#f-close-note')?$('#f-close-note').value.trim():'',word=$('#f-close-word')?$('#f-close-word').value.trim():'',arr=S.dayCloses||(S.dayCloses=[]),old=arr.find(function(x){return x.key===k;}),obj={key:k,finishedAt:Date.now(),word:word,note:note,done:st.done,total:st.total,classes:st.classes,focus:st.focus};if(old)Object.assign(old,obj);else arr.push(obj);save();closeModal();render();inAppToast('오늘 마감했어요');}
 function examPrep(x){return Array.isArray(x&&x.prep)?x.prep:[];}
 function examPrepProgress(x){var a=examPrep(x),done=a.filter(function(t){return t.done;}).length;return {done:done,total:a.length,pct:a.length?Math.round(done/a.length*100):0};}
@@ -3496,10 +3496,10 @@ function homeStrip(){
   var ne=S.exams.filter(function(x){return (x.end||x.start)>=k;}).sort(function(a,b){return String(a.start).localeCompare(String(b.start));})[0];
   var pct=tot?Math.round(dn/tot*100):0, ep=ne?examPrepProgress(ne):{done:0,total:0,pct:0};
   var nextCard=nc?'<button class="next-class" style="--c:'+esc(nc.color||S.settings.defColor||'#dce9f7')+'" data-act="course-todos" data-name="'+esc(nc.name)+'"><span><small>'+(nc.start<=now&&nc.end>now?'지금 수업 중':'다음 수업')+' · '+timeShort(fmt(nc.start))+'–'+timeShort(fmt(nc.end))+'</small><b>'+esc(nc.name)+'</b>'+(nc.sub?'<small>'+esc(nc.sub)+'</small>':'')+'</span><i class="chev">›</i></button>':'';
-  var todo='<div class="home-line"><span><small>'+(hour>=17?'남은 할 일':'오늘 할 일')+'</small><b>'+dn+'/'+tot+'</b></span><em>'+pct+'%</em></div><div class="hbar" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>';
-  var exam=ne?'<button class="home-line home-exam" data-act="edit-exam" data-id="'+esc(ne.id)+'"><span><small>가까운 시험</small><b>'+esc(ne.name)+'</b></span><em>'+(diffDays(ne.start)>0?'D-'+diffDays(ne.start):(diffDays(ne.start)===0?'오늘':'진행 중'))+(ep.total?' · '+ep.done+'/'+ep.total:'')+' ›</em></button>':'<div class="home-line"><span><small>가까운 시험</small><b>없음</b></span></div>';
-  var evening=hour>=17?'<div class="home-evening"><button data-act="open-diary">10분 일기</button><span></span><button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+'</button></div>':'';
-  return '<section class="home home-clean"><div class="home-main">'+nextCard+todo+exam+evening+'</div><button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
+  var todo=S.settings.showNextTodo===false?'':('<div class="home-line"><span><small>'+(hour>=17?'남은 할 일':'오늘 할 일')+'</small><b>'+dn+'/'+tot+'</b></span><em>'+pct+'%</em></div><div class="hbar" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>');
+  var exam='';
+  var evening=hour>=17?'<div class="home-evening"><button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span><button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+'</button></div>':'';
+  return '<section class="home home-clean"><div class="home-main">'+nextCard+todo+evening+'</div><button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
 }
 function askReminderPermission(){
   if(!('Notification' in window)){S.settings.remindOn=false;save();render();return;}
@@ -3876,7 +3876,7 @@ function updateNow(){
 }
 
 
-function monthReviewHTML(d){var pre=mkey(d),cl=(S.dayCloses||[]).filter(function(x){return x.key&&x.key.slice(0,7)===pre;}),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt)).slice(0,7)===pre;}),words=cl.map(function(x){return (x.word||'').trim();}).filter(Boolean),focus=cl.reduce(function(a,x){return a+(x.focus||0);},0),done=cl.reduce(function(a,x){return a+(x.done||0);},0),total=cl.reduce(function(a,x){return a+(x.total||0);},0);if(!cl.length&&!di.length)return '';return '<div class="month-review"><b>'+ (d.getMonth()+1)+'월 회고</b><small>하루 마감 '+cl.length+'일 · 10분 일기 '+di.length+'개'+(total?' · 할 일 '+done+'/'+total:'')+(focus?' · 집중 '+durLong(focus):'')+'</small>'+(words.length?'<div class="month-words">'+words.slice(-12).map(function(w){return '<span>'+esc(w)+'</span>';}).join('')+'</div>':'')+'</div>';}
+function monthReviewHTML(d){var pre=mkey(d),cl=(S.dayCloses||[]).filter(function(x){return x.key&&x.key.slice(0,7)===pre;}),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt)).slice(0,7)===pre;}),words=cl.map(function(x){return (x.word||'').trim();}).filter(Boolean),focus=cl.reduce(function(a,x){return a+(x.focus||0);},0),done=cl.reduce(function(a,x){return a+(x.done||0);},0),total=cl.reduce(function(a,x){return a+(x.total||0);},0);if(!cl.length&&!di.length)return '';return '<div class="month-review"><b>'+ (d.getMonth()+1)+'월 회고</b><small>하루 마감 '+cl.length+'일 · '+diaryTargetMinutes()+'분 일기 '+di.length+'개'+(total?' · 할 일 '+done+'/'+total:'')+(focus?' · 집중 '+durLong(focus):'')+'</small>'+(words.length?'<div class="month-words">'+words.slice(-12).map(function(w){return '<span>'+esc(w)+'</span>';}).join('')+'</div>':'')+'</div>';}
 
 /* ---------- 화면: 월간 ---------- */
 function viewMonth(){
@@ -4075,7 +4075,7 @@ function schoolInfoCard(){
  var p=schoolProfile(S.settings.school),camp=canonicalCampus(p.id,S.settings.schoolCampus),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
   var links=schoolLinks(p.id,camp).concat(custom);
   var checked=S.settings.schoolLastChecked?new Date(S.settings.schoolLastChecked):null,sub=checked?'마지막 확인 '+(checked.getMonth()+1)+'/'+checked.getDate()+' '+pad(checked.getHours())+':'+pad(checked.getMinutes()):'공식 사이트에서 최신 내용을 확인해요';
-  return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div><button class="tbtn" data-act="open-settings">설정</button></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
+  if(S.settings.showSchoolLinks===false)return ''; return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
 }
 function viewDay(){
   var d=U.date,k=dkey(d),tk=dkey(new Date());
@@ -4357,6 +4357,8 @@ function viewSettings(){
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div><div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
     '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
+    '<div class="setrow"><span>홈 학교 링크<small>학교 홈페이지·공지·식단 바로가기</small></span><button class="tbtn" data-act="toggle-home-school">'+(S.settings.showSchoolLinks===false?'꺼짐':'켜짐')+'</button></div>'+
+    '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드의 할 일 진행률</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>배경<small>이름 기본 색과 같은 색으로 보여요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','핑크 땡땡이'],['white','흰 바탕 핑크 땡땡이'],['beige','베이지 땡땡이']].map(function(x){
       var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';
       return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+ 
