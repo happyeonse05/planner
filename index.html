@@ -80,7 +80,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .tbtn{height:34px;padding:0 12px;border-radius:10px;background:var(--soft);font-size:13px;font-weight:600;flex:none;text-align:center}
 .plus{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
 main{flex:1;min-height:0;overflow-y:auto;padding:2px 12px 20px;-webkit-overflow-scrolling:touch}
-.nav{flex:none;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px 8px 8px;border-top:1px solid var(--line);background:var(--card)}
+.nav{flex:none;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:6px 8px 8px;border-top:1px solid var(--line);background:var(--card)}
 .nav button{padding:9px 0;border-radius:10px;font-size:13px;color:var(--sub);font-weight:600;text-align:center}
 .nav button.on{background:var(--soft);color:var(--ink)}
 
@@ -344,6 +344,9 @@ main{padding:0 14px 24px}
 .nav{background:var(--bg);border-top:1px solid var(--line);gap:2px;padding:6px 8px 8px}
 .nav button{color:var(--sub);font-weight:600}
 .nav button.on{background:transparent;color:var(--ink);font-weight:800}
+.nav button{position:relative;white-space:nowrap}
+.nav .navdot{position:absolute;top:6px;right:calc(50% - 20px);width:7px;height:7px;border-radius:50%;background:var(--now)}
+@media (max-width:360px){.nav button{font-size:12px}}
 .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:14px;box-shadow:none}
 .card-h h3{font-size:16px}
 .card.warn{background:var(--card);border-color:color-mix(in srgb,var(--now) 40%,var(--edge))}
@@ -947,6 +950,11 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .friend-list-tail{margin-left:auto;font-size:22px;color:var(--sub);white-space:nowrap}
 .friend-detail-card .fc-top{padding:4px 0 14px}.friend-detail-actions{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:8px;margin-top:8px}.friend-detail-actions>*{height:44px}.detail-share{padding-top:4px}.danger-row{color:var(--now)}
 
+.gapfill{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px;max-height:46vh;overflow-y:auto}
+.gapfill-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;background:var(--soft);font-size:14px;font-weight:600;text-align:left}
+.gapfill-row span{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis}
+.gapfill-row b{flex:none;font-size:12px;color:var(--sub);font-weight:700;font-variant-numeric:tabular-nums}
+.gapfill-home{cursor:pointer}.gapfill-home em{color:var(--ink)!important;font-weight:700}
 </style>
 </head>
 <body>
@@ -1228,7 +1236,7 @@ var DEFAULT_CLASSES=[];
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -2066,7 +2074,7 @@ function createLink(){
   if(msg)msg.textContent='만드는 중…';
   sb.from('planner_meet_links').insert({owner_id:Sync.uid,payload:payload,status:'open'}).select().single().then(function(r){
     if(r.error)throw r.error;LinkSync.links.unshift(r.data);LinkSync.answers[r.data.token]=[];openLinkShare(r.data.token,true);
-  }).catch(function(e){if(msg)msg.textContent=(/does not exist|schema cache|Could not find/i.test(e&&e.message||'')?'Supabase에서 planner-friends.sql을 한 번 더 실행해주세요. ':'링크를 만들지 못했어요. ')+'('+(e&&e.message||'')+')';});
+  }).catch(function(e){if(msg)msg.textContent=userMsg('링크를 만들지 못했어요. 잠시 뒤 다시 해주세요.',(/does not exist|schema cache|Could not find/i.test(e&&e.message||'')?'Supabase에서 planner-friends.sql을 한 번 더 실행해주세요. ':'링크를 만들지 못했어요. ')+'('+(e&&e.message||'')+')');});
 }
 function linkShareText(l){var p=l.payload||{};return (p.ownerName||'친구')+'님이 '+(p.what?'“'+p.what+'” ':'약속 ')+'시간을 물어봐요! 되는 시간 눌러줘 👉 '+linkUrl(l.token);}
 function openLinkShare(t,fresh){
@@ -2195,7 +2203,7 @@ function setMemoryPhoto(file,memId){
     if(!memId){M.mphoto=url;drawFriendMemories();return;}
     var row=(FriendSync.memories||[]).find(function(x){return x.id===memId;}),sb=friendDb();
     if(!row||!sb){var lr=(S.settings.friendMemories||[]).find(function(x){return x.id===memId;});if(lr){lr.photo=url;save();drawFriendMemories();}return;}
-    sb.from('planner_friend_memories').update({photo:url}).eq('id',memId).then(function(r){if(r.error)throw r.error;row.photo=url;drawFriendMemories();inAppToast('사진을 넣었어요');}).catch(function(e){inAppToast(/photo|column/i.test(e&&e.message||'')?'사진 칸이 서버에 없어요. planner-friends.sql을 실행해주세요':'사진을 저장하지 못했어요');});
+    sb.from('planner_friend_memories').update({photo:url}).eq('id',memId).then(function(r){if(r.error)throw r.error;row.photo=url;drawFriendMemories();inAppToast('사진을 넣었어요');}).catch(function(e){inAppToast(userMsg('사진을 저장하지 못했어요. 잠시 뒤 다시 해주세요',/photo|column/i.test(e&&e.message||'')?'사진 칸이 서버에 없어요. planner-friends.sql을 실행해주세요':(e&&e.message)));});
   });
 }
 /* ----- 우리 추억 리포트 (인스타 스토리용 이미지) ----- */
@@ -2352,9 +2360,11 @@ function openFriendPlanner(id){
   var trow=row('timetable'),erow=row('exam'),crow=row('calendar'),label=friendLabel(f);
   var tt=trow&&trow.payload,exams=erow&&erow.payload,cal=f.inCalendar&&crow?crow.payload:null;
   var html='<h3>'+esc(label)+'님 플래너</h3><p class="hint">친구가 공개한 항목만 보여요.</p><div class="share-preview">'+friendViewHTML({name:label,photo:f.photo,sub:lastMetInfo(id),tt:tt,exams:exams,cal:cal})+'</div>';
-  openModal(html+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="friend-meet" data-id="'+esc(id)+'">약속 잡기</button></div>');
+  openModal(html+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button>'+(S.settings.showMeetMaker===false?'':'<button class="b-save" data-act="friend-meet" data-id="'+esc(id)+'">약속 잡기</button>')+'</div>');
 }
-function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if(U.tab==='settings'&&!M.type)render();}
+function friendNote(t){FriendSync.msg=t||'';FriendSync.error='';if((U.tab==='settings'||U.tab==='friends')&&!M.type)render();}
+var DEV_MODE=(function(){try{return /[?&]debug\b/.test(location.search)||localStorage.getItem('planner.debug')==='1';}catch(e){return false;}})();
+function userMsg(friendly,dev){if(dev)try{console.warn('[planner]',dev);}catch(e){}return DEV_MODE&&dev?dev:friendly;}
 function friendPayload(kind){
   var cp=function(a){return (a||[]).map(function(e){return Object.assign({},e);});};
   if(kind==='profile')return {name:(S.settings.profileName||'').trim(),photo:S.settings.profilePhoto||'',homeStation:S.settings.homeStation||''};
@@ -2431,7 +2441,7 @@ function friendLoad(){
         return x.kind==='calendar'?f.inCalendar:(x.kind==='planner'&&f.inPlanner);
       });
     });
-  }).then(function(){FriendSync.loaded=true;var ch=JSON.stringify([(S.settings.profileName||'').trim(),(S.settings.profilePhoto||'').length,S.settings.homeStation||'']);if(lsGet('planner.codeSync.'+Sync.uid)!==ch)syncProfileToCodes().then(function(r){if(!r||!r.error)lsSet('planner.codeSync.'+Sync.uid,ch);},function(){});return friendBusyLoad().then(friendLoadMemories);}).then(function(){return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if(U.tab==='settings'&&!M.type)render();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. friend-sharing-schema.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. friend-sharing-schema.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')';if(U.tab==='settings'&&!M.type)render();});
+  }).then(function(){FriendSync.loaded=true;var ch=JSON.stringify([(S.settings.profileName||'').trim(),(S.settings.profilePhoto||'').length,S.settings.homeStation||'']);if(lsGet('planner.codeSync.'+Sync.uid)!==ch)syncProfileToCodes().then(function(r){if(!r||!r.error)lsSet('planner.codeSync.'+Sync.uid,ch);},function(){});return friendBusyLoad().then(friendLoadMemories);}).then(function(){return friendPush();}).then(function(){return friendRequestLoad();}).then(function(){if((U.tab==='settings'||U.tab==='friends')&&!M.type)render();else if(!M.type)$('#nav').innerHTML=navHTML();}).catch(function(e){FriendSync.loaded=false;var em=(e&&(e.message||e.details||e.hint||e.code))||String(e||'');FriendSync.error=userMsg('친구 정보를 불러오지 못했어요. 잠시 뒤 다시 열어주세요.',(/does not exist|schema cache|Could not find/i.test(em)?'Supabase에 친구 기능용 표가 아직 없어요. friend-sharing-schema.sql을 실행해주세요.':/permission denied|row-level security|42501/i.test(em)?'표는 있는데 권한 설정이 막혀 있어요. friend-sharing-schema.sql을 다시 실행해주세요.':'친구 연동 중 오류가 났어요.')+' (자세히: '+em+')');if((U.tab==='settings'||U.tab==='friends')&&!M.type)render();});
 }
 function friendLoadMemories(){
   var sb=friendDb();if(!sb||!FriendSync.friends.length){FriendSync.memories=[];return Promise.resolve();}
@@ -2479,7 +2489,7 @@ function saveFriendMemory(){
   var photo=M.mphoto||'';var reset=function(){M.pp=ppNew(null,{friendId:id});M.mplace='';M.mwhat='';M.mphoto='';M.memoryDate=dkey(new Date());drawFriendMemories();var m2=$('#memory-msg');if(m2)m2.textContent=done;};
   var sb=friendDb();
   row.photo=photo;var ins={owner_id:row.owner_id,friend_id:row.friend_id,line:row.line,station:row.station,visited_at:row.visited_at,place:row.place,what:row.what};if(photo&&!FriendSync.noMemPhoto)ins.photo=photo;
-  if(sb){sb.from('planner_friend_memories').insert(ins).select().single().then(function(r){if(r.error&&ins.photo&&/photo/i.test(r.error.message||'')){FriendSync.noMemPhoto=true;delete ins.photo;inAppToast('사진은 SQL 실행 후에 저장돼요. 기록은 남겼어요');return sb.from('planner_friend_memories').insert(ins).select().single();}return r;}).then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);FriendSync.memoryError='';reset();inAppToast(done);}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';reset();var msg=$('#memory-msg');if(msg)msg.textContent='이 기기에 먼저 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
+  if(sb){sb.from('planner_friend_memories').insert(ins).select().single().then(function(r){if(r.error&&ins.photo&&/photo/i.test(r.error.message||'')){FriendSync.noMemPhoto=true;delete ins.photo;inAppToast(userMsg('사진은 지금 저장할 수 없어서 기록만 남겼어요','사진은 SQL 실행 후에 저장돼요. 기록은 남겼어요'));return sb.from('planner_friend_memories').insert(ins).select().single();}return r;}).then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);FriendSync.memoryError='';reset();inAppToast(done);}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';reset();var msg=$('#memory-msg');if(msg)msg.textContent='이 기기에 먼저 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
   else{S.settings.friendMemories.push(row);save();FriendSync.memories.push(row);reset();inAppToast(done);}
 }
 function friendAdd(code){
@@ -2585,7 +2595,7 @@ function hm(m){return pad(Math.floor(m/60))+':'+pad(m%60);}
 function slotText(k,a,b){var d=parseKey(k),t=mdTxt(d)+' ('+DAYS[dow(d)]+')';return a==null?t:t+' '+timeShort(hm(a))+'~'+timeShort(hm(b));}
 function myDisplayName(){return (S.settings.profileName||'').trim()||FriendSync.code||'친구';}
 function weekMon(d){return addDays(d,-dow(d));}
-function friendSqlHint(e){var m=(e&&(e.message||e.details||e.code))||String(e||'');return (/does not exist|schema cache|Could not find|relation/i.test(m)?'Supabase에서 friend-invite-busy.sql을 한 번 실행해주세요.':/permission|row-level|42501/i.test(m)?'권한 설정이 막혀 있어요. friend-invite-busy.sql을 다시 실행해주세요.':'연결 중 오류가 났어요.')+' (자세히: '+m+')';}
+function friendSqlHint(e){var m=(e&&(e.message||e.details||e.code))||String(e||'');return userMsg('연결 중 오류가 났어요. 잠시 뒤 다시 해주세요.',(/does not exist|schema cache|Could not find|relation/i.test(m)?'Supabase에서 friend-invite-busy.sql을 한 번 실행해주세요.':/permission|row-level|42501/i.test(m)?'권한 설정이 막혀 있어요. friend-invite-busy.sql을 다시 실행해주세요.':'연결 중 오류가 났어요.')+' (자세히: '+m+')');}
 function myBusyOn(k){
   var d=parseKey(k),allday=(S.allday||[]).some(function(a){return alldayForPayload(a,d);});
   var r=itemsFor(d).filter(function(it){return !it.skipped&&(it.kind==='class'||it.kind==='event');}).map(function(it){return [it.start,it.end];});
@@ -2916,10 +2926,12 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','hourNotes','routineDone'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker','liteHome','showLog','showDiary','showMemo'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
+  /* 간단한 홈 이전에 만든 계정·백업이면, 새 기기 기본값(간단한 홈)이 원래 화면을 덮지 않게 해요. */
+  if(rs.liteHome===undefined&&Object.keys(rs).length)ls.liteHome=false;
   if((+rs.prefsAt||0)>(+ls.prefsAt||0)){PREF_KEYS.forEach(function(k){if(rs[k]!==undefined)ls[k]=JSON.parse(JSON.stringify(rs[k]));});ls.prefsAt=rs.prefsAt;}
   if(rs.schoolConfigured||rs.onboardDone){if(!ls.schoolConfigured&&rs.school){ls.school=rs.school;ls.schoolCampus=rs.schoolCampus;}ls.schoolConfigured=true;ls.onboardDone=true;}
   ['profileName','profilePhoto','homeStation','defColor'].forEach(function(k){if(!ls[k]&&rs[k])ls[k]=rs[k];});
@@ -3168,7 +3180,7 @@ function supaAttach(session){
     if(Sync.dirty){Sync.dirty=false;scheduleSync();}
     if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
     /* 친구 기능은 시간표 표시를 막지 않게 뒤에서 따로 불러와요 */
-    friendLoad().catch(function(){}).then(function(){if(U.tab==='settings'&&!M.type)render();});
+    friendLoad().catch(function(){}).then(function(){if(!M.type)render();});
   });
 }
 function initSupa(){
@@ -3233,8 +3245,8 @@ function authErr(e){
 }
 function initSync(){
   if(!window.claude){
-    if(!SUPABASE_URL)Sync.diag='config.js 파일을 못 찾았어요. index.html이랑 같은 폴더에 올렸는지 확인해주세요.';
-    else if(!/^https:\/\/.+/.test(SUPABASE_URL)||SUPABASE_ANON_KEY.length<=20)Sync.diag='config.js에 주소나 키가 비어 있어요.';
+    if(!SUPABASE_URL)Sync.diag=userMsg('로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 열어주세요.','config.js 파일을 못 찾았어요. index.html이랑 같은 폴더에 올렸는지 확인해주세요.');
+    else if(!/^https:\/\/.+/.test(SUPABASE_URL)||SUPABASE_ANON_KEY.length<=20)Sync.diag=userMsg('로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 열어주세요.','config.js에 주소나 키가 비어 있어요.');
     else if(!window.supabase)Sync.diag='로그인 도구를 못 불러왔어요. 인터넷 연결을 확인하고 새로고침해주세요.';
   }
   if(initSupa())return;
@@ -3427,6 +3439,7 @@ function saveTrk(){
   else S.trackers.push({id:uid(),name:n,type:M.ttype});
   save();closeModal();render();
 }
+function featOn(k){var v=S.settings[k];return v===undefined?!S.settings.liteHome:v!==false;}
 function todayKey(){return dkey(new Date());}
 function letterBar(){
   if(!S.settings.letterOn)return '';
@@ -3519,7 +3532,7 @@ function todayClose(){var k=todayKey();return (S.dayCloses||[]).find(function(x)
 function dayCloseStats(k){var d=parseKey(k),todos=S.todos.filter(function(t){return t.scope==='day'&&t.key===k;}),rr=routinesFor(d),done=todos.filter(function(t){return t.done;}).length+rr.filter(function(r){return routineDone(r,k);}).length,total=todos.length+rr.length,classes=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped;}).length,focus=S.focus[k]||0;return {done:done,total:total,classes:classes,focus:focus};}
 function dayCloseBanner(){var h=new Date().getHours(),c=todayClose();if(h<17&&!c)return '';return '<button class="dayclose-banner" data-act="open-day-close"><span><b>'+(c?'오늘 마감 완료':'하루 마감')+'</b><small>'+(c?'오늘 기록을 다시 볼 수 있어요':'오늘 한 일을 한 번에 정리해요')+'</small></span><span class="chev">›</span></button>';}
 function openDayClose(){var k=todayKey(),st=dayCloseStats(k),c=todayClose(),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt))===k;}),mins=Math.round((st.focus||0)/60000);M={type:'day-close'};openModal('<h3>하루 마감</h3><div class="close-summary"><div><b>'+st.done+'/'+st.total+'</b><small>할 일</small></div><div><b>'+st.classes+'</b><small>수업</small></div><div><b>'+mins+'분</b><small>집중</small></div></div><p class="hint">'+(di.length?diaryTargetMinutes()+'분 일기 '+di.length+'개도 오늘 기록에 함께 남아 있어요.':'오늘 기록을 이 상태로 마감해요.')+'</p><span class="lbl">오늘을 한 단어로 표현하면?</span><input class="fld" id="f-close-word" maxlength="12" placeholder="예: 뿌듯, 정신없음, 몰입" value="'+esc(c&&c.word||'')+'"><textarea class="memo" id="f-close-note" placeholder="더 남기고 싶은 말 · 선택사항">'+esc(c&&c.note||'')+'</textarea><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="save-day-close">'+(c?'다시 저장':'오늘 마감')+'</button></div>');}
-function saveDayClose(){var k=todayKey(),st=dayCloseStats(k),note=$('#f-close-note')?$('#f-close-note').value.trim():'',word=$('#f-close-word')?$('#f-close-word').value.trim():'',arr=S.dayCloses||(S.dayCloses=[]),old=arr.find(function(x){return x.key===k;}),obj={key:k,finishedAt:Date.now(),word:word,note:note,done:st.done,total:st.total,classes:st.classes,focus:st.focus};if(old)Object.assign(old,obj);else arr.push(obj);save();closeModal();render();inAppToast('오늘 마감했어요');}
+function saveDayClose(){var k=todayKey(),st=dayCloseStats(k),note=$('#f-close-note')?$('#f-close-note').value.trim():'',word=$('#f-close-word')?$('#f-close-word').value.trim():'',arr=S.dayCloses||(S.dayCloses=[]),old=arr.find(function(x){return x.key===k;}),obj={key:k,finishedAt:Date.now(),word:word,note:note,done:st.done,total:st.total,classes:st.classes,focus:st.focus};if(old)Object.assign(old,obj);else arr.push(obj);save();closeModal();render();var sk=dayCloseStreak();inAppToast(sk>=2?'오늘 마감했어요 · '+sk+'일 연속':'오늘 마감했어요');}
 function examPrep(x){return Array.isArray(x&&x.prep)?x.prep:[];}
 function examPrepProgress(x){var a=examPrep(x),done=a.filter(function(t){return t.done;}).length;return {done:done,total:a.length,pct:a.length?Math.round(done/a.length*100):0};}
 function homeStrip(){
@@ -3529,11 +3542,11 @@ function homeStrip(){
   var nc=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped&&it.end>=now;})[0];
   var ne=S.exams.filter(function(x){return (x.end||x.start)>=k;}).sort(function(a,b){return String(a.start).localeCompare(String(b.start));})[0];
   var pct=tot?Math.round(dn/tot*100):0, ep=ne?examPrepProgress(ne):{done:0,total:0,pct:0};
-  var nextCard=nc?'<button class="next-class" style="--c:'+esc(nc.color||S.settings.defColor||'#dce9f7')+'" data-act="course-todos" data-name="'+esc(nc.name)+'"><span><small>'+(nc.start<=now&&nc.end>now?'지금 수업 중':'다음 수업')+' · '+timeShort(fmt(nc.start))+'–'+timeShort(fmt(nc.end))+'</small><b>'+esc(nc.name)+'</b>'+(nc.sub?'<small>'+esc(nc.sub)+'</small>':'')+'</span><i class="chev">›</i></button>':'';
+  var nextCard=nc?'<button class="next-class" style="--c:'+esc(nc.color||S.settings.defColor||'#dce9f7')+'" data-act="course-todos" data-name="'+esc(nc.name)+'"><span><small>'+(nc.start<=now&&nc.end>now?'지금 수업 중 · '+durText(nc.end-now)+' 남음':'다음 수업 · '+durText(nc.start-now)+' 뒤')+' · '+timeShort(fmt(nc.start))+'–'+timeShort(fmt(nc.end))+'</small><b>'+esc(nc.name)+'</b>'+(nc.sub?'<small>'+esc(nc.sub)+'</small>':'')+'</span><i class="chev">›</i></button>':'';
   var todo=S.settings.showNextTodo===false?'':('<div class="home-line"><span><small>'+(hour>=17?'남은 할 일':'오늘 할 일')+'</small><b>'+dn+'/'+tot+'</b></span><em>'+pct+'%</em></div><div class="hbar" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>');
-  var exam='';
-  var evening=hour>=17?'<div class="home-evening"><button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span><button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+'</button></div>':'';
-  return '<section class="home home-clean"><div class="home-main">'+nextCard+todo+evening+'</div><button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
+  var gapLine=gapHomeLine(k),stk=dayCloseStreak();
+  var evening=hour>=17?'<div class="home-evening">'+(featOn('showDiary')?'<button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span>':'')+'<button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+(stk>=2?' · '+stk+'일째':'')+'</button></div>':'';
+  return '<section class="home home-clean"><div class="home-main">'+nextCard+todo+gapLine+evening+'</div><button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+'집중</button></section>';
 }
 function askReminderPermission(){
   if(!('Notification' in window)){S.settings.remindOn=false;save();render();return;}
@@ -3546,6 +3559,13 @@ function checkReminders(){
     var key=k+'|'+it.id+'|'+it.start;
     if(S.settings.notified[key])return;
     try{new Notification('곧 시작해요',{body:it.name+' · '+timeShort(fmt(it.start))});}catch(e){}
+    S.settings.notified[key]=Date.now();changed=true;
+  });
+  gapsOf(itemsFor(d)).forEach(function(g){
+    if(g.end-g.start<40||now<g.start||now-g.start>5)return;
+    var key=k+'|gap|'+g.start;if(S.settings.notified[key])return;
+    var c=gapFillCandidates(k)[0];
+    try{new Notification('공강 '+durText(g.end-g.start)+' 시작',{body:c?'지금 하기 좋은 일: '+c.text:'다음 일정은 '+timeShort(fmt(g.end))+'부터예요'});}catch(e){}
     S.settings.notified[key]=Date.now();changed=true;
   });
   Object.keys(S.settings.notified).forEach(function(key){if(Date.now()-S.settings.notified[key]>1209600000){delete S.settings.notified[key];changed=true;}});
@@ -3777,6 +3797,120 @@ function gapsOf(items){
   });
   return out;
 }
+/* ---------- 공강 채우기 ---------- */
+function gapDueRank(t){return t.due?diffDays(t.due):999;}
+function gapFillCandidates(k){
+  var wk=dkey(mondayOf(parseKey(k))),mk=k.slice(0,7);
+  return S.todos.filter(function(t){
+    if(t.done)return false;
+    if(t.scope==='day')return t.key<=k&&!(t.key===k&&t.time);
+    if(t.scope==='week')return t.key===wk;
+    if(t.scope==='month')return t.key===mk&&!!t.due;
+    if(t.scope==='inbox')return !!t.due&&diffDays(t.due)<=7;
+    return false;
+  }).sort(function(a,b){return (+!!b.star)-(+!!a.star)||gapDueRank(a)-gapDueRank(b)||ordOf(a)-ordOf(b);});
+}
+function openGaps(k){
+  var isT=k===todayKey(),n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  return gapsOf(itemsFor(parseKey(k))).map(function(g){var st=g.start;if(isT&&nm>st)st=Math.ceil(nm/5)*5;return {start:st,end:g.end};}).filter(function(g){return g.end-g.start>=30;});
+}
+function gapPlan(k){
+  var cands=gapFillCandidates(k),plan=[];
+  openGaps(k).forEach(function(g){
+    var cur=g.start;
+    while(cands.length&&g.end-cur>=30){var t=cands.shift(),dur=Math.min(t.dur||60,g.end-cur);plan.push({t:t,start:cur,dur:dur});cur+=dur;}
+  });
+  return plan;
+}
+function placeTodoAt(t,k,start,dur){t.scope='day';t.key=k;t.time=fmt(start);t.dur=dur;t.carried=false;}
+function gapAutoFill(k){
+  var plan=gapPlan(k);if(!plan.length){inAppToast('공강에 넣을 할 일이 없어요');return;}
+  var before=JSON.stringify(S);
+  plan.forEach(function(p){placeTodoAt(p.t,k,p.start,p.dur);});
+  save();render();showUndo(before,'공강에 '+plan.length+'개 넣었어요');
+}
+function openGapFill(k,st,en){
+  var isT=k===todayKey(),n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  if(isT&&nm>st&&nm<en)st=Math.ceil(nm/5)*5;
+  M={type:'gap-fill',gap:{date:k,start:st,cur:st,end:en}};drawGapFill();
+}
+function drawGapFill(){
+  var g=M.gap,left=g.end-g.cur,c=gapFillCandidates(g.date).slice(0,8);
+  var rows=c.map(function(t){
+    return '<li><button class="gapfill-row" data-act="gap-place" data-id="'+t.id+'"><span>'+esc(t.text)+(t.course?'<em class="ctag" style="--c:'+courseColor(t.course)+'">'+esc(t.course)+'</em>':'')+ddHTML(t)+'</span><b>'+timeShort(fmt(g.cur))+'</b></button></li>';
+  }).join('');
+  openModal('<h3>공강 '+timeShort(fmt(g.cur))+'–'+timeShort(fmt(g.end))+' · '+esc(durText(left))+'</h3>'+
+    (c.length?'<p class="hint">누르면 그 할 일이 이 공강에 바로 들어가요. 별표·마감 가까운 순이에요.</p><ul class="gapfill">'+rows+'</ul>'
+      :'<p class="hint">공강에 넣을 할 일이 없어요. 할 일을 먼저 적거나 새 일정으로 넣어보세요.</p>')+
+    '<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="gap-new-event">새 일정으로 넣기</button></div>');
+}
+function gapPlace(id){
+  var t=findTodo(id),g=M.gap;if(!t||!g)return;
+  var dur=Math.min(t.dur||60,g.end-g.cur);
+  placeTodoAt(t,g.date,g.cur,dur);g.cur+=dur;save();render();
+  inAppToast(timeShort(fmt(g.cur-dur))+'에 넣었어요');
+  if(g.end-g.cur>=30&&gapFillCandidates(g.date).length)drawGapFill();else closeModal();
+}
+function gapHomeLine(k){
+  var plan=gapPlan(k);if(!plan.length)return '';
+  var gl=openGaps(k).reduce(function(s,g){return s+g.end-g.start;},0);
+  return '<button class="home-line gapfill-home" data-act="gap-autofill" data-date="'+k+'"><span><small>남은 공강 '+esc(durText(gl))+'</small><b>할 일 '+plan.length+'개를 공강에 넣기</b></span><em>채우기 ›</em></button>';
+}
+/* ---------- 빠른 입력: "내일 3시 경제학 과제" ---------- */
+function parseQuickTodo(raw){
+  var txt=' '+raw+' ',out={},T=new Date(),t0=new Date(T.getFullYear(),T.getMonth(),T.getDate()),date=null,m;
+  var WD='월화수목금토일';
+  function cut(re){txt=txt.replace(re,' ');}
+  function mark(d,deadline){if(deadline)out.due=dkey(d);else date=d;}
+  m=txt.match(/\s(오늘|내일|낼|모레|글피)(\s*(까지|마감))?(?=\s|에\s)/);
+  if(m){mark(addDays(t0,{'오늘':0,'내일':1,'낼':1,'모레':2,'글피':3}[m[1]]),!!m[2]);cut(m[0]);}
+  if(!m||!date&&!out.due){
+    m=txt.match(/\s(이번\s?주|다음\s?주|담주)?\s*([월화수목금토일])요일(\s*(까지|마감))?(?=\s|에\s)/);
+    if(m){var wi=WD.indexOf(m[2]),d;
+      if(m[1]&&/다음|담/.test(m[1]))d=addDays(mondayOf(t0),7+wi);
+      else if(m[1])d=addDays(mondayOf(t0),wi);
+      else{d=addDays(t0,(wi-dow(t0)+7)%7);}
+      mark(d,!!m[3]);cut(m[0]);}
+  }
+  if(!date&&!out.due){
+    m=txt.match(/\s(\d{1,2})\s?(?:\/|월\s?)(\d{1,2})일?(\s*(까지|마감))?(?=\s|에\s)/);
+    if(m){var mo=+m[1],da=+m[2];
+      if(mo>=1&&mo<=12&&da>=1&&da<=31){var d2=new Date(t0.getFullYear(),mo-1,da);if(d2-t0<-60*864e5)d2=new Date(t0.getFullYear()+1,mo-1,da);
+        if(d2-t0<=200*864e5){mark(d2,!!m[3]);cut(m[0]);}}}
+  }
+  m=txt.match(/\s(오전|오후|아침|저녁|밤)?\s*(\d{1,2})시(?:\s*(반|(\d{1,2})분))?(?:에|부터)?(?=\s)/);
+  if(m&&!/시간/.test(m[0])){
+    var h=+m[2],mi=m[3]==='반'?30:(+m[4]||0);
+    if(h<=24&&mi<60){
+      if(/오후|저녁|밤/.test(m[1]||'')){if(h<12)h+=12;}
+      else if(!m[1]&&h>=1&&h<=7)h+=12;
+      if(h===24)h=0;
+      out.time=fmt(h*60+mi);cut(m[0]);}
+  }else{
+    m=txt.match(/\s([01]?\d|2[0-3]):([0-5]\d)(?:에|부터)?(?=\s)/);
+    if(m){out.time=fmt(+m[1]*60+(+m[2]));cut(m[0]);}
+  }
+  var names=courseNames().slice().sort(function(a,b){return b.length-a.length;});
+  for(var i=0;i<names.length;i++){var nm=names[i];if(nm.length>=2&&txt.indexOf(nm)>=0){out.course=nm;var rest=txt.replace(nm,' ').replace(/\s+/g,' ').trim();if(rest)txt=' '+rest+' ';break;}}
+  if(date)out.key=dkey(date);
+  out.text=txt.replace(/\s+/g,' ').trim()||raw.trim();
+  return out;
+}
+function quickTodoToast(q){
+  var bits=[];
+  if(q.key){var n=diffDays(q.key);bits.push(n===0?'오늘':n===1?'내일':n===2?'모레':mdTxt(parseKey(q.key)));}
+  if(q.time)bits.push(timeShort(q.time));
+  if(q.due)bits.push('마감 '+mdTxt(parseKey(q.due)));
+  if(q.course)bits.push(q.course);
+  return bits.length?'넣었어요 · '+bits.join(' · '):'';
+}
+/* ---------- 하루 마감 연속 기록 ---------- */
+function dayCloseStreak(){
+  var set={};(S.dayCloses||[]).forEach(function(x){set[x.key]=1;});
+  var d=new Date();if(!set[dkey(d)])d=addDays(d,-1);
+  var n=0;while(set[dkey(d)]&&n<3650){n++;d=addDays(d,-1);}
+  return n;
+}
 function ordOf(t){return t.order!=null?t.order:t.created;}
 function sortTodos(a){return a.slice().sort(function(x,y){return (+x.done)-(+y.done)||ordOf(x)-ordOf(y);});}
 function keyFor(scope,d){
@@ -3814,6 +3948,9 @@ function topHTML(){
   }else if(U.tab==='todo'){
     var n=S.todos.filter(function(x){return !x.done;}).length;
     t='할 일';s='남은 일 '+n+'개';
+  }else if(U.tab==='friends'){
+    var fn=(typeof FriendSync!=='undefined'&&FriendSync.friends)?FriendSync.friends.length:0;
+    t='친구';s=fn?'친구 '+fn+'명 · 비는 시간에 약속 잡기':'시간표 기준으로 약속 잡고 추억 쌓기';
   }else if(U.tab==='settings'){
     return '<button class="ibtn" data-act="back" aria-label="뒤로">‹</button><div class="ttl"><h1>설정</h1></div>'+bellBtnHTML()+searchBtn;
   }else{
@@ -3827,8 +3964,18 @@ function topHTML(){
     '<button class="ibtn gear icog" data-act="open-settings" aria-label="설정">'+'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>';
 }
 function navHTML(){
-  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable','시간표']];
-  return tabs.map(function(t){return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'">'+t[1]+'</button>';}).join('');
+  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable','시간표'],['friends','친구']];
+  return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'">'+t[1]+dot+'</button>';}).join('');
+}
+function friendPendingCount(){
+  if(typeof FriendSync==='undefined'||!Sync.uid)return 0;
+  var inv=(FriendSync.invitesIn||[]).length;
+  var req=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).length;
+  return inv+req;
+}
+function viewFriends(){
+  if(U.friendsPage==='detail'&&U.friendDetailId)return '<section class="card"><button class="setrow chatrow" data-act="friends-home"><span>‹ 친구 목록</span></button></section>'+friendDetailHTML(U.friendDetailId);
+  return friendHTML();
 }
 
 /* ---------- 할 일 컴포넌트 ---------- */
@@ -4098,13 +4245,13 @@ function sideTodo(k,title){
   var nOpen=openT.length+openR.length,nDone=doneT.length+doneR.length,tot=nOpen+nDone,id='day:'+k;
   return '<section class="card"><div class="card-h"><h3>'+esc(title)+'</h3><span class="cnt">'+nOpen+' 남음 · '+nDone+' 완료</span></div>'+
     (tot?'<div class="bar"><i style="width:'+Math.round(nDone/tot*100)+'%"></i></div>':'')+
-    '<div class="add" style="margin:4px 0 6px"><input data-draft="'+id+'" data-scope="day" data-key="'+k+'" placeholder="새 할 일 추가" enterkeyhint="done" value="'+esc(U.drafts[id]||'')+'"><button data-act="add">추가</button></div>'+
+    '<div class="add" style="margin:4px 0 6px"><input data-draft="'+id+'" data-scope="day" data-key="'+k+'" placeholder="새 할 일 (예: 내일 3시 과제)" enterkeyhint="done" value="'+esc(U.drafts[id]||'')+'"><button data-act="add">추가</button></div>'+
     '<ul class="todos">'+((openR.map(function(r){return rtLi(r,false);}).join('')+openT.map(function(t){return todoItem(t,{focus:k===todayKey(),today:true});}).join(''))||'<li class="empty">'+(nDone?'다 끝냈어요':'아직 적은 일이 없어요')+'</li>')+'</ul>'+
     (nDone?'<div class="donelbl">완료됨</div><ul class="todos">'+doneR.map(function(r){return rtLi(r,true);}).join('')+doneT.map(function(t){return todoItem(t,{today:true});}).join('')+'</ul>':'')+
     '</section>';
 }
 function timelineHTML(d){
-  var k=dkey(d),items=itemsFor(d),gaps=[];
+  var k=dkey(d),items=itemsFor(d),gaps=gapsOf(items);
   var lo=S.settings.hStart!=null?S.settings.hStart:6,hi=S.settings.hEnd!=null?S.settings.hEnd:23;
   items.forEach(function(it){lo=Math.min(lo,Math.floor(it.start/60));hi=Math.max(hi,Math.ceil(it.end/60));});
   hi=Math.min(hi,24);
@@ -4132,7 +4279,7 @@ function schoolInfoCard(){
  var p=schoolProfile(S.settings.school),camp=canonicalCampus(p.id,S.settings.schoolCampus),custom=(S.settings.links||[]).filter(function(l){return !isGeneratedSchoolLink(l);});
   var links=schoolLinks(p.id,camp).concat(custom);
   var checked=S.settings.schoolLastChecked?new Date(S.settings.schoolLastChecked):null,sub=checked?'마지막 확인 '+(checked.getMonth()+1)+'/'+checked.getDate()+' '+pad(checked.getHours())+':'+pad(checked.getMinutes()):'공식 사이트에서 최신 내용을 확인해요';
-  if(S.settings.showSchoolLinks===false)return ''; return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
+  if(!featOn('showSchoolLinks'))return ''; return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
 }
 function viewDay(){
   var d=U.date,k=dkey(d),tk=dkey(new Date());
@@ -4140,10 +4287,10 @@ function viewDay(){
   var over=(k===tk)?S.todos.filter(function(t){return !t.done&&t.scope==='day'&&t.key<tk;}):[];
   var warn=over.length?'<section class="card warn"><div class="card-h"><h3>밀린 할 일 '+over.length+'개</h3><button class="tbtn" data-act="move-all-today">모두 오늘로</button></div><ul class="todos">'+
     sortTodos(over).map(function(t){return todoItem(t,{tag:true,move:true});}).join('')+'</ul></section>':'';
-  var side='<div class="side">'+warn+sideTodo(k,k===tk?'오늘 할 일':'이날 할 일')+friendPlannerHTML(k)+
+  var side='<div class="side">'+warn+sideTodo(k,k===tk?'오늘 할 일':'이날 할 일')+friendPlannerHTML(k)+(featOn('showMemo')?
     '<section class="card s-memo" data-memo-drop="'+k+'"><div class="card-h"><h3>하루 메모</h3></div><textarea class="memo" data-memo="'+k+'" placeholder="기억할 것, 오늘 있었던 일">'+esc(memo.text)+'</textarea>'+
-    memoPhotosHTML(k,memo.photos)+'<label class="tbtn memo-addphoto">사진 추가<input type="file" accept="image/*" multiple data-memophoto="'+k+'" hidden></label></section>'+
-    '<div class="s-log">'+logCard(k)+'</div><div class="s-letter">'+letterCard(k)+'</div></div>';
+    memoPhotosHTML(k,memo.photos)+'<label class="tbtn memo-addphoto">사진 추가<input type="file" accept="image/*" multiple data-memophoto="'+k+'" hidden></label></section>':'')+
+    (featOn('showLog')?'<div class="s-log">'+logCard(k)+'</div>':'')+'<div class="s-letter">'+letterCard(k)+'</div></div>';
   return (k===tk?homeStrip()+schoolInfoCard():'')+'<div class="dayg">'+timelineHTML(d)+side+'</div>';
 }
 
@@ -4282,7 +4429,7 @@ async function analyzeTimetableImage(){
     var fd=new FormData();fd.append('image',TTScan.file);
     var sbBase=(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:(typeof SB_URL!=='undefined'?SB_URL:'')),
         sbKey=(typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:(typeof SB_KEY!=='undefined'?SB_KEY:'')));
-    if(!sbBase)throw new Error('Supabase URL 설정을 찾지 못했어요.');
+    if(!sbBase)throw new Error(userMsg('서버에 연결하지 못했어요.','Supabase URL 설정을 찾지 못했어요.'));
     var hdr={};if(sbKey)hdr.apikey=sbKey;
     var res=await fetch(sbBase.replace(/\/$/,'')+'/functions/v1/timetable-vision',{method:'POST',headers:hdr,body:fd});
     var data=await res.json().catch(function(){return {};});
@@ -4410,7 +4557,11 @@ function viewSettings(){
     '<p class="hint">원하는 항목만 오늘 기록 카드와 달력에 보여줘요. 기록 데이터는 숨겨도 지워지지 않아요.</p>'+
     [['wakeGoal','기상 목표'],['wakeTime','기상 시간'],['sleepTime','취침 시간'],['studyTotal','공부 총 시간']].map(function(x){return '<div class="setrow"><span>'+x[1]+'</span><button class="tbtn" data-act="toggle-log-display" data-id="'+x[0]+'">'+(ld[x[0]]!==false?'켜짐':'꺼짐')+'</button></div>';}).join('')+
     '<div class="setrow"><span>기상 목표 시각<small>오늘 오전 9시가 지나면 오늘의 달성 버튼이 잠겨요</small></span><input class="sel" type="time" id="set-wake-goal" value="'+esc(S.settings.wakeGoal||'09:00')+'"></div>'+
-    '<div class="setrow"><span>홈 학교 링크<small>학교 홈페이지·공지·식단 바로가기를 홈에 보여줘요</small></span><button class="tbtn" data-act="toggle-home-school">'+(S.settings.showSchoolLinks===false?'꺼짐':'켜짐')+'</button></div>'+
+    '<div class="setrow"><span>간단한 홈<small>핵심만 보여줘요. 아래에서 따로 켠 항목은 그대로 보여요</small></span><button class="tbtn" data-act="toggle-lite">'+(S.settings.liteHome?'켜짐':'꺼짐')+'</button></div>'+
+    '<div class="setrow"><span>홈 학교 링크<small>학교 홈페이지·공지·식단 바로가기를 홈에 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showSchoolLinks">'+(featOn('showSchoolLinks')?'켜짐':'꺼짐')+'</button></div>'+
+    '<div class="setrow"><span>하루 메모<small>일간 화면에 메모·사진 칸을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showMemo">'+(featOn('showMemo')?'켜짐':'꺼짐')+'</button></div>'+
+    '<div class="setrow"><span>오늘 기록 카드<small>일간 화면에 기상·공부 시간 기록 카드를 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showLog">'+(featOn('showLog')?'켜짐':'꺼짐')+'</button></div>'+
+    '<div class="setrow"><span>저녁 일기 버튼<small>오후 5시부터 홈에 일기 버튼을 보여줘요. 일기장은 설정에 그대로 있어요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showDiary">'+(featOn('showDiary')?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
     '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속을 만드는 버튼만 숨겨요. 기존 약속·받은 요청은 지워지지 않아요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div></section>';
@@ -4473,7 +4624,7 @@ function viewSettings(){
     '</section>'+
     '<section class="card">'+
       navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
-      navRow('settings-life','생활 기록','기상 · 취침 · 공부 · 홈 표시')+
+      navRow('settings-life','생활 기록 · 홈 표시','간단한 홈 · 기상 · 취침 · 공부')+
       navRow('settings-screen','화면','색 · 배경 · 다크모드 · 시간표 표시')+
     '</section>'+
     '<section class="card">'+
@@ -4531,7 +4682,7 @@ function saveProfile(){
   S.settings.profileName=name;var hs=$('#f-home-station');if(hs)S.settings.homeStation=hs.value||'';save();
   if(!friendDb()){friendNote('프로필을 이 기기에 저장했어요. 친구에게 표시하려면 로그인해주세요');return;}
   syncProfileToCodes().then(function(r){
-    if(r&&r.error&&/display_name|column|schema cache/i.test(r.error.message||'')){friendNote('이 기기에는 저장했어요. 친구에게 이름을 보이려면 planner-friends.sql을 한 번 실행해주세요.');return;}
+    if(r&&r.error&&/display_name|column|schema cache/i.test(r.error.message||'')){friendNote(userMsg('이 기기에는 저장했어요. 친구에게 보이는 이름은 잠시 뒤 다시 저장해주세요.','이 기기에는 저장했어요. 친구에게 이름을 보이려면 planner-friends.sql을 한 번 실행해주세요.'));return;}
     return friendPush().then(function(){friendNote('친구에게 보일 프로필을 저장했어요');return friendLoad();});
   }).catch(function(){friendNote('프로필은 저장했지만 친구 동기화를 다시 확인해주세요');});
 }
@@ -4672,7 +4823,11 @@ function friendDetailHTML(id){
     '<section class="card"><button class="setrow chatrow danger-row" data-act="friend-remove" data-id="'+f.id+'"><span>친구 연결 해제<small>서로의 공유 정보가 더 이상 보이지 않아요</small></span><span class="chev">›</span></button></section>';
 }
 function friendHTML(){
-  if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>친구</h3></div><p class="hint">친구와 약속을 잡고 추억을 남기려면 먼저 로그인해주세요. 메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p><button class="tbtn" data-act="open-login">로그인하기</button></section>';
+  if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>친구랑 약속 잡기</h3></div>'+
+    '<div class="setrow"><span>1. 초대코드로 친구 연결<small>상대가 수락해야 연결돼요</small></span></div>'+
+    '<div class="setrow"><span>2. 둘 다 비는 시간만 골라서 약속<small>시간표 기준으로 바쁜 칸은 회색이에요 · 앱 없는 친구는 링크로</small></span></div>'+
+    '<div class="setrow"><span>3. 만나고 나면 추억으로 쌓여요<small>만난 곳·사진이 모여 추억 리포트가 돼요</small></span></div>'+
+    '<p class="hint">메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p><button class="tbtn plus" style="width:100%;height:42px;margin-top:4px" data-act="open-login">로그인하고 시작하기</button></section>';
   var myCode=FriendSync.code||storedFriendCode()||'생성 중';
   var invIn=(FriendSync.invitesIn||[]).map(function(x){var n=inviteName(x.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.from_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 요청을 보냈어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn fc-pri b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div></div>';}).join('');
   var reqIn=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).map(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user),rf=FriendSync.friends.find(function(y){return y.id===r.from_user;});return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,rf&&rf.photo)+'<div class="fc-name"><b>'+esc(n)+' · '+esc(p.what||p.title||'약속')+'</b><small>'+esc([p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'',p.place].filter(function(x){return !!x;}).join(' · ')||'약속 요청')+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div></div>';}).join('');
@@ -4749,7 +4904,7 @@ function openGlobalSearch(){
 }
 function openGlobalResult(a){
   var kind=a.dataset.kind,id=a.dataset.id;
-  if(kind==='friend'){closeModal();U.tab='settings';render(true);setTimeout(function(){var el=document.querySelector('[data-act="friend-meet"][data-id="'+CSS.escape(id)+'"]');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},80);return;}
+  if(kind==='friend'){closeModal();U.tab='friends';U.friendsPage='detail';U.friendDetailId=id;render(true);setTimeout(function(){var el=document.querySelector('[data-act="friend-meet"][data-id="'+CSS.escape(id)+'"]');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},80);return;}
   if(kind==='chat'){
     var cm=S.selfchat.find(function(m){return String(m.id)===id;});
     closeModal();U.chatRoom=(cm&&cm.room)||a.dataset.room||'general';U.chatQuery=cm&&cm.text||'';U.chatSel=null;drawChat();return;
@@ -4771,9 +4926,9 @@ function render(reset){
   var main=$('#main'),st=reset?0:main.scrollTop;
   $('#top').innerHTML=topHTML();
   $('#top').classList.toggle('navtop',U.tab==='month'||U.tab==='week'||U.tab==='day');
-  var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings}[U.tab]();
+  var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings,friends:viewFriends}[U.tab]();
   if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=topBar()+v;
-  if(U.tab!=='settings'&&U.tab!=='ttable')v=letterBar()+v;
+  if(U.tab!=='settings'&&U.tab!=='ttable'&&U.tab!=='friends')v=letterBar()+v;
   if(U.tab==='day')v=appointmentPrecheckHTML()+postMeetNudgesHTML()+memoryNudgeHTML()+v;
   if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
     v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
@@ -4849,7 +5004,7 @@ function drawOnboard(){
   }else if(M.step===2){
     body='<div class="onboard-demo" style="display:block;padding:16px"><b>시간표 캡처로 빠르게 등록</b><small style="display:block;color:var(--sub);font-weight:500;margin-top:6px">JPG · PNG · HEIC 사진을 사용할 수 있어요.</small><button class="b-save" data-act="onboard-scan" style="width:100%;margin-top:12px">시간표 사진 등록</button></div>';
   }else{
-    body='<span class="lbl">첫 할 일 (선택)</span><input class="fld" id="f-on-first-todo" maxlength="80" placeholder="예: 미적분 과제 1쪽 풀기"><div class="onboard-demo">나머지 기능은 필요할 때 하나씩 발견하면 돼요.</div>';
+    body='<span class="lbl">첫 할 일 (선택)</span><input class="fld" id="f-on-first-todo" maxlength="80" placeholder="예: 미적분 과제 1쪽 풀기"><div class="onboard-demo">아래 <b>친구</b> 탭에서 초대코드나 링크로 약속을 잡아봐요. 내 시간표 기준으로 비는 시간만 골라줘요.</div>';
   }
   openModal('<div class="onboard"><div class="onboard-dots">'+steps.map(function(_,i){return '<i class="'+(i===M.step?'on':'')+'"></i>';}).join('')+'</div><h3>'+st.title+'</h3><p class="hint">'+st.desc+'</p>'+body+'<div class="acts"><button class="b-ghost" data-act="onboard-skip">나중에</button><button class="b-save" data-act="onboard-next">'+(last?'플래너 시작':'다음')+'</button></div></div>');
 }
@@ -5174,6 +5329,7 @@ function pendingChatPhotosHTML(){
   var ps=U.chatPhotos||[];
   return ps.length?'<div class="chat-pending">'+ps.map(function(p){return '<img src="'+p+'" alt="보낼 사진">';}).join('')+'</div>':'';
 }
+function diaryTargetMinutes(){return diaryMinutes();}
 function diaryMinutes(){var n=Number(S.settings.diaryMinutes||10);return [7,10,20,30].indexOf(n)>=0?n:10;}
 function diaryLimitMs(){return diaryMinutes()*60000;}
 function diaryFmtMs(ms,targetMin){
@@ -5222,7 +5378,7 @@ function drawDiary(dateKey){
   $('#modal').classList.add('full');diaryTick();setTimeout(function(){var x=$('#f-diary');if(x)x.focus();},30);
 }
 function saveDiaryDraft(){var x=$('#f-diary'),n=$('#f-diary-note');if(x)U.diaryDraft=x.value;if(n)U.diaryNote=n.value;}
-function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else if(U.diaryReturn==='chat'){U.diaryReturn='';U.diaryDate='';drawChat();}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}}
+function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});U.diaryDraft='';U.diaryNote='';U.diaryRun=null;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}}
 
 function drawChat(){
   M={type:'chat'};
@@ -5425,9 +5581,16 @@ function shift(n){
 function addTodo(scope,key,text,draftId,due,course){
   text=(text||'').trim();
   if(!text)return;
-  S.todos.push({id:uid(),text:text,done:false,star:false,scope:scope,key:key,due:due||null,course:course||'',created:Date.now(),order:Date.now()});
+  var q=S.settings.smartAdd===false?{text:text}:parseQuickTodo(text),time=null,msg='';
+  if(q.key){scope='day';key=q.key;}
+  if(q.time){time=q.time;if(scope!=='day'){scope='day';key=todayKey();}}
+  if(q.due&&!due)due=q.due;
+  if(q.course&&!course)course=q.course;
+  if(q.key||q.time||q.due||(q.course&&q.course===course&&text!==q.text))msg=quickTodoToast(q);
+  S.todos.push({id:uid(),text:q.text,done:false,star:false,scope:scope,key:key,due:due||null,course:course||'',time:time,created:Date.now(),order:Date.now()});
   delete U.drafts[draftId];
   save();U.refocus=draftId;render();
+  if(msg)inAppToast(msg);
 }
 function findTodo(id){return S.todos.find(function(t){return t.id===id;});}
 
@@ -5448,7 +5611,7 @@ function signOutSafely(openOther){
 function act(a,e){
   var id=a.dataset.id,name=a.dataset.act;
   switch(name){
-    case 'tab':U.tab=a.dataset.tab;render(true);break;
+    case 'tab':if(a.dataset.tab==='friends'&&U.tab==='friends')U.friendsPage='';U.tab=a.dataset.tab;render(true);break;
     case 'prev':shift(-1);break;
     case 'next':shift(1);break;
     case 'today':U.date=new Date();render(true);break;
@@ -5459,7 +5622,7 @@ function act(a,e){
     }
     case 'add-schedule':openSchedule(null,{date:a.dataset.date||dkey(U.date)});break;
     case 'add-appointment':{
-      if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}
+      if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}
       openAppointment(null,{date:a.dataset.date});break;
     }
     case 'add-block':openBlock(null,{day:Math.min(dow(U.date),4)});break;
@@ -5485,11 +5648,12 @@ function act(a,e){
     case 'friend-copy-code':friendCopyCode();break;
     case 'friend-add':friendAdd($('#f-friend-code')?$('#f-friend-code').value:'');break;
     case 'friend-pin':toggleFriendPin(id);break;
-    case 'friend-detail':U.friendDetailId=id;U.settingsPage='friend-detail';render();break;
+    case 'friend-detail':U.friendDetailId=id;U.tab='friends';U.friendsPage='detail';U.settingsPage='';render(true);break;
+    case 'friends-home':U.friendsPage='';render(true);break;
     case 'friend-view-planner':openFriendPlanner(id);break;
     case 'friend-share-preview':openFriendSharePreview(id);break;
     case 'friend-memories':openFriendMemories(id);break;
-    case 'friend-meet':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openFriendMeet(id);break;
+    case 'friend-meet':if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}openFriendMeet(id);break;
     case 'meet-cell':meetTap(a.dataset.k,Number(a.dataset.m));break;
     case 'meet-week':{var nw=addDays(M.week,7*Number(a.dataset.v));if(!M.minWeek||nw>=M.minWeek){M.week=nw;drawMeet();var gg=document.querySelector('#meetbox .meetgrid');if(gg)gg.scrollTop=0;}break;}
     case 'meet-activity':
@@ -5512,7 +5676,7 @@ function act(a,e){
     case 'place-decide-open':openPlaceDecision(id);break;
     case 'candidate-toggle':{var cv=a.dataset.v,ca=M.selected||(M.selected=[]),ci=ca.indexOf(cv);if(ci>=0)ca.splice(ci,1);else ca.push(cv);drawPlaceDecision();break;}
     case 'candidate-new':{var cn=$('#f-cand-new'),cvv=cn?normalizePlaceText(cn.value):'';if(!cvv){if(cn)cn.classList.add('bad');break;}if(!M.added)M.added=[];M.added.push(cvv);if(M.selected.indexOf(cvv)<0)M.selected.push(cvv);drawPlaceDecision();break;}
-    case 'lk-new':if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}openLinkCreate();break;
+    case 'lk-new':if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}openLinkCreate();break;
     case 'lk-list':openLinkList();linkLoad();break;
     case 'lk-days':M.days=Number(a.dataset.v);document.querySelectorAll('#lk-days button').forEach(function(b){b.classList.toggle('on',b===a);});break;
     case 'lk-create':createLink();break;
@@ -5571,11 +5735,13 @@ function act(a,e){
     case 'friend-toggle-share':{var ftp=friendToggle(id,a.dataset.mode),inPrev=M.type==='friend-share-preview';if(inPrev){a.classList.toggle('on');ftp.then(function(){if(M.type==='friend-share-preview'&&M.friendId===id)openFriendSharePreview(id);});}break;}
     case 'friend-remove':if(armed(a))friendRemove(id);break;
     case 'save-friend-memory':saveFriendMemory();break;
-    case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 생활 기록에서 약속 잡기를 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
+    case 'memory-appointment':{if(S.settings.showMeetMaker===false){inAppToast('설정 → 친구 → 친구 약속 잡기에서 켤 수 있어요');break;}var mmWhat=$('#f-mwhat')?$('#f-mwhat').value.trim():'',memInfo=ppInfo(M.pp),memFriend=M.friendId;closeModal();openFriendMeet(memFriend,{info:memInfo,what:mmWhat});break;}
     case 'appointment-accept':respondAppointmentRequest(true);break;
     case 'appointment-decline':respondAppointmentRequest(false);break;
     case 'set-topn':S.settings.topN=Number(a.dataset.v);save();render();break;
-    case 'toggle-home-school':S.settings.showSchoolLinks=S.settings.showSchoolLinks===false;save();render();break;
+    case 'toggle-home-school':S.settings.showSchoolLinks=!featOn('showSchoolLinks');save();render();break;
+    case 'toggle-feat':if(/^(showSchoolLinks|showMemo|showLog|showDiary)$/.test(id||'')){S.settings[id]=!featOn(id);save();render();}break;
+    case 'toggle-lite':S.settings.liteHome=!S.settings.liteHome;save();render();break;
     case 'toggle-home-todo':S.settings.showNextTodo=S.settings.showNextTodo===false;save();render();break;
     case 'toggle-meet-maker':S.settings.showMeetMaker=S.settings.showMeetMaker===false;save();render();break;
     case 'set-diary-minutes':S.settings.diaryMinutes=Number(a.dataset.v)||10;save();render();break;
@@ -5607,7 +5773,7 @@ function act(a,e){
     case 'exam-prep-del':{var pr=a.closest('.exam-prep-row');if(pr)pr.remove();break;}
     case 'settings-home':U.settingsPage='';render();break;
     case 'settings-profile':U.settingsPage='profile';render();break;
-    case 'settings-friends':U.settingsPage='friends';render();break;
+    case 'settings-friends':U.settingsPage='';U.tab='friends';U.friendsPage='';render(true);break;
     case 'settings-school':U.settingsPage='school';render();break;
     case 'settings-life':U.settingsPage='life';render();break;
     case 'settings-screen':U.settingsPage='screen';render();break;
@@ -5623,8 +5789,8 @@ function act(a,e){
     case 'diary-cal-today':diaryCalPick(todayKey());break;
     case 'diary-cal-day':diaryCalPick(t.dataset.date);break;
     case 'diary-write-date':U.diaryDraft='';U.diaryNote='';U.diaryRun=null;U.diaryDate=a.dataset.date||todayKey();U.diaryReturn='library';drawDiary(U.diaryDate);break;
-    case 'open-diary':saveDiaryDraft();U.diaryDate=todayKey();U.diaryReturn=(M.type==='chat'?'chat':'home');drawDiary(todayKey());break;
-    case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);if(U.diaryReturn==='library'){var backDate=U.diaryDate||todayKey();U.diaryReturn='';openDiaryLibrary(backDate);}else if(U.diaryReturn==='chat'){U.diaryReturn='';U.diaryDate='';drawChat();}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}break;
+    case 'open-diary':saveDiaryDraft();U.diaryDate=todayKey();U.diaryReturn='home';drawDiary(todayKey());break;
+    case 'diary-back':saveDiaryDraft();diaryPause();clearTimeout(U.diaryTimer);if(U.diaryReturn==='library'){var backDate=U.diaryDate||todayKey();U.diaryReturn='';openDiaryLibrary(backDate);}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}break;
     case 'diary-toggle':saveDiaryDraft();if(!U.diaryRun)U.diaryRun={acc:0,since:Date.now(),running:true};else if(U.diaryRun.running)diaryPause();else diaryResume();drawDiary();break;
     case 'diary-finish':finishDiary();break;
     case 'open-chat':U.chatRoom='general';U.chatQuery='';U.chatSel=null;drawChat();break;
@@ -5814,7 +5980,10 @@ function act(a,e){
       save();render();break;
     }
     case 'clear-qdue':U.qdue='';render();break;
-    case 'gap':openEvent(null,{date:a.dataset.date,start:a.dataset.s,end:a.dataset.e,heading:'공강에 할 일 넣기',ph:'이 시간에 할 일'});break;
+    case 'gap':openGapFill(a.dataset.date,toMin(a.dataset.s),toMin(a.dataset.e));break;
+    case 'gap-place':gapPlace(id);break;
+    case 'gap-new-event':{var gg=M.gap||{};openEvent(null,{date:gg.date,start:fmt(gg.cur),end:fmt(gg.end),heading:'공강에 일정 넣기',ph:'이 시간에 할 일'});break;}
+    case 'gap-autofill':gapAutoFill(a.dataset.date);break;
     case 'toggle-rt':{
       var k=a.dataset.date,arr=(S.routineDone[k]||[]).slice(),ix=arr.indexOf(id);
       if(ix>=0)arr.splice(ix,1);else arr.push(id);
@@ -5871,7 +6040,7 @@ function act(a,e){
       }
       if(M.step>=3){
         var ft=$('#f-on-first-todo'),txt=ft?(ft.value||'').trim():'';
-        if(txt){S.todos.push({id:uid(),title:txt,date:iso(U.sel||new Date()),done:false,color:defCol(),createdAt:Date.now()});}
+        if(txt){S.todos.push({id:uid(),text:txt,done:false,star:false,scope:'day',key:todayKey(),due:null,course:'',created:Date.now(),order:Date.now()});}
         finishOnboard();closeModal();save();render();
       }else{M.step++;drawOnboard();}
       break;
@@ -5992,7 +6161,7 @@ document.addEventListener('input',function(e){
   if(e.target&&e.target.id==='pp-other'&&M.pp){M.pp.other=e.target.value;var pb=$('#pp');if(pb)pb.classList.remove('bad');}
 });
 var LastDelete=null,undoTimer=null;
-function showUndo(before){LastDelete=before;var bar=document.getElementById('undo-bar');if(!bar){bar=document.createElement('div');bar.id='undo-bar';bar.innerHTML='<span>삭제했어요</span><button data-act="undo-delete">실행 취소</button>';document.body.appendChild(bar);}bar.classList.add('on');clearTimeout(undoTimer);undoTimer=setTimeout(function(){bar.classList.remove('on');LastDelete=null;},6000);}
+function showUndo(before,label){LastDelete=before;var bar=document.getElementById('undo-bar');if(!bar){bar=document.createElement('div');bar.id='undo-bar';bar.innerHTML='<span>삭제했어요</span><button data-act="undo-delete">실행 취소</button>';document.body.appendChild(bar);}bar.querySelector('span').textContent=label||'삭제했어요';bar.classList.add('on');clearTimeout(undoTimer);undoTimer=setTimeout(function(){bar.classList.remove('on');LastDelete=null;},6000);}
 function undoLastDelete(){if(!LastDelete)return;S=normalize(JSON.parse(LastDelete));S.updatedAt=Date.now();LastDelete=null;var bar=document.getElementById('undo-bar');if(bar)bar.classList.remove('on');save();closeModal();render(true);inAppToast('되돌렸어요');}
 function isDeleteAction(n){return /^(del-|chat-del$|chat-room-delete$|memo-photo-del$|profile-photo-remove$|notice-clear$)/.test(n||'');}
 document.addEventListener('click',function(e){
