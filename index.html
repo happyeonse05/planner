@@ -2168,6 +2168,20 @@ function linkGridHTML(p,answers,o){
     '<div class="meetgrid">'+h+'</div>';
 }
 /* ----- 만드는 쪽 (로그인한 나) ----- */
+function localInputValue(d){
+  d=d||new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function linkDeadlineDefault(){
+  var d=new Date();d.setDate(d.getDate()+3);d.setHours(23,59,0,0);return localInputValue(d);
+}
+function linkDeadlineText(v){
+  if(!v)return '마감 없음';
+  try{var d=new Date(v);if(!isFinite(d))return v;return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+pad(d.getHours())+':'+pad(d.getMinutes());}catch(e){return v;}
+}
+function linkDeadlinePassed(p){
+  if(!p||!p.responseDeadline)return false;var t=new Date(p.responseDeadline).getTime();return isFinite(t)&&Date.now()>t;
+}
 function openLinkCreate(){
   if(!friendDb()){openLogin('링크 약속은 로그인 후 만들 수 있어요');return;}
   M={type:'link-create',pp:ppNew(null,{allowUndecided:true}),days:14};
@@ -2179,8 +2193,11 @@ function openLinkCreate(){
     '<span class="lbl">내 출발 지역</span><input class="fld" id="f-lk-origin" list="origin-suggestions" autocomplete="off" placeholder="부산, 서울, 강남역처럼 검색" value="'+esc(S.settings.homeStation||'')+'">'+originDatalist()+
     '<div class="geo-row"><button class="tbtn" data-act="lk-current">현재 위치에서 찾기</button><small id="lk-geo-msg">프로필의 출발 지역이 자동으로 들어가요.</small></div>'+
     '<span class="lbl">내 편도 상한 <em>(선택)</em></span><select class="fld" id="f-lk-cap"><option value="0">상한 없음</option><option value="30">30분 이하</option><option value="45">45분 이하</option><option value="60">60분 이하</option><option value="90">90분 이하</option></select></div>'+
-    '<span class="lbl">언제까지 물어볼까</span><div class="seg" id="lk-days">'+[[7,'1주'],[14,'2주'],[21,'3주']].map(function(x){return '<button data-act="lk-days" data-v="'+x[0]+'" class="'+(x[0]===14?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>'+
-    '<p class="hint">시간 범위는 내 약속 가능 시간('+meetAvail()[0]+':00~'+meetAvail()[1]+':00)을 따라요. 설정 → 친구에서 바꿀 수 있어요.</p>'+
+    '<span class="lbl">언제까지의 날짜를 물어볼까</span><div class="seg" id="lk-days">'+[[7,'1주'],[14,'2주'],[21,'3주']].map(function(x){return '<button data-act="lk-days" data-v="'+x[0]+'" class="'+(x[0]===14?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>'+
+    '<span class="lbl">응답은 언제까지 받을까</span><input class="fld" id="f-lk-deadline" type="datetime-local" value="'+linkDeadlineDefault()+'">'+
+    '<p class="hint">이 시간이 지나면 친구는 더 이상 답을 보내거나 수정할 수 없어요.</p>'+
+    '<span class="lbl">몇 시부터 몇 시까지 물어볼까</span><div class="row" style="margin-bottom:10px;align-items:center">'+meetAvailSelHTML('f-lk-time-start',meetAvail()[0],0,23)+'<span style="flex:none;color:var(--sub)">~</span>'+meetAvailSelHTML('f-lk-time-end',meetAvail()[1],1,24)+'</div>'+
+    '<p class="hint">이 링크에서만 쓰는 시간 범위예요. 기본값은 내 약속 가능 시간이고, 여기서 따로 바꿀 수 있어요.</p>'+
     '<p class="hint" id="lk-msg"></p><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="lk-create">링크 만들기</button></div>');
 }
 function createLink(){
@@ -2188,18 +2205,25 @@ function createLink(){
   var info=ppInfo(M.pp),msg=$('#lk-msg');
   if(M.pp.mode!=='undecided'&&!info){if(msg)msg.textContent='장소를 고르거나 “미정”을 눌러주세요';return;}
   var what=$('#f-lkwhat').value.trim(),days=M.days||14,av=meetAvail(),busy={},t=new Date(),
+      linkStart=+($('#f-lk-time-start')&&$('#f-lk-time-start').value),
+      linkEnd=+($('#f-lk-time-end')&&$('#f-lk-time-end').value),
+      responseDeadline=($('#f-lk-deadline')&&$('#f-lk-deadline').value)||'',
       placeRecommend=!!($('#f-lk-place-reco')&&$('#f-lk-place-reco').checked),
       expectedPeople=Math.max(2,Math.min(30,+($('#f-lk-expected')&&$('#f-lk-expected').value)||2)),
       ownerStation=($('#f-lk-origin')&&$('#f-lk-origin').value)||S.settings.homeStation||'',
       ownerCap=+($('#f-lk-cap')&&$('#f-lk-cap').value)||0;
+  if(!Number.isFinite(linkStart))linkStart=av[0];if(!Number.isFinite(linkEnd))linkEnd=av[1];
+  if(linkEnd<=linkStart){if(msg)msg.textContent='끝나는 시간은 시작 시간보다 뒤로 정해주세요';return;}
+  if(responseDeadline){var rd=new Date(responseDeadline).getTime();if(!isFinite(rd)||rd<=Date.now()){if(msg)msg.textContent='응답 마감은 지금보다 뒤로 정해주세요';return;}}
+  av=[linkStart,linkEnd];
   for(var i=0;i<days;i++){var k=dkey(addDays(t,i)),b=myBusyOn(k);if(b.allday)busy[k]='a';else if(b.r.length)busy[k]=b.r.map(function(r){return [r[0],r[1]];});}
-  var payload={v:1,ownerName:myDisplayName(),ownerPhoto:S.settings.profilePhoto||'',what:what,place:placeInfoText(info),placeInfo:info,from:dkey(t),days:days,lo:av[0]*60,hi:av[1]*60,busy:busy,placeRecommend:placeRecommend,expectedPeople:expectedPeople,ownerStation:ownerStation,ownerCap:ownerCap};
+  var payload={v:1,ownerName:myDisplayName(),ownerPhoto:S.settings.profilePhoto||'',what:what,place:placeInfoText(info),placeInfo:info,from:dkey(t),days:days,lo:av[0]*60,hi:av[1]*60,busy:busy,responseDeadline:responseDeadline,placeRecommend:placeRecommend,expectedPeople:expectedPeople,ownerStation:ownerStation,ownerCap:ownerCap};
   if(msg)msg.textContent='만드는 중…';
   sb.from('planner_meet_links').insert({owner_id:Sync.uid,payload:payload,status:'open'}).select().single().then(function(r){
     if(r.error)throw r.error;LinkSync.links.unshift(r.data);LinkSync.answers[r.data.token]=[];openLinkShare(r.data.token,true);
   }).catch(function(e){if(msg)msg.textContent=userMsg('링크를 만들지 못했어요. 잠시 뒤 다시 해주세요.',(/does not exist|schema cache|Could not find/i.test(e&&e.message||'')?'Supabase에서 planner-friends.sql을 한 번 더 실행해주세요. ':'링크를 만들지 못했어요. ')+'('+(e&&e.message||'')+')');});
 }
-function linkShareText(l){var p=l.payload||{};return (p.ownerName||'친구')+'님이 '+(p.what?'“'+p.what+'” ':'약속 ')+'시간을 물어봐요! 되는 시간 눌러줘 👉 '+linkUrl(l.token);}
+function linkShareText(l){var p=l.payload||{},dl=p.responseDeadline?' · '+linkDeadlineText(p.responseDeadline)+'까지 응답':'';return (p.ownerName||'친구')+'님이 '+(p.what?'“'+p.what+'” ':'약속 ')+'시간을 물어봐요!'+dl+' · 되는 시간 눌러줘 👉 '+linkUrl(l.token);}
 function openLinkShare(t,fresh){
   var l=LinkSync.links.find(function(x){return x.token===t;});if(!l)return;
   M={type:'link-share',token:t};
@@ -2223,7 +2247,7 @@ function linkLoad(){
 }
 function openLinkList(){
   M={type:'link-list'};
-  var rows=LinkSync.links.map(function(l){var p=l.payload||{},n=(LinkSync.answers[l.token]||[]).length,f=l.final;return '<button class="setrow lk-row" data-act="lk-detail" data-id="'+l.token+'"><span>'+esc(p.what||'약속')+(p.place?' · '+esc(p.place):'')+'<small>'+(l.status==='open'?esc(n?n+'명 답함 · 누르면 겹치는 시간을 봐요':'아직 답이 없어요'):'확정 · '+esc(f&&f.date?slotText(f.date,toMin(f.start),toMin(f.end)):''))+'</small></span><span class="chev">›</span></button>';}).join('');
+  var rows=LinkSync.links.map(function(l){var p=l.payload||{},n=(LinkSync.answers[l.token]||[]).length,f=l.final;return '<button class="setrow lk-row" data-act="lk-detail" data-id="'+l.token+'"><span>'+esc(p.what||'약속')+(p.place?' · '+esc(p.place):'')+'<small>'+(l.status==='open'?esc((n?n+'명 답함':'아직 답이 없어요')+(p.responseDeadline?' · 응답 '+linkDeadlineText(p.responseDeadline)+'까지':'')+(linkDeadlinePassed(p)?' · 마감됨':' · 누르면 겹치는 시간을 봐요')):'확정 · '+esc(f&&f.date?slotText(f.date,toMin(f.start),toMin(f.end)):''))+'</small></span><span class="chev">›</span></button>';}).join('');
   openModal('<h3>링크 약속</h3>'+(rows||'<div class="empty">아직 만든 링크가 없어요.</div>')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="lk-new">새 링크 만들기</button></div>');
 }
 function openLinkDetail(t){M={type:'link-detail',token:t,week:0,sel:null,tap:null};drawLinkDetail();linkLoad();}
@@ -2232,7 +2256,7 @@ function drawLinkDetail(){
   var p=l.payload||{},ans=LinkSync.answers[l.token]||[],sc=document.querySelector('#lk-grid .meetgrid'),top=sc?sc.scrollTop:0;
   if(l.status!=='open'){var f=l.final||{};openModal('<h3>'+esc(p.what||'약속')+'</h3><div class="requestbox"><b>확정된 약속</b><small>'+esc([f.date?slotText(f.date,toMin(f.start),toMin(f.end)):'',f.place||'장소 미정',(f.names||[]).join(', ')].filter(Boolean).join(' · '))+'</small></div><p class="hint">링크를 연 사람들도 확정된 시간을 볼 수 있어요.</p><div class="acts"><button class="b-del" data-act="lk-delete" data-id="'+l.token+'">링크 삭제</button><button class="b-ghost" data-act="lk-copy" data-id="'+l.token+'">링크 복사</button><button class="b-save" data-act="close">닫기</button></div>');return;}
   var best=linkBestRuns(p,ans),cw=linkCounts(ans),tapWho=M.tap?(cw.who[M.tap]||[]):null,s=M.sel;
-  openModal('<h3>'+esc(p.what||'링크 약속')+'</h3><p class="hint">'+(ans.length?((ans.length+1)+'/'+Math.max(+p.expectedPeople||0,ans.length+1)+'명 입력 완료 · '+esc(ans.map(function(a){return a.name;}).join(', '))):('1/'+Math.max(+p.expectedPeople||2,2)+'명 입력 완료 · 아직 친구 답이 없어요.'))+'</p>'+
+  openModal('<h3>'+esc(p.what||'링크 약속')+'</h3><p class="hint">'+(p.responseDeadline?'응답 마감 '+esc(linkDeadlineText(p.responseDeadline))+(linkDeadlinePassed(p)?' · 마감됨':'')+'<br>':'')+(ans.length?((ans.length+1)+'/'+Math.max(+p.expectedPeople||0,ans.length+1)+'명 입력 완료 · '+esc(ans.map(function(a){return a.name;}).join(', '))):('1/'+Math.max(+p.expectedPeople||2,2)+'명 입력 완료 · 아직 친구 답이 없어요.'))+'</p>'+
     (best.length?'<div class="meetsug"><span>제일 많이 겹치는 시간</span><div class="meetsug-row">'+best.map(function(x){var on=s&&s.date===x.date&&s.s===x.s&&s.e===x.e;return '<button class="sugchip'+(on?' on':'')+'" data-act="lk-best" data-k="'+x.date+'" data-s="'+x.s+'" data-e="'+x.e+'">'+x.n+'/'+ans.length+'명 · '+esc(slotText(x.date,x.s,x.e))+'</button>';}).join('')+'</div></div>':'')+
     linkPlaceRecoHTML(p,ans)+'<div id="lk-grid">'+linkGridHTML(p,ans,{mode:'owner',week:M.week,sel:s})+'</div>'+
     '<p class="hint" id="lk-sel">'+(tapWho?esc(slotText(M.tap.split('|')[0],+M.tap.split('|')[1],+M.tap.split('|')[1]+30))+' 가능 · '+(tapWho.length?esc(tapWho.join(', ')):'아무도 없어요')+'<br>':'')+(s?'고른 시간 · '+esc(slotText(s.date,s.s,s.e))+(s.step===1?' · 한 번 더 누르면 끝 시간':''):'칸을 눌러 누가 되는지 보고, 시작·끝을 골라 확정해요')+'</p>'+
@@ -2281,10 +2305,11 @@ function guestHTML(){
   var L=G.link,p=L.payload||{},who=p.ownerName||'친구',ans=G.answers||[];
   var expected=Math.max(+p.expectedPeople||0,ans.length+1),answered=ans.length+1;
   var head='<section class="card lk-head"><div class="meet-head">'+friendAvatar(who,p.ownerPhoto,'lg')+'<div><b class="meet-days-big">'+esc(who)+'님이 약속 시간을 물어봐요</b><span class="meet-days">'+esc([p.what||'약속',p.place||'장소는 같이 정해요'].join(' · '))+'</span></div></div>'+
-    '<p class="hint" style="margin:0">'+answered+'/'+expected+'명 입력 완료'+(ans.length?' · '+esc(ans.map(function(a){return a.name;}).join(', ')):'')+'</p><div class="input-progress"><i style="width:'+Math.min(100,Math.round(answered/expected*100))+'%"></i></div></section>';
+    '<p class="hint" style="margin:0">'+answered+'/'+expected+'명 입력 완료'+(p.responseDeadline?' · 응답 '+esc(linkDeadlineText(p.responseDeadline))+'까지':'')+(ans.length?' · '+esc(ans.map(function(a){return a.name;}).join(', ')):'')+'</p><div class="input-progress"><i style="width:'+Math.min(100,Math.round(answered/expected*100))+'%"></i></div></section>';
   if(L.status!=='open'){var f=L.final||{};
     return head+'<section class="card"><div class="card-h"><h3>약속이 정해졌어요</h3></div><div class="requestbox"><b>'+esc(f.date?slotText(f.date,toMin(f.start),toMin(f.end)):'')+'</b><small>'+esc([f.place||'장소 미정',(f.names||[]).length?'함께 · '+f.names.join(', '):''].filter(Boolean).join(' · '))+'</small></div>'+
       '<div class="acts"><a class="b-ghost lk-a" href="'+esc(gcalUrl(f,p))+'" target="_blank" rel="noopener">구글 캘린더에 추가</a><button class="b-save" data-act="lk-add-mine">내 플래너에 넣기</button></div></section>'+guestCtaHTML();}
+  if(linkDeadlinePassed(p))return head+'<section class="card"><div class="card-h"><h3>응답이 마감됐어요</h3></div><p class="hint">'+esc(linkDeadlineText(p.responseDeadline))+'까지 받는 약속이었어요. 이제 새 답을 보내거나 수정할 수 없어요.</p></section>'+guestCtaHTML();
   var cnt=Object.keys(G.mine||{}).length;
   return head+'<section class="card"><span class="lbl">내 이름</span><input class="fld" id="lk-name" maxlength="20" placeholder="친구들이 알아볼 이름" value="'+esc(G.name||'')+'">'+
     (p.placeRecommend?'<span class="lbl">어디서 출발해?</span><select class="fld" id="lk-origin">'+moStationOptions(G.origin||'')+'</select><div class="geo-row"><button class="tbtn" data-act="guest-current">현재 위치에서 찾기</button><small id="guest-geo-msg">좌표는 저장하지 않고 가까운 역만 사용해요.</small></div><span class="lbl">편도 상한 <em>(선택)</em></span><select class="fld" id="lk-cap"><option value="0">상한 없음</option>'+[30,45,60,90].map(function(v){return '<option value="'+v+'"'+(+G.cap===v?' selected':'')+'>'+v+'분 이하</option>';}).join('')+'</select>':'')+
@@ -2295,7 +2320,8 @@ function guestHTML(){
 function guestCtaHTML(){return '<section class="card lk-cta"><b>나도 이 플래너 써볼래?</b><p class="hint">친구 시간표를 보고 빈 시간에 약속을 잡으면, 만난 곳이 추억으로 쌓여요.</p><button class="b-ghost lk-full" data-act="lk-leave">플래너 열어보기</button></section>';}
 function guestDrawGrid(){var G=U.guest,box=$('#lk-grid');if(!box||!G||!G.link)return;var g=box.querySelector('.meetgrid'),top=g?g.scrollTop:0;box.innerHTML=linkGridHTML(G.link.payload||{},G.answers,{mode:'guest',week:G.week||0,mine:G.mine,skipId:G.aid});var g2=box.querySelector('.meetgrid');if(g2)g2.scrollTop=top;var cnt=Object.keys(G.mine).length,m=$('#lk-gmsg');if(m&&!G.sent)m.textContent=cnt?cnt+'칸 골랐어요':'';}
 function guestSend(){
-  var G=U.guest,nm=$('#lk-name'),name=nm?nm.value.trim():'',m=$('#lk-gmsg'),slots=Object.keys(G.mine||{}),
+  var G=U.guest;if(G&&G.link&&linkDeadlinePassed(G.link.payload||{})){var mm=$('#lk-gmsg');if(mm)mm.textContent='응답 마감 시간이 지나서 더 이상 보낼 수 없어요';return;}
+  var nm=$('#lk-name'),name=nm?nm.value.trim():'',m=$('#lk-gmsg'),slots=Object.keys(G.mine||{}),
       p=(G.link&&G.link.payload)||{},origin=($('#lk-origin')&&$('#lk-origin').value)||G.origin||'',cap=+($('#lk-cap')&&$('#lk-cap').value)||0;
   if(!name){if(nm){nm.classList.add('bad');nm.focus();}if(m)m.textContent='이름을 먼저 적어줘';return;}
   if(p.placeRecommend&&!origin){if(m)m.textContent='출발 지역이나 역을 입력해줘';return;}if(!slots.length){if(m)m.textContent='되는 시간을 한 칸 이상 눌러줘';return;}G.origin=origin;G.cap=cap;var sendSlots=linkMetaSlots(slots,origin,cap);
