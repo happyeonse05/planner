@@ -5838,13 +5838,13 @@ document.addEventListener('change',function(e){
   if(e.target.id==='set-wake-goal'){S.settings.wakeGoal=e.target.value||'09:00';save();render();return;}
   if(e.target.dataset&&e.target.dataset.monthItem){S.settings.monthItems[e.target.dataset.monthItem]=e.target.checked;save();render();return;}
   if(e.target.dataset&&e.target.dataset.memphoto!==undefined&&e.target.files&&e.target.files[0]){setMemoryPhoto(e.target.files[0],e.target.dataset.memphoto||null);e.target.value='';return;}
-  if(e.target.dataset&&e.target.dataset.profilePhoto&&e.target.files&&e.target.files[0]){
+  if(e.target.dataset&&e.target.dataset.profilePhoto!==undefined&&e.target.files&&e.target.files[0]){
     setProfilePhoto(e.target.files[0]);e.target.value='';return;
   }
   if(e.target.dataset&&e.target.dataset.memophoto&&e.target.files){
     addMemoPhotos(e.target.dataset.memophoto,e.target.files);e.target.value='';return;
   }
-  if(e.target.dataset&&e.target.dataset.chatphoto&&e.target.files){
+  if(e.target.dataset&&e.target.dataset.chatphoto!==undefined&&e.target.files){
     addChatPhotos(e.target.files);e.target.value='';return;
   }
   if((M.type==='event'||M.type==='appointment'||M.type==='schedule')&&/^f-(date|from|to|enddate|start|end)$/.test(e.target.id)){M.tpA=null;if(M.type==='schedule')drawSchedule();else drawTpick();}
