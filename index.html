@@ -307,6 +307,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 
 /* ===== 하루 마감 · 시험 준비 ===== */
 .dayclose-banner{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;margin:10px 0;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--edge));border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--card));text-align:left}.dayclose-banner span{flex:1;min-width:0}.dayclose-banner b{display:block;font-size:14px}.dayclose-banner small{display:block;color:var(--sub);font-size:12px;margin-top:2px}.close-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.close-summary div{padding:11px 8px;border-radius:12px;background:var(--soft);text-align:center}.close-summary b{display:block;font-size:18px}.close-summary small{color:var(--sub);font-size:11px}.exam-prep{margin:8px 0 12px;padding:10px;border-radius:12px;background:var(--soft)}.exam-prep-row{display:flex;align-items:center;gap:8px;padding:6px 0}.exam-prep-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}.exam-prep-row input[type=text]{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);font-size:14px}.exam-prep-add{display:flex;gap:6px;margin-top:6px}.exam-prep-add input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:0 10px;font-size:16px}.exam-prep-add button{height:38px;padding:0 11px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:700}.prep-progress{font-size:11px;color:var(--sub);margin-left:6px}.exam-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.exam-meta .fld{margin:0}.prep-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.prep-head .tbtn{height:30px;font-size:12px}.prep-meter{height:4px;background:var(--line);border-radius:999px;overflow:hidden;margin:7px 0 9px}.prep-meter i{display:block;height:100%;background:var(--accent)}.home-smart{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.home-smart button{height:32px;padding:0 10px;border-radius:9px;background:var(--soft);font-size:12px;font-weight:700}.month-review{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;scrollbar-width:none}.month-review::-webkit-scrollbar{display:none}.month-review>div{flex:0 0 auto;min-width:110px;padding:9px 10px;border-radius:10px;background:var(--soft)}.month-review small{display:block;color:var(--sub);font-size:10px}.month-review b{display:block;margin-top:2px;font-size:13px}
+.schedule-pack .hint{margin:4px 0 8px}.schedule-pack-list:empty::before{content:'아직 준비물이 없어요';display:block;padding:10px;border-radius:10px;background:var(--card);border:1px dashed var(--line);color:var(--sub);font-size:13px}.pack-opts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}.pack-opts label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub)}.pack-opts input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}.pack-msg{font-size:12px;color:var(--sub);margin-top:6px}
 .close-word{margin:10px 0 12px}.close-word .lbl{font-size:13px;color:var(--ink);font-weight:700}.close-word input{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:0 13px;font-size:16px;color:var(--ink)}.close-word input:focus{outline:2px solid var(--accent);border-color:transparent}.month-review{margin:0 0 10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 20%,var(--edge))}.month-review b{font-size:14px}.month-review small{display:block;color:var(--sub);font-size:12px;margin-top:3px}.month-words{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.month-words span{padding:4px 8px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:11px}.home-priority{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.home-priority button{height:34px;padding:0 10px;border-radius:10px;background:var(--soft);font-size:12px;font-weight:700}.home-priority button.primary{background:var(--accent);color:var(--accent-ink)}.exam-auto{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}.exam-auto .fld{margin:0}.exam-auto-btn{width:100%;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:12px;font-weight:700;margin-bottom:6px}
 
 /* ===== 일기장 · 책 보기 ===== */
@@ -1271,7 +1272,7 @@ var DEFAULT_CLASSES=[];
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'star',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -1304,6 +1305,7 @@ function normalize(s){
   if(!o.settings.chatHidden||typeof o.settings.chatHidden!=='object')o.settings.chatHidden={};
   if(!o.settings.chatRoomNames||typeof o.settings.chatRoomNames!=='object')o.settings.chatRoomNames={};
   ['classes','events','todos','routines','exams','allday','trackers','selfchat','diaries','dayCloses','ddays'].forEach(function(k){if(!Array.isArray(o[k]))o[k]=d[k];});
+  if(!o.schedulePrepTemplates||typeof o.schedulePrepTemplates!=='object')o.schedulePrepTemplates={};
   DEFAULT_TRK.forEach(function(t){if(!o.trackers.some(function(x){return x.id===t.id;}))o.trackers.push(Object.assign({},t));});
   if(!o.memos||typeof o.memos!=='object')o.memos={};
   if(!o.routineDone||typeof o.routineDone!=='object')o.routineDone={};
@@ -1346,8 +1348,8 @@ function normalize(s){
   o.settings.links=schoolLinks(o.settings.school,o.settings.schoolCampus).concat(customLinks);
   var OLDB=['#efe7da','#f4e0bf'];
   o.classes.forEach(function(c){if(OLDB.indexOf(c.color)>=0)c.color=BEIGE;});
-  o.events.forEach(function(e){if(OLDB.indexOf(e.color)>=0)e.color=BEIGE;});
-  o.allday.forEach(function(e){if(OLDB.indexOf(e.color)>=0)e.color=BEIGE;});
+  o.events.forEach(function(e){if(OLDB.indexOf(e.color)>=0)e.color=BEIGE; e.packing=cleanPackItems(e.packing);});
+  o.allday.forEach(function(e){if(OLDB.indexOf(e.color)>=0)e.color=BEIGE; e.packing=cleanPackItems(e.packing);});
   if(!o.settings.colorV2){
     o.classes.forEach(function(c){c.color=BEIGE;});
     o.events.forEach(function(e){if(PALETTE.indexOf(e.color)<0)e.color=PALETTE[5];});
@@ -3703,7 +3705,7 @@ function eventOnDate(e,k){
 function eventLabel(e){return e.kind==='appointment'?(e.what||e.title||e.person||e.place||'약속'):(e.title||'일정');}
 function eventSub(e){return e.kind==='appointment'?[e.person,e.place].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(' · '):'';}
 function eventChipLabel(e){
-  if(e.kind!=='appointment')return eventLabel(e);
+  if(e.kind!=='appointment'){var base=eventLabel(e),pc=cleanPackItems(e&&e.packing).length;return base+(pc?(' · 준비물 '+pc):'');}
   return [e.what,e.person,e.place].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(' · ')||'약속';
 }
 function appointmentChip(e){return '<button class="adchip" style="--c:'+e.color+'" data-act="edit-event" data-id="'+e.id+'">'+esc(eventChipLabel(e))+'</button>';}
@@ -5927,6 +5929,49 @@ function saveExam(){
   else S.exams.push({id:uid(),name:n,start:a,end:a,time:time||null,kind:M.kind||null,course:course,pin:$('#f-epin').checked,prep:prep,rangeText:rangeText,materials:materials});
   save();closeModal();render();
 }
+
+function normPackTitle(s){return String(s||'').trim().replace(/\s+/g,' ').toLowerCase();}
+function cleanPackItems(items){
+  return (Array.isArray(items)?items:[]).map(function(it){
+    if(typeof it==='string')it={text:it};
+    if(!it||typeof it!=='object')return null;
+    var txt=String(it.text||'').trim();
+    if(!txt)return null;
+    return {id:it.id||uid(),text:txt,done:!!it.done};
+  }).filter(Boolean);
+}
+function scheduleTemplateStore(){if(!S.schedulePrepTemplates||typeof S.schedulePrepTemplates!=='object')S.schedulePrepTemplates={};return S.schedulePrepTemplates;}
+function scheduleTemplateFor(title){var k=normPackTitle(title);if(!k)return [];var t=scheduleTemplateStore()[k];return t&&Array.isArray(t.items)?cleanPackItems(t.items):[];}
+function scheduleTemplateHas(title){return scheduleTemplateFor(title).length>0;}
+function scheduleTemplateSave(title,items){var k=normPackTitle(title),nm=String(title||'').trim();if(!k||!nm)return;var arr=cleanPackItems(items);if(arr.length)scheduleTemplateStore()[k]={title:nm,items:arr};else delete scheduleTemplateStore()[k];}
+function scheduleTemplateClear(title){var k=normPackTitle(title);if(k&&scheduleTemplateStore()[k])delete scheduleTemplateStore()[k];}
+function schedulePackRow(it){return '<label class="exam-prep-row"><input type="checkbox" data-pack-id="'+esc(it.id)+'"'+(it.done?' checked':'')+'><input type="text" data-pack-text="'+esc(it.id)+'" value="'+esc(it.text||'')+'"><button type="button" data-act="pack-del" data-id="'+esc(it.id)+'">×</button></label>';}
+function renderSchedulePackList(items){var box=$('#schedule-pack-list');if(box)box.innerHTML=cleanPackItems(items).map(schedulePackRow).join('');}
+function collectSchedulePack(){return [].slice.call(document.querySelectorAll('#schedule-pack-list .exam-prep-row')).map(function(r){var c=r.querySelector('[data-pack-id]'),t=r.querySelector('[data-pack-text]');return {id:(c&&c.dataset.packId)||uid(),text:(t&&t.value||'').trim(),done:!!(c&&c.checked)};}).filter(function(x){return x.text;});}
+function schedulePackHint(){
+  var ti=$('#f-stitle'),msg=$('#pack-template-msg'),ck=$('#f-pack-template');
+  if(!ti||!msg)return;
+  var nm=(ti.value||'').trim(),has=scheduleTemplateHas(nm),cnt=has?scheduleTemplateFor(nm).length:0;
+  if(has)msg.textContent='“'+nm+'” 제목에 저장된 준비물 템플릿 '+cnt+'개';
+  else if(nm)msg.textContent='이 제목엔 아직 저장된 준비물 템플릿이 없어요';
+  else msg.textContent='제목을 적으면 같은 제목의 준비물 템플릿을 불러올 수 있어요';
+  if(ck&&has&&M.type==='schedule'&&M.id==null&&M.packTouched!==true)ck.checked=true;
+}
+function maybeApplyScheduleTemplate(force){
+  var ti=$('#f-stitle'); if(!ti)return;
+  var nm=(ti.value||'').trim(),tpl=scheduleTemplateFor(nm),cur=collectSchedulePack();
+  if((force||!cur.length)&&tpl.length){renderSchedulePackList(tpl);M.packTouched=false;}
+  schedulePackHint();
+}
+function schedulePackMarkup(items,title){
+  var arr=cleanPackItems(items),has=scheduleTemplateHas(title);
+  return '<div class="schedule-pack">'+
+    '<div class="prep-head"><span class="lbl">준비물</span><button class="tbtn" type="button" data-act="pack-fill-template">제목 템플릿 불러오기</button></div>'+
+    '<p class="hint">예: “본가” 일정에 충전기, 잠옷, 세면도구를 적어두면 다음에 같은 제목을 만들 때도 자동으로 떠요.</p>'+
+    '<div class="exam-prep"><div id="schedule-pack-list" class="schedule-pack-list">'+arr.map(schedulePackRow).join('')+'</div><div class="exam-prep-add"><input id="f-pack-new" placeholder="예: 충전기"><button type="button" data-act="pack-add">추가</button></div><div class="pack-opts"><label><input type="checkbox" id="f-pack-template"'+(has?' checked':'')+'> 이 제목의 준비물 템플릿으로 저장</label><button class="b-ghost" type="button" data-act="pack-template-clear">이 제목 템플릿 지우기</button></div><div class="pack-msg" id="pack-template-msg"></div></div></div>';
+}
+function packBadge(cnt){return cnt?(' <small class="prep-progress">준비물 '+cnt+'개</small>'):'';}
+
 function openCourseColor(name){
   M={type:'ccolor',name:name};
   var cur=courseColor(name);
@@ -5939,10 +5984,12 @@ function openSchedule(a,def){
   var editing=!!a,isAll=editing&&!a.start;
   var x=a||{title:def.title||'',color:def.color||defCol(),date:def.date||dkey(U.date),start:def.start||'',end:def.end||''};
   var repeat=!!(x.days&&Array.isArray(x.days)),single=isAll?!(x.end&&x.date&&x.end!==x.date):!(x.from&&x.to&&!repeat);
-  M={type:'schedule',id:editing?x.id:null,source:isAll?'allday':'event',color:x.color||defCol(),mode:(def.mode==='time'||x.start)?'time':'all',repeat:repeat,tpA:null,single:single,days:repeat?x.days.slice():[0,1,2,3,4,5,6]};
+  var seedPacking=cleanPackItems(x.packing&&x.packing.length?x.packing:scheduleTemplateFor(x.title||def.title||''));
+  M={type:'schedule',id:editing?x.id:null,source:isAll?'allday':'event',color:x.color||defCol(),mode:(def.mode==='time'||x.start)?'time':'all',repeat:repeat,tpA:null,single:single,days:repeat?x.days.slice():[0,1,2,3,4,5,6],packTouched:false};
   var date=x.date||x.from||def.date||dkey(U.date),endDate=isAll&&x.end&&x.end!==date?x.end:(!repeat&&x.from&&x.to?x.to:''),from=x.from||date,to=x.to||'';
   openModal('<h3>'+(editing?'일정 수정':'일정 추가')+'</h3>'+ 
     '<input class="fld" id="f-stitle" placeholder="일정 제목" maxlength="60" value="'+esc(x.title||'')+'">'+
+    schedulePackMarkup(seedPacking,x.title||def.title||'')+
     '<span class="lbl">언제</span><div class="seg" id="f-swhen"><button data-act="schedule-when" data-v="once">한 번만</button><button data-act="schedule-when" data-v="rep">반복</button></div>'+
     '<div id="schedule-once"><div class="seg" id="f-srange"><button data-act="schedule-range" data-v="single">하루</button><button data-act="schedule-range" data-v="period">기간</button></div><div class="row"><input class="fld" type="date" id="f-date" value="'+esc(date)+'"><span class="s-enddate"'+(single?' style="display:none"':'')+'>~</span><span class="s-enddate"'+(single?' style="display:none"':'')+'><input class="fld" type="date" id="f-enddate" value="'+esc(endDate)+'"></span></div></div>'+
     '<div id="schedule-repeat"><div class="row"><input class="fld" type="date" id="f-from" value="'+esc(from)+'"><span>~</span><input class="fld" type="date" id="f-to" value="'+esc(to)+'"></div><div class="seg" id="f-sdays"></div><div class="seg"><button data-act="schedule-preset" data-v="all">매일</button><button data-act="schedule-preset" data-v="wd">평일</button><button data-act="schedule-preset" data-v="we">주말</button></div></div>'+
@@ -5952,6 +5999,7 @@ function openSchedule(a,def){
     palHTML(M.color)+
     '<div class="acts">'+(editing?'<button class="b-del" data-act="del-schedule">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-schedule">저장</button></div>');
   drawSchedule();
+  schedulePackHint();
   if(!x.title)setTimeout(function(){var f=$('#f-stitle');if(f)f.focus();},50);
 }
 function drawSchedule(){
@@ -5967,16 +6015,18 @@ function drawSchedule(){
 }
 function saveSchedule(){
   var title=$('#f-stitle').value.trim();if(!title){bad('#f-stitle');return;}
+  var packing=cleanPackItems(collectSchedulePack());
   var target,source=M.mode==='all'?'allday':'event';
   if(M.repeat){
     var from=$('#f-from').value,to=$('#f-to').value||null;if(!from){bad('#f-from');return;}if(to&&to<from){bad('#f-to');return;}if(!M.days.length){$('#f-sdays').style.outline='2px solid var(--now)';return;}
-    if(M.mode==='all')target={title:title,color:M.color,date:null,end:null,days:M.days.slice().sort(),from:from,to:to};
-    else{var rs=$('#f-start').value,re=$('#f-end').value;if(!rs){bad('#f-start');return;}if(!re||toMin(re)<=toMin(rs)){bad('#f-end');return;}target={kind:'schedule',title:title,color:M.color,date:null,start:rs,end:re,days:M.days.slice().sort(),from:from,to:to};}
+    if(M.mode==='all')target={title:title,color:M.color,date:null,end:null,days:M.days.slice().sort(),from:from,to:to,packing:packing};
+    else{var rs=$('#f-start').value,re=$('#f-end').value;if(!rs){bad('#f-start');return;}if(!re||toMin(re)<=toMin(rs)){bad('#f-end');return;}target={kind:'schedule',title:title,color:M.color,date:null,start:rs,end:re,days:M.days.slice().sort(),from:from,to:to,packing:packing};}
   }else{
     var date=$('#f-date').value;if(!date){bad('#f-date');return;}var endDate=!M.single?($('#f-enddate').value||''):'';if(endDate&&endDate<date){bad('#f-enddate');return;}
-    if(M.mode==='all')target={title:title,color:M.color,date:date,end:endDate&&endDate!==date?endDate:null,days:null,from:null,to:null};
-    else{var s=$('#f-start').value,e=$('#f-end').value;if(!s){bad('#f-start');return;}if(!e||toMin(e)<=toMin(s)){bad('#f-end');return;}target={kind:'schedule',title:title,color:M.color,date:endDate?null:date,start:s,end:e,days:null,from:endDate?date:null,to:endDate?endDate:null};}
+    if(M.mode==='all')target={title:title,color:M.color,date:date,end:endDate&&endDate!==date?endDate:null,days:null,from:null,to:null,packing:packing};
+    else{var s=$('#f-start').value,e=$('#f-end').value;if(!s){bad('#f-start');return;}if(!e||toMin(e)<=toMin(s)){bad('#f-end');return;}target={kind:'schedule',title:title,color:M.color,date:endDate?null:date,start:s,end:e,days:null,from:endDate?date:null,to:endDate?endDate:null,packing:packing};}
   }
+  if($('#f-pack-template')&&$('#f-pack-template').checked&&title)scheduleTemplateSave(title,packing);
   if(M.id){S.events=S.events.filter(function(x){return x.id!==M.id;});S.allday=S.allday.filter(function(x){return x.id!==M.id;});}
   target.id=M.id||uid();if(source==='allday')S.allday.push(target);else S.events.push(target);
   save();closeModal();render();
@@ -6942,6 +6992,10 @@ function act(a,e){
     case 'schedule-range':M.single=a.dataset.v==='single';drawSchedule();break;
     case 'schedule-day':{var sd=Number(a.dataset.v),si=M.days.indexOf(sd);if(si>=0)M.days.splice(si,1);else M.days.push(sd);drawSchedule();break;}
     case 'schedule-preset':M.days=a.dataset.v==='all'?[0,1,2,3,4,5,6]:a.dataset.v==='wd'?[0,1,2,3,4]:[5,6];drawSchedule();break;
+    case 'pack-fill-template':maybeApplyScheduleTemplate(true);break;
+    case 'pack-add':{var pi=$('#f-pack-new'),pv=pi&&pi.value.trim();if(pv){var box=$('#schedule-pack-list');if(box){var rid=uid(),wrap=document.createElement('div');wrap.innerHTML=schedulePackRow({id:rid,text:pv,done:false});box.appendChild(wrap.firstChild);M.packTouched=true;}pi.value='';schedulePackHint();}break;}
+    case 'pack-del':{var pr=a.closest('.exam-prep-row');if(pr){pr.remove();M.packTouched=true;schedulePackHint();}break;}
+    case 'pack-template-clear':{var ti=$('#f-stitle'),nm=ti&&(ti.value||'').trim();if(nm){scheduleTemplateClear(nm);if($('#f-pack-template'))$('#f-pack-template').checked=false;schedulePackHint();toast('이 제목의 준비물 템플릿을 지웠어요');}break;}
     case 'del-schedule':if(armed(a)){S.events=S.events.filter(function(x){return x.id!==M.id;});S.allday=S.allday.filter(function(x){return x.id!==M.id;});save();closeModal();render();}break;
     case 'del-event':if(armed(a)){var delEv=S.events.find(function(x){return x.id===M.id;});S.events=S.events.filter(function(x){return x.id!==M.id;});save();if(delEv&&delEv.sharedRequestId)cancelSharedAppointment(delEv);closeModal();render();}break;
     case 'save-block':saveBlock();break;
@@ -7052,6 +7106,7 @@ document.addEventListener('input',function(e){
   if(e.target&&e.target.id==='pp-q'&&M.pp){M.pp.q=e.target.value;var z=$('#pp-results');if(z)z.innerHTML=ppResultsHTML(M.pp.q);}
   if(e.target&&e.target.id==='f-diary'){diaryLiveInput(e.target);}
   if(e.target&&e.target.id==='f-diary-note'){U.diaryNote=e.target.value;if(U.diaryDate)diarySessionSave(U.diaryDate);}
+  if(e.target&&e.target.id==='f-stitle'){schedulePackHint();}
   if(e.target&&e.target.id==='pp-other'&&M.pp){M.pp.other=e.target.value;var pb=$('#pp');if(pb)pb.classList.remove('bad');}
 });
 var LastDelete=null,undoTimer=null;
@@ -7178,6 +7233,8 @@ document.addEventListener('input',function(e){
   if(t.id==='q-due'){U.qdue=t.value;}
   if(t.id==='c-due'){U.cdue=t.value;}
   if(t.id==='f-chat'){U.chatDraft=t.value;}
+  if(t.id==='f-stitle'){schedulePackHint();}
+  if(t.dataset&&t.dataset.packText){M.packTouched=true;schedulePackHint();}
   if(t.id==='f-chat-search'){
     U.chatQuery=t.value;
     var cl=document.querySelector('#clist'),old=cl?cl.scrollTop:0;
@@ -7227,6 +7284,9 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('change',function(e){
   if(M&&M.type==='appointment'&&e.target&&['f-date','f-start','f-end'].indexOf(e.target.id)>=0)M.conflictConfirmed=false;
+  if(e.target&&e.target.id==='f-stitle'){maybeApplyScheduleTemplate(false);return;}
+  if(e.target&&e.target.id==='f-pack-template'){schedulePackHint();return;}
+  if(e.target&&e.target.dataset&&e.target.dataset.packId){M.packTouched=true;return;}
   if(e.target.id==='f-on-school'){var picked=allSchoolProfiles().find(function(x){return x.name===e.target.value;});if(picked){M.school=picked.id;M.campus=picked.campuses[0]||'';drawOnboard();}return;}
   if(e.target.id==='f-on-campus'){M.campus=e.target.value;return;}
   if(e.target.id==='set-meet-s'||e.target.id==='set-meet-e'){var ms=Number($('#set-meet-s').value),me=Number($('#set-meet-e').value);if(me<=ms){e.target.classList.add('bad');return;}S.settings.meetStart=ms;S.settings.meetEnd=me;save();render();friendBusyPush();return;}
