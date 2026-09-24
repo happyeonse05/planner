@@ -329,7 +329,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 /* ===== 10분 일기 ===== */
 .settings-group-head{margin:22px 4px 8px;padding-top:4px}.settings-group-head b{display:block;font-size:17px;letter-spacing:-.02em}.settings-group-head small{display:block;margin-top:2px;color:var(--sub);font-size:12px;font-weight:500}
 .diary-banner{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 48%,var(--card));border:1px solid color-mix(in srgb,var(--planner-color,#dce9f7) 75%,var(--edge));text-align:left}.diary-banner b{display:block;font-size:14px}.diary-banner small{display:block;margin-top:2px;color:var(--sub);font-size:12px}.diary-banner .chev{font-size:22px;color:var(--sub)}
-.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:color-mix(in srgb,var(--planner-color,#dce9f7) 72%,#111)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--planner-color,#dce9f7);color:#1d1d1f}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background:var(--soft);padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text:focus{outline:2px solid var(--planner-color,#dce9f7)}.diary-note{min-height:100px;margin-top:9px}.diary-count{display:flex;justify-content:flex-end;margin:-4px 4px 8px;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--planner-color,#dce9f7);color:#1d1d1f;font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}
+.diarypage{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}.diary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.diary-head>div{flex:1}.diary-head h3{margin:0;font-size:20px}.diary-head small{color:var(--sub)}.diary-clock{text-align:center;padding:18px 8px 12px}.diary-time{font-size:42px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.diary-time.extra{color:color-mix(in srgb,var(--planner-color,#dce9f7) 72%,#111)}.diary-status{font-size:12px;color:var(--sub);margin-top:3px}.diary-actions{display:flex;justify-content:center;gap:7px;margin:8px 0 14px}.diary-actions button{height:38px;padding:0 15px;border-radius:11px;background:var(--soft);font-size:13px;font-weight:700}.diary-actions .primary{background:var(--planner-color,#dce9f7);color:#1d1d1f}.diary-text{width:100%;min-height:220px;flex:1;resize:none;border:0;border-radius:14px;background-color:var(--soft);background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1.65em - 1px),rgba(232,150,170,.18) calc(1.65em - 1px),rgba(232,150,170,.18) 1.65em);background-position:0 14px;padding:14px;font:inherit;font-size:16px;line-height:1.65;color:var(--ink)}.diary-text:focus{outline:2px solid var(--planner-color,#dce9f7)}.diary-note{min-height:100px;margin-top:9px;background-image:none;background-color:var(--soft)}.diary-count{display:flex;justify-content:flex-end;margin:-4px 4px 8px;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}.diary-finish{width:100%;height:46px;margin-top:10px;border-radius:12px;background:var(--planner-color,#dce9f7);color:#1d1d1f;font-weight:800;text-align:center}.diary-history{margin-top:12px}.diary-entry{padding:11px 2px;border-top:1px solid var(--line)}.diary-entry b{font-size:13px}.diary-entry small{color:var(--sub);margin-left:6px}.diary-entry p{margin:5px 0 0;white-space:pre-wrap;line-height:1.5;font-size:14px}.diary-entry em{font-style:normal;color:var(--accent);font-weight:700}.diary-word{display:inline-flex;align-items:center;margin-left:6px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,#ef9fb5 14%,var(--card));border:1px solid color-mix(in srgb,#ef9fb5 32%,var(--line));font-size:11px;font-weight:700;color:var(--ink)}.diary-finish-word{margin:10px 0}.diary-finish-word input{text-align:center;font-weight:700;font-size:17px}
 
 /* ===== 테마: 화이트 미니멀 ===== */
 :root{
@@ -6115,7 +6115,7 @@ function diaryClockText(){var ms=diaryElapsed(),lim=diaryLimitMs(),left=Math.max
 function diaryTick(){if(M.type!=='diary')return;diaryCountUpdate();var t=$('#diary-time'),st=$('#diary-status'),lim=diaryLimitMs(),mins=diaryMinutes();if(t){var ms=diaryElapsed();t.textContent=diaryClockText();t.classList.toggle('extra',ms>lim);if(st)st.textContent=!U.diaryRun?mins+'분 타이머를 시작해도 되고 그냥 써도 돼요':(U.diaryRun.running?(ms>lim?mins+'분 완료 · 추가 시간 기록 중':'집중해서 쓰는 중'):'일시정지');}clearTimeout(U.diaryTimer);U.diaryTimer=setTimeout(diaryTick,250);}
 function diaryPause(){var r=U.diaryRun;if(r&&r.running){r.acc+=Date.now()-r.since;r.running=false;}}
 function diaryResume(){var r=U.diaryRun;if(r&&!r.running){r.since=Date.now();r.running=true;}}
-function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em><p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
+function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em>'+(x.word?'<span class="diary-word">'+esc(x.word)+'</span>':'')+'<p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
 function diaryDateKey(x){return dkey(new Date(x.finishedAt));}
 function diaryLibraryRows(){return (S.diaries||[]).slice().sort(function(a,b){return a.finishedAt-b.finishedAt;});}
 function openDiaryLibrary(dateKey){
@@ -6136,7 +6136,7 @@ function drawDiaryLibrary(){
   if(x&&M.diaryDate===diaryDateKey(x))key=M.diaryDate;
   var shown=(x&&diaryDateKey(x)===key)?x:null,date=shown?new Date(shown.finishedAt):parseKey(key);
   var canWrite=key<=todayKey();
-  var book=shown?'<div class="diary-book"><div class="diary-book-date"><b>'+mdTxt(date)+'</b><small>'+pad(date.getHours())+':'+pad(date.getMinutes())+' · '+esc(diaryFmtMs(shown.elapsed||0,shown.targetMinutes||10))+'</small></div><div class="diary-book-body">'+esc(shown.text||'')+'</div><div class="diary-book-note">'+esc(shown.note||'')+'</div></div>':'<div class="diary-book"><div class="diary-book-empty"><div>'+(rows.length?'이 날짜에는 저장된 일기가 없어요.':'아직 저장된 일기가 없어요.')+(canWrite?'<br><button class="b-save" style="margin-top:16px;padding:0 18px;height:42px;border-radius:12px" data-act="diary-write-date" data-date="'+esc(key)+'">이 날짜 일기 쓰기</button>':'<br><small>미래 날짜에는 아직 일기를 쓸 수 없어요.</small>')+'</div></div></div>';
+  var book=shown?'<div class="diary-book"><div class="diary-book-date"><b>'+mdTxt(date)+'</b>'+(shown.word?'<span class="diary-word">'+esc(shown.word)+'</span>':'')+'<small>'+pad(date.getHours())+':'+pad(date.getMinutes())+' · '+esc(diaryFmtMs(shown.elapsed||0,shown.targetMinutes||10))+'</small></div><div class="diary-book-body">'+esc(shown.text||'')+'</div><div class="diary-book-note">'+esc(shown.note||'')+'</div></div>':'<div class="diary-book"><div class="diary-book-empty"><div>'+(rows.length?'이 날짜에는 저장된 일기가 없어요.':'아직 저장된 일기가 없어요.')+(canWrite?'<br><button class="b-save" style="margin-top:16px;padding:0 18px;height:42px;border-radius:12px" data-act="diary-write-date" data-date="'+esc(key)+'">이 날짜 일기 쓰기</button>':'<br><small>미래 날짜에는 아직 일기를 쓸 수 없어요.</small>')+'</div></div></div>';
   var nav=shown?'<div class="diary-book-nav"><button data-act="diary-lib-prev"'+(ix<=0?' disabled':'')+'>‹ 이전 일기</button><button data-act="diary-lib-next"'+(ix>=rows.length-1?' disabled':'')+'>다음 일기 ›</button></div>':'';
   openModal('<div class="diary-library"><div class="diary-library-head"><button class="ibtn" data-act="close">‹</button><div><h3>일기장</h3><small>지난 기록을 한 장씩 읽어요</small></div></div>'+diaryCalHTML(key)+book+nav+'</div>');
   $('#modal').classList.add('full');
@@ -6164,7 +6164,39 @@ function diaryCharCount(v){v=String(v==null?'':v);try{return Array.from(v).lengt
 function diaryLiveInput(el){if(el)U.diaryDraft=el.value||'';diaryCountUpdate();if(U.diaryDate)diarySessionSave(U.diaryDate);}
 function diaryCountUpdate(){var x=$('#f-diary'),c=$('#diary-count'),v=x?x.value:(U.diaryDraft||'');if(c)c.textContent=diaryCharCount(v)+'자';}
 function saveDiaryDraft(){var x=$('#f-diary'),n=$('#f-diary-note');if(x)U.diaryDraft=x.value;if(n)U.diaryNote=n.value;if(U.diaryDate)diarySessionSave(U.diaryDate);}
-function finishDiary(){saveDiaryDraft();var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}diaryPause();var elapsed=U.diaryRun?U.diaryRun.acc:0,target=diaryMinutes();S.diaries=S.diaries||[];var dk=U.diaryDate||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());S.diaries.push({id:uid(),text:text,note:note,elapsed:elapsed,targetMinutes:target,finishedAt:fd.getTime()});diarySessionClear(dk);U.diaryDraft='';U.diaryNote='';U.diaryRun=null;U.diaryResumeOnReturn=false;clearTimeout(U.diaryTimer);save();inAppToast('일기 저장 · '+diaryFmtMs(elapsed,target));if(U.diaryReturn==='library'){U.diaryReturn='';openDiaryLibrary(dk);}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}}
+function finishDiary(){
+  saveDiaryDraft();
+  var text=(U.diaryDraft||'').trim(),note=(U.diaryNote||'').trim();
+  if(!text&&!note){inAppToast('일기를 조금 적어줘');return;}
+  diaryPause();
+  var dk=U.diaryDate||todayKey(),isToday=dk===todayKey();
+  U.diaryFinishPending={date:dk,text:text,note:note,elapsed:U.diaryRun?U.diaryRun.acc:0,targetMinutes:diaryMinutes(),returnTo:U.diaryReturn||''};
+  M={type:'diary-finish-confirm'};
+  openModal('<h3>일기를 끝낼까요?</h3><p class="hint">'+(isToday?'오늘 하루를 한 단어로 남겨주세요.':'이날 하루를 한 단어로 남겨주세요.')+'</p><div class="diary-finish-word"><input class="fld" id="f-diary-word" maxlength="12" placeholder="예: 뿌듯, 몽글, 정신없음" autocomplete="off"></div><p class="hint" id="diary-finish-msg">한 단어를 입력하면 일기와 함께 저장돼요.</p><div class="acts"><button class="b-ghost" data-act="diary-finish-cancel">아니요, 더 쓸래요</button><button class="b-save" data-act="diary-finish-save">끝내기</button></div>');
+  setTimeout(function(){var w=$('#f-diary-word');if(w)w.focus();},30);
+}
+function finishDiaryCancel(){
+  var p=U.diaryFinishPending;
+  if(!p){drawDiary();return;}
+  U.diaryDate=p.date;U.diaryReturn=p.returnTo||'';
+  U.diaryDraft=p.text||'';U.diaryNote=p.note||'';
+  U.diaryFinishPending=null;
+  drawDiary(p.date);
+}
+function finishDiarySave(){
+  var p=U.diaryFinishPending;if(!p){closeModal();return;}
+  var w=$('#f-diary-word'),word=w?(w.value||'').trim():'';
+  if(!word){bad('#f-diary-word');var m=$('#diary-finish-msg');if(m)m.textContent='오늘 하루를 표현하는 한 단어를 적어주세요.';return;}
+  S.diaries=S.diaries||[];
+  var dk=p.date||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());
+  S.diaries.push({id:uid(),text:p.text||'',note:p.note||'',word:word.slice(0,12),elapsed:Number(p.elapsed||0),targetMinutes:Number(p.targetMinutes||diaryMinutes()),finishedAt:fd.getTime()});
+  diarySessionClear(dk);
+  U.diaryDraft='';U.diaryNote='';U.diaryRun=null;U.diaryResumeOnReturn=false;clearTimeout(U.diaryTimer);
+  var ret=p.returnTo||'';U.diaryFinishPending=null;
+  save();inAppToast('일기 저장 · '+word);
+  if(ret==='library'){U.diaryReturn='';openDiaryLibrary(dk);}
+  else{U.diaryReturn='';U.diaryDate='';closeModal();render();}
+}
 
 function drawChat(){
   M={type:'chat'};
@@ -6723,6 +6755,8 @@ function act(a,e){
     case 'diary-back':{saveDiaryDraft();var wasRunning=!!(U.diaryRun&&U.diaryRun.running);if(wasRunning){diaryPause();U.diaryResumeOnReturn=true;}else U.diaryResumeOnReturn=false;diarySessionSave(U.diaryDate||todayKey());clearTimeout(U.diaryTimer);if(U.diaryReturn==='library'){var backDate=U.diaryDate||todayKey();U.diaryReturn='';openDiaryLibrary(backDate);}else{U.diaryReturn='';U.diaryDate='';closeModal();render();}break;}
     case 'diary-toggle':saveDiaryDraft();U.diaryAutoPaused=false;U.diaryResumeOnReturn=false;if(!U.diaryRun)U.diaryRun={acc:0,since:Date.now(),running:true};else if(U.diaryRun.running)diaryPause();else diaryResume();diarySessionSave(U.diaryDate||todayKey());drawDiary();break;
     case 'diary-finish':finishDiary();break;
+    case 'diary-finish-cancel':finishDiaryCancel();break;
+    case 'diary-finish-save':finishDiarySave();break;
     case 'open-chat':U.chatRoom='general';U.chatQuery='';U.chatSel=null;drawChat();break;
     case 'chat-room':U.chatRoom=a.dataset.room||'general';U.chatQuery='';U.chatSel=null;drawChat();break;
     case 'chat-add-room':openChatRoomAdd();break;
@@ -7209,7 +7243,7 @@ document.addEventListener('keydown',function(e){
     var btn=t.parentElement.querySelector('button[data-act]');
     if(btn)btn.click();
   }else if(t.tagName==='INPUT'&&M.type){
-    var sv={dd:'save-dd',jump:'do-jump',trk:'save-trk',link:'save-link',login:'login',event:'save-event',appointment:'save-appointment',schedule:'save-schedule',block:'save-block',todo:'save-todo',routine:'save-rt',exam:'save-exam',allday:'save-ad','chat-add-room':'save-chat-room','chat-room-rename':'save-chat-room-name','school-add':'save-school'}[M.type];
+    var sv={dd:'save-dd',jump:'do-jump',trk:'save-trk',link:'save-link',login:'login',event:'save-event',appointment:'save-appointment',schedule:'save-schedule',block:'save-block',todo:'save-todo',routine:'save-rt',exam:'save-exam',allday:'save-ad','diary-finish-confirm':'diary-finish-save','chat-add-room':'save-chat-room','chat-room-rename':'save-chat-room-name','school-add':'save-school'}[M.type];
     var b=sv&&document.querySelector('[data-act="'+sv+'"]');
     if(b&&t.type!=='time'&&t.type!=='date'){e.preventDefault();b.click();}
   }
