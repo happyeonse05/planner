@@ -1682,3 +1682,35 @@ body{word-break:keep-all;overflow-wrap:break-word}
   border-left-width:5px;
   border-left-color:var(--letter-accent,var(--planner-color,#dce9f7));
 }
+
+/* ===== 응원 쪽지: 기기 기본 이모지 대신 앱 자체 편지+하트 SVG ===== */
+.cheer-entry{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.cheer-envelope-icon{
+  width:22px;
+  height:19px;
+  flex:none;
+  overflow:visible;
+  fill:none;
+  stroke:color-mix(in srgb,var(--planner-color,#faefdc) 52%,#2d2722 48%);
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.cheer-envelope-icon .cheer-heart{
+  fill:color-mix(in srgb,var(--planner-color,#faefdc) 62%,#d86d77 38%);
+  stroke:color-mix(in srgb,var(--planner-color,#faefdc) 48%,#6b343b 52%);
+  stroke-width:1.2;
+}
+.cheer-envelope-icon.small{width:24px;height:21px}
+.cheer-envelope-icon.button{width:20px;height:18px}
+.cheer-note-title{
+  display:flex !important;
+  align-items:center;
+  gap:8px;
+  color:var(--ink);
+}

@@ -1858,7 +1858,7 @@ function friendViewHTML(o){
 function friendPlannerProgressHTML(id){
   var me=todayTodoStatsFrom(S.todos,todayKey()),fr=friendCheerStatus(id),sent=cheerAlreadySent(id);
   var both=me.allDone&&fr.allDone;
-  var status=both?'둘 다 오늘 할 일을 끝냈어요 🎉':(!me.total&&!fr.total?'오늘 할 일 기록이 아직 없어요':'오늘 진행 중');
+  var status=both?'둘 다 오늘 할 일을 끝냈어요':(!me.total&&!fr.total?'오늘 할 일 기록이 아직 없어요':'오늘 진행 중');
   var btn=sent
     ?'<span class="planner-cheer-sent">응원 보냄 ✓</span>'
     :(both?'<button class="b-save planner-cheer-btn" data-act="cheer-open" data-id="'+esc(id)+'">응원 쪽지 보내기</button>':'');
@@ -1914,10 +1914,17 @@ function cheerEligible(id){
 }
 function cheerSentKey(id){return todayKey()+'|'+id;}
 function cheerAlreadySent(id){return !!(S.settings.cheerSent&&S.settings.cheerSent[cheerSentKey(id)]);}
+function cheerIconHTML(cls){
+  return '<svg class="cheer-envelope-icon '+esc(cls||'')+'" viewBox="0 0 28 24" aria-hidden="true" focusable="false">'+
+    '<rect x="2.5" y="5.5" width="18" height="14" rx="3"></rect>'+
+    '<path d="M4.2 8l7.3 5.4L18.8 8"></path>'+
+    '<path class="cheer-heart" d="M22 4.2c-1.8-2.2-5.2-.9-5.2 1.8 0 2.3 2.2 3.8 5.2 6.1 3-2.3 5.2-3.8 5.2-6.1 0-2.7-3.4-4-5.2-1.8Z"></path>'+
+  '</svg>';
+}
 function cheerStatusHTML(id){
   var e=cheerEligible(id),f=FriendSync.friends.find(function(x){return x.id===id;}),n=f?friendLabel(f):'친구';
   if(cheerAlreadySent(id))return '<section class="card"><div class="card-h"><h3>응원 쪽지</h3><span class="cnt">보냄 ✓</span></div><p class="hint">오늘 '+esc(n)+'님에게 보낸 응원은 내일 상대가 정한 시간이 지난 뒤 플래논을 열면 확인할 수 있어요.</p></section>';
-  if(e.ok)return '<section class="card cheer-card"><div class="card-h"><h3>오늘 둘 다 완료 🎉</h3><span class="cnt">'+e.mine.done+'/'+e.mine.total+' · '+e.friend.done+'/'+e.friend.total+'</span></div><p class="hint">둘 다 오늘 할 일을 다 했어요. '+esc(n)+'님에게 최대 100자의 수고 메시지를 보내면 내일 설정 시간 이후 플래논에서 확인할 수 있어요.</p><button class="b-save" style="width:100%;height:42px" data-act="cheer-open" data-id="'+esc(id)+'">수고했다고 응원 보내기</button></section>';
+  if(e.ok)return '<section class="card cheer-card"><div class="card-h"><h3>오늘 둘 다 완료!</h3><span class="cnt">'+e.mine.done+'/'+e.mine.total+' · '+e.friend.done+'/'+e.friend.total+'</span></div><p class="hint">둘 다 오늘 할 일을 다 했어요. '+esc(n)+'님에게 최대 100자의 수고 메시지를 보내면 내일 설정 시간 이후 플래논에서 확인할 수 있어요.</p><button class="b-save" style="width:100%;height:42px" data-act="cheer-open" data-id="'+esc(id)+'">수고했다고 응원 보내기</button></section>';
   var mine=e.mine.total?('내 할 일 '+e.mine.done+'/'+e.mine.total):( '내 오늘 할 일 없음');
   var fr=e.friend.total?('친구 할 일 '+e.friend.done+'/'+e.friend.total):'친구 완료 상태 확인 전';
   return '<section class="card"><div class="card-h"><h3>응원 쪽지</h3></div><p class="hint">'+esc(mine+' · '+fr)+'<br>둘 다 오늘 할 일을 모두 마치면 응원 쪽지를 보낼 수 있어요. 할 일 내용은 공유하지 않고 완료 개수만 확인해요.</p></section>';
@@ -1926,7 +1933,7 @@ function openCheerMessage(id){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
   var e=cheerEligible(id);if(!e.ok){inAppToast('둘 다 오늘 할 일을 다 한 뒤 보낼 수 있어요');return;}
   M={type:'cheer-message',friendId:id};
-  openModal('<h3>'+esc(friendLabel(f))+'님에게 응원 보내기</h3><div class="cheer-delay-note"><b>오늘 보내고, 내일 받기 💌</b><small>바로 전달되지 않아요. 내일 설정 시간 이후 상대가 플래논을 열면 보여요. 답장·대화 기능은 없고 하루에 한 번만 보낼 수 있어요.</small></div><textarea class="diary-text" style="min-height:130px;background-image:none" id="f-cheer-msg" maxlength="100" placeholder="예: 오늘도 수고했어! 진짜 잘했다 💛"></textarea><div class="diary-count" id="cheer-count">0/100</div><p class="hint" id="cheer-msg-status">최대 100자 · 내일 설정 시간 이후 플래논을 열면 보여요</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="cheer-send" data-id="'+esc(id)+'">내일 보내기</button></div>');
+  openModal('<h3>'+esc(friendLabel(f))+'님에게 응원 보내기</h3><div class="cheer-delay-note"><b class="cheer-note-title">'+cheerIconHTML('small')+'<span>오늘 보내고, 내일 받기</span></b><small>바로 전달되지 않아요. 내일 설정 시간 이후 상대가 플래논을 열면 보여요. 답장·대화 기능은 없고 하루에 한 번만 보낼 수 있어요.</small></div><textarea class="diary-text" style="min-height:130px;background-image:none" id="f-cheer-msg" maxlength="100" placeholder="예: 오늘도 수고했어! 진짜 잘했다"></textarea><div class="diary-count" id="cheer-count">0/100</div><p class="hint" id="cheer-msg-status">최대 100자 · 내일 설정 시간 이후 플래논을 열면 보여요</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="cheer-send" data-id="'+esc(id)+'">내일 보내기</button></div>');
   setTimeout(function(){var x=$('#f-cheer-msg');if(x)x.focus();},30);
 }
 function sendCheerMessage(id){
@@ -1958,7 +1965,7 @@ function cheerDeliverDue(){
       var f=FriendSync.friends.find(function(y){return y.id===x.from_user;}),n=f?friendLabel(f):'친구';
       var tx=n+'님: '+x.message;
       pushNotice('cheer',tx,x.deliver_date);
-      if(document.hidden)sysNotify('응원 메시지가 도착했어요 💌',tx,'cheer:'+x.id);else inAppToast('💌 '+tx);
+      if(document.hidden)sysNotify('응원 메시지가 도착했어요',tx,'cheer:'+x.id);else inAppToast(tx);
       return sb.from('planner_friend_cheers').update({notified_at:new Date().toISOString()}).eq('id',x.id).eq('to_user',Sync.uid);
     }));
   }).catch(function(e){
@@ -4958,7 +4965,7 @@ function friendDetailHTML(id){
   if(!f)return '<section class="card"><div class="empty">친구를 찾을 수 없어요.</div></section>';
   var n=friendLabel(f),pinned=friendPinIndex(f.id)>=0;
   return '<section class="card friend-detail-card"><div class="fc-top">'+friendAvatar(n,f.photo,'lg')+'<div class="fc-name"><b>'+esc(n)+'</b><small>'+esc(lastMetInfo(f.id))+' · 추억 '+friendMemoryRows(f.id).length+'개</small></div><button class="tbtn fc-pin'+(pinned?' on':'')+'" data-act="friend-pin" data-id="'+f.id+'">'+(pinned?'★':'☆')+'</button></div>'+ 
-    '<div class="friend-detail-actions">'+(S.settings.showMeetMaker===false?'':'<button class="b-save" data-act="friend-meet" data-id="'+f.id+'">약속</button>')+'<button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너</button><button class="tbtn cheer-entry" data-act="cheer-open" data-id="'+f.id+'">💌 응원 쪽지</button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button></div>'+ 
+    '<div class="friend-detail-actions">'+(S.settings.showMeetMaker===false?'':'<button class="b-save" data-act="friend-meet" data-id="'+f.id+'">약속</button>')+'<button class="tbtn" data-act="friend-view-planner" data-id="'+f.id+'">플래너</button><button class="tbtn cheer-entry" data-act="cheer-open" data-id="'+f.id+'">'+cheerIconHTML('button')+'<span>응원 쪽지</span></button><button class="tbtn" data-act="friend-memories" data-id="'+f.id+'">추억</button></div>'+ 
     '<div class="friend-quick-settings"><button data-act="friend-share-preview" data-id="'+f.id+'">공개 설정 <span>›</span></button><button data-act="friend-manage" data-id="'+f.id+'">친구 관리 <span>›</span></button></div></section>'+cheerStatusHTML(f.id);
 }
 function friendHTML(){
