@@ -6769,17 +6769,13 @@ if(typeof S!=='undefined'&&S.settings&&S.settings.friendNotify)registerSW();
 var friendPollTick=0;
 setInterval(function(){if(Sync.kind!=='supa'||!Sync.uid)return;friendPollTick++;if(document.hidden&&friendPollTick%2)return;friendRequestLoad();},12000);
 
-/* ---------- 분리 파일 호환 브리지 ----------
-   nemo.js / recipes.js / selfchat.js는 원래 app core와 같은 스코프에서
-   S/U/M과 여러 helper를 보던 코드예요. 파일 분리 후에도 같은 상태를
-   보도록 연결합니다. */
-try{
-  Object.defineProperties(window,{
-    S:{configurable:true,get:function(){return S;},set:function(v){S=v;}},
-    U:{configurable:true,get:function(){return U;},set:function(v){U=v;}},
-    M:{configurable:true,get:function(){return M;},set:function(v){M=v;}}
-  });
-}catch(e){}
+/* ---------- 분리 파일 Safari 호환 ---------- */
+try{Object.defineProperty(window,'S',{configurable:true,get:function(){return S;},set:function(v){S=v;}});}
+catch(e){try{window.S=S;}catch(_e){}}
+try{Object.defineProperty(window,'U',{configurable:true,get:function(){return U;},set:function(v){U=v;}});}
+catch(e){try{window.U=U;}catch(_e){}}
+try{Object.defineProperty(window,'M',{configurable:true,get:function(){return M;},set:function(v){M=v;}});}
+catch(e){try{window.M=M;}catch(_e){}}
 window.$=$;
 window.esc=esc;
 window.uid=uid;
@@ -6828,3 +6824,5 @@ restoreFocus();
 
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='f-checklist'){clearTimeout(window.__taskTimer);window.__taskTimer=setTimeout(function(){refreshTaskAssign();bindTaskDrag();},180);}});
 document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
+
+/* PLANON build: safari-S-fix 2026-09-25 */

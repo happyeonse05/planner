@@ -41,7 +41,9 @@ function nemoMoodLabel(mood){
 }
 function nemoMoodValid(mood){return ['basic','happy','proud','sad','gloomy','angry','sleepy'].indexOf(mood)>=0;}
 function diaryMoodForDate(k){
-  var rows=(S.diaries||[]).filter(function(x){return diaryDateKey(x)===k&&nemoMoodValid(x.mood);}).sort(function(a,b){return Number(b.finishedAt||0)-Number(a.finishedAt||0);});
+  var bridge=window.PLANON_UX_BRIDGE;
+  var state=(bridge&&typeof bridge.state==='function')?bridge.state():window.S;
+  var rows=((state&&state.diaries)||[]).filter(function(x){return diaryDateKey(x)===k&&nemoMoodValid(x.mood);}).sort(function(a,b){return Number(b.finishedAt||0)-Number(a.finishedAt||0);});
   return rows.length?rows[0].mood:'';
 }
 function nemoHomeCopy(mood,total,done,manual){
