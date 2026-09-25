@@ -142,7 +142,7 @@ function openQuickType(type){
 
 function afterRender(){
   addStyles();
-  featureEntry();
+  /* 기능 표시 메뉴는 홈·기록 설정으로 통합했어요. */
   applyFeatureVisibility();
   decorateEmpties();
   quickFab();

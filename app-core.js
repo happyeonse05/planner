@@ -3647,10 +3647,20 @@ function addFocus(min){
   if(F&&F.tid){var t=S.todos.find(function(x){return x.id===F.tid;});if(t)t.focusMin=(t.focusMin||0)+min;}
   save();
 }
-var DDAY_CATS={couple:{label:'커플',icon:'♥'},exam:{label:'시험',icon:'✎'},birthday:{label:'생일',icon:'✦'},travel:{label:'여행',icon:'✈'},deadline:{label:'마감',icon:'!'},anniversary:{label:'기념일',icon:'◆'},graduation:{label:'입학·졸업',icon:'🎓'},other:{label:'기타',icon:'•'}};
+var DDAY_CATS={couple:{label:'커플',icon:'♥'},exam:{label:'시험',icon:'✎'},birthday:{label:'생일',icon:'✦'},travel:{label:'여행',icon:'✈'},deadline:{label:'마감',icon:'!'},anniversary:{label:'기념일',icon:''},graduation:{label:'입학·졸업',icon:''},other:{label:'기타',icon:'—'}};
 function ddInferCategory(x){var t=String(x&&x.title||'');if(/시험|중간|기말|모의고사|수능|토익|자격/.test(t))return 'exam';if(/생일/.test(t))return 'birthday';if(/여행|출국|입국|휴가/.test(t))return 'travel';if(/마감|제출|공모전|신청/.test(t))return 'deadline';if(/100일|200일|300일|연애|커플/.test(t))return 'couple';if(/주년|기념/.test(t))return 'anniversary';if(/입학|졸업|개강|종강/.test(t))return 'graduation';return 'other';}
 function ddCategory(x){var c=x&&x.category||ddInferCategory(x);return DDAY_CATS[c]?c:'other';}
 function ddCatIcon(x){return DDAY_CATS[ddCategory(x)].icon;}
+function ddCatIconHTML(x){
+  var cat=typeof x==='string'?x:ddCategory(x);
+  if(cat==='anniversary'){
+    return '<svg class="dd-anniv-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="7" r="2.7"/><circle cx="17" cy="12" r="2.7"/><circle cx="12" cy="17" r="2.7"/><circle cx="7" cy="12" r="2.7"/><circle cx="12" cy="12" r="1.4"/></svg>';
+  }
+  if(cat==='graduation'){
+    return '<svg class="dd-grad-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 8.7 12 5l8.5 3.7L12 12.4 3.5 8.7Z"/><path d="M7.2 10.6v4.1c2.6 2.1 7 2.1 9.6 0v-4.1"/><path d="M20.5 8.8v5.1"/></svg>';
+  }
+  return esc(DDAY_CATS[cat]&&DDAY_CATS[cat].icon||'—');
+}
 function ddCatLabel(x){return DDAY_CATS[ddCategory(x)].label;}
 function dateKeyAdd(k,n){return dkey(addDays(parseKey(k),n));}
 function coupleDayNo(x,k){if(!x||!x.date||k<x.date)return 0;return Math.floor((parseKey(k)-parseKey(x.date))/86400000)+1;}
@@ -3673,13 +3683,13 @@ function ddLabel(x){if(ddCategory(x)==='couple'){var nk=ddNext(x),mil=coupleMile
 function ddayBar(){
   var list=S.ddays.filter(function(x){return x.pin;}).sort(function(a,b){return ddNext(a)<ddNext(b)?-1:1;});
   if(!list.length)return '';
-  return '<div class="ddbar">'+list.slice(0,4).map(function(x){return '<button class="ddpill'+(diffDays(ddNext(x))===0?' today':'')+'" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'"><i class="ddcat-ico">'+esc(ddCatIcon(x))+'</i><span>'+esc(x.title)+'</span><b>'+ddLabel(x)+'</b></button>';}).join('')+'</div>';
+  return '<div class="ddbar">'+list.slice(0,4).map(function(x){return '<button class="ddpill'+(diffDays(ddNext(x))===0?' today':'')+'" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'"><i class="ddcat-ico">'+ddCatIconHTML(x)+'</i><span>'+esc(x.title)+'</span><b>'+ddLabel(x)+'</b></button>';}).join('')+'</div>';
 }
-function ddChip(x,k){var mil=ddCategory(x)==='couple'&&k?coupleMilestoneName(x,k):'';return '<button class="adchip ddchip" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'"><span class="ddcat-ico">'+esc(ddCatIcon(x))+'</span> '+esc(mil||x.title)+'</button>';}
+function ddChip(x,k){var mil=ddCategory(x)==='couple'&&k?coupleMilestoneName(x,k):'';return '<button class="adchip ddchip" style="--c:'+x.color+'" data-act="edit-dd" data-id="'+x.id+'"><span class="ddcat-ico">'+ddCatIconHTML(x)+'</span> '+esc(mil||x.title)+'</button>';}
 function examIcon(){return '<svg class="examico" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3.5h8a1.5 1.5 0 0 1 1.5 1.5v11.5H4.5V5A1.5 1.5 0 0 1 6 3.5Z"/><path d="M8 3.5V2.8h4v.7M7.5 8h5M7.5 11h5M7.5 14h3"/></svg>';}
 function examChip(x){var c=examCourse(x),col=c&&c!=='기타'?courseColor(c):BEIGE,p=examPrep(x),dn=p.filter(function(t){return t.done;}).length,pg=p.length?' · '+dn+'/'+p.length:'';return '<button class="adchip ddchip" style="--c:'+col+'" data-act="edit-exam" data-id="'+x.id+'">'+examIcon()+' '+esc(x.name)+(pg?'<span class="prep-progress">'+pg+'</span>':'')+'</button>';}
 function ddDisplay(x,k){if((S.settings.calDday||'icon')==='text')return ddCategory(x)==='couple'&&k?(coupleMilestoneName(x,k)||ddLabel(x)):ddLabel(x);return ddCatIcon(x);}
-function ddMark(k){var x=ddOn(k)[0];if(!x)return '';var isText=(S.settings.calDday||'icon')==='text',text=ddDisplay(x,k);return '<span class="impmark '+(isText?'ddtext':'ddicon')+'" style="--c:'+x.color+'" title="'+esc(ddCatLabel(x)+' · '+(coupleMilestoneName(x,k)||x.title))+'">'+esc(text)+'</span>';}
+function ddMark(k){var x=ddOn(k)[0];if(!x)return '';var isText=(S.settings.calDday||'icon')==='text',text=ddDisplay(x,k),body=isText?esc(text):ddCatIconHTML(x);return '<span class="impmark '+(isText?'ddtext':'ddicon')+'" style="--c:'+x.color+'" title="'+esc(ddCatLabel(x)+' · '+(coupleMilestoneName(x,k)||x.title))+'">'+body+'</span>';}
 function examsFor(d){var k=dkey(d);return S.exams.filter(function(x){return k>=x.start&&k<=x.end;}).sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:0;});}
 function specialRowsForDay(d){
   var k=dkey(d),dds=ddOn(k),exs=examsFor(d),ads=alldayFor(d),aps=S.events.filter(function(e){return eventOnDate(e,k)&&e.kind==='appointment'&&!e.start;}),tasks=S.todos.filter(function(t){return t.scope==='day'&&t.key===k;}),routines=routinesFor(d),total=tasks.length+routines.length,done=tasks.filter(function(t){return t.done;}).length+routines.filter(function(r){return routineDone(r,k);}).length,html='';
@@ -3695,7 +3705,7 @@ function openDD(x,def){
   var v=x||{title:'',date:(def&&def.date)||dkey(U.date),color:defCol(),yearly:false,pin:true,mode:'until',one:false,category:'other'};
   M={type:'dd',id:x?x.id:null,color:v.color,mode:v.mode||'until',category:ddCategory(v)};
   openModal('<h3>'+(x?'D-day 수정':'D-day 추가')+'</h3>'+ 
-    '<span class="lbl">종류</span><div class="ddcat-grid" id="f-ddcat">'+Object.keys(DDAY_CATS).map(function(k){var c=DDAY_CATS[k];return '<button type="button" data-act="dd-cat" data-v="'+k+'"><b>'+esc(c.icon)+'</b>'+esc(c.label)+'</button>';}).join('')+'</div>'+ 
+    '<span class="lbl">종류</span><div class="ddcat-grid" id="f-ddcat">'+Object.keys(DDAY_CATS).map(function(k){var c=DDAY_CATS[k];return '<button type="button" data-act="dd-cat" data-v="'+k+'"><b>'+ddCatIconHTML(k)+'</b>'+esc(c.label)+'</button>';}).join('')+'</div>'+ 
     '<input class="fld" id="f-ddt" placeholder="예: 우리, 기말고사, 여행, 공모전 마감" maxlength="30" value="'+esc(v.title)+'">'+ 
     '<span class="lbl" id="f-ddmode-label">어떻게 셀까요</span><div class="seg" id="f-ddm"><button data-act="dd-mode" data-v="until">그날까지 남은 날 (D-)</button><button data-act="dd-mode" data-v="since">그날부터 지난 날 (D+)</button></div>'+ 
     '<span class="lbl" id="f-ddl">날짜</span><input class="fld" type="date" id="f-ddd" value="'+v.date+'">'+ 
@@ -3763,7 +3773,7 @@ function topItems(){
   return items;
 }
 function topItemHTML(i){
-  var act=i.type==='exam'?'edit-exam':'edit-dd',icon='';if(i.type==='dd'){var dx=S.ddays.find(function(x){return 'dd:'+x.id===i.id;});icon=dx?'<i class="ddcat-row" style="--c:'+dx.color+'">'+esc(ddCatIcon(dx))+'</i> ':'';}
+  var act=i.type==='exam'?'edit-exam':'edit-dd',icon='';if(i.type==='dd'){var dx=S.ddays.find(function(x){return 'dd:'+x.id===i.id;});icon=dx?'<i class="ddcat-row" style="--c:'+dx.color+'">'+ddCatIconHTML(dx)+'</i> ':'';}
   return '<button class="trow'+(i.now?' now':'')+'" data-act="'+act+'" data-id="'+(i.type==='exam'?i.id.slice(5):i.id.slice(3))+'"><span><b>'+icon+esc(i.title)+'</b><small>'+esc(i.sub)+'</small></span><em>'+esc(i.value)+'</em></button>';
 }
 function topBar(){
@@ -4555,7 +4565,7 @@ function viewTable(){
   var ddl=S.ddays.slice().sort(function(a,b){return ddNext(a)<ddNext(b)?-1:1;});
   var ddHTML='<section class="card"><div class="card-h"><h3>D-day</h3><button class="tbtn" data-act="add-dd">+ 추가</button></div>'+
     (ddl.length?ddl.map(function(x){var nd=parseKey(ddNext(x));
-      return '<div class="setrow"><span style="display:flex;align-items:center;gap:8px"><i class="ddcat-row" style="--c:'+x.color+'">'+esc(ddCatIcon(x))+'</i><span>'+esc(x.title)+'<small>'+(nd.getMonth()+1)+'/'+nd.getDate()+(x.mode==='since'?' · 시작일':'')+(x.yearly?' · 매년':'')+(x.pin?' · 위에 표시':'')+'</small></span></span><b class="ddn">'+ddLabel(x)+'</b><button class="tbtn" data-act="edit-dd" data-id="'+x.id+'">수정</button></div>';}).join('')
+      return '<div class="setrow"><span style="display:flex;align-items:center;gap:8px"><i class="ddcat-row" style="--c:'+x.color+'">'+ddCatIconHTML(x)+'</i><span>'+esc(x.title)+'<small>'+(nd.getMonth()+1)+'/'+nd.getDate()+(x.mode==='since'?' · 시작일':'')+(x.yearly?' · 매년':'')+(x.pin?' · 위에 표시':'')+'</small></span></span><b class="ddn">'+ddLabel(x)+'</b><button class="tbtn" data-act="edit-dd" data-id="'+x.id+'">수정</button></div>';}).join('')
       :'<div class="empty">중요한 날은 디데이로 설정할 수 있어요.<br><button class="tbtn" style="margin-top:8px" data-act="add-dd">+ D-day 추가</button></div>')+'</section>';
   var adl=S.allday.slice().sort(function(a,b){return (a.days?0:1)-(b.days?0:1)||((a.date||'')<(b.date||'')?-1:1);});
   var adHTML='<section class="card"><div class="card-h"><h3>일정</h3><button class="tbtn" data-act="add-schedule">+ 추가</button></div>'+
@@ -4594,44 +4604,67 @@ function viewSettings(){
   var th=S.settings.theme||lsGet('planner.theme')||'auto';
   var bg=S.settings.bg||lsGet('planner.bg')||'rainbow';
   var ld=S.settings.logDisplay||{};
-  var logPrefHTML='<section class="card"><div class="card-h"><h3>생활 기록 표시</h3></div>'+
-    '<p class="hint">원하는 항목만 오늘 기록 카드와 달력에 보여줘요. 기록 데이터는 숨겨도 지워지지 않아요.</p>'+
-    [['wakeGoal','기상 목표'],['wakeTime','기상 시간'],['sleepTime','취침 시간'],['studyTotal','공부 총 시간']].map(function(x){return '<div class="setrow"><span>'+x[1]+'</span><button class="tbtn" data-act="toggle-log-display" data-id="'+x[0]+'">'+(ld[x[0]]!==false?'켜짐':'꺼짐')+'</button></div>';}).join('')+
-    '<div class="setrow"><span>기상 목표 시각<small>오늘 오전 9시가 지나면 오늘의 달성 버튼이 잠겨요</small></span><input class="sel" type="time" id="set-wake-goal" value="'+esc(S.settings.wakeGoal||'09:00')+'"></div>'+
-    '<div class="setrow"><span>간단한 홈<small>핵심만 보여줘요. 아래에서 따로 켠 항목은 그대로 보여요</small></span><button class="tbtn" data-act="toggle-lite">'+(S.settings.liteHome?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>홈 학교 링크<small>학교 홈페이지·공지·식단 바로가기를 홈에 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showSchoolLinks">'+(featOn('showSchoolLinks')?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>하루 메모<small>일간 화면에 메모·사진 칸을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showMemo">'+(featOn('showMemo')?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>오늘 기록 카드<small>일간 화면에 기상·공부 시간 기록 카드를 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showLog">'+(featOn('showLog')?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>주간 회고 카드<small>주간 화면에 완료율·집중시간·한 줄 회고를 보여줘요</small></span><button class="tbtn" data-act="toggle-weekly-review">'+(S.settings.showWeeklyReview===false?'꺼짐':'켜짐')+'</button></div>'+
-        '<div class="setrow"><span>저녁 일기 버튼<small>오후 5시부터 홈에 일기 버튼을 보여줘요. 일기장은 설정에 그대로 있어요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showDiary">'+(featOn('showDiary')?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>일기 노트 줄<small>일기 본문에 이름 기본 색과 연동된 연한 가로줄을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="diaryRuled">'+(featOn('diaryRuled')?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>홈 오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
-    '<div class="setrow"><span>상단 D-day·시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
-    '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속을 만드는 버튼만 숨겨요. 기존 약속·받은 요청은 지워지지 않아요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div></section>';
+  var logPrefHTML='<section class="card settings-clean-card"><div class="card-h"><h3>홈 · 기록</h3><span class="cnt">필요한 것만 켜두기</span></div>'+
+    '<p class="hint settings-clean-intro">비슷한 설정끼리 묶었어요. 접혀 있는 항목은 눌러서 펼치면 돼요.</p>'+
+
+    '<details class="settings-group" open><summary><span><b>홈 화면</b><small>오늘 화면에 바로 보이는 것</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>간단한 홈<small>핵심 일정과 할 일 위주로 보여줘요</small></span><button class="tbtn" data-act="toggle-lite">'+(S.settings.liteHome?'켜짐':'꺼짐')+'</button></div>'+
+      '<div class="setrow"><span>학교 바로가기<small>학교 홈페이지·공지·식단 링크를 홈에 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showSchoolLinks">'+(featOn('showSchoolLinks')?'켜짐':'꺼짐')+'</button></div>'+
+      '<div class="setrow"><span>오늘 할 일<small>홈 요약 카드에 오늘 할 일 진행률을 보여줘요</small></span><button class="tbtn" data-act="toggle-home-todo">'+(S.settings.showNextTodo===false?'꺼짐':'켜짐')+'</button></div>'+
+      '<div class="setrow"><span>상단 D-day · 시험<small>홈·일간·주간 위에 중요 날짜를 보여줘요</small></span><button class="tbtn" data-act="toggle-top-show">'+(S.settings.topShow===false?'꺼짐':'켜짐')+'</button></div>'+
+    '</div></details>'+
+
+    '<details class="settings-group"><summary><span><b>생활 기록</b><small>기상 · 취침 · 공부 시간</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<p class="hint settings-group-hint">숨겨도 기록 데이터는 지워지지 않아요.</p>'+
+      [['wakeGoal','기상 목표'],['wakeTime','기상 시간'],['sleepTime','취침 시간'],['studyTotal','공부 총 시간']].map(function(x){return '<div class="setrow"><span>'+x[1]+'</span><button class="tbtn" data-act="toggle-log-display" data-id="'+x[0]+'">'+(ld[x[0]]!==false?'켜짐':'꺼짐')+'</button></div>';}).join('')+
+      '<div class="setrow"><span>기상 목표 시각<small>이 시각이 지나면 오늘의 달성 버튼이 잠겨요</small></span><input class="sel" type="time" id="set-wake-goal" value="'+esc(S.settings.wakeGoal||'09:00')+'"></div>'+
+      '<div class="setrow"><span>오늘 기록 카드<small>일간 화면에 생활 기록 카드를 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showLog">'+(featOn('showLog')?'켜짐':'꺼짐')+'</button></div>'+
+    '</div></details>'+
+
+    '<details class="settings-group"><summary><span><b>메모 · 일기 · 회고</b><small>기록 기능을 한곳에서 관리</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>하루 메모<small>일간 화면에 메모·사진 칸을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showMemo">'+(featOn('showMemo')?'켜짐':'꺼짐')+'</button></div>'+
+      '<div class="setrow"><span>주간 회고<small>주간 화면에 완료율·집중시간·한 줄 회고를 보여줘요</small></span><button class="tbtn" data-act="toggle-weekly-review">'+(S.settings.showWeeklyReview===false?'꺼짐':'켜짐')+'</button></div>'+
+      '<div class="setrow"><span>저녁 일기 버튼<small>오후 5시부터 홈에 일기 버튼을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="showDiary">'+(featOn('showDiary')?'켜짐':'꺼짐')+'</button></div>'+
+      '<div class="setrow"><span>일기 노트 줄<small>일기 본문에 기본 색과 연동된 연한 가로줄을 보여줘요</small></span><button class="tbtn" data-act="toggle-feat" data-id="diaryRuled">'+(featOn('diaryRuled')?'켜짐':'꺼짐')+'</button></div>'+
+      '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div>'+
+    '</div></details>'+
+
+    '<details class="settings-group"><summary><span><b>친구 기능</b><small>약속 잡기 버튼 표시</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>친구 약속 잡기<small>끄면 새 약속 만들기만 숨겨요. 기존 약속·요청은 유지돼요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div>'+
+    '</div></details>'+
+  '</section>';
   var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p><div class="note" style="word-break:break-word;user-select:text;-webkit-user-select:text"><b style="display:block;margin-bottom:5px">오류 상세</b>'+esc(Sync.lastError||Sync.diag||'오류 정보 없음')+'</div>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div>'+
     '<div class="setrow"><span>개인정보처리방침<small>수집·저장·공유·삭제되는 데이터를 확인해요</small></span><button class="tbtn" data-act="open-privacy">보기</button></div>'+
     '<div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
-  var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
-    '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
-    '<div class="setrow"><span>배경<small>이름 기본 색과 같은 색으로 보여요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','연핑크 + 흰 점'],['white','흰 바탕 + 연핑크 점'],['beige','베이지 + 흰 점'],['dot-mint','민트 바탕 + 아이보리 점'],['dot-mint-rev','아이보리 바탕 + 민트 점'],['dot-sky','하늘 바탕 + 아이보리 점'],['dot-sky-rev','아이보리 바탕 + 하늘 점'],['dot-yellow','연노랑 바탕 + 아이보리 점'],['dot-yellow-rev','아이보리 바탕 + 연노랑 점'],['dot-peach','살구 바탕 + 아이보리 점'],['dot-peach-rev','아이보리 바탕 + 살구 점'],['dot-pink','연핑크 바탕 + 아이보리 점'],['dot-pink-rev','아이보리 바탕 + 연핑크 점'],['dot-lavender','연보라 바탕 + 아이보리 점'],['dot-lavender-rev','아이보리 바탕 + 연보라 점'],['dot-green','연두 바탕 + 아이보리 점'],['dot-green-rev','아이보리 바탕 + 연두 점'],['dot-gray','연회색 바탕 + 아이보리 점'],['dot-gray-rev','아이보리 바탕 + 연회색 점'],['dot-beige','베이지 바탕 + 아이보리 점'],['dot-beige-rev','아이보리 바탕 + 베이지 점']].map(function(x){
-      var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';
-      return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+ 
-    '<div class="setrow"><span>주간 시간표 배경화면<small>현재 주간 시간표를 잠금화면용 이미지로 저장해요</small></span><div class="seg" style="margin:0"><button data-act="wallpaper-phone">폰</button><button data-act="wallpaper-pad">패드</button></div></div>'+
-    '<div class="setrow"><span>시간표 시간<small>이 범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
-      '<select class="sel" id="set-hs">'+[0,1,2,3,4,5,6,7,8,9,10,11,12].map(function(h){return '<option value="'+h+'"'+((S.settings.hStart!=null?S.settings.hStart:9)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select><span>~</span>'+
-      '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
-    '<div class="setrow defc"><span>이름 기본 색<small>'+esc(blockWord)+'·일정·종일 일정·D-day·네모 캐릭터에 함께 적용되는 색</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+
-    '<div class="nemo-settings-preview">'+nemoSVG('basic','')+'<div><b>네모 캐릭터도 자동 연동</b><small>색 파일을 여러 장 만들 필요 없이 이름 기본 색이 그대로 적용돼요. 홈에서는 오늘 상태에 따라 표정도 바뀌어요.</small><div class="nemo-mood-samples"><span class="nemo-mood-sample">'+nemoSVG('basic','')+'기본</span><span class="nemo-mood-sample">'+nemoSVG('happy','')+'행복</span><span class="nemo-mood-sample">'+nemoSVG('proud','')+'뿌듯</span><span class="nemo-mood-sample">'+nemoSVG('sad','')+'슬픔</span><span class="nemo-mood-sample">'+nemoSVG('gloomy','')+'우울</span><span class="nemo-mood-sample">'+nemoSVG('angry','')+'화남</span><span class="nemo-mood-sample">'+nemoSVG('sleepy','')+'졸림</span></div></div></div>'+ 
-    '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+ 
-    '<div class="setrow"><span>가까운 일정 알림<small>'+(isIOSDevice()&&!isStandalonePWA()?'아이폰은 홈 화면에 추가한 앱에서 켤 수 있어요 · 현재 '+reminderPermissionLabel():'30분 전 시스템 알림 · 현재 '+reminderPermissionLabel())+'</small></span><button class="tbtn'+(S.settings.remindOn?' on':'')+'" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'켜기')+'</button></div>'+ 
-    '<div class="setrow"><span>아침 브리핑<small>하루 한 번 오늘 '+esc(blockWord)+'·마감·'+esc(gapWord)+'·할 일을 알려줘요</small></span><div style="display:flex;align-items:center;gap:6px"><input class="sel" type="time" id="set-brief-time" value="'+esc(S.settings.morningBriefingTime||'08:00')+'" style="width:92px"><button class="tbtn'+(S.settings.morningBriefing?' on':'')+'" data-act="toggle-morning-brief">'+(S.settings.morningBriefing?'켜짐':'켜기')+'</button></div></div>'+
-    '<div class="setrow"><span>맨 위 D-day 개수<small>시험·D-day 중 "맨 위에 표시"한 것만 가까운 순으로 보여줘요</small></span><div class="seg" style="margin:0">'+[[0,'0'],[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(0,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+     topOrderHTML()+
+  var viewHTML='<section class="card settings-clean-card"><div class="card-h"><h3>화면 · 알림</h3><span class="cnt">꾸미기와 표시</span></div>'+
+    '<p class="hint settings-clean-intro">화면 꾸미기, 알림, 달력 표시를 나눠뒀어요.</p>'+
 
-    '<div class="setrow"><span>달력 D-day 표시</span><div class="seg" style="margin:0"><button data-act="set-caldd" data-v="icon" class="'+((S.settings.calDday||'icon')==='icon'?'on':'')+'">종류 아이콘</button><button data-act="set-caldd" data-v="text" class="'+((S.settings.calDday||'icon')==='text'?'on':'')+'">D-숫자</button></div></div>'+
-    '<div class="setrow"><span>월간 표시 항목<small>체크한 항목만 월간 달력에 보여요</small></span></div><div class="monthopts">'+[['appointment','약속'],['dday','D-day'],['exam','시험'],['event','일정'],['todo','할 일']].map(function(x){return '<label class="monthopt"><input type="checkbox" data-month-item="'+x[0]+'"'+(monthItemOn(x[0])?' checked':'')+'>'+x[1]+'</label>';}).join('')+'</div>'+
-    '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
-    '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div></section>';
+    '<details class="settings-group" open><summary><span><b>화면 꾸미기</b><small>테마 · 배경 · 시간표 · 기본 색</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
+      '<div class="setrow"><span>배경<small>원하는 배경만 골라요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','연핑크 + 흰 점'],['white','흰 바탕 + 연핑크 점'],['beige','베이지 + 흰 점'],['dot-mint','민트 바탕 + 아이보리 점'],['dot-mint-rev','아이보리 바탕 + 민트 점'],['dot-sky','하늘 바탕 + 아이보리 점'],['dot-sky-rev','아이보리 바탕 + 하늘 점'],['dot-yellow','연노랑 바탕 + 아이보리 점'],['dot-yellow-rev','아이보리 바탕 + 연노랑 점'],['dot-peach','살구 바탕 + 아이보리 점'],['dot-peach-rev','아이보리 바탕 + 살구 점'],['dot-pink','연핑크 바탕 + 아이보리 점'],['dot-pink-rev','아이보리 바탕 + 연핑크 점'],['dot-lavender','연보라 바탕 + 아이보리 점'],['dot-lavender-rev','아이보리 바탕 + 연보라 점'],['dot-green','연두 바탕 + 아이보리 점'],['dot-green-rev','아이보리 바탕 + 연두 점'],['dot-gray','연회색 바탕 + 아이보리 점'],['dot-gray-rev','아이보리 바탕 + 연회색 점'],['dot-beige','베이지 바탕 + 아이보리 점'],['dot-beige-rev','아이보리 바탕 + 베이지 점']].map(function(x){var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+
+      '<div class="setrow"><span>주간 시간표 배경화면<small>현재 주간 시간표를 이미지로 저장해요</small></span><div class="seg" style="margin:0"><button data-act="wallpaper-phone">폰</button><button data-act="wallpaper-pad">패드</button></div></div>'+
+      '<div class="setrow"><span>시간표 시간<small>범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
+        '<select class="sel" id="set-hs">'+[0,1,2,3,4,5,6,7,8,9,10,11,12].map(function(h){return '<option value="'+h+'"'+((S.settings.hStart!=null?S.settings.hStart:9)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select><span>~</span>'+
+        '<select class="sel" id="set-he">'+[15,16,17,18,19,20,21,22,23,24].map(function(h){return '<option value="'+h+'"'+((S.settings.hEnd!=null?S.settings.hEnd:22)===h?' selected':'')+'>'+h+'시</option>';}).join('')+'</select></div></div>'+
+      '<div class="setrow defc"><span>이름 기본 색<small>'+esc(blockWord)+'·일정·D-day·네모에 함께 적용돼요</small></span></div><div class="pal defpal">'+PALETTE.map(function(c){return '<button class="sw'+(defCol()===c?' on':'')+'" style="--c:'+c+'" data-act="set-defcolor" data-v="'+c+'" aria-label="기본 색"></button>';}).join('')+'</div>'+
+      '<div class="nemo-settings-preview">'+nemoSVG('basic','')+'<div><b>네모도 기본 색에 자동 연동</b><small>홈에서는 오늘 상태에 따라 표정이 바뀌어요.</small><div class="nemo-mood-samples"><span class="nemo-mood-sample">'+nemoSVG('basic','')+'기본</span><span class="nemo-mood-sample">'+nemoSVG('happy','')+'행복</span><span class="nemo-mood-sample">'+nemoSVG('proud','')+'뿌듯</span><span class="nemo-mood-sample">'+nemoSVG('sad','')+'슬픔</span><span class="nemo-mood-sample">'+nemoSVG('gloomy','')+'우울</span><span class="nemo-mood-sample">'+nemoSVG('angry','')+'화남</span><span class="nemo-mood-sample">'+nemoSVG('sleepy','')+'졸림</span></div></div></div>'+
+    '</div></details>'+
+
+    '<details class="settings-group"><summary><span><b>알림</b><small>필요한 알림만 켜기</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>가까운 일정 알림<small>'+(isIOSDevice()&&!isStandalonePWA()?'아이폰은 홈 화면에 추가한 앱에서 켤 수 있어요 · 현재 '+reminderPermissionLabel():'30분 전 시스템 알림 · 현재 '+reminderPermissionLabel())+'</small></span><button class="tbtn'+(S.settings.remindOn?' on':'')+'" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'켜기')+'</button></div>'+
+      '<div class="setrow"><span>아침 브리핑<small>오늘 '+esc(blockWord)+'·마감·'+esc(gapWord)+'·할 일을 알려줘요</small></span><div style="display:flex;align-items:center;gap:6px"><input class="sel" type="time" id="set-brief-time" value="'+esc(S.settings.morningBriefingTime||'08:00')+'" style="width:92px"><button class="tbtn'+(S.settings.morningBriefing?' on':'')+'" data-act="toggle-morning-brief">'+(S.settings.morningBriefing?'켜짐':'켜기')+'</button></div></div>'+
+    '</div></details>'+
+
+    '<details class="settings-group"><summary><span><b>달력 · D-day</b><small>월간·주간과 상단 표시</small></span><i>⌄</i></summary><div class="settings-group-body">'+
+      '<div class="setrow"><span>공휴일 표시<small>빨간 날과 이름을 달력에 보여줘요 (2026~2027)</small></span><button class="tbtn" data-act="toggle-holi">'+(S.settings.holiOff?'꺼짐':'켜짐')+'</button></div>'+
+      '<div class="setrow"><span>맨 위 D-day 개수<small>맨 위 표시한 중요 날짜만 가까운 순으로 보여줘요</small></span><div class="seg" style="margin:0">'+[[0,'0'],[1,'1'],[2,'2'],[3,'3']].map(function(x){var cur=Math.min(3,Math.max(0,S.settings.topN!=null?S.settings.topN:3));return '<button data-act="set-topn" data-v="'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
+      topOrderHTML()+
+      '<div class="setrow"><span>달력 D-day 표시</span><div class="seg" style="margin:0"><button data-act="set-caldd" data-v="icon" class="'+((S.settings.calDday||'icon')==='icon'?'on':'')+'">종류 아이콘</button><button data-act="set-caldd" data-v="text" class="'+((S.settings.calDday||'icon')==='text'?'on':'')+'">D-숫자</button></div></div>'+
+      '<div class="setrow"><span>월간 표시 항목<small>체크한 항목만 월간 달력에 보여요</small></span></div><div class="monthopts">'+[['appointment','약속'],['dday','D-day'],['exam','시험'],['event','일정'],['todo','할 일']].map(function(x){return '<label class="monthopt"><input type="checkbox" data-month-item="'+x[0]+'"'+(monthItemOn(x[0])?' checked':'')+'>'+x[1]+'</label>';}).join('')+'</div>'+
+      '<div class="setrow"><span>주간 화면에 주말 표시</span><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'켜짐':'꺼짐')+'</button></div>'+
+    '</div></details>'+
+  '</section>';
   var acct='';
   if(Sync.kind!=='supa'&&Sync.diag){
     acct='<section class="card warn"><div class="card-h"><h3>계정</h3></div><div class="setrow"><span>로그인을 쓸 수 없어요<small>'+esc(Sync.diag)+'</small></span></div></section>';
@@ -4675,8 +4708,8 @@ function viewSettings(){
     '</section>'+
     '<section class="card">'+
       navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
-      navRow('settings-life','생활 기록 · 홈 표시','간단한 홈 · 기상 · 취침 · 공부')+
-      navRow('settings-screen','화면','색 · 배경 · 다크모드 · 시간표 표시')+
+      navRow('settings-life','홈 · 기록','홈 구성 · 생활 기록 · 일기 · 회고')+
+      navRow('settings-screen','화면 · 알림','테마 · 배경 · 달력 · 알림')+
       navRow('settings-recipes','레시피 노트','준비물 · 만드는 법 · 자주 쓰는 조합')+
     '</section>'+
     '<section class="card">'+

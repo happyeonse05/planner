@@ -565,7 +565,7 @@ main{padding:0 14px 24px}
 @media (prefers-reduced-motion:reduce){.switch,.switch i{transition:none}}
 
 /* 내일의 나에게 */
-.letter{margin:10px 0;padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--edge);border-left:4px solid #f4a7b9}
+.letter{margin:10px 0;padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--edge);border-left:4px solid var(--planner-color,#dce9f7)}
 .lt-h{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:600}
 .lt-x{width:28px;height:28px;display:grid;place-items:center;color:var(--sub);font-size:13px;text-align:center}
 .letter p{margin:4px 0 0;font-size:17px;font-weight:700;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
@@ -1576,4 +1576,102 @@ body{word-break:keep-all;overflow-wrap:break-word}
   :root[data-bg^="dot-"]:not([data-theme="dark"]) body{
     background-attachment:scroll;
   }
+}
+
+/* ===== grouped settings UI ===== */
+.settings-clean-card{overflow:visible}
+.settings-clean-intro{margin:0 0 8px}
+.settings-group{border-top:1px solid var(--line)}
+.settings-group:first-of-type{border-top:0}
+.settings-group>summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:14px 2px;user-select:none
+}
+.settings-group>summary::-webkit-details-marker{display:none}
+.settings-group>summary span{min-width:0}
+.settings-group>summary b{display:block;font-size:14px}
+.settings-group>summary small{display:block;margin-top:3px;color:var(--sub);font-size:11px;font-weight:500}
+.settings-group>summary i{
+  width:28px;height:28px;border-radius:9px;background:var(--soft);display:grid;place-items:center;
+  font-style:normal;color:var(--sub);transition:transform .18s
+}
+.settings-group[open]>summary i{transform:rotate(180deg)}
+.settings-group-body{padding:0 0 6px}
+.settings-group-body>.setrow:first-child{border-top:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
+.settings-group-hint{margin:0;padding:0 2px 8px}
+.settings-group .top-order-settings{margin:0}
+
+/* ===== D-day category icons: deep tone linked to the planner color ===== */
+:root{
+  --planner-deep:color-mix(in srgb,var(--planner-color) 58%,#171717 42%);
+}
+.ddcat-grid button b{
+  color:var(--planner-deep);
+}
+.ddcat-grid button.on{
+  background:color-mix(in srgb,var(--planner-color) 24%,var(--soft));
+  box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--planner-color) 62%,#171717 38%);
+}
+.ddcat-grid button.on b,
+.ddcat-grid button.on{
+  color:var(--planner-deep);
+}
+.ddcat-ico{
+  color:color-mix(in srgb,var(--c,var(--planner-color)) 58%,#171717 42%);
+}
+.ddcat-row{
+  color:color-mix(in srgb,var(--c,var(--planner-color)) 58%,#171717 42%);
+}
+.impmark.ddicon{
+  color:color-mix(in srgb,var(--c,var(--planner-color)) 58%,#171717 42%);
+}
+.dd-grad-icon{
+  width:1.28em;
+  height:1.28em;
+  display:inline-block;
+  vertical-align:-.16em;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.ddcat-grid .dd-grad-icon{
+  width:22px;
+  height:22px;
+  vertical-align:middle;
+}
+.ddcat-row .dd-grad-icon,
+.ddcat-ico .dd-grad-icon{
+  width:1.05em;
+  height:1.05em;
+}
+.impmark.ddicon .dd-grad-icon{
+  width:11px;
+  height:11px;
+  vertical-align:middle;
+}
+
+
+.dd-anniv-icon{
+  width:1.18em;
+  height:1.18em;
+  display:inline-block;
+  vertical-align:-.12em;
+  fill:currentColor;
+}
+.ddcat-grid .dd-anniv-icon{
+  width:20px;
+  height:20px;
+  vertical-align:middle;
+}
+.ddcat-row .dd-anniv-icon,
+.ddcat-ico .dd-anniv-icon{
+  width:1em;
+  height:1em;
+}
+.impmark.ddicon .dd-anniv-icon{
+  width:10px;
+  height:10px;
+  vertical-align:middle;
 }
