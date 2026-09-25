@@ -1196,21 +1196,384 @@ body{word-break:keep-all;overflow-wrap:break-word}
     '@page{size:'+(n===7?'landscape':'portrait')+';margin:12mm}*{box-sizing:border-box}body{margin:0;color:#3b3530;font-family:Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}h1{margin:0;font-size:25px}p{margin:0}.sub{margin-top:5px;color:#9a9086;font-size:12px}.week{display:grid;grid-template-columns:repeat('+n+',1fr);gap:7px;margin-top:18px}.day{min-height:180mm;border:1px solid #e9e2d6;border-radius:12px;padding:10px;background:#fffdf9;break-inside:avoid}.day header{display:flex;align-items:baseline;gap:6px;padding-bottom:9px;margin-bottom:8px;border-bottom:1px solid #e9e2d6}.day header span{color:#d0705f;font-size:10px}.day header b{font-size:15px}.tag,.row{border-radius:7px;background:#f1ebe0;margin:4px 0;padding:5px 7px;border-left:3px solid var(--c);font-size:10px;line-height:1.35}.tag b{display:block;color:#9a9086;font-size:8px;margin-bottom:1px}.row span{display:inline-block;color:#9a9086;width:34px}.row b{font-weight:600}.todo{font-size:10px;padding:5px 2px;border-bottom:1px solid #e9e2d6}.empty{color:#9a9086;font-size:11px;margin-top:10px}.footer{margin-top:12px;padding-top:9px;border-top:1px solid #e9e2d6;font-size:11px}.footer b{display:block;margin-bottom:5px}.footer span{margin-right:10px}@media print{.printbar{display:none}}.printbar{display:flex;justify-content:flex-end;margin-bottom:10px}.printbar button{border:0;border-radius:8px;background:#3b3530;color:#fffdf9;padding:7px 12px;font:600 12px inherit}'+
     '
 
-
-/* ===== Restore original dot scale ===== */
+/* ===== FINAL polka-dot scale =====
+   Uploaded dot images are ~711px wide with only ~7 dot columns.
+   Showing them at ~720px makes the dots/spacing look huge on desktop.
+   Scale the tile down so the original "small dakkuri dots" appearance returns. */
 :root[data-bg^="dot-"][data-theme="light"] body,
 :root[data-bg^="dot-"]:not([data-theme="dark"]) body{
-  /* 도트 원본 디자인을 유지하면서 화면 전체로 강제 확대하지 않아요. */
-  background-size:720px auto;
-  background-position:center top;
-  background-repeat:repeat;
+  background-size:280px auto !important;
+  background-position:center top !important;
+  background-repeat:repeat !important;
   background-attachment:fixed;
   image-rendering:auto;
 }
 @media(max-width:700px){
   :root[data-bg^="dot-"][data-theme="light"] body,
   :root[data-bg^="dot-"]:not([data-theme="dark"]) body{
-    background-size:520px auto;
+    background-size:260px auto !important;
+    background-attachment:scroll;
+  }
+}
+
+/* ===== FINAL: image-independent polka-dot backgrounds =====
+   These do NOT require the backgrounds/ folder.
+   Small staggered dots are generated directly in CSS, so they stay crisp at any screen size. */
+
+:root[data-bg="dot-mint"][data-theme="light"] body,
+:root[data-bg="dot-mint"]:not([data-theme="dark"]) body{
+  background-color:#ccecd7 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-mint-rev"][data-theme="light"] body,
+:root[data-bg="dot-mint-rev"]:not([data-theme="dark"]) body{
+  background-color:#faf8ed !important;
+  background-image:
+    radial-gradient(circle,#ccecd7 3.2px,transparent 3.8px),
+    radial-gradient(circle,#ccecd7 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-mint{
+  background-color:#ccecd7 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-mint-rev{
+  background-color:#faf8ed !important;
+  background-image:
+    radial-gradient(circle,#ccecd7 2px,transparent 2.5px),
+    radial-gradient(circle,#ccecd7 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-sky"][data-theme="light"] body,
+:root[data-bg="dot-sky"]:not([data-theme="dark"]) body{
+  background-color:#c7e3fd !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-sky-rev"][data-theme="light"] body,
+:root[data-bg="dot-sky-rev"]:not([data-theme="dark"]) body{
+  background-color:#fcfaf4 !important;
+  background-image:
+    radial-gradient(circle,#c7e3fd 3.2px,transparent 3.8px),
+    radial-gradient(circle,#c7e3fd 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-sky{
+  background-color:#c7e3fd !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-sky-rev{
+  background-color:#fcfaf4 !important;
+  background-image:
+    radial-gradient(circle,#c7e3fd 2px,transparent 2.5px),
+    radial-gradient(circle,#c7e3fd 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-yellow"][data-theme="light"] body,
+:root[data-bg="dot-yellow"]:not([data-theme="dark"]) body{
+  background-color:#fdf4bc !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-yellow-rev"][data-theme="light"] body,
+:root[data-bg="dot-yellow-rev"]:not([data-theme="dark"]) body{
+  background-color:#fefaf2 !important;
+  background-image:
+    radial-gradient(circle,#fdf4bc 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fdf4bc 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-yellow{
+  background-color:#fdf4bc !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-yellow-rev{
+  background-color:#fefaf2 !important;
+  background-image:
+    radial-gradient(circle,#fdf4bc 2px,transparent 2.5px),
+    radial-gradient(circle,#fdf4bc 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-peach"][data-theme="light"] body,
+:root[data-bg="dot-peach"]:not([data-theme="dark"]) body{
+  background-color:#fcd3c2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-peach-rev"][data-theme="light"] body,
+:root[data-bg="dot-peach-rev"]:not([data-theme="dark"]) body{
+  background-color:#fef7ea !important;
+  background-image:
+    radial-gradient(circle,#fcd3c2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fcd3c2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-peach{
+  background-color:#fcd3c2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-peach-rev{
+  background-color:#fef7ea !important;
+  background-image:
+    radial-gradient(circle,#fcd3c2 2px,transparent 2.5px),
+    radial-gradient(circle,#fcd3c2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-pink"][data-theme="light"] body,
+:root[data-bg="dot-pink"]:not([data-theme="dark"]) body{
+  background-color:#fdced2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-pink-rev"][data-theme="light"] body,
+:root[data-bg="dot-pink-rev"]:not([data-theme="dark"]) body{
+  background-color:#fef8f4 !important;
+  background-image:
+    radial-gradient(circle,#fdced2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fdced2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-pink{
+  background-color:#fdced2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-pink-rev{
+  background-color:#fef8f4 !important;
+  background-image:
+    radial-gradient(circle,#fdced2 2px,transparent 2.5px),
+    radial-gradient(circle,#fdced2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-lavender"][data-theme="light"] body,
+:root[data-bg="dot-lavender"]:not([data-theme="dark"]) body{
+  background-color:#e6d5f2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-lavender-rev"][data-theme="light"] body,
+:root[data-bg="dot-lavender-rev"]:not([data-theme="dark"]) body{
+  background-color:#fefaf3 !important;
+  background-image:
+    radial-gradient(circle,#e6d5f2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#e6d5f2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-lavender{
+  background-color:#e6d5f2 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-lavender-rev{
+  background-color:#fefaf3 !important;
+  background-image:
+    radial-gradient(circle,#e6d5f2 2px,transparent 2.5px),
+    radial-gradient(circle,#e6d5f2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-green"][data-theme="light"] body,
+:root[data-bg="dot-green"]:not([data-theme="dark"]) body{
+  background-color:#dbe7c4 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-green-rev"][data-theme="light"] body,
+:root[data-bg="dot-green-rev"]:not([data-theme="dark"]) body{
+  background-color:#fdf9ef !important;
+  background-image:
+    radial-gradient(circle,#dbe7c4 3.2px,transparent 3.8px),
+    radial-gradient(circle,#dbe7c4 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-green{
+  background-color:#dbe7c4 !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-green-rev{
+  background-color:#fdf9ef !important;
+  background-image:
+    radial-gradient(circle,#dbe7c4 2px,transparent 2.5px),
+    radial-gradient(circle,#dbe7c4 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-gray"][data-theme="light"] body,
+:root[data-bg="dot-gray"]:not([data-theme="dark"]) body{
+  background-color:#e2e0df !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-gray-rev"][data-theme="light"] body,
+:root[data-bg="dot-gray-rev"]:not([data-theme="dark"]) body{
+  background-color:#fdf9ef !important;
+  background-image:
+    radial-gradient(circle,#e2e0df 3.2px,transparent 3.8px),
+    radial-gradient(circle,#e2e0df 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-gray{
+  background-color:#e2e0df !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-gray-rev{
+  background-color:#fdf9ef !important;
+  background-image:
+    radial-gradient(circle,#e2e0df 2px,transparent 2.5px),
+    radial-gradient(circle,#e2e0df 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+:root[data-bg="dot-beige"][data-theme="light"] body,
+:root[data-bg="dot-beige"]:not([data-theme="dark"]) body{
+  background-color:#edddca !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px),
+    radial-gradient(circle,#fffaf2 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+:root[data-bg="dot-beige-rev"][data-theme="light"] body,
+:root[data-bg="dot-beige-rev"]:not([data-theme="dark"]) body{
+  background-color:#fffaf0 !important;
+  background-image:
+    radial-gradient(circle,#edddca 3.2px,transparent 3.8px),
+    radial-gradient(circle,#edddca 3.2px,transparent 3.8px) !important;
+  background-size:40px 40px !important;
+  background-position:0 0,20px 20px !important;
+  background-repeat:repeat !important;
+  background-attachment:fixed;
+}
+.bgsw.bg-dot-beige{
+  background-color:#edddca !important;
+  background-image:
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px),
+    radial-gradient(circle,#fffaf2 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+.bgsw.bg-dot-beige-rev{
+  background-color:#fffaf0 !important;
+  background-image:
+    radial-gradient(circle,#edddca 2px,transparent 2.5px),
+    radial-gradient(circle,#edddca 2px,transparent 2.5px) !important;
+  background-size:12px 12px !important;
+  background-position:0 0,6px 6px !important;
+}
+
+@media(max-width:700px){
+  :root[data-bg^="dot-"][data-theme="light"] body,
+  :root[data-bg^="dot-"]:not([data-theme="dark"]) body{
     background-attachment:scroll;
   }
 }
