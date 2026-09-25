@@ -8,7 +8,7 @@ function ui(){return B.ui&&B.ui();}
 function modal(){return B.modal&&B.modal();}
 function todo(id){var s=state();return s&&Array.isArray(s.todos)?s.todos.find(function(x){return x.id===id;}):null;}
 function now(){return Date.now();}
-function dateKey(ts){try{return B.dkey(new Date(ts));}catch(e){return '';}}
+function dateKey(ts){try{var d=new Date(ts);return B.studyDayKey?B.studyDayKey(d):(window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.key(d):B.dkey(d));}catch(e){return '';}}
 function sessions(t){if(!t)return[];if(!Array.isArray(t.workSessions))t.workSessions=[];return t.workSessions;}
 function activeStart(t){var n=Number(t&&t.workStartedAt||0);return Number.isFinite(n)&&n>0?n:0;}
 function totalSec(t,includeActive){
@@ -36,8 +36,9 @@ function todaySec(t){
   return Math.max(0,Math.round(sec));
 }
 function weekBounds(){
-  var d=new Date(),day=d.getDay(),delta=day===0?-6:1-day;
-  var a=new Date(d.getFullYear(),d.getMonth(),d.getDate()+delta,0,0,0,0);
+  var d=B.parseKey?B.parseKey(B.todayKey()):new Date(),day=d.getDay(),delta=day===0?-6:1-day;
+  /* 월요일 오전 5시가 공부 주간의 시작. */
+  var a=new Date(d.getFullYear(),d.getMonth(),d.getDate()+delta,5,0,0,0);
   var b=new Date(a);b.setDate(a.getDate()+7);return [a.getTime(),b.getTime()];
 }
 function sessionSec(x){

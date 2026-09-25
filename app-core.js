@@ -245,6 +245,9 @@ var $=function(s){return document.querySelector(s);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function pad(n){return String(n).padStart(2,'0');}
 function dkey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function studyDayDate(d){return window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.date(d):new Date((d||new Date()).getTime?d.getTime():d);}
+function studyDayKey(d){return window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.key(d):dkey(d||new Date());}
+function studyTomorrowKey(d){return window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.tomorrowKey(d):dkey(addDays(d||new Date(),1));}
 function mkey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1);}
 function parseKey(k){var p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
 function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);}
@@ -283,7 +286,7 @@ function switchPlannerMode(next){
   S.modeStates[plannerMode()]=snapshotModeState();
   if(!S.modeStates[next])S.modeStates[next]=emptyModeState();
   applyModeState(S.modeStates[next]);
-  S.settings.plannerMode=next;U.date=new Date();U.tab='ttable';U.settingsPage='';
+  S.settings.plannerMode=next;U.date=studyDayDate(new Date());U.tab='ttable';U.settingsPage='';
   save();render(true);inAppToast(plannerModeMeta(next).label+' 플래너로 전환했어요');
 }
 function modePillsHTML(active,act){return '<div class="mode-pills">'+Object.keys(PLANNER_MODES).map(function(k){var m=PLANNER_MODES[k];return '<button class="mode-pill'+(k===active?' on':'')+'" data-act="'+(act||'switch-mode')+'" data-v="'+k+'"><b>'+m.label+'</b><small>'+m.sub+'</small></button>';}).join('')+'</div>';}
@@ -2032,7 +2035,7 @@ function sendCheerMessage(id){
   var chars=Array.from(text0);if(chars.length>100){bad('#f-cheer-msg');if(msg)msg.textContent='100자 이하로 적어주세요.';return;}
   if(!cheerEligible(id).ok){if(msg)msg.textContent='둘 다 오늘 할 일을 모두 마친 상태가 아니에요.';return;}
   if(msg)msg.textContent='보내는 중…';
-  var tomorrow=dkey(addDays(new Date(),1));
+  var tomorrow=studyTomorrowKey(new Date());
   sb.from('planner_friend_cheers').insert({from_user:Sync.uid,to_user:id,message:text0,deliver_date:tomorrow}).then(function(r){
     if(r.error)throw r.error;
     S.settings.cheerSent=S.settings.cheerSent||{};S.settings.cheerSent[cheerSentKey(id)]=1;save();
@@ -3107,7 +3110,7 @@ function initSync(){
 }
 
 /* ---------- UI 상태 ---------- */
-var U={tab:'day',date:new Date(),drafts:{},showDone:false,qscope:'day',refocus:null,chatQuery:'',chatPhotos:[],chatRoom:'general',diaryDraft:'',diaryNote:'',diaryMood:'',diaryRun:null};
+var U={tab:'day',date:studyDayDate(new Date()),drafts:{},showDone:false,qscope:'day',refocus:null,chatQuery:'',chatPhotos:[],chatRoom:'general',diaryDraft:'',diaryNote:'',diaryMood:'',diaryRun:null};
 var M={type:null};
 var onboardTimer=null;
 
@@ -3167,7 +3170,7 @@ function layout(items){
   flush();
   return out;
 }
-function diffDays(k){var a=parseKey(k),t=new Date();t=new Date(t.getFullYear(),t.getMonth(),t.getDate());return Math.round((a-t)/86400000);}
+function diffDays(k){var a=parseKey(k),t=parseKey(todayKey());return Math.round((a-t)/86400000);}
 function ddHTML(t){
   if(!t.due)return '';
   var n=diffDays(t.due);
@@ -3183,7 +3186,7 @@ function courseSelect(id,sel,cls){
   return '<select class="'+(cls||'fld')+'" id="'+id+'"><option value="">과목 없음</option>'+names.map(function(n){return '<option value="'+esc(n)+'"'+(n===sel?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'</select>';
 }
 function examNow(){
-  var tk=dkey(new Date());
+  var tk=todayKey();
   return S.exams.filter(function(e){return e.end>=tk;}).sort(function(a,b){return a.start<b.start?-1:1;})[0]||null;
 }
 function inExam(k){return S.exams.some(function(e){return k>=e.start&&k<=e.end;});}
@@ -3213,7 +3216,7 @@ function logItemOn(id){
   return id==='wakeGoal'?d.wakeGoal!==false:id==='wake'?d.wakeTime!==false:id==='sleep'?d.sleepTime!==false:id==='study'?d.studyTotal!==false:true;
 }
 function beforeWakeGoalCutoff(){
-  var now=new Date(),cut=new Date(now.getFullYear(),now.getMonth(),now.getDate(),9,0,0,0);
+  var now=new Date(),base=parseKey(todayKey()),cut=new Date(base.getFullYear(),base.getMonth(),base.getDate(),9,0,0,0);
   return now<cut;
 }
 function durShort(m){if(m<60)return m+'m';var h=Math.floor(m/60),r=m%60;return h+'h'+(r?pad(r):'');}
@@ -3285,7 +3288,7 @@ function saveTrk(){
   save();closeModal();render();
 }
 function featOn(k){var v=S.settings[k];return v===undefined?!S.settings.liteHome:v!==false;}
-function todayKey(){return dkey(new Date());}
+function todayKey(){return studyDayKey(new Date());}
 function letterAccentColor(){
   var c=String(defCol()||'#dce9f7').toLowerCase();
   var map={
@@ -3319,7 +3322,7 @@ function letterCard(k){
       '<p class="lt-got">'+esc(got.text)+'</p></section>';
   }
   if(k===tk){
-    var nk=dkey(addDays(new Date(),1)),L=S.letters[nk]||{},sent=!!(L&&L.text);
+    var nk=studyTomorrowKey(new Date()),L=S.letters[nk]||{},sent=!!(L&&L.text);
     var skipped=S.settings.letterSkipComposeDate===tk;
     if(!skipped){
       html+='<section class="card self-letter-card"><div class="card-h"><h3>내일의 나에게</h3><span class="cnt">'+(sent?'예약됨 ✓':'내일 맨 위에 도착')+'</span></div>'+
@@ -3650,7 +3653,7 @@ function briefingPermission(){
 }
 function todayBriefingData(){
   carryOver();
-  var d=new Date(),k=dkey(d);
+  var d=parseKey(todayKey()),k=todayKey();
   var cls=itemsFor(d).filter(function(x){return x.kind==='class'&&!x.skipped;}).length;
   var due=S.todos.filter(function(t){return !t.done&&t.due===k;}).length+S.exams.filter(function(e){return (e.start||'')===k;}).length;
   var gapMin=openGaps(k).reduce(function(n,g){return n+Math.max(0,g.end-g.start);},0);
@@ -3659,7 +3662,7 @@ function todayBriefingData(){
 }
 function checkMorningBriefing(force){
   if(!S.settings.morningBriefing||!('Notification' in window)||Notification.permission!=='granted')return;
-  var n=new Date(),k=dkey(n),tm=S.settings.morningBriefingTime||'08:00',p=tm.split(':'),target=(+p[0]||8)*60+(+p[1]||0),now=n.getHours()*60+n.getMinutes();
+  var n=new Date(),k=todayKey(),tm=S.settings.morningBriefingTime||'08:00',p=tm.split(':'),target=(+p[0]||8)*60+(+p[1]||0),now=n.getHours()*60+n.getMinutes();
   if(!force&&(now<target||S.settings.morningBriefingSent===k))return;
   var b=todayBriefingData(),body='오늘 '+modeBlockWord()+' '+b.classes+'개 · 마감 '+b.due+'개 · '+modeGapWord()+' '+durText(b.gap);
   if(b.todo)body+=' · 할 일 '+b.todo+'개';
@@ -3716,8 +3719,8 @@ function fProg(){
   var tot=(F.phase==='break'||(F.phase==='paused'&&F.pbreak)?FMODES[F.mode][1]:FMODES[F.mode][0])*60;
   return 1-Math.max(0,fShown())/tot;
 }
-function weekFocus(){var m=mondayOf(new Date()),t=0;for(var i=0;i<7;i++)t+=S.focus[dkey(addDays(m,i))]||0;return t;}
-function focusTasks(){var tk=todayKey(),wk=dkey(mondayOf(new Date()));
+function weekFocus(){var m=mondayOf(studyDayDate(new Date())),t=0;for(var i=0;i<7;i++)t+=S.focus[dkey(addDays(m,i))]||0;return t;}
+function focusTasks(){var tk=todayKey(),wk=dkey(mondayOf(studyDayDate(new Date())));
   return sortTodos(S.todos.filter(function(t){return !t.done&&((t.scope==='day'&&t.key===tk)||(t.scope==='week'&&t.key===wk)||t.scope==='inbox');}));}
 function drawFocusDone(min,late){
   var t=F&&F.tid?S.todos.find(function(x){return x.id===F.tid;}):null;
@@ -3980,7 +3983,7 @@ function gapHomeLine(k){
 }
 /* ---------- 빠른 입력: "내일 3시 경제학 과제" ---------- */
 function parseQuickTodo(raw){
-  var txt=' '+raw+' ',out={},T=new Date(),t0=new Date(T.getFullYear(),T.getMonth(),T.getDate()),date=null,m;
+  var txt=' '+raw+' ',out={},T=studyDayDate(new Date()),t0=new Date(T.getFullYear(),T.getMonth(),T.getDate()),date=null,m;
   var WD='월화수목금토일';
   function cut(re){txt=txt.replace(re,' ');}
   function mark(d,deadline){if(deadline)out.due=dkey(d);else date=d;}
@@ -4029,7 +4032,7 @@ function quickTodoToast(q){
 /* ---------- 하루 마감 연속 기록 ---------- */
 function dayCloseStreak(){
   var set={};(S.dayCloses||[]).forEach(function(x){set[x.key]=1;});
-  var d=new Date();if(!set[dkey(d)])d=addDays(d,-1);
+  var d=studyDayDate(new Date());if(!set[dkey(d)])d=addDays(d,-1);
   var n=0;while(set[dkey(d)]&&n<3650){n++;d=addDays(d,-1);}
   return n;
 }
@@ -4047,7 +4050,7 @@ function tagOf(t){
 
 /* ---------- 화면: 공통 ---------- */
 function relLabel(){
-  var t=new Date(),n;
+  var t=parseKey(todayKey()),n;
   if(U.tab==='month'){n=(U.date.getFullYear()-t.getFullYear())*12+U.date.getMonth()-t.getMonth();return n===0?'이번 달':n>0?n+'달 후':(-n)+'달 전';}
   if(U.tab==='week'){n=Math.round((mondayOf(U.date)-mondayOf(t))/(7*864e5));return n===0?'이번 주':n>0?n+'주 후':(-n)+'주 전';}
   n=diffDays(dkey(U.date));return n===0?'오늘':n>0?n+'일 후':(-n)+'일 전';
@@ -4055,7 +4058,7 @@ function relLabel(){
 function topHTML(){
   var d=U.date,t='',s='',arrows=false,plus='';
   var searchBtn='<button class="ibtn" data-act="global-search" aria-label="전체 검색"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>';
-  var today=dkey(d)===dkey(new Date());
+  var today=dkey(d)===todayKey();
   if(U.tab==='month'){t=d.getFullYear()+'년 '+(d.getMonth()+1)+'월';arrows=true;plus='add-schedule';}
   else if(U.tab==='week'){
     var m=mondayOf(d),th=addDays(m,3),e=addDays(m,6);
@@ -4146,7 +4149,7 @@ function gridHTML(dates,o){
   items.forEach(function(arr){arr.forEach(function(it){lo=Math.min(lo,Math.floor(it.start/60));hi=Math.max(hi,Math.ceil(it.end/60));});});
   hi=Math.min(hi,24);
   var rows=hi-lo,hh=o.day?56:48;
-  var now=new Date(),tk=dkey(now),nowMin=now.getHours()*60+now.getMinutes();
+  var now=new Date(),tk=todayKey(),nowMin=now.getHours()*60+now.getMinutes();
   var hours='';
   for(var i=0;i<rows;i++)hours+='<span style="top:'+(i*hh+3)+'px">'+hourLabel(lo+i)+'</span>';
   var cols=dates.map(function(d,i){
@@ -4213,13 +4216,13 @@ function relationDotsHTML(k){
   return '<span class="rel-dots" aria-label="친구와 만난 날">'+fs.slice(0,4).map(function(f){return '<i class="rel-dot" title="'+esc(friendLabel(f))+'" style="--rc:'+relationFriendColor(f.id)+'"></i>';}).join('')+'</span>';
 }
 
-function monthReviewHTML(d){var pre=mkey(d),cl=(S.dayCloses||[]).filter(function(x){return x.key&&x.key.slice(0,7)===pre;}),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt)).slice(0,7)===pre;}),words=cl.map(function(x){return (x.word||'').trim();}).filter(Boolean),focus=cl.reduce(function(a,x){return a+(x.focus||0);},0),done=cl.reduce(function(a,x){return a+(x.done||0);},0),total=cl.reduce(function(a,x){return a+(x.total||0);},0);if(!cl.length&&!di.length)return '';return '<div class="month-review"><b>'+ (d.getMonth()+1)+'월 회고</b><small>하루 마감 '+cl.length+'일 · '+diaryTargetMinutes()+'분 일기 '+di.length+'개'+(total?' · 할 일 '+done+'/'+total:'')+(focus?' · 집중 '+durLong(focus):'')+'</small>'+(words.length?'<div class="month-words">'+words.slice(-12).map(function(w){return '<span>'+esc(w)+'</span>';}).join('')+'</div>':'')+'</div>';}
+function monthReviewHTML(d){var pre=mkey(d),cl=(S.dayCloses||[]).filter(function(x){return x.key&&x.key.slice(0,7)===pre;}),di=(S.diaries||[]).filter(function(x){return diaryDateKey(x).slice(0,7)===pre;}),words=cl.map(function(x){return (x.word||'').trim();}).filter(Boolean),focus=cl.reduce(function(a,x){return a+(x.focus||0);},0),done=cl.reduce(function(a,x){return a+(x.done||0);},0),total=cl.reduce(function(a,x){return a+(x.total||0);},0);if(!cl.length&&!di.length)return '';return '<div class="month-review"><b>'+ (d.getMonth()+1)+'월 회고</b><small>하루 마감 '+cl.length+'일 · '+diaryTargetMinutes()+'분 일기 '+di.length+'개'+(total?' · 할 일 '+done+'/'+total:'')+(focus?' · 집중 '+durLong(focus):'')+'</small>'+(words.length?'<div class="month-words">'+words.slice(-12).map(function(w){return '<span>'+esc(w)+'</span>';}).join('')+'</div>':'')+'</div>';}
 
 /* ---------- 화면: 월간 ---------- */
 function viewMonth(){
   var d=U.date,y=d.getFullYear(),m=d.getMonth();
   var first=new Date(y,m,1),off=dow(first),dim=new Date(y,m+1,0).getDate();
-  var rows=Math.ceil((off+dim)/7),start=addDays(first,-off),tk=dkey(new Date());
+  var rows=Math.ceil((off+dim)/7),start=addDays(first,-off),tk=todayKey();
   var cells='';
   for(var i=0;i<rows*7;i++){
     var c=addDays(start,i),k=dkey(c),w=i%7;
@@ -4390,7 +4393,7 @@ function courseStudyHTML(mon){
 }
 function reviewHTML(mon){
   if(S.settings.showWeeklyReview===false)return '';
-  var thisMon=mondayOf(new Date()),today=dkey(new Date());
+  var thisMon=mondayOf(studyDayDate(new Date())),today=todayKey();
   if(dkey(mon)>dkey(thisMon))return '';
   var sun=addDays(mon,6),mk=dkey(mon),sk=dkey(sun);
   var list=S.todos.filter(function(t){return (t.scope==='week'&&t.key===mk)||(t.scope==='day'&&t.key>=mk&&t.key<=sk);});
@@ -4437,7 +4440,7 @@ function timelineHTML(d){
   var lo=S.settings.hStart!=null?S.settings.hStart:6,hi=S.settings.hEnd!=null?S.settings.hEnd:23;
   items.forEach(function(it){lo=Math.min(lo,Math.floor(it.start/60));hi=Math.max(hi,Math.ceil(it.end/60));});
   hi=Math.min(hi,24);
-  var now=new Date(),isToday=k===dkey(now),nh=now.getHours();
+  var now=new Date(),isToday=k===todayKey(),nh=now.getHours();
   var notes=S.hourNotes[k]||{},rows='';
   for(var h=lo;h<hi;h++){
     var hs=h*60,he=hs+60;
@@ -4500,7 +4503,7 @@ function closedDayHTML(d){
   return '<div class="closed-day">'+hero+story+hours+plans+letter+tail+'</div>';
 }
 function viewDay(){
-  var d=U.date,k=dkey(d),tk=dkey(new Date());
+  var d=U.date,k=dkey(d),tk=todayKey();
   if(dayClosedMode(k))return closedDayHTML(d);
   var backToClosed=dayCloseCard(k)?'<div class="closed-back"><button class="tbtn" data-act="day-closed-view">마감 요약으로 보기</button></div>':'';
   var memo=memoOf(k);
@@ -4516,7 +4519,7 @@ function viewDay(){
 
 /* ---------- 화면: 할 일 ---------- */
 function viewTodo(){
-  var T=new Date(),tk=dkey(T),wk=dkey(mondayOf(T)),mo=mkey(T);
+  var T=studyDayDate(new Date()),tk=todayKey(),wk=dkey(mondayOf(T)),mo=mkey(T);
   var allOpen=S.todos.filter(function(t){return !t.done&&!t.autoPlanChild;});
   var dueSoon=allOpen.filter(function(t){return t.due&&diffDays(t.due)<=7;}).sort(function(a,b){return a.due<b.due?-1:a.due>b.due?1:0;});
   var open=allOpen.filter(function(t){return dueSoon.indexOf(t)<0;});
@@ -5245,7 +5248,7 @@ function render(reset){
   $('#nav').innerHTML=navHTML();
   $('#app').classList.toggle('wide',U.tab==='day');
   main.scrollTop=st;
-  if(reset&&U.tab==='day'&&dkey(U.date)===dkey(new Date())&&window.innerWidth>=760){
+  if(reset&&U.tab==='day'&&dkey(U.date)===todayKey()&&window.innerWidth>=760){
     var cur=document.querySelector('.hr.cur');
     if(cur)main.scrollTop=Math.max(0,cur.offsetTop-main.offsetTop-120);
   }
@@ -5478,7 +5481,7 @@ function saveBlock(){
 }
 
 function openTodo(t){
-  var date=t.scope==='month'?t.key+'-01':(t.key||dkey(new Date()));
+  var date=t.scope==='month'?t.key+'-01':(t.key||todayKey());
   M={type:'todo',id:t.id,scope:t.scope};
   var timeHTML='<span class="lbl">시간표에 넣기 (선택)</span><div class="row"><input class="fld" type="time" id="f-ttime" value="'+(t.time||'')+'"><select class="fld" id="f-tdur">'+[30,60,90,120,180].map(function(m){return '<option value="'+m+'"'+((t.dur||60)===m?' selected':'')+'>'+durLong(m)+'</option>';}).join('')+'</select><button class="tbtn" data-act="clear-ttime">없음</button></div>';
   var dueHTML='<span class="lbl">마감일 (선택)</span><div class="row"><input class="fld" type="date" id="f-due" value="'+(t.due||'')+'"><button class="tbtn" data-act="clear-due">없음</button></div>';
@@ -5498,7 +5501,7 @@ function saveTodo(){
   if(!text){bad('#f-text');return;}
   var t=S.todos.find(function(x){return x.id===M.id;});
   if(!t){closeModal();return;}
-  var d=$('#f-tdate').value?parseKey($('#f-tdate').value):new Date();
+  var d=$('#f-tdate').value?parseKey($('#f-tdate').value):studyDayDate(new Date());
   t.text=text;t.scope=M.scope;t.key=keyFor(M.scope,d);t.due=$('#f-due').value||null;t.course=$('#f-course').value;t.time=$('#f-ttime').value||null;t.dur=Number($('#f-tdur').value)||60;if(t.time&&t.scope!=='day'){t.scope='day';t.key=dkey(d);}
   save();closeModal();render();
 }
@@ -5706,7 +5709,7 @@ function diaryMoodPickerHTML(){
 }
 function diaryMoodSavedHTML(mood){return nemoMoodValid(mood)?'<div class="diary-saved-mood">'+nemoSVG(mood,'')+'<span>'+esc(nemoMoodLabel(mood))+'</span></div>':'';}
 function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em>'+(x.word?'<span class="diary-word">'+esc(x.word)+'</span>':'')+'<p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
-function diaryDateKey(x){return dkey(new Date(x.finishedAt));}
+function diaryDateKey(x){return studyDayKey(new Date(x.finishedAt));}
 function diaryLibraryRows(){return (S.diaries||[]).slice().sort(function(a,b){return a.finishedAt-b.finishedAt;});}
 function openDiaryLibrary(dateKey){
   var rows=diaryLibraryRows(),wanted=dateKey||todayKey(),ix=-1;
@@ -6090,7 +6093,7 @@ function deleteAccountNow(){
   }).then(function(){
     Sync.db=null;Sync.on=false;Sync.pulled=false;Sync.loading=false;Sync.uid=null;Sync.email='';Sync.busy=false;Sync.dirty=false;
     FriendSync.loaded=false;FriendSync.invitesIn=[];FriendSync.invitesOut=[];FriendSync.busyMap={};FriendSync.lastBusy='';FriendSync.code='';FriendSync.friends=[];FriendSync.incoming=[];FriendSync.requests=[];FriendSync.shared=[];FriendSync.memories=[];FriendSync.shown={};
-    Sync.deleting=false;closeModal();U.tab='day';U.settingsPage='';U.date=new Date();render(true);inAppToast('계정을 삭제했어요');
+    Sync.deleting=false;closeModal();U.tab='day';U.settingsPage='';U.date=studyDayDate(new Date());render(true);inAppToast('계정을 삭제했어요');
   }).catch(function(e){
     Sync.deleting=false;Sync.db=supaAdapter(Sync.sb,uid0);Sync.path='planner';Sync.uid=uid0;Sync.on=true;Sync.pulled=oldPulled!==false;Sync.busy=false;Sync.dirty=false;setDeleteAccountBusy(false);if(msg)msg.textContent=deleteAccountError(e);scheduleSync();
   });
@@ -6115,10 +6118,10 @@ function act(a,e){
     case 'tab':if(a.dataset.tab==='friends'&&U.tab==='friends')U.friendsPage='';U.tab=a.dataset.tab;render(true);break;
     case 'prev':shift(-1);break;
     case 'next':shift(1);break;
-    case 'today':U.date=new Date();render(true);break;
+    case 'today':U.date=studyDayDate(new Date());render(true);break;
     case 'open-day':U.date=parseKey(a.dataset.date);U.tab='day';render(true);break;
     case 'add-event':{
-      var now=new Date(),h=(dkey(U.date)===dkey(now))?Math.min(Math.max(now.getHours()+1,9),22):9;
+      var now=new Date(),h=(dkey(U.date)===todayKey())?Math.min(Math.max(now.getHours()+1,9),22):9;
       openEvent(null,{date:dkey(U.date),start:pad(h)+':00',end:pad(h+1)+':00'});break;
     }
     case 'add-schedule':openSchedule(null,{date:a.dataset.date||dkey(U.date)});break;
@@ -6372,11 +6375,11 @@ function act(a,e){
     case 'chat-del':if(armed(a)){S.selfchat=S.selfchat.filter(function(m){return m.id!==id;});U.chatSel=null;save();drawChat();}break;
     case 'chat-copy':{var cm=S.selfchat.find(function(m){return m.id===id;});if(cm){copyTextSafe(cm.text,function(){});U.chatSel=null;drawChat();}break;}
     case 'mstar':{var ms=findTodo(id);if(ms){ms.star=!ms.star;save();a.classList.toggle('on',ms.star);render();}break;}
-    case 'postpone':{var pt=findTodo(id);if(pt){var base=new Date(),nd;
+    case 'postpone':{var pt=findTodo(id);if(pt){var base=studyDayDate(new Date()),nd;
       if(a.dataset.v==='we'){nd=addDays(mondayOf(base),5);if(dkey(nd)<=dkey(base))nd=addDays(nd,7);}else nd=addDays(base,Number(a.dataset.v));
       pt.scope='day';pt.key=dkey(nd);pt.time=null;pt.carried=false;save();closeModal();render();}break;}
     case 'jump':M={type:'jump'};openModal('<h3>날짜로 이동</h3><input class="fld" type="date" id="f-jump" value="'+dkey(U.date)+'"><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="do-jump">이동</button></div><button class="tbtn jtoday" data-act="jump-today">오늘로 이동</button>');break;
-    case 'jump-today':U.date=new Date();closeModal();render(true);break;
+    case 'jump-today':U.date=studyDayDate(new Date());closeModal();render(true);break;
     case 'do-jump':{var jv=$('#f-jump').value;if(jv){U.date=parseKey(jv);closeModal();render(true);}break;}
     case 'merge-backup':{
       try{var mo=decodeBackupCode($('#f-backup').value);if(mo&&mo.state&&typeof mo.state==='object')mo=mo.state;if(!validBackupState(mo))throw 0;
@@ -6440,9 +6443,9 @@ function act(a,e){
     case 'nudge-off':lsSet('planner.loginNudge','off');render();break;
     case 'toggle-letter':S.settings.letterOn=!S.settings.letterOn;save();render();break;
     case 'letter-seen':{var lk=todayKey();if(S.letters[lk]){S.letters[lk].seen=true;save();}render();break;}
-    case 'send-letter-tomorrow':sendLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
-    case 'no-letter-tomorrow':askNoLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
-    case 'no-letter-tomorrow-confirm':skipLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
+    case 'send-letter-tomorrow':sendLetterTomorrow(a.dataset.date||studyTomorrowKey(new Date()));break;
+    case 'no-letter-tomorrow':askNoLetterTomorrow(a.dataset.date||studyTomorrowKey(new Date()));break;
+    case 'no-letter-tomorrow-confirm':skipLetterTomorrow(a.dataset.date||studyTomorrowKey(new Date()));break;
     case 'letter-rmphoto':setLetter(a.dataset.k,{photo:null});save();render();break;
     case 'letter-photo':{var LL=S.letters[a.dataset.k];if(LL&&LL.photo){M={type:'photo'};openModal('<img class="lt-big" src="'+LL.photo+'" alt="사진">'+(LL.text?'<p class="lt-got" style="margin-top:12px">'+esc(LL.text)+'</p>':'')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');}break;}
     case 'memo-photo-del':{
@@ -6583,12 +6586,12 @@ function act(a,e){
       var q=a.parentElement.querySelector('input');
       var qd=U.qdue||null,qc=U.qcourse||'';
       if(q.value.trim())U.qdue='';
-      addTodo(U.qscope,keyFor(U.qscope,new Date()),q.value,'quick',qd,qc);break;
+      addTodo(U.qscope,keyFor(U.qscope,studyDayDate(new Date())),q.value,'quick',qd,qc);break;
     }
     case 'qscope':U.qscope=a.dataset.v;render();break;
-    case 'move-today':{var t4=findTodo(id);if(t4){t4.scope='day';t4.key=dkey(new Date());save();render();}break;}
+    case 'move-today':{var t4=findTodo(id);if(t4){t4.scope='day';t4.key=todayKey();save();render();}break;}
     case 'move-all-today':{
-      var tk=dkey(new Date());
+      var tk=todayKey();
       S.todos.forEach(function(t){if(!t.done&&t.scope==='day'&&t.key<tk)t.key=tk;});
       save();render();break;
     }
@@ -6983,6 +6986,16 @@ setInterval(tickFocus,500);
 setInterval(checkReminders,60000);
 setInterval(checkMorningBriefing,60000);
 setInterval(function(){if(Sync.kind==='supa'&&Sync.uid)cheerDeliverDue();},60000);
+/* 공부 하루는 오전 5시에 바뀌어요. 자정에는 어제 기록을 그대로 유지하고, 5시에 새 하루로 넘어갑니다. */
+var lastStudyDayKey=todayKey();
+setInterval(function(){
+  var nextKey=todayKey();
+  if(nextKey===lastStudyDayKey)return;
+  var prevKey=lastStudyDayKey;lastStudyDayKey=nextKey;
+  if(dkey(U.date)===prevKey)U.date=parseKey(nextKey);
+  carryOver();pruneLetters();render(true);
+  try{window.dispatchEvent(new CustomEvent('planon:studydaychange',{detail:{oldKey:prevKey,newKey:nextKey}}));}catch(e){}
+},30000);
 setInterval(function(){if(Sync.db&&!document.hidden&&!Sync.busy&&!Sync.timer&&!memoTimer&&!M.type){pull();if(Sync.kind==='supa')friendLoad();}},45000);
 registerSW();
 if(typeof S!=='undefined'&&S.settings&&S.settings.friendNotify)registerSW();
@@ -7007,6 +7020,7 @@ window.openModal=openModal;
 window.closeModal=closeModal;
 window.inAppToast=inAppToast;
 window.dkey=dkey;
+window.studyDayKey=studyDayKey;
 window.pad=pad;
 window.dow=dow;
 window.mdTxt=mdTxt;
@@ -7022,7 +7036,7 @@ window.PLANON_UX_BRIDGE={
   state:function(){return S;}, ui:function(){return U;}, modal:function(){return M;},
   save:save, render:render, openModal:openModal, closeModal:closeModal,
   openSchedule:openSchedule, openExam:openExam, openDD:openDD, openAppointment:openAppointment,
-  addTodo:addTodo, todayKey:todayKey, dkey:dkey, parseKey:parseKey,
+  addTodo:addTodo, todayKey:todayKey, dkey:dkey, parseKey:parseKey, studyDayDate:studyDayDate, studyDayKey:studyDayKey,
   plannerMode:plannerMode, plannerModeMeta:plannerModeMeta, featOn:featOn,
   dayCloseStats:dayCloseStats, logVal:logVal, logItemOn:logItemOn,
   db:function(){return friendDb();}, friendState:function(){return FriendSync;},

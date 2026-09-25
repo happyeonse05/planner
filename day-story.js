@@ -121,6 +121,11 @@ document.addEventListener('click',function(e){
   e.preventDefault();
   handleStoryAction(a);
 });
+window.addEventListener('planon:studydaychange',function(){
+  ST.loading=false;ST.loaded=false;ST.stories=[];ST.reactions=[];ST.ownReactions=[];ST.error='';ST.lastLoad=0;
+  closeLayer();decorateSafe();
+  pullOwnToday().then(function(){return retryPending();}).then(function(){if(closeFor(B.todayKey()))return loadStories(true);});
+});
 window.addEventListener('online',function(){retryPending();});
 document.addEventListener('visibilitychange',function(){if(!document.hidden)retryPending();});
 setInterval(function(){if(navigator.onLine!==false)retryPending();},30000);

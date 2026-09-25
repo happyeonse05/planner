@@ -28,7 +28,7 @@ function nemoMoodForToday(total,done,hour){
   if(total<=0)return 'basic';
   if(done>=total)return 'happy';
   var remain=Math.max(0,total-done),pct=total?done/total:0;
-  if(hour>=22&&remain>0)return 'sleepy';
+  if((hour>=22||hour<5)&&remain>0)return 'sleepy';
   if(remain>=Math.max(4,Math.ceil(total*0.65)))return 'angry';
   if(done>=Math.max(1,total-1)||pct>=0.8)return 'proud';
   if(hour>=18&&pct<0.35)return 'sad';
