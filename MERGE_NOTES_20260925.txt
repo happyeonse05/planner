@@ -1,0 +1,37 @@
+PLAN:ON Claude + 최신 수정 병합 내역
+
+[Claude 수정본 그대로 유지한 핵심 파일]
+- app-core.js
+- styles.css
+- ux.js
+- supabase/001_production_security.sql
+
+[Claude 수정본 위에 요청대로 추가한 것]
+1. 스토리
+- 내 스토리를 가장 위에 단독 표시
+- 내 스토리 아이콘 = 오늘 화면에 보이는 네모
+- 그 아래 '친구들의 스토리' 줄
+- 친구 스토리 아이콘도 해당 마감 시점 네모
+- day_closings.nemo_mood를 선택적으로 저장
+- SQL 미실행 상태에서도 기존 스토리가 깨지지 않게 fallback
+- 스토리 DOM 감시가 화면을 계속 다시 그리지 않게 안정화
+
+2. Shop / Market
+- 무료 기본 컬러는 딱 5개: 아이보리/핑크/옐로우/민트/블루
+- 기존 나머지 팔레트 4색은 유료 특색 컬러
+- 기존 도트 배경 21종은 유료 배경 상품
+- 기존 사용자가 이미 쓰던 유료 디자인은 1회 legacy 보유 처리하여 사라지지 않음
+- 설정 팔레트에서 미보유 유료 디자인은 ₩ 표시 + 누르면 Shop 상세로 이동
+- 버터/딸기우유/민트 '팩'은 실제 테마+도트+아이콘/캐릭터/프레임 조합으로 수정
+- 시험기간/주간/중간고사 상품은 '실용 세팅'으로 별도 유지
+
+3. 최신 안정성/회귀 수정
+- worklog MutationObserver 무한 재장식 방지 (월간/주간/+/설정 클릭 먹통 회귀 방지)
+- Service Worker에 today-core/day-story 자산 캐시 포함
+- 최신 날씨 유지: 상단 미래 '22시 비' 제거, 강수 칩 하나만 표시, 강수 칩 클릭 시 오늘 날씨 상세
+- Claude의 경제학입문 잘림 방지/친구 탭/과목별 주간 공부시간/약속 후 추억 기능 유지
+- 어제의 내가 남긴 말 오늘 중복 표시 방지 유지
+
+[Supabase]
+- RUN_THIS_IN_SUPABASE_SQL_EDITOR.sql에 nemo_mood 컬럼 추가 포함
+- 기존 day_closings 테이블이 있어도 ALTER TABLE IF NOT EXISTS로 추가됨

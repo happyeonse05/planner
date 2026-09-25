@@ -169,11 +169,20 @@ function decorateAll(){
   decorateModal();
 }
 
-var queued=false;
-function queue(){if(queued)return;queued=true;setTimeout(function(){queued=false;decorateAll();},20);}
+var queued=false,mainObserver=null,modalObserver=null,watchTimer=null;
+function queue(){if(queued)return;queued=true;setTimeout(function(){queued=false;decorateAllSafe();},20);}
 var main=document.getElementById('main'),mod=document.getElementById('modal');
-if(main)new MutationObserver(queue).observe(main,{childList:true,subtree:true});
-if(mod)new MutationObserver(queue).observe(mod,{childList:true,subtree:true});
+function watchWorklog(){
+  if(main&&mainObserver)mainObserver.observe(main,{childList:true,subtree:true});
+  if(mod&&modalObserver)modalObserver.observe(mod,{childList:true,subtree:true});
+}
+function decorateAllSafe(){
+  if(mainObserver)mainObserver.disconnect();if(modalObserver)modalObserver.disconnect();
+  decorateAll();clearTimeout(watchTimer);watchTimer=setTimeout(watchWorklog,0);
+}
+if(main){mainObserver=new MutationObserver(queue);}
+if(mod){modalObserver=new MutationObserver(queue);}
+watchWorklog();
 
 document.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('[data-work-action]');if(!b)return;
@@ -202,5 +211,5 @@ setInterval(function(){
 },15000);
 
 window.PLANON_WORKLOG={start:start,end:end,totalSec:totalSec,todaySec:todaySec,weekSec:weekSec,courseWeekSec:courseWeekSec,decorate:decorateAll};
-decorateAll();
+decorateAllSafe();
 })();

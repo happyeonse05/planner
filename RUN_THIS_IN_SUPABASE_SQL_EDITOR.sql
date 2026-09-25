@@ -14,11 +14,14 @@ create table if not exists public.day_closings (
   core_total integer not null default 0 check(core_total>=0 and core_total<=3),
   study_minutes integer check(study_minutes is null or study_minutes>=0),
   wake_time text,
+  nemo_mood text check(nemo_mood is null or nemo_mood in ('basic','happy','proud','sad','gloomy','angry','sleepy')),
   comment text check(comment is null or char_length(comment)<=40),
   visibility text not null default 'private' check(visibility in ('friends','private')),
   created_at timestamptz not null default now(),
   unique(user_id,date)
 );
+
+alter table public.day_closings add column if not exists nemo_mood text;
 
 create table if not exists public.story_reactions (
   id uuid primary key default gen_random_uuid(),

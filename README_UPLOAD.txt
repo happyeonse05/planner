@@ -1,10 +1,9 @@
+PLAN:ON 업로드 안내
 
-## 배경 중요 변경
-도트 배경은 이제 이미지 파일을 사용하지 않고 CSS로 직접 그립니다.
-따라서 `backgrounds/` 폴더가 없어도 모든 도트 배경이 정상 표시됩니다.
-기존 배경 폴더는 GitHub에서 삭제해도 됩니다.
+- 이 폴더의 파일/폴더를 GitHub Pages 저장소 루트에 그대로 덮어써 주세요.
+- 기존 저장소의 apple-touch-icon.png / icon-512.png는 이 ZIP에 없으므로 삭제하지 말고 그대로 유지해 주세요.
+- backgrounds/ 폴더도 함께 유지해 주세요. 기존 도트 디자인 자산을 보존합니다.
+- 새 하루 마감/친구 스토리를 서버에서 쓰려면 RUN_THIS_IN_SUPABASE_SQL_EDITOR.sql을 skku-planner의 Supabase SQL Editor에서 실행해 주세요.
 
-
-[2026-09-25 추가 수정]
-- '어제의 내가 남긴 말' 카드 왼쪽 줄을 기본색보다 더 진한 같은 계열 색으로 변경
-- 왼쪽 줄 두께도 5px로 강화
+이번 병합은 planner_update(1).zip(Claude 수정본)을 우선으로 두고,
+그 수정본에 없던 최신 안정성/날씨/스토리/Shop 보완만 추가했습니다.

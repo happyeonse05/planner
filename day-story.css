@@ -54,3 +54,34 @@
 .closed-actions,.closed-back{display:flex;justify-content:center;margin:6px 0 14px}
 .closed-back{justify-content:flex-end;margin:4px 0 8px}
 @media(max-width:430px){.closed-hero{gap:12px;padding:15px 13px}.closed-hero .closed-nemo{width:78px;height:78px}.closed-hero-copy b{font-size:17px}}
+
+/* ===== 2026-09-25 story hierarchy: 내 네모 위, 친구 네모 아래 ===== */
+.friend-story-strip{padding:0;overflow:hidden}
+.story-own-row{padding:11px 12px;border-bottom:1px solid var(--line)}
+.story-own-row>button{width:100%;display:flex;align-items:center;gap:11px;text-align:left;min-height:58px}
+.story-own-nemo{width:54px;height:54px;flex:none;display:grid;place-items:center}
+.story-own-nemo .nemo-char{width:54px;height:54px;display:block}
+.story-own-copy{flex:1;min-width:0}
+.story-own-copy b{display:block;font-size:14px;color:var(--ink);font-weight:800}
+.story-own-copy small{display:block;margin-top:2px;font-size:11px;color:var(--sub);white-space:normal;word-break:keep-all}
+.story-own-row i{font-style:normal;color:var(--sub);font-size:20px;line-height:1}
+.story-friends-block{padding:10px 12px 11px}
+.story-friends-block .story-strip-head{margin:0 0 8px}
+.story-friends-block .story-circles{margin:0 -1px}
+.story-friends-block .story-zero{padding:1px 0}
+.story-friends-block .story-none{margin:6px 0 0}
+.story-friends-block .story-strip-skeleton{padding:2px 0 1px}
+
+/* 프로필 사진/기기 이모지 대신 각 스토리의 '오늘의 네모' */
+.story-avatar.story-avatar-nemo{width:50px;height:50px;border:0;border-radius:0;background:transparent;overflow:visible;margin:0 auto 4px;display:grid;place-items:center}
+.story-avatar.story-avatar-nemo .story-nemo,.story-avatar.story-avatar-nemo .nemo-char{width:50px;height:50px;display:block}
+.story-circles button{width:62px}
+.story-circles button>span:last-child{max-width:62px}
+.story-circles.locked .story-avatar.story-avatar-nemo{filter:grayscale(.15);opacity:.58}
+.story-view-head .story-avatar.story-avatar-nemo{width:34px;height:34px;border:0;background:transparent;overflow:visible}
+.story-view-head .story-avatar.story-avatar-nemo .nemo-char{width:34px;height:34px}
+.story-person .story-avatar.story-avatar-nemo{width:42px;height:42px;border:0;background:transparent;overflow:visible}
+.story-person .story-avatar.story-avatar-nemo .nemo-char{width:42px;height:42px}
+.story-card-owner .story-avatar.story-avatar-nemo{width:38px;height:38px;border:0;background:transparent;overflow:visible}
+.story-card-owner .story-avatar.story-avatar-nemo .nemo-char{width:38px;height:38px}
+@media(max-width:430px){.story-own-row{padding:10px 11px}.story-friends-block{padding:9px 11px 10px}.story-own-nemo,.story-own-nemo .nemo-char{width:50px;height:50px}.story-avatar.story-avatar-nemo,.story-avatar.story-avatar-nemo .nemo-char{width:46px;height:46px}}

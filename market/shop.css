@@ -2,3 +2,8 @@
 .market-history{display:grid;gap:8px;margin:12px 0 18px}
 .market-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:var(--card)}
 .market-history-row span{min-width:0}.market-history-row b{display:block;font-size:13px}.market-history-row small{display:block;margin-top:3px;color:var(--sub);font-size:10.5px}.market-history-row strong{flex:none;font-size:12px}
+
+/* 기존 설정 팔레트와 Shop 연동: 기본 5색만 무료, 도트/특색 컬러는 보유 시 선택 */
+.sw.market-locked,.bgsw.market-locked{position:relative}
+.sw.market-locked::after,.bgsw.market-locked::after{content:'₩';position:absolute;right:-4px;bottom:-4px;min-width:14px;height:14px;padding:0 2px;border-radius:999px;display:grid;place-items:center;background:var(--ink);color:var(--card);font-size:8px;font-weight:800;line-height:1;box-shadow:0 0 0 2px var(--card)}
+.sw.market-locked:not(.on),.bgsw.market-locked:not(.on){opacity:.72}
