@@ -52,7 +52,7 @@ function nemoHomeCopy(mood,total,done,manual){
   if(mood==='proud')return ['오늘 네모가 뿌듯해해요','거의 다 끝냈어요. 마지막 하나만 마무리해볼까요?'];
   if(mood==='sad')return ['네모가 조금 속상해해요','남은 할 일을 하나씩 줄여봐요'];
   if(mood==='gloomy')return ['네모가 조금 우울해해요','지친 날엔 쉬엄쉬엄 해도 괜찮아요'];
-  if(mood==='angry')return ['네모가 잔뜩 바빠졌어요','할 일이 많아요. 가장 급한 것부터 해봐요'];
+  if(mood==='angry')return ['네모가 바빠졌어요','할 일이 많아요 · 급한 것부터 하나씩 해봐요'];
   if(mood==='sleepy')return ['네모가 졸려해요','밤이 늦었어요. 오늘 몫만 하고 쉬어도 돼요'];
   if(total===0)return ['오늘의 네모','일정이나 할 일을 추가하면 같이 하루를 채워가요'];
   return ['오늘의 네모',done+'/'+total+' 완료 · 이름 기본 색과 자동으로 맞춰져요'];

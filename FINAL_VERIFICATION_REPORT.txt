@@ -1,0 +1,15 @@
+PLANON FINAL INTEGRATED VERIFICATION
+Build: 20260925-2035
+Base: PLANON_FINAL_SHOP_MARKET_STABILITY.zip
+
+JS syntax: PASS (18 files)
+Index required local asset references: PASS (existing repo assets expected: apple-touch-icon.png, icon-512.png, manifest.webmanifest)
+Key action handlers: PASS (friend-meet, postmeet-yes, postmeet-no, toggle, save-todo, add, toggle-meet-maker)
+Market catalog required products/fields: PASS
+Admin all-products entitlement: PASS
+localStorage quota recovery: PASS
+Supabase full schema + current migration + delete RPC: PASS
+privacy.html: PASS
+New requested UX/features: PASS
+
+Note: actual two-account Supabase network behavior still requires live A/B account testing on the deployed project; static/runtime code integrity and schema presence were verified here.

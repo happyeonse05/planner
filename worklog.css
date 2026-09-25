@@ -1,0 +1,32 @@
+/* PLAN:ON lightweight task work logging */
+.worklog-btn{
+  flex:none;min-width:44px;height:30px;padding:0 9px;border-radius:10px;
+  background:var(--soft);border:1px solid var(--line);color:var(--ink);
+  font-size:11px;font-weight:800;white-space:nowrap;
+}
+.worklog-btn.active{
+  background:color-mix(in srgb,var(--planner-color,#faefdc) 68%,var(--card));
+  border-color:color-mix(in srgb,var(--planner-color,#faefdc) 62%,#5b5148 38%);
+  color:color-mix(in srgb,var(--planner-color,#faefdc) 45%,#2a2521 55%);
+}
+.worklog-tag{background:color-mix(in srgb,var(--planner-color,#faefdc) 36%,var(--soft))!important}
+.worklog-tag.active{font-weight:800;color:color-mix(in srgb,var(--planner-color,#faefdc) 45%,#2a2521 55%)}
+.worklog-modal-panel{
+  margin:8px 0;padding:11px 12px;border-radius:13px;background:var(--soft);
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.worklog-modal-copy{min-width:0}.worklog-modal-copy b{display:block;font-size:13px}.worklog-modal-copy small{display:block;margin-top:3px;color:var(--sub);font-size:11px}
+.worklog-modal-btn{flex:none;height:38px;min-width:72px;padding:0 13px;border-radius:11px;background:var(--planner-color,#faefdc);color:var(--planner-ink,#1c1c1e);font-weight:800}
+.worklog-modal-btn.active{background:color-mix(in srgb,var(--planner-color,#faefdc) 58%,#5b5148 42%);color:#fff}
+@media(max-width:430px){
+  .worklog-btn{min-width:40px;padding:0 7px}
+  .worklog-modal-panel{padding:10px}
+}
+
+
+/* 작업시간 표시는 제목 옆 배지 대신 보조정보 줄로 정리 */
+.worklog-tag{
+  display:block!important;width:max-content;max-width:100%;margin:3px 0 0!important;padding:0!important;
+  background:transparent!important;color:var(--sub)!important;border-radius:0!important;font-style:normal;font-size:10.5px;line-height:1.35
+}
+.worklog-tag.active{color:color-mix(in srgb,var(--planner-color,#faefdc) 40%,#2a2521 60%)!important;font-weight:800}

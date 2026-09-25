@@ -1,0 +1,7 @@
+Stage 3 — Supabase day_closings + story_reactions
+- day_closings / story_reactions 생성 SQL 추가
+- 본인 카드: SELECT + INSERT만 허용, UPDATE/DELETE 정책 없음
+- 친구 카드: 친구 관계 + friends 공개 + 24시간 + 보는 사람도 같은 날짜 마감 완료 조건
+- 반응: 스토리당 사용자 1회, 수정/삭제 불가
+- 계정 삭제 RPC에 카드/반응 삭제 포함
+- 000_full_schema.sql / 001_current_migration.sql에도 통합

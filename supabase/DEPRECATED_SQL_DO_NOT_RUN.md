@@ -1,10 +1,9 @@
-# Deprecated SQL
+# Deprecated SQL files
 
-Production source of truth: `001_production_security.sql`.
+운영 DB에는 예전 friend-sharing-schema, friend-invite-busy, planon-cheers, release-safety, account-deletion SQL을 다시 실행하지 마세요.
 
-Do not re-run after applying it:
-- friend-sharing-schema.sql
-- friend-sharing-schema(1).sql
-- planon-cheers.sql
+- 새 프로젝트: `000_full_schema.sql`
+- 기존 프로젝트 업데이트: `001_current_migration.sql`
+- 확인: `002_verify_production.sql`
 
-`friend_rls_security.sql` and `planon-cheers-v2.sql` were used as the source for the canonical migration.
+이 3개를 production 정본으로 사용합니다.

@@ -1717,3 +1717,25 @@ body{word-break:keep-all;overflow-wrap:break-word}
   gap:8px;
   color:var(--ink);
 }
+
+
+/* ===== 2026-09-25 UX cleanup: friend meet / Nemo copy / todo course meta ===== */
+.friend-detail-actions .friend-meet-main{font-weight:800}
+.nemo-home-head .nemo-copy{overflow:hidden}
+.nemo-home-head .nemo-copy b,.nemo-home-head .nemo-copy small{white-space:normal!important;overflow-wrap:anywhere;word-break:keep-all;text-overflow:clip!important;overflow:visible!important}
+.todo .ttxt{display:block}
+.todo-title-line{display:block;min-width:0}
+.todo-course-meta.ctag{
+  display:flex!important;align-items:center;gap:5px;width:max-content;max-width:100%;
+  margin:5px 0 0!important;padding:0!important;border-radius:0!important;background:transparent!important;
+  color:var(--sub)!important;font-size:10.5px!important;font-weight:650!important;line-height:1.35;overflow:visible!important
+}
+.todo-course-meta.ctag::before{width:5px;height:5px}
+.todo-course-name{max-width:13em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.todo-course-week{color:color-mix(in srgb,var(--c) 48%,var(--sub));font-weight:750;white-space:nowrap}
+.todo-course-week:not(:empty)::before{content:'·';margin-right:5px;color:var(--sub);font-weight:500}
+.course-week-study{display:block;margin-top:4px;color:var(--sub);font-size:11px;font-weight:650}
+@media(max-width:520px){
+  .todo-course-name{max-width:9em}
+  .todo-course-week{font-size:10px}
+}

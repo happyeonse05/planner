@@ -1,0 +1,22 @@
+PLAN:ON final feature verification — build 20260925-2055
+
+[PASS] todo_isCore
+[PASS] core_limit3
+[PASS] immutable_snapshot
+[PASS] done_zero_confirm
+[PASS] friends_private
+[PASS] story_24h
+[PASS] reaction_once
+[PASS] reaction_nemo
+[PASS] pending_retry
+[PASS] story_rls_closed_gate
+[PASS] no_story_update_policy
+[PASS] friend_meet_preserved
+[PASS] backup_space_fix_preserved
+[PASS] market_preserved
+[PASS] privacy_preserved
+[PASS] worklog_preserved
+[PASS] future-rain time removed from top weather chip; dedicated rain chip remains
+
+JavaScript syntax: PASS for every .js file in package.
+SQL was statically checked for required tables/policies/functions; actual Supabase execution still requires running the provided SQL in the project SQL Editor.
