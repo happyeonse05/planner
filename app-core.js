@@ -3423,7 +3423,7 @@ function streakTxt(r){
 function todayClose(){var k=todayKey();return (S.dayCloses||[]).find(function(x){return x.key===k;})||null;}
 function dayCloseStats(k){var d=parseKey(k),todos=S.todos.filter(function(t){return t.scope==='day'&&t.key===k;}),rr=routinesFor(d),done=todos.filter(function(t){return t.done;}).length+rr.filter(function(r){return routineDone(r,k);}).length,total=todos.length+rr.length,classes=itemsFor(d).filter(function(it){return it.kind==='class'&&!it.skipped;}).length,focus=S.focus[k]||0;return {done:done,total:total,classes:classes,focus:focus};}
 function dayCloseBanner(){var h=new Date().getHours(),c=todayClose();if(h<17&&!c)return '';return '<button class="dayclose-banner" data-act="open-day-close"><span><b>'+(c?'오늘 마감 완료':'하루 마감')+'</b><small>'+(c?'오늘 기록을 다시 볼 수 있어요':'오늘 한 일을 한 번에 정리해요')+'</small></span><span class="chev">›</span></button>';}
-function openDayClose(){var k=todayKey(),st=dayCloseStats(k),c=todayClose(),di=(S.diaries||[]).filter(function(x){return dkey(new Date(x.finishedAt))===k;}),mins=Math.round((st.focus||0)/60000);M={type:'day-close'};openModal('<h3>하루 마감</h3><div class="close-summary"><div><b>'+st.done+'/'+st.total+'</b><small>할 일</small></div><div><b>'+st.classes+'</b><small>'+esc(modeBlockWord())+'</small></div><div><b>'+mins+'분</b><small>집중</small></div></div><p class="hint">'+(di.length?diaryTargetMinutes()+'분 일기 '+di.length+'개도 오늘 기록에 함께 남아 있어요.':'오늘 기록을 이 상태로 마감해요.')+'</p><span class="lbl">오늘을 한 단어로 표현하면?</span><input class="fld" id="f-close-word" maxlength="12" placeholder="예: 뿌듯, 정신없음, 몰입" value="'+esc(c&&c.word||'')+'"><textarea class="memo" id="f-close-note" placeholder="더 남기고 싶은 말 · 선택사항">'+esc(c&&c.note||'')+'</textarea><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="save-day-close">'+(c?'다시 저장':'오늘 마감')+'</button></div>');}
+function openDayClose(){var k=todayKey(),st=dayCloseStats(k),c=todayClose(),di=(S.diaries||[]).filter(function(x){return diaryDateKey(x)===k;}),mins=Math.round((st.focus||0)/60000);M={type:'day-close'};openModal('<h3>하루 마감</h3><div class="close-summary"><div><b>'+st.done+'/'+st.total+'</b><small>할 일</small></div><div><b>'+st.classes+'</b><small>'+esc(modeBlockWord())+'</small></div><div><b>'+mins+'분</b><small>집중</small></div></div><p class="hint">'+(di.length?diaryTargetMinutes()+'분 일기 '+di.length+'개도 오늘 기록에 함께 남아 있어요.':'오늘 기록을 이 상태로 마감해요.')+'</p><span class="lbl">오늘을 한 단어로 표현하면?</span><input class="fld" id="f-close-word" maxlength="12" placeholder="예: 뿌듯, 정신없음, 몰입" value="'+esc(c&&c.word||'')+'"><textarea class="memo" id="f-close-note" placeholder="더 남기고 싶은 말 · 선택사항">'+esc(c&&c.note||'')+'</textarea><div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="save-day-close">'+(c?'다시 저장':'오늘 마감')+'</button></div>');}
 function saveDayClose(){var k=todayKey(),st=dayCloseStats(k),note=$('#f-close-note')?$('#f-close-note').value.trim():'',word=$('#f-close-word')?$('#f-close-word').value.trim():'',arr=S.dayCloses||(S.dayCloses=[]),old=arr.find(function(x){return x.key===k;}),obj={key:k,finishedAt:Date.now(),word:word,note:note,done:st.done,total:st.total,classes:st.classes,focus:st.focus};if(old)Object.assign(old,obj);else arr.push(obj);save();closeModal();render();var sk=dayCloseStreak();inAppToast(sk>=2?'오늘 마감했어요 · '+sk+'일 연속':'오늘 마감했어요');}
 function examPrep(x){return Array.isArray(x&&x.prep)?x.prep:[];}
 function examPrepProgress(x){var a=examPrep(x),done=a.filter(function(t){return t.done;}).length;return {done:done,total:a.length,pct:a.length?Math.round(done/a.length*100):0};}
@@ -4487,16 +4487,13 @@ function closedDayHTML(d){
   var copy=(typeof nemoHomeCopy==='function')?nemoHomeCopy(mood,st.total,st.done,!!saved):['오늘의 네모',''];
   var face=(typeof nemoSVG==='function')?nemoSVG(mood,'closed-nemo'):'';
   var hero='<section class="card closed-hero">'+face+'<div class="closed-hero-copy"><small>'+esc(mdTxt(d)+' '+DAYS[dow(d)]+'요일')+' · 마감 완료</small><b>'+esc(copy[0])+'</b><span>할 일 '+st.done+'/'+st.total+' 완료</span></div></section>';
-  var storyCard='';
-  try{if(c&&window.PLANON_DAY_STORY.cardHTML)storyCard='<button class="closed-story-card" data-story-act="view-date" data-date="'+k+'" aria-label="마감 카드 크게 보기">'+window.PLANON_DAY_STORY.cardHTML(c)+'</button>';}catch(e){}
-  var story='<section class="closed-story">'+storyCard+(k===tk?'<div id="closed-story-strip"></div>':'')+'</section>';
   /* 시간별 한 일 */
-  var items=itemsFor(d).filter(function(it){return !it.skipped&&it.kind!=='todo';}),notes=S.hourNotes[k]||{},hrs={};
+  var junkTimeLabel=/^(시작|시장|끝|종료)$/;var items=itemsFor(d).filter(function(it){var nm=String(it&&it.name||'').trim();return !it.skipped&&it.kind!=='todo'&&!junkTimeLabel.test(nm);}),notes=S.hourNotes[k]||{},hrs={};
   items.forEach(function(it){var h=Math.floor(it.start/60);(hrs[h]=hrs[h]||{items:[],note:''}).items.push(it);});
-  Object.keys(notes).forEach(function(h){if(String(notes[h]||'').trim())(hrs[h]=hrs[h]||{items:[],note:''}).note=String(notes[h]).trim();});
+  Object.keys(notes).forEach(function(h){var nt=String(notes[h]||'').trim();if(nt&&!junkTimeLabel.test(nt))(hrs[h]=hrs[h]||{items:[],note:''}).note=nt;});
   var hourRows=Object.keys(hrs).map(Number).sort(function(a,b){return a-b;}).map(function(h){var x=hrs[h];
     return '<li class="closed-hour"><span class="closed-hour-t">'+h+':00</span><div class="closed-hour-b">'+
-      x.items.map(function(it){return '<span class="closed-hour-it" style="--c:'+it.color+'"><i></i>'+esc(it.name)+'<small>'+fmt(it.start)+(it.openEnd?'':'–'+fmt(it.end))+'</small></span>';}).join('')+
+      x.items.map(function(it){var nm=String(it.name||'');return '<span class="closed-hour-it" style="--c:'+it.color+'"><i></i>'+esc(nm)+'<small>'+fmt(it.start)+(it.openEnd?'':'–'+fmt(it.end))+'</small></span>';}).join('')+
       (x.note?'<p>'+esc(x.note)+'</p>':'')+'</div></li>';}).join('');
   var hours='<section class="card closed-sec"><div class="card-h"><h3>시간별로 한 일</h3></div>'+(hourRows?'<ul class="closed-hours">'+hourRows+'</ul>':'<p class="closed-empty">시간별 기록이 없어요</p>')+'</section>';
   /* 하려고 한 일 (한 건 선 긋기) */
@@ -4510,8 +4507,15 @@ function closedDayHTML(d){
     if(k===tk)letter=letterCard(k);
     else{var nx=S.letters[dkey(addDays(d,1))];if(nx&&nx.text)letter='<section class="card"><div class="card-h"><h3>다음 날의 나에게</h3></div><p class="lt-got">'+esc(nx.text)+'</p></section>';}
   }
-  var tail='<div class="closed-actions"><button class="tbtn" data-act="day-full-view" data-date="'+k+'">기록 고치기 · 전체 보기</button></div>';
-  return '<div class="closed-day">'+hero+story+hours+plans+letter+tail+'</div>';
+  var diaryEntry=diaryForKey(k),hasDiary=!!diaryEntry,diaryWait='';
+  if(k===tk){
+    var diaryPreview=hasDiary?String(diaryEntry.text||diaryEntry.note||'').trim().replace(/\s+/g,' ').slice(0,72):'';
+    var diaryTitle=hasDiary?'오늘 쓴 일기 보기':'네모가 일기를 기다리고 있어요';
+    var diarySub=hasDiary?(diaryPreview||(diaryEntry.word?('오늘의 한 단어 · '+diaryEntry.word):'오늘 남긴 기록을 다시 펼쳐봐요.')):'일기로 오늘 하루의 마지막을 채워봐요';
+    diaryWait='<button class="card diary-today-banner closed-diary-wait" data-act="'+(hasDiary?'open-diary-library':'open-diary')+'"><div class="diary-banner-copy"><small>'+esc(mdTxt(d)+' ('+DAYS[dow(d)]+')')+'</small><b>'+esc(diaryTitle)+'</b><span>'+esc(diarySub)+'</span></div><img class="diary-banner-nemo" src="nemo-diary.png?v=20260926-0209" alt=""><span class="diary-banner-arrow">›</span></button>';
+  }
+  /* 일간에는 스토리 카드 자체를 펼쳐두지 않아요. 마감 뒤 원본 기록은 읽기 전용이고, 카드는 하단 버튼/친구 탭에서 열어요. */
+  return '<div class="closed-day">'+hours+plans+diaryWait+letter+'</div>';
 }
 function viewDay(){
   var d=U.date,k=dkey(d),tk=todayKey();
@@ -4824,9 +4828,6 @@ function viewSettings(){
       '<div class="setrow"><span>내일의 나에게<small>오늘 남긴 한 줄이 내일 맨 위에 떠요</small></span><button class="tbtn" data-act="toggle-letter">'+(S.settings.letterOn?'켜짐':'꺼짐')+'</button></div>'+
     '</div></details>'+
 
-    '<details class="settings-group"><summary><span><b>친구 기능</b><small>약속 잡기 버튼 표시</small></span><i>⌄</i></summary><div class="settings-group-body">'+
-      '<div class="setrow"><span>약속 빠른 버튼<small>끄면 홈의 약속 바로가기만 숨겨요. 친구 화면의 약속 잡기는 항상 사용할 수 있어요.</small></span><button class="tbtn" data-act="toggle-meet-maker">'+(S.settings.showMeetMaker===false?'꺼짐':'켜짐')+'</button></div>'+
-    '</div></details>'+
   '</section>';
   var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p><div class="note" style="word-break:break-word;user-select:text;-webkit-user-select:text"><b style="display:block;margin-bottom:5px">오류 상세</b>'+esc(Sync.lastError||Sync.diag||'오류 정보 없음')+'</div>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div>'+
@@ -4880,7 +4881,13 @@ function viewSettings(){
     '<div class="setrow"><span>'+esc(plannerModeMeta().schedule)+' 비우기<small>'+esc(blockWord)+'·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
-  var diaryShortcut='<section class="card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>과거는 읽기 · 오늘은 쓰기 · 미래는 잠금</small></span><span class="chev">›</span></button><button class="diary-today-write" data-act="open-diary">오늘의 '+diaryMinutes()+'분 일기쓰기</button><div class="setrow"><span>오늘의 일기 시간<small>일기 버튼과 타이머에 바로 반영돼요</small></span><div class="seg" style="margin:0">'+[5,10,20,30].map(function(n){return '<button data-act="set-diary-minutes" data-v="'+n+'" class="'+(diaryMinutes()===n?'on':'')+'">'+n+'분</button>';}).join('')+'</div></div></section>';
+  var todayDiarySaved=diaryForKey(todayKey()),todayDiaryKey=todayKey(),todayDiaryDate=parseKey(todayDiaryKey),
+      todayDiaryPreview=todayDiarySaved?String(todayDiarySaved.text||todayDiarySaved.note||'').trim().replace(/\s+/g,' ').slice(0,72):'',
+      todayDiaryTitle=todayDiarySaved?'오늘 쓴 일기 보기':'네모가 일기를 기다리고 있어요',
+      todayDiarySub=todayDiarySaved?(todayDiaryPreview||(todayDiarySaved.word?('오늘의 한 단어 · '+todayDiarySaved.word):'오늘 남긴 기록을 다시 펼쳐봐요.')):'일기로 오늘 하루의 마지막을 채워봐요',
+      diaryShortcut='<section class="card diary-settings-card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>과거는 읽기 · 오늘은 쓰기 · 미래는 잠금</small></span><span class="chev">›</span></button>'+
+      '<button class="diary-today-banner" data-act="'+(todayDiarySaved?'open-diary-library':'open-diary')+'"><div class="diary-banner-copy"><small>'+esc(mdTxt(todayDiaryDate)+' ('+DAYS[dow(todayDiaryDate)]+')')+'</small><b>'+esc(todayDiaryTitle)+'</b><span>'+esc(todayDiarySub)+'</span></div><img class="diary-banner-nemo" src="nemo-diary.png?v=20260926-0209" alt=""></button>'+
+      '<div class="setrow"><span>오늘의 일기 시간<small>일기 버튼과 타이머에 바로 반영돼요</small></span><div class="seg" style="margin:0">'+[5,10,20,30].map(function(n){return '<button data-act="set-diary-minutes" data-v="'+n+'" class="'+(diaryMinutes()===n?'on':'')+'">'+n+'분</button>';}).join('')+'</div></div></section>';
   /* 설정 첫 화면은 메뉴만 보여주고, 복잡한 내용은 각각 별도 화면에서 열어요. */
   var settingsPage=U.settingsPage||'';
   var back='';
@@ -4899,7 +4906,6 @@ function viewSettings(){
   var main=modeCard+chatHTML+diaryShortcut+
     '<section class="card">'+
       navRow('settings-profile','내 프로필','사진 · 친구에게 보일 이름 · 출발 지역')+
-      navRow('settings-friends','친구','친구 추가 · 공개 범위 · 약속 설정')+
     '</section>'+
     '<section class="card">'+
       navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
@@ -5200,7 +5206,7 @@ function globalSearchRows(query){
   S.exams.forEach(function(e){add('exam','시험',e.id,e.name,rangeTxt(e.start,e.end),e.kind||'시험 기간',e.start||'9995');});
   S.ddays.forEach(function(x){add('dday','D-day',x.id,x.title,ddLabel(x),x.date||'','9994');});
   Object.keys(S.memos||{}).forEach(function(k){var m=memoOf(k);if(m&&m.text)add('memo','하루 메모',k,m.text,globalSearchDate(k),'','9993');});
-  (S.diaries||[]).forEach(function(d){add('diary','일기',d.id,(d.text||d.note||'일기').slice(0,40),globalSearchDate(dkey(new Date(d.finishedAt))),d.text||d.note||'','9991');});
+  (S.diaries||[]).forEach(function(d){add('diary','일기',d.id,(d.text||d.note||'일기').slice(0,40),globalSearchDate(diaryDateKey(d)),d.text||d.note||'','9991');});
   S.selfchat.forEach(function(m){var text=m.text||'사진';add('chat','채팅',m.id,text,(m.room?chatRoomLabel(m.room)+' · ':'')+globalSearchDate(dkey(new Date(m.at))),m.text||'','9992');});
   if(typeof FriendSync!=='undefined'&&(FriendSync.friends||[]).length){FriendSync.friends.forEach(function(f){add('friend','친구',f.id,friendLabel(f),'친구 · 약속/추억 보기',f.code||'','9991');});}
   var order={todo:0,routine:1,event:2,allday:3,exam:4,dday:5,class:6,friend:7,memo:8,chat:9};
@@ -5719,8 +5725,21 @@ function diaryMoodPickerHTML(){
   return '<div class="diary-mood-pick"><div class="diary-mood-head"><b>오늘의 네모 기분</b><small>고르면 오늘 네모 표정에 반영돼요</small></div><div class="diary-mood-grid">'+moods.map(function(x){return '<button type="button" class="diary-mood-btn'+(cur===x[0]?' on':'')+'" data-act="diary-mood" data-v="'+x[0]+'">'+nemoSVG(x[0],'')+'<span>'+x[1]+'</span></button>';}).join('')+'</div><button type="button" class="diary-mood-auto'+(!cur?' on':'')+'" data-act="diary-mood" data-v="">선택 안 함 · 자동 표정 유지</button></div>';
 }
 function diaryMoodSavedHTML(mood){return nemoMoodValid(mood)?'<div class="diary-saved-mood">'+nemoSVG(mood,'')+'<span>'+esc(nemoMoodLabel(mood))+'</span></div>':'';}
-function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var d=new Date(x.finishedAt);return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(d.getHours())+':'+pad(d.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em>'+(x.word?'<span class="diary-word">'+esc(x.word)+'</span>':'')+'<p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
-function diaryDateKey(x){return studyDayKey(new Date(x.finishedAt));}
+function diaryHistoryHTML(){var rows=(S.diaries||[]).slice().sort(function(a,b){return b.finishedAt-a.finishedAt;}).slice(0,12);return rows.length?'<div class="diary-history"><span class="lbl">지난 일기</span>'+rows.map(function(x){var tm=new Date(x.finishedAt),d=parseKey(diaryDateKey(x));return '<div class="diary-entry"><b>'+mdTxt(d)+'</b><small>'+pad(tm.getHours())+':'+pad(tm.getMinutes())+'</small> <em>'+esc(diaryFmtMs(x.elapsed||0,x.targetMinutes||10))+'</em>'+(x.word?'<span class="diary-word">'+esc(x.word)+'</span>':'')+'<p>'+esc((x.text||'').slice(0,180))+(x.text&&x.text.length>180?'…':'')+'</p></div>';}).join('')+'</div>':'';}
+function diaryDateKey(x){
+  var sd=x&&/^\d{4}-\d{2}-\d{2}$/.test(String(x.studyDate||''))?String(x.studyDate):'';
+  if(sd)return sd;
+  var explicit=x&&/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))?String(x.date):'';
+  var d=new Date(Number(x&&x.finishedAt||0));
+  if(!isNaN(d)){
+    var sk=studyDayKey(d),civil=dkey(d);
+    /* 5시 기준 도입 전 새벽에 저장된 일기는 civil date 대신 해당 공부일로 복구해요. */
+    if(explicit&&d.getHours()<5&&explicit===civil&&sk!==civil)return sk;
+    if(!explicit)return sk;
+  }
+  return explicit||todayKey();
+}
+function diaryForKey(k){var rows=(S.diaries||[]).filter(function(x){try{return diaryDateKey(x)===k;}catch(e){return false;}});return rows.length?rows[rows.length-1]:null;}
 function diaryLibraryRows(){return (S.diaries||[]).slice().sort(function(a,b){return a.finishedAt-b.finishedAt;});}
 function openDiaryLibrary(dateKey){
   var rows=diaryLibraryRows(),wanted=dateKey||todayKey(),ix=-1;
@@ -5737,12 +5756,12 @@ function drawDiaryLibrary(){
   var rows=diaryLibraryRows(),key=M.diaryDate||todayKey(),today=todayKey(),ix=-1;
   rows.forEach(function(row,i){if(diaryDateKey(row)===key&&ix<0)ix=i;});
   M.diaryIndex=ix;
-  var shown=ix>=0?rows[ix]:null,date=shown?new Date(shown.finishedAt):parseKey(key),isToday=key===today,isFuture=key>today;
+  var shown=ix>=0?rows[ix]:null,date=parseKey(key),isToday=key===today,isFuture=key>today;
   var dateTitle=mdTxt(date),wordMeta=shown?String((shown.word||'기록')).trim().slice(0,12):'',countMeta=shown?String((shown.text||'').trim().length)+'글자':'';
   var book='';
   if(shown){
     book='<div class="diary-book"><div class="diary-book-inner"><div class="diary-pretty-date"><b>'+esc(dateTitle)+'</b><small class="diary-meta-line"><span class="diary-word-meta">&lt;'+esc(wordMeta)+'&gt;</span><span class="diary-count-meta">/'+esc(countMeta)+'</span></small>'+diaryMoodSavedHTML(shown.mood)+'</div>'+
-      (isToday?'<button class="diary-cta-btn diary-cta-under-word" data-act="diary-write-date" data-date="'+esc(key)+'">오늘의 '+diaryMinutes()+'분 일기쓰기</button>':'')+
+      (isToday?'<div class="diary-today-saved">오늘 일기 저장됨 ✓</div>':'')+
       '<div class="diary-entry-body">'+esc(shown.text||'')+'</div>'+
       ((shown.note||'').trim()?'<div class="diary-entry-note">'+esc(shown.note||'')+'</div>':'')+
       '<div class="diary-entry-meta"><span class="diary-entry-chip">'+esc(String(shown.targetMinutes||diaryMinutes()))+'분 기록</span><span class="diary-entry-chip">'+esc(diaryFmtMs(shown.elapsed||0,shown.targetMinutes||10))+'</span></div></div></div>';
@@ -5837,8 +5856,8 @@ function finishDiarySave(){
   if(!word){bad('#f-diary-word');var m=$('#diary-finish-msg');if(m)m.textContent='오늘 하루를 표현하는 한 단어를 적어주세요.';return;}
   if(/\s/.test(word)){bad('#f-diary-word');var m2=$('#diary-finish-msg');if(m2)m2.textContent='띄어쓰기 없이 딱 한 단어로 적어주세요.';return;}
   S.diaries=S.diaries||[];
-  var dk=p.date||todayKey(),now=new Date(),fd=parseKey(dk);fd.setHours(now.getHours(),now.getMinutes(),now.getSeconds(),now.getMilliseconds());
-  S.diaries.push({id:uid(),text:p.text||'',note:p.note||'',word:word.slice(0,12),mood:nemoMoodValid(p.mood)?p.mood:'',elapsed:Number(p.elapsed||0),targetMinutes:Number(p.targetMinutes||diaryMinutes()),finishedAt:fd.getTime()});
+  var dk=p.date||todayKey(),finishedAt=Date.now();
+  S.diaries.push({id:uid(),date:dk,studyDate:dk,text:p.text||'',note:p.note||'',word:word.slice(0,12),mood:nemoMoodValid(p.mood)?p.mood:'',elapsed:Number(p.elapsed||0),targetMinutes:Number(p.targetMinutes||diaryMinutes()),finishedAt:finishedAt});
   diarySessionClear(dk);
   U.diaryDraft='';U.diaryNote='';U.diaryMood='';U.diaryRun=null;U.diaryResumeOnReturn=false;clearTimeout(U.diaryTimer);
   var ret=p.returnTo||'';U.diaryFinishPending=null;
@@ -6263,7 +6282,7 @@ function act(a,e){
     case 'candidate-final':finalizeCandidate(a.dataset.v);break;
     case 'postmeet-yes':postMeetAnswer(id,true);break;
     case 'postmeet-no':postMeetAnswer(id,false);break;
-    case 'day-full-view':U.dayFullView=a.dataset.date||dkey(U.date);render(true);break;
+    case 'day-full-view':{var dk0=a.dataset.date||dkey(U.date);if(dayCloseCard(dk0)){inAppToast('마감한 기록은 고칠 수 없어요');U.dayFullView='';render(true);break;}U.dayFullView=dk0;render(true);break;}
     case 'day-closed-view':U.dayFullView='';render(true);break;
     case 'postmeet-local-yes':postMeetLocalAnswer(id,true);break;
     case 'postmeet-local-no':postMeetLocalAnswer(id,false);break;

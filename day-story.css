@@ -122,3 +122,62 @@
 .story-task-pick{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-align:left}.story-task-pick>i{width:20px;height:20px;border-radius:7px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;font-size:12px;font-weight:900}.story-task-pick.on{border-color:color-mix(in srgb,var(--planner-color) 76%,var(--line));background:color-mix(in srgb,var(--planner-color) 13%,var(--card))}.story-task-pick.on>i{background:var(--planner-color);border-color:var(--planner-color)}.story-task-pick>span{min-width:0;flex:1}.story-task-pick b,.story-task-pick small{display:block}.story-task-pick b{font-size:12px;white-space:normal;overflow-wrap:break-word}.story-task-pick small{margin-top:2px;color:var(--sub);font-size:10px}
 .story-card-highlights{margin-top:11px;padding:10px 11px;border-radius:14px;background:color-mix(in srgb,var(--story-accent) 9%,var(--soft))}.story-card-highlights>small{display:block;margin-bottom:5px;color:var(--sub);font-size:9px;font-weight:800}.story-card-highlights>div{display:flex;align-items:flex-start;gap:6px;margin-top:4px;min-width:0}.story-card-highlights i{font-style:normal;font-size:10px;font-weight:900;line-height:16px;flex:none}.story-card-highlights span{min-width:0;display:flex;align-items:baseline;gap:5px}.story-card-highlights b{font-size:10px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.story-card-highlights em{font-style:normal;color:var(--sub);font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
 @media(max-width:430px){.story-task-picker{max-height:155px}.story-card-highlights b{max-width:135px}}
+
+
+/* ===== Story card detail controls + save image + closed-day diary CTA ===== */
+.story-setting-block{padding:12px 14px;border-top:1px solid var(--line)}
+.story-setting-block>b{display:block;font-size:13px}.story-setting-block>small{display:block;margin-top:2px;color:var(--sub);font-size:11px}
+.story-setting-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.story-setting-chips button{height:32px;padding:0 10px;border-radius:999px;background:var(--soft);font-size:11px;font-weight:750;color:var(--sub)}.story-setting-chips button.on{background:color-mix(in srgb,var(--planner-color) 30%,var(--card));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--planner-color) 62%,var(--line))}
+.story-card-options{margin:10px 0 4px}.story-option-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.story-option{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border-radius:12px;background:var(--soft);cursor:pointer}.story-option input{margin-top:2px;accent-color:var(--planner-color)}.story-option span{min-width:0}.story-option b,.story-option small{display:block}.story-option b{font-size:11px}.story-option small{margin-top:2px;color:var(--sub);font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.story-option.disabled{opacity:.45;cursor:default}
+.story-card-courses{margin-top:12px;padding:10px 11px;border-radius:14px;background:color-mix(in srgb,var(--story-accent) 9%,var(--soft))}.story-card-courses>small{display:block;margin-bottom:5px;color:var(--sub);font-size:9px;font-weight:750}.story-card-courses>div{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:10px}.story-card-courses>div span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.story-card-courses>div b{flex:none}.story-card-courses>em{display:block;margin-top:3px;color:var(--sub);font-size:8.5px;font-style:normal}
+.story-save-card{width:min(340px,78vw);height:42px;margin-top:10px;border-radius:12px;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);font-weight:800;text-align:center}
+.closed-diary-wait{display:flex;align-items:center;gap:14px;padding:18px 18px!important;margin-top:12px!important}.closed-diary-wait .closed-diary-nemo{width:72px;height:72px;flex:none;overflow:visible}.closed-diary-wait>div{flex:1;min-width:0}.closed-diary-wait>div b{display:block;font-size:18px;letter-spacing:-.02em}.closed-diary-wait>div small{display:block;margin-top:4px;color:var(--sub);font-size:12px;line-height:1.45}.closed-diary-wait>.tbtn{flex:none;min-height:38px;padding:0 12px;background:color-mix(in srgb,var(--planner-color) 28%,var(--soft))}
+@media(max-width:520px){.story-option-grid{grid-template-columns:1fr}.closed-diary-wait{align-items:flex-start;flex-wrap:wrap}.closed-diary-wait .closed-diary-nemo{width:64px;height:64px}.closed-diary-wait>div{min-width:calc(100% - 82px)}.closed-diary-wait>.tbtn{width:100%;margin-top:2px}.story-save-card{width:min(328px,82vw)}}
+
+.story-card.compact{padding-top:18px;padding-bottom:18px}.story-card.compact .story-card-title{font-size:20px}.story-card.compact .story-card-stats{gap:6px;margin-top:12px}.story-card.compact .story-card-stat{padding:9px 8px}.story-card.compact .story-card-stat b{font-size:16px}.story-card.compact .story-card-courses{margin-top:8px;padding:8px 9px}.story-card.compact .story-card-highlights{margin-top:8px}.story-card.compact .story-card-comment{padding:10px;margin-top:auto;font-size:12px;min-height:40px}
+
+
+/* ===== 2026-09-26 closed-day diary flow ===== */
+.closed-diary-wait{width:100%;display:flex;align-items:center;gap:18px;padding:24px 22px!important;margin-top:16px!important;text-align:left;border:1px solid color-mix(in srgb,var(--planner-color) 28%,var(--line));background:color-mix(in srgb,var(--planner-color) 9%,var(--card));box-shadow:0 8px 24px rgba(0,0,0,.045);cursor:pointer}
+.closed-diary-wait .closed-diary-nemo{width:96px;height:96px;flex:none;overflow:visible}
+.closed-diary-wait>div{flex:1;min-width:0}.closed-diary-wait>div b{display:block;font-size:21px;line-height:1.25;letter-spacing:-.03em}.closed-diary-wait>div small{display:block;margin-top:7px;color:var(--sub);font-size:13px;line-height:1.55;word-break:keep-all}
+.closed-diary-go{flex:none;padding:9px 12px;border-radius:999px;background:color-mix(in srgb,var(--planner-color) 34%,var(--soft));font-size:11px;font-weight:850;color:var(--ink)}
+.diary-today-saved{display:inline-flex;align-items:center;margin:10px 0 4px;padding:8px 11px;border-radius:999px;background:color-mix(in srgb,var(--planner-color) 24%,var(--soft));font-size:12px;font-weight:800;color:var(--ink)}
+@media(max-width:520px){.closed-diary-wait{gap:14px;padding:21px 17px!important;flex-wrap:wrap}.closed-diary-wait .closed-diary-nemo{width:86px;height:86px}.closed-diary-wait>div{min-width:calc(100% - 104px)}.closed-diary-wait>div b{font-size:20px}.closed-diary-go{margin-left:100px}}
+
+
+/* ===== 20260926-0209 diary banner / closed-day cleanup ===== */
+.diary-settings-card{overflow:visible}
+.diary-today-banner{
+  position:relative;width:100%;min-height:128px;margin:12px 0 14px;padding:18px 132px 18px 18px;
+  border:1px solid color-mix(in srgb,var(--planner-color) 38%,var(--line));
+  border-radius:24px;text-align:left;overflow:hidden;cursor:pointer;
+  background:color-mix(in srgb,var(--planner-color) 24%,#fffaf1);
+  box-shadow:0 7px 22px rgba(0,0,0,.035);
+  color:var(--ink);
+}
+.diary-today-banner:active{transform:scale(.995)}
+.diary-banner-copy{position:relative;z-index:2;min-width:0}
+.diary-banner-copy small{display:block;margin-bottom:7px;color:color-mix(in srgb,var(--ink) 45%,var(--sub));font-size:12px;font-weight:750}
+.diary-banner-copy b{display:block;font-size:20px;line-height:1.28;letter-spacing:-.035em;word-break:keep-all}
+.diary-banner-copy span{display:block;margin-top:7px;color:var(--sub);font-size:13px;line-height:1.48;word-break:keep-all;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.diary-banner-nemo{position:absolute;right:18px;bottom:8px;width:108px;height:108px;object-fit:contain;z-index:1;pointer-events:none}
+.diary-banner-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:3;font-size:23px;font-weight:700;color:color-mix(in srgb,var(--ink) 40%,var(--sub))}
+.closed-diary-wait{min-height:168px!important;margin-top:16px!important;padding:24px 160px 24px 22px!important;
+  background:color-mix(in srgb,var(--planner-color) 26%,#fffaf1)!important}
+.closed-diary-wait .diary-banner-nemo{width:132px;height:132px;right:24px;bottom:12px}
+.closed-diary-wait .diary-banner-copy b{font-size:23px}
+.closed-diary-wait .diary-banner-copy span{font-size:14px}
+.closed-day>.closed-hero{display:none!important}
+@media(max-width:520px){
+  .diary-today-banner{min-height:122px;padding:17px 114px 17px 16px;border-radius:22px}
+  .diary-banner-nemo{width:92px;height:92px;right:12px;bottom:10px}
+  .diary-banner-copy b{font-size:18px}
+  .diary-banner-copy span{font-size:12px}
+  .diary-banner-arrow{right:7px;font-size:20px}
+  .closed-diary-wait{min-height:158px!important;padding:21px 132px 21px 17px!important;align-items:stretch!important;flex-wrap:nowrap!important}
+  .closed-diary-wait .diary-banner-nemo{width:112px;height:112px;right:15px;bottom:13px}
+  .closed-diary-wait .diary-banner-copy{min-width:0!important}
+  .closed-diary-wait .diary-banner-copy b{font-size:21px}
+}

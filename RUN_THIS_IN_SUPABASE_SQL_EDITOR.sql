@@ -35,6 +35,7 @@ alter table public.day_closings add column if not exists nemo_mood text;
 alter table public.day_closings add column if not exists nemo_color text;
 alter table public.day_closings add column if not exists highlight_items jsonb not null default '[]'::jsonb;
 alter table public.day_closings add column if not exists show_done_count boolean not null default true;
+alter table public.day_closings add column if not exists card_details jsonb not null default '{}'::jsonb;
 
 create table if not exists public.story_reactions (
   id uuid primary key default gen_random_uuid(),

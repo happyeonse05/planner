@@ -1,0 +1,16 @@
+PASS
+- legacy diary 5am recovery: OK
+- settings diary banner: OK
+- attached Nemo asset ref: OK
+- friend settings group removed: OK
+- junk time label filter: OK
+- inline story hero removed from closed return: OK
+- closed daily compact card button: OK
+- save card image still present: OK
+- card detail options present: OK
+- new banner css: OK
+- asset exists: OK
+- card detail SQL patch exists: OK
+- JS syntax: all root + market JS OK
+- nemo-diary.png: RGBA transparency OK
+- existing diary rows are not deleted or rewritten
