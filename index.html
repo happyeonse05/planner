@@ -94,5 +94,33 @@ if('serviceWorker' in navigator){
 
 
 
+<script>
+/* 빈 화면 표정(얼굴) 숨기기: 안내 문구만 남김 */
+(function(){
+  var MSG=/없어요|없습니다|비어\s?있어요/;
+  function clean(root){
+    var w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT);
+    var n;while((n=w.nextNode())){
+      var t=n.nodeValue.trim();
+      if(!t||t.length>40||!MSG.test(t))continue;
+      var el=n.parentElement;if(!el)continue;
+      var box=el.parentElement;if(!box)continue;
+      for(var i=0;i<box.children.length;i++){
+        var c=box.children[i];
+        if(c===el||c.contains(el))continue;
+        if(c.matches('input,textarea,button,select')||c.querySelector('input,textarea,button,select'))continue;
+        if(c.textContent.replace(/[\s\-_\.·ㅡ]/g,'')==='')c.style.display='none';
+      }
+    }
+  }
+  function run(){clean(document.body);}
+  document.addEventListener('DOMContentLoaded',function(){
+    run();
+    var q=false;
+    new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;run();});})
+      .observe(document.body,{childList:true,subtree:true});
+  });
+})();
+</script>
 </body>
 </html>
