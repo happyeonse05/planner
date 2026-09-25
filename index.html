@@ -481,13 +481,80 @@ main{padding:0 14px 24px}
 :root[data-bg="rainbow"][data-theme="dark"] body{background-color:var(--planner-color);background-image:none}
 @media (prefers-color-scheme: dark){:root[data-bg="rainbow"]:not([data-theme="light"]) body{background-color:var(--planner-color);background-image:none}}
 :root[data-bg]:not([data-bg="plain"]) .nav{background:var(--card)}
-.bgs{display:flex;gap:8px;flex:none}
+.bgs{display:grid;grid-template-columns:repeat(5,34px);gap:8px;flex:none;max-width:202px}
 .bgsw{width:34px;height:34px;border-radius:10px;box-shadow:0 0 0 1px var(--edge);background:#fff}
 .bgsw.on{box-shadow:0 0 0 2px var(--ink)}
 .bgsw.bg-pink{background-color:#fbd6de;background-image:radial-gradient(circle,#fff 2px,transparent 2.5px),radial-gradient(circle,#fff 2px,transparent 2.5px);background-size:12px 12px;background-position:0 0,6px 6px}
 .bgsw.bg-white{background-color:#fffdfd;background-image:radial-gradient(circle,#f7bccb 2px,transparent 2.5px),radial-gradient(circle,#f7bccb 2px,transparent 2.5px);background-size:12px 12px;background-position:0 0,6px 6px}
 .bgsw.bg-beige{background-color:#fbf0e0;background-image:radial-gradient(circle,#fff 1.6px,transparent 2px),radial-gradient(circle,#fff 1.6px,transparent 2px);background-size:10px 10px;background-position:0 0,5px 5px}
 .bgsw.bg-rainbow{background-color:var(--planner-color)!important;background-image:none!important}
+
+/* uploaded polka-dot background set */
+:root[data-bg="dot-mint"][data-theme="light"] body,
+:root[data-bg="dot-mint"]:not([data-theme="dark"]) body{background-image:url("backgrounds/mint-ivory-dots.jpg");background-color:#ccecd7}
+:root[data-bg="dot-mint-rev"][data-theme="light"] body,
+:root[data-bg="dot-mint-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-mint-dots.jpg");background-color:#faf8ed}
+:root[data-bg="dot-sky"][data-theme="light"] body,
+:root[data-bg="dot-sky"]:not([data-theme="dark"]) body{background-image:url("backgrounds/sky-ivory-dots.jpg");background-color:#c7e3fd}
+:root[data-bg="dot-sky-rev"][data-theme="light"] body,
+:root[data-bg="dot-sky-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-sky-dots.jpg");background-color:#fcfaf4}
+:root[data-bg="dot-yellow"][data-theme="light"] body,
+:root[data-bg="dot-yellow"]:not([data-theme="dark"]) body{background-image:url("backgrounds/yellow-ivory-dots.jpg");background-color:#fdf4bc}
+:root[data-bg="dot-yellow-rev"][data-theme="light"] body,
+:root[data-bg="dot-yellow-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-yellow-dots.jpg");background-color:#fefaf2}
+:root[data-bg="dot-peach"][data-theme="light"] body,
+:root[data-bg="dot-peach"]:not([data-theme="dark"]) body{background-image:url("backgrounds/peach-ivory-dots.jpg");background-color:#fcd3c2}
+:root[data-bg="dot-peach-rev"][data-theme="light"] body,
+:root[data-bg="dot-peach-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-peach-dots.jpg");background-color:#fef7ea}
+:root[data-bg="dot-pink"][data-theme="light"] body,
+:root[data-bg="dot-pink"]:not([data-theme="dark"]) body{background-image:url("backgrounds/pink-ivory-dots.jpg");background-color:#fdced2}
+:root[data-bg="dot-pink-rev"][data-theme="light"] body,
+:root[data-bg="dot-pink-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-pink-dots.png");background-color:#fef8f4}
+
+:root[data-bg^="dot-"][data-theme="light"] body,
+:root[data-bg^="dot-"]:not([data-theme="dark"]) body{
+  background-size:cover;background-position:center top;background-repeat:no-repeat;background-attachment:fixed;
+}
+
+.bgsw.bg-dot-mint{background-image:url("backgrounds/mint-ivory-dots.jpg")}
+.bgsw.bg-dot-mint-rev{background-image:url("backgrounds/ivory-mint-dots.jpg")}
+.bgsw.bg-dot-sky{background-image:url("backgrounds/sky-ivory-dots.jpg")}
+.bgsw.bg-dot-sky-rev{background-image:url("backgrounds/ivory-sky-dots.jpg")}
+.bgsw.bg-dot-yellow{background-image:url("backgrounds/yellow-ivory-dots.jpg")}
+.bgsw.bg-dot-yellow-rev{background-image:url("backgrounds/ivory-yellow-dots.jpg")}
+.bgsw.bg-dot-peach{background-image:url("backgrounds/peach-ivory-dots.jpg")}
+.bgsw.bg-dot-peach-rev{background-image:url("backgrounds/ivory-peach-dots.jpg")}
+.bgsw.bg-dot-pink{background-image:url("backgrounds/pink-ivory-dots.jpg")}
+.bgsw.bg-dot-pink-rev{background-image:url("backgrounds/ivory-pink-dots.png")}
+
+:root[data-bg="dot-lavender"][data-theme="light"] body,
+:root[data-bg="dot-lavender"]:not([data-theme="dark"]) body{background-image:url("backgrounds/lavender-ivory-dots.jpg");background-color:#e6d5f2}
+:root[data-bg="dot-lavender-rev"][data-theme="light"] body,
+:root[data-bg="dot-lavender-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-lavender-dots.jpg");background-color:#fefaf3}
+:root[data-bg="dot-green"][data-theme="light"] body,
+:root[data-bg="dot-green"]:not([data-theme="dark"]) body{background-image:url("backgrounds/green-ivory-dots.jpg");background-color:#dbe7c4}
+:root[data-bg="dot-green-rev"][data-theme="light"] body,
+:root[data-bg="dot-green-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-green-dots.jpg");background-color:#fdf9ef}
+:root[data-bg="dot-gray"][data-theme="light"] body,
+:root[data-bg="dot-gray"]:not([data-theme="dark"]) body{background-image:url("backgrounds/gray-ivory-dots.jpg");background-color:#e2e0df}
+:root[data-bg="dot-gray-rev"][data-theme="light"] body,
+:root[data-bg="dot-gray-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-gray-dots.jpg");background-color:#fdf9ef}
+:root[data-bg="dot-beige"][data-theme="light"] body,
+:root[data-bg="dot-beige"]:not([data-theme="dark"]) body{background-image:url("backgrounds/beige-ivory-dots.jpg");background-color:#edddca}
+:root[data-bg="dot-beige-rev"][data-theme="light"] body,
+:root[data-bg="dot-beige-rev"]:not([data-theme="dark"]) body{background-image:url("backgrounds/ivory-beige-dots.png");background-color:#fffaf0}
+
+.bgsw.bg-dot-lavender{background-image:url("backgrounds/lavender-ivory-dots.jpg")}
+.bgsw.bg-dot-lavender-rev{background-image:url("backgrounds/ivory-lavender-dots.jpg")}
+.bgsw.bg-dot-green{background-image:url("backgrounds/green-ivory-dots.jpg")}
+.bgsw.bg-dot-green-rev{background-image:url("backgrounds/ivory-green-dots.jpg")}
+.bgsw.bg-dot-gray{background-image:url("backgrounds/gray-ivory-dots.jpg")}
+.bgsw.bg-dot-gray-rev{background-image:url("backgrounds/ivory-gray-dots.jpg")}
+.bgsw.bg-dot-beige{background-image:url("backgrounds/beige-ivory-dots.jpg")}
+.bgsw.bg-dot-beige-rev{background-image:url("backgrounds/ivory-beige-dots.png")}
+
+.bgsw[class*="bg-dot-"]{background-size:cover;background-position:center;background-repeat:no-repeat}
+
 /* 기록 */
 .switch{width:38px;height:22px;border-radius:11px;background:#d1d1d6;position:relative;flex:none;transition:background .15s}
 .switch i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
@@ -648,6 +715,41 @@ main{padding:0 14px 24px}
 .cinput textarea:focus{outline:2px solid var(--ink)}
 .csend{flex:none;width:42px;height:42px;border-radius:50%;background:var(--planner-color);color:var(--planner-ink,#1c1c1e);display:grid;place-items:center}
 
+/* ===== 나와의 채팅: 메모장형 피드 ===== */
+.clist.selfmemo-list{gap:0;padding:4px 0 12px}
+.selfmemo-list .cdate{
+  align-self:stretch;background:transparent;border-radius:0;
+  margin:14px 2px 5px;padding:0;color:var(--sub);
+  font-size:11px;font-weight:700;text-align:left
+}
+.selfnote{
+  position:relative;width:100%;padding:14px 12px 13px;
+  border-bottom:1px solid var(--line);background:var(--card);
+  text-align:left
+}
+.selfnote:first-of-type{border-top:1px solid var(--line)}
+.selfnote.sel{background:color-mix(in srgb,var(--planner-color) 11%,var(--card))}
+.selfnote-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.selfnote-time{font-size:10px;color:var(--sub);font-variant-numeric:tabular-nums}
+.selfnote-more{
+  margin-left:auto;width:30px;height:28px;border-radius:9px;
+  display:grid;place-items:center;color:var(--sub);font-size:18px
+}
+.selfnote-text{
+  display:block;width:100%;padding:0;border:0;background:transparent;
+  color:var(--ink);font-size:15px;line-height:1.68;
+  white-space:pre-wrap;word-break:break-word;text-align:left
+}
+.selfnote-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.selfnote-photo{display:block;width:100%;aspect-ratio:1/1;border-radius:11px;overflow:hidden;background:var(--soft)}
+.selfnote-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.selfnote-actions{display:flex;gap:6px;justify-content:flex-end;padding:7px 10px 9px;background:var(--card);border-bottom:1px solid var(--line)}
+.selfnote-actions .tbtn{height:30px;font-size:12px}
+.chatpage.selfmemo-page .chat-search{border-radius:11px}
+.chatpage.selfmemo-page .cinput textarea{border-radius:12px;background:var(--soft)}
+.chatpage.selfmemo-page .chat-addphoto,.chatpage.selfmemo-page .csend{border-radius:12px}
+
+
 .ddbar{display:flex;gap:6px;overflow-x:auto;margin:10px 0 0;padding-bottom:2px;scrollbar-width:none}
 .ddbar::-webkit-scrollbar{display:none}
 .ddpill{flex:none;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;background:var(--card);border:1px solid var(--edge);font-size:13px;font-weight:600}
@@ -802,6 +904,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .top.navtop .topbr{display:block;order:2;flex:0 0 100%;height:0}
   .top.navtop .navg{order:3}
 }
+.top-focus-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;height:34px;padding:0 11px!important}
+.top-focus-btn svg{width:17px;height:17px;flex:none}
+@media(max-width:380px){.top-focus-btn{padding:0 9px!important;font-size:12px}}
 .region-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
 .region-chips button{height:32px;padding:0 12px;border-radius:999px;background:color-mix(in srgb,var(--planner-color,#dce9f7) 55%,var(--card));border:1px solid color-mix(in srgb,var(--planner-color,#dce9f7) 80%,var(--edge));font-size:13px;font-weight:700;color:var(--ink)}
 .region-chips button.on{background:var(--planner-color);border-color:var(--planner-color);color:var(--planner-ink,#1c1c1e)}
@@ -1029,10 +1134,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
 @media(max-width:390px){.origin-hour-grid{grid-template-columns:1fr}.origin-grid-days{gap:3px}.origin-grid-days button{font-size:11px}}
 
 
-.self-letter-compose{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
-.self-letter-compose .b-save{height:44px;padding:0 13px;white-space:nowrap}
+.self-letter-compose{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.self-letter-compose .b-save,.self-letter-compose .b-ghost{height:44px;padding:0 13px;white-space:nowrap}
 .self-letter-help{display:block;margin-top:7px;color:var(--sub);font-size:11px}
-@media(max-width:430px){.self-letter-compose{grid-template-columns:1fr}.self-letter-compose .b-save{width:100%}}
+@media(max-width:430px){.self-letter-compose{grid-template-columns:1fr 1fr}.self-letter-compose .fld{grid-column:1/-1}.self-letter-compose .b-save,.self-letter-compose .b-ghost{width:100%}}
 
 
 .self-letter-sent-pop{text-align:center;padding-top:4px}.self-letter-sent-pop h3{margin:4px 0 6px}.self-letter-sent-pop .hint{margin:0 0 14px}
@@ -1053,6 +1158,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .nemo-mood-samples{display:flex;gap:6px;margin-top:8px}.nemo-mood-sample{display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:10px;font-weight:700;color:var(--sub)}.nemo-mood-sample .nemo-char{width:22px;height:22px}
 .diary-mood-pick{margin:12px 0 6px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}.diary-mood-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:9px}.diary-mood-head b{font-size:13px}.diary-mood-head small{font-size:11px;color:var(--sub);text-align:right}.diary-mood-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.diary-mood-btn{min-width:0;padding:6px 2px 5px;border:1px solid transparent;border-radius:11px;background:var(--soft);text-align:center;color:var(--sub);font-size:9.5px;font-weight:750}.diary-mood-btn .nemo-char{width:34px;height:34px;margin:0 auto 2px}.diary-mood-btn.on{background:color-mix(in srgb,var(--planner-color) 28%,var(--card));border-color:var(--planner-color);color:var(--ink);box-shadow:0 0 0 1px color-mix(in srgb,var(--planner-color) 28%,transparent)}.diary-mood-auto{width:100%;margin-top:7px;height:32px;border-radius:10px;background:transparent;border:1px dashed var(--line);font-size:11px;font-weight:700;color:var(--sub);text-align:center}.diary-mood-auto.on{border-style:solid;border-color:var(--planner-color);background:color-mix(in srgb,var(--planner-color) 12%,var(--card));color:var(--ink)}.diary-saved-mood{display:flex;align-items:center;gap:7px;margin-top:9px;width:max-content;max-width:100%;padding:5px 9px 5px 5px;border-radius:999px;background:color-mix(in srgb,var(--planner-color) 18%,var(--soft));font-size:11px;font-weight:800;color:var(--ink)}.diary-saved-mood .nemo-char{width:28px;height:28px}@media(max-width:520px){.diary-mood-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.diary-mood-btn .nemo-char{width:32px;height:32px}}
 @media(max-width:380px){.nemo-home-char{width:46px;height:46px}.nemo-settings-preview .nemo-char{width:62px;height:62px}}
+/* ===== 레시피 노트 ===== */
+.recipe-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.recipe-head h3{margin:0;font-size:18px}.recipe-list{display:flex;flex-direction:column;gap:8px}.recipe-card{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:left}.recipe-card:active{background:var(--soft)}.recipe-card b{display:block;font-size:15px}.recipe-card small{display:block;margin-top:4px;color:var(--sub);font-size:12px;line-height:1.45}.recipe-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.recipe-meta span{padding:4px 8px;border-radius:999px;background:var(--soft);font-size:10px;font-weight:700;color:var(--sub)}.recipe-empty{padding:24px 8px;text-align:center;color:var(--sub);font-size:13px;line-height:1.6}.recipe-ta{display:block;width:100%;min-height:118px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:11px 12px;font:inherit;font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:10px}.recipe-ta:focus{outline:2px solid var(--accent);border-color:transparent}.recipe-help{margin:-3px 2px 10px;color:var(--sub);font-size:11px;line-height:1.45}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1389,7 +1497,7 @@ function openModeSwitch(){M={type:'mode-switch'};openModal('<h3>플래너 유형
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],recipes:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -1401,6 +1509,14 @@ function normalize(s){
   if(!Array.isArray(o.settings.blockedUsers))o.settings.blockedUsers=[];
   if(!o.settings.blockedUserNames||typeof o.settings.blockedUserNames!=='object')o.settings.blockedUserNames={};
   if(!Array.isArray(o.settings.friendMemories))o.settings.friendMemories=[];
+  if(!Array.isArray(o.settings.recipes))o.settings.recipes=[];
+  o.settings.recipes=o.settings.recipes.map(function(r){
+    if(!r||typeof r!=='object')return null;
+    var title=String(r.title||'').trim().slice(0,50);
+    if(!title)return null;
+    return {id:r.id||uid(),title:title,ingredients:String(r.ingredients||'').slice(0,4000),steps:String(r.steps||'').slice(0,6000),memo:String(r.memo||'').slice(0,3000),createdAt:Number(r.createdAt||Date.now()),updatedAt:Number(r.updatedAt||r.createdAt||Date.now())};
+  }).filter(Boolean).slice(0,200);
+
   if(!o.modeStates||typeof o.modeStates!=='object'||Array.isArray(o.modeStates))o.modeStates={};
   if(['university','school','exam','other'].indexOf(o.settings.plannerMode)<0)o.settings.plannerMode='university';
   if(typeof o.settings.profileName!=='string')o.settings.profileName='';
@@ -3634,7 +3750,7 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','weeklyRetro','hourNotes','routineDone','modeStates'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','originRules','originWeekOverrides','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','plannerMode','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker','liteHome','showLog','showDiary','showMemo','showWeeklyReview','diaryRuled','morningBriefing','morningBriefingTime'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','originRules','originWeekOverrides','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','letterSkipComposeDate','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','plannerMode','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker','liteHome','showLog','showDiary','showMemo','showWeeklyReview','diaryRuled','morningBriefing','morningBriefingTime','recipes'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
@@ -4287,10 +4403,14 @@ function letterCard(k){
   }
   if(k===tk){
     var nk=dkey(addDays(new Date(),1)),L=S.letters[nk]||{},sent=!!(L&&L.text);
-    html+='<section class="card self-letter-card"><div class="card-h"><h3>내일의 나에게</h3><span class="cnt">'+(sent?'예약됨 ✓':'내일 맨 위에 도착')+'</span></div>'+
-      '<div class="self-letter-compose"><input class="fld" style="margin:0" id="f-letter-tomorrow" maxlength="80" placeholder="내일의 나에게 한 줄" value="'+esc(L.text||'')+'">'+
-      '<button class="b-save" data-act="send-letter-tomorrow" data-date="'+nk+'">'+(sent?'예약 수정':'보내기')+'</button></div>'+
-      '<small class="self-letter-help">'+(sent?'내일 열기 전까지 문구를 수정할 수 있어요.':'보내기를 누르면 내일 보여드려요.')+'</small></section>';
+    var skipped=S.settings.letterSkipComposeDate===tk;
+    if(!skipped){
+      html+='<section class="card self-letter-card"><div class="card-h"><h3>내일의 나에게</h3><span class="cnt">'+(sent?'예약됨 ✓':'내일 맨 위에 도착')+'</span></div>'+
+        '<div class="self-letter-compose"><input class="fld" style="margin:0" id="f-letter-tomorrow" maxlength="80" placeholder="내일의 나에게 한 줄" value="'+esc(L.text||'')+'">'+
+        '<button class="b-save" data-act="send-letter-tomorrow" data-date="'+nk+'">'+(sent?'예약 수정':'보내기')+'</button>'+
+        '<button class="b-ghost" data-act="no-letter-tomorrow" data-date="'+nk+'">없음</button></div>'+
+        '<small class="self-letter-help">'+(sent?'내일 열기 전까지 문구를 수정하거나, 없음으로 취소할 수 있어요.':'입력하지 않으면 내일 아무 창도 뜨지 않아요.')+'</small></section>';
+    }
   }
   return html;
 }
@@ -4320,10 +4440,22 @@ function sendLetterTomorrow(k){
   var f=$('#f-letter-tomorrow'),txt=f?(f.value||'').trim():'';
   if(!txt){bad('#f-letter-tomorrow');inAppToast('내일의 나에게 남길 말을 적어줘');return;}
   setLetter(k,{text:txt,seen:null,sentAt:Date.now()});
+  if(S.settings.letterSkipComposeDate===todayKey())delete S.settings.letterSkipComposeDate;
   save();
   render();
   M={type:'self-letter-sent'};
   openModal('<div class="self-letter-sent-pop"><h3>내일 보여드릴게요!</h3><p class="hint">내일의 나에게 예약했어요.</p><div class="acts"><button class="b-save" data-act="close">확인</button></div></div>');
+}
+function askNoLetterTomorrow(k){
+  M={type:'no-letter-tomorrow',date:k};
+  openModal('<h3>내일의 나에게 아무 말도 남기지 않을까요?</h3><p class="hint">확인하면 오늘은 이 입력창이 사라지고, 내일도 메시지 창이 뜨지 않아요.</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="no-letter-tomorrow-confirm" data-date="'+esc(k)+'">없음으로 할게</button></div>');
+}
+function skipLetterTomorrow(k){
+  if(S.letters[k])delete S.letters[k];
+  S.settings.letterSkipComposeDate=todayKey();
+  save();
+  closeModal();
+  render();
 }
 function pruneLetters(){
   var y=dkey(addDays(new Date(),-1)),ch=false;
@@ -4425,8 +4557,7 @@ function homeStrip(){
   var evening=hour>=17?'<div class="home-evening">'+(featOn('showDiary')?'<button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span>':'')+'<button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+(stk>=2?' · '+stk+'일째':'')+'</button></div>':'';
   var main=nextCard+todo+gapLine+evening;
   if(!main)main='<div class="home-empty-summary"><span class="mini-square"></span><span><b>오늘은 아직 비어 있어요</b><small>일정이나 할 일을 추가하면 여기서 바로 이어서 볼 수 있어요.</small></span></div>';
-  var fm=Number(S.focus[k]||0),focusLabel=fm>0?'집중 · '+durLong(fm):'집중';
-  var quick='<div class="home-quick-actions"><button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button><button class="tbtn" data-act="add-dd" data-date="'+k+'">D-day</button>'+(featOn('showDiary')?'<button class="tbtn" data-act="open-diary-library">일기</button>':'')+'<button class="tbtn ibt home-focus" data-act="focus-free">'+ICO_CLOCK+focusLabel+'</button></div>';
+  var quick='<div class="home-quick-actions"><button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button><button class="tbtn" data-act="add-dd" data-date="'+k+'">D-day</button>'+(featOn('showDiary')?'<button class="tbtn" data-act="open-diary-library">일기</button>':'')+'</div>';
   var savedNemoMood=diaryMoodForDate(k),nemoMood=savedNemoMood||nemoMoodForToday(tot,dn,hour),nemoCopy=nemoHomeCopy(nemoMood,tot,dn,!!savedNemoMood);
   var nemo='<div class="nemo-home-head">'+nemoSVG(nemoMood,'nemo-home-char')+'<span class="nemo-copy"><b>'+esc(nemoCopy[0])+'</b><small>'+esc(nemoCopy[1])+'</small></span></div>';
   return '<section class="home home-clean"><div class="home-main">'+nemo+main+'</div>'+quick+'</section>'+flashMeetHTML();
@@ -5077,7 +5208,7 @@ function topHTML(){
   }
   var jump=(U.tab==='month'||U.tab==='week'||U.tab==='day');
   return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small>'+esc(s)+'</small>':'')+'</div>'+
-    (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>':'')+
+    (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>'+(U.tab==='day'?'<button class="tbtn navg top-focus-btn" data-act="focus-free" aria-label="집중 타이머">'+ICO_CLOCK+'집중</button>':''):'')+
     (plus?'<button class="ibtn plus navg" data-act="'+plus+'" aria-label="추가">+</button>':'')+
     modeSwitchButtonHTML()+bellBtnHTML().replace('class="ibtn bell"','class="ibtn bell icog"')+searchBtn.replace('class="ibtn"','class="ibtn icog"')+
     '<button class="ibtn gear icog" data-act="open-settings" aria-label="설정">'+'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>';
@@ -5738,7 +5869,7 @@ function viewSettings(){
     '<div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var viewHTML='<section class="card"><div class="card-h"><h3>화면</h3></div>'+
     '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+ 
-    '<div class="setrow"><span>배경<small>이름 기본 색과 같은 색으로 보여요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','핑크 땡땡이'],['white','흰 바탕 핑크 땡땡이'],['beige','베이지 땡땡이']].map(function(x){
+    '<div class="setrow"><span>배경<small>이름 기본 색과 같은 색으로 보여요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['dot-mint','민트 바탕 + 아이보리 점'],['dot-mint-rev','아이보리 바탕 + 민트 점'],['dot-sky','하늘 바탕 + 아이보리 점'],['dot-sky-rev','아이보리 바탕 + 하늘 점'],['dot-yellow','연노랑 바탕 + 아이보리 점'],['dot-yellow-rev','아이보리 바탕 + 연노랑 점'],['dot-peach','살구 바탕 + 아이보리 점'],['dot-peach-rev','아이보리 바탕 + 살구 점'],['dot-pink','연핑크 바탕 + 아이보리 점'],['dot-pink-rev','아이보리 바탕 + 연핑크 점'],['dot-lavender','연보라 바탕 + 아이보리 점'],['dot-lavender-rev','아이보리 바탕 + 연보라 점'],['dot-green','연두 바탕 + 아이보리 점'],['dot-green-rev','아이보리 바탕 + 연두 점'],['dot-gray','연회색 바탕 + 아이보리 점'],['dot-gray-rev','아이보리 바탕 + 연회색 점'],['dot-beige','베이지 바탕 + 아이보리 점'],['dot-beige-rev','아이보리 바탕 + 베이지 점']].map(function(x){
       var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';
       return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+ 
     '<div class="setrow"><span>주간 시간표 배경화면<small>현재 주간 시간표를 잠금화면용 이미지로 저장해요</small></span><div class="seg" style="margin:0"><button data-act="wallpaper-phone">폰</button><button data-act="wallpaper-pad">패드</button></div></div>'+
@@ -5786,6 +5917,7 @@ function viewSettings(){
   if(settingsPage==='school')return back+schoolHTML+linkHTML;
   if(settingsPage==='life')return back+logPrefHTML;
   if(settingsPage==='screen')return back+viewHTML;
+  if(settingsPage==='recipes')return back+recipeBookHTML();
   if(settingsPage==='account')return back+acct+syncHTML+dataHTML+supportHTML;
   if(settingsPage==='data')return back+acct+syncHTML+dataHTML+supportHTML;
   if(settingsPage==='support')return back+acct+syncHTML+dataHTML+supportHTML;
@@ -5800,11 +5932,46 @@ function viewSettings(){
       navRow('settings-school','학교 · 바로가기','학교 등록 · 캠퍼스 · 학교 링크')+
       navRow('settings-life','생활 기록 · 홈 표시','간단한 홈 · 기상 · 취침 · 공부')+
       navRow('settings-screen','화면','색 · 배경 · 다크모드 · 시간표 표시')+
+      navRow('settings-recipes','레시피 노트','준비물 · 만드는 법 · 자주 쓰는 조합')+
     '</section>'+
     '<section class="card">'+
       navRow('settings-account','계정',Sync.uid?'로그인 · 동기화 · 데이터 · 도움':'로그인 · 동기화 · 데이터 · 도움')+
     '</section>';
   return main;
+}
+function recipeBookHTML(){
+  var rows=(S.settings.recipes||[]).slice().sort(function(a,b){return (b.updatedAt||0)-(a.updatedAt||0);});
+  var list=rows.length?'<div class="recipe-list">'+rows.map(function(r){
+    var ing=String(r.ingredients||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean),preview=(r.steps||r.memo||r.ingredients||'').replace(/\s+/g,' ').trim();
+    return '<button class="recipe-card" data-act="recipe-open" data-id="'+esc(r.id)+'"><b>'+esc(r.title)+'</b><small>'+(preview?esc(preview.slice(0,72))+(preview.length>72?'…':''):'아직 내용이 없어요')+'</small><div class="recipe-meta"><span>준비물 '+ing.length+'개</span>'+(r.steps?'<span>만드는 법 있음</span>':'')+(r.memo?'<span>메모 있음</span>':'')+'</div></button>';
+  }).join('')+'</div>':'<div class="recipe-empty">아직 저장한 레시피가 없어요.<br>초코우유, 간단한 간식, 자주 쓰는 조합을 적어두면 편해요.</div>';
+  return '<section class="card"><div class="recipe-head"><div><h3>레시피 노트</h3><small style="color:var(--sub)">준비물 · 만드는 법 · 내 메모를 모아둬요</small></div><button class="tbtn" data-act="recipe-add">+ 레시피</button></div>'+list+'</section>';
+}
+function openRecipe(id){
+  var r=(S.settings.recipes||[]).find(function(x){return x.id===id;})||{id:'',title:'',ingredients:'',steps:'',memo:''};
+  M={type:'recipe',id:r.id||null};
+  openModal('<h3>'+(r.id?'레시피 수정':'새 레시피')+'</h3>'+
+    '<span class="lbl">이름</span><input class="fld" id="f-recipe-title" maxlength="50" placeholder="예: 초코우유 맛있게 타기" value="'+esc(r.title)+'">'+
+    '<span class="lbl">준비물</span><textarea class="recipe-ta" id="f-recipe-ingredients" maxlength="4000" placeholder="한 줄에 하나씩 적어도 좋아요\n예: 우유 200ml\n초코가루 2스푼">'+esc(r.ingredients)+'</textarea>'+
+    '<div class="recipe-help">재료뿐 아니라 컵, 얼음, 전자레인지처럼 필요한 것도 같이 적어둘 수 있어요.</div>'+
+    '<span class="lbl">만드는 법</span><textarea class="recipe-ta" id="f-recipe-steps" maxlength="6000" placeholder="예: 1. 컵에 초코가루를 넣기\n2. 따뜻한 우유 조금으로 먼저 풀기\n3. 나머지 우유를 넣고 섞기">'+esc(r.steps)+'</textarea>'+
+    '<span class="lbl">내 메모 <em>(선택)</em></span><textarea class="recipe-ta" id="f-recipe-memo" maxlength="3000" style="min-height:86px" placeholder="예: 얼음 3개 넣으면 제일 맛있음">'+esc(r.memo)+'</textarea>'+
+    '<div class="acts">'+(r.id?'<button class="b-del" data-act="recipe-delete">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="recipe-save">저장</button></div>');
+  setTimeout(function(){var f=$('#f-recipe-title');if(f&&!r.id)f.focus();},50);
+}
+function saveRecipe(){
+  var t=$('#f-recipe-title'),title=t?t.value.trim():'';
+  if(!title){bad('#f-recipe-title');return;}
+  var now=Date.now(),arr=S.settings.recipes||(S.settings.recipes=[]),r=M.id&&arr.find(function(x){return x.id===M.id;});
+  var data={title:title.slice(0,50),ingredients:($('#f-recipe-ingredients')?$('#f-recipe-ingredients').value:'').slice(0,4000),steps:($('#f-recipe-steps')?$('#f-recipe-steps').value:'').slice(0,6000),memo:($('#f-recipe-memo')?$('#f-recipe-memo').value:'').slice(0,3000),updatedAt:now};
+  if(r)Object.assign(r,data);else arr.push(Object.assign({id:uid(),createdAt:now},data));
+  save();closeModal();U.settingsPage='recipes';render();inAppToast('레시피를 저장했어요');
+}
+function deleteRecipe(btn){
+  if(!M.id)return;
+  if(!armed(btn))return;
+  S.settings.recipes=(S.settings.recipes||[]).filter(function(r){return r.id!==M.id;});
+  save();closeModal();U.settingsPage='recipes';render();inAppToast('레시피를 삭제했어요');
 }
 function openLink(l){
   var x=l||{name:'',url:''};
@@ -6602,6 +6769,7 @@ function chatRoomsHTML(){
 }
 function chatListHTML(){
   var q=(U.chatQuery||'').trim().toLowerCase(),room=U.chatRoom||'general',last='',html='';
+  var isMemo=room==='general';
   S.selfchat.slice().sort(function(a,b){return a.at-b.at;}).filter(function(m){
     if((m.room||'general')!==room)return false;
     if(!q)return true;
@@ -6610,12 +6778,19 @@ function chatListHTML(){
     var d=new Date(m.at),k=dkey(d);
     if(k!==last){html+='<div class="cdate">'+mdTxt(d)+' '+DAYS[dow(d)]+'요일</div>';last=k;}
     var sel=U.chatSel===m.id,photos=chatPhotosOf(m);
-    var ph=photos.length?'<div class="cphotos">'+photos.map(function(p,i){return '<button class="cphoto" data-act="chat-photo" data-id="'+m.id+'" data-pi="'+i+'"><img src="'+chatPhotoSrc(p)+'" alt="채팅 사진"></button>';}).join('')+'</div>':'';
-    var tx=m.text?'<button class="cbub" data-act="chat-sel" data-id="'+m.id+'">'+esc(m.text)+'</button>':'';
-    html+='<div class="cmsg'+(sel?' sel':'')+'"><span class="ctime">'+pad(d.getHours())+':'+pad(d.getMinutes())+'</span>'+ph+tx+'<button class="chat-more" data-act="chat-sel" data-id="'+m.id+'" aria-label="메시지 메뉴">⋯</button></div>'+
-      (sel?'<div class="cops">'+(m.text?'<button class="tbtn" data-act="chat-copy" data-id="'+m.id+'">복사</button>':'')+'<button class="tbtn cdel" data-act="chat-del" data-id="'+m.id+'">삭제</button></div>':'');
+    if(isMemo){
+      var ph=photos.length?'<div class="selfnote-photos">'+photos.map(function(p,i){return '<button class="selfnote-photo" data-act="chat-photo" data-id="'+m.id+'" data-pi="'+i+'"><img src="'+chatPhotoSrc(p)+'" alt="메모 사진"></button>';}).join('')+'</div>':'';
+      var tx=m.text?'<button class="selfnote-text" data-act="chat-sel" data-id="'+m.id+'">'+esc(m.text)+'</button>':'';
+      html+='<article class="selfnote'+(sel?' sel':'')+'"><div class="selfnote-head"><span class="selfnote-time">'+pad(d.getHours())+':'+pad(d.getMinutes())+'</span><button class="selfnote-more" data-act="chat-sel" data-id="'+m.id+'" aria-label="메모 메뉴">⋯</button></div>'+tx+ph+'</article>'+
+        (sel?'<div class="selfnote-actions">'+(m.text?'<button class="tbtn" data-act="chat-copy" data-id="'+m.id+'">복사</button>':'')+'<button class="tbtn cdel" data-act="chat-del" data-id="'+m.id+'">삭제</button></div>':'');
+    }else{
+      var cph=photos.length?'<div class="cphotos">'+photos.map(function(p,i){return '<button class="cphoto" data-act="chat-photo" data-id="'+m.id+'" data-pi="'+i+'"><img src="'+chatPhotoSrc(p)+'" alt="채팅 사진"></button>';}).join('')+'</div>':'';
+      var ctx=m.text?'<button class="cbub" data-act="chat-sel" data-id="'+m.id+'">'+esc(m.text)+'</button>':'';
+      html+='<div class="cmsg'+(sel?' sel':'')+'"><span class="ctime">'+pad(d.getHours())+':'+pad(d.getMinutes())+'</span>'+cph+ctx+'<button class="chat-more" data-act="chat-sel" data-id="'+m.id+'" aria-label="메시지 메뉴">⋯</button></div>'+
+        (sel?'<div class="cops">'+(m.text?'<button class="tbtn" data-act="chat-copy" data-id="'+m.id+'">복사</button>':'')+'<button class="tbtn cdel" data-act="chat-del" data-id="'+m.id+'">삭제</button></div>':'');
+    }
   });
-  return html||'<div class="empty" style="text-align:center;margin:auto">'+(q?'검색 결과가 없어요':'생각나는 걸 편하게 보내봐요')+'</div>';
+  return html||'<div class="empty" style="text-align:center;margin:auto">'+(q?'검색 결과가 없어요':isMemo?'생각나는 걸 메모처럼 남겨봐요':'생각나는 걸 편하게 보내봐요')+'</div>';
 }
 function pendingChatPhotosHTML(){
   var ps=U.chatPhotos||[];
@@ -6775,11 +6950,12 @@ function finishDiarySave(){
 
 function drawChat(){
   M={type:'chat'};
-  openModal('<div class="chatpage"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+chatRoomsHTML()+
-    '<input class="chat-search" id="f-chat-search" placeholder="대화 검색" value="'+esc(U.chatQuery||'')+'">'+
-    '<div class="clist" id="clist">'+chatListHTML()+'</div>'+
+  var isMemoRoom=(U.chatRoom||'general')==='general';
+  openModal('<div class="chatpage'+(isMemoRoom?' selfmemo-page':'')+'"><div class="ftop"><button class="ibtn" data-act="close" aria-label="닫기">‹</button><span>'+esc(chatRoomLabel(U.chatRoom||'general'))+'</span>'+(U.chatRoom!=='general'?'<button class="chat-menu" data-act="chat-room-menu" aria-label="채팅방 설정">⋯</button>':'')+'</div>'+chatRoomsHTML()+
+    '<input class="chat-search" id="f-chat-search" placeholder="'+(isMemoRoom?'메모 검색':'대화 검색')+'" value="'+esc(U.chatQuery||'')+'">'+
+    '<div class="clist'+(isMemoRoom?' selfmemo-list':'')+'" id="clist">'+chatListHTML()+'</div>'+
     pendingChatPhotosHTML()+
-    '<div class="cinput"><label class="chat-addphoto" aria-label="사진 첨부">＋<input type="file" accept="image/*" multiple data-chatphoto hidden></label><textarea id="f-chat" rows="1" placeholder="메시지 입력" enterkeyhint="send">'+esc(U.chatDraft||'')+'</textarea><button class="csend" data-act="chat-send" aria-label="보내기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>');
+    '<div class="cinput"><label class="chat-addphoto" aria-label="사진 첨부">＋<input type="file" accept="image/*" multiple data-chatphoto hidden></label><textarea id="f-chat" rows="1" placeholder="'+(isMemoRoom?'메모 입력':'메시지 입력')+'" enterkeyhint="send">'+esc(U.chatDraft||'')+'</textarea><button class="csend" data-act="chat-send" aria-label="보내기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>');
   $('#modal').classList.add('full');
   var cl=$('#clist');if(cl)cl.scrollTop=cl.scrollHeight;
 }
@@ -7337,6 +7513,11 @@ function act(a,e){
     case 'settings-school':U.settingsPage='school';render();break;
     case 'settings-life':U.settingsPage='life';render();break;
     case 'settings-screen':U.settingsPage='screen';render();break;
+    case 'settings-recipes':U.settingsPage='recipes';render();break;
+    case 'recipe-add':openRecipe(null);break;
+    case 'recipe-open':openRecipe(id);break;
+    case 'recipe-save':saveRecipe();break;
+    case 'recipe-delete':deleteRecipe(a);break;
     case 'settings-account':U.settingsPage='account';render();break;
     case 'open-privacy':openPrivacyPolicy();break;
     case 'delete-account-open':openDeleteAccount();break;
@@ -7451,6 +7632,8 @@ function act(a,e){
     case 'toggle-letter':S.settings.letterOn=!S.settings.letterOn;save();render();break;
     case 'letter-seen':{var lk=todayKey();if(S.letters[lk]){S.letters[lk].seen=true;save();}render();break;}
     case 'send-letter-tomorrow':sendLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
+    case 'no-letter-tomorrow':askNoLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
+    case 'no-letter-tomorrow-confirm':skipLetterTomorrow(a.dataset.date||dkey(addDays(new Date(),1)));break;
     case 'letter-rmphoto':setLetter(a.dataset.k,{photo:null});save();render();break;
     case 'letter-photo':{var LL=S.letters[a.dataset.k];if(LL&&LL.photo){M={type:'photo'};openModal('<img class="lt-big" src="'+LL.photo+'" alt="사진">'+(LL.text?'<p class="lt-got" style="margin-top:12px">'+esc(LL.text)+'</p>':'')+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button></div>');}break;}
     case 'memo-photo-del':{
@@ -7850,7 +8033,7 @@ document.addEventListener('keydown',function(e){
     var btn=t.parentElement.querySelector('button[data-act]');
     if(btn)btn.click();
   }else if(t.tagName==='INPUT'&&M.type){
-    var sv={dd:'save-dd',jump:'do-jump',trk:'save-trk',link:'save-link',login:'login',event:'save-event',appointment:'save-appointment',schedule:'save-schedule',block:'save-block',todo:'save-todo',routine:'save-rt',exam:'save-exam',allday:'save-ad','diary-finish-confirm':'diary-finish-save','chat-add-room':'save-chat-room','chat-room-rename':'save-chat-room-name','school-add':'save-school'}[M.type];
+    var sv={dd:'save-dd',jump:'do-jump',trk:'save-trk',link:'save-link',login:'login',event:'save-event',appointment:'save-appointment',schedule:'save-schedule',block:'save-block',todo:'save-todo',routine:'save-rt',exam:'save-exam',allday:'save-ad','diary-finish-confirm':'diary-finish-save','chat-add-room':'save-chat-room','chat-room-rename':'save-chat-room-name','school-add':'save-school','recipe':'recipe-save'}[M.type];
     var b=sv&&document.querySelector('[data-act="'+sv+'"]');
     if(b&&t.type!=='time'&&t.type!=='date'){e.preventDefault();b.click();}
   }
