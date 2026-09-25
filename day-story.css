@@ -57,14 +57,15 @@
 
 /* ===== 2026-09-25 story hierarchy: 내 네모 위, 친구 네모 아래 ===== */
 .friend-story-strip{padding:0;overflow:hidden}
-.story-own-row{padding:11px 12px;border-bottom:1px solid var(--line)}
-.story-own-row>button{width:100%;display:flex;align-items:center;gap:11px;text-align:left;min-height:58px}
-.story-own-nemo{width:54px;height:54px;flex:none;display:grid;place-items:center}
-.story-own-nemo .nemo-char{width:54px;height:54px;display:block}
-.story-own-copy{flex:1;min-width:0}
-.story-own-copy b{display:block;font-size:14px;color:var(--ink);font-weight:800}
-.story-own-copy small{display:block;margin-top:2px;font-size:11px;color:var(--sub);white-space:normal;word-break:keep-all}
-.story-own-row i{font-style:normal;color:var(--sub);font-size:20px;line-height:1}
+.story-my-block{padding:11px 12px;border-bottom:1px solid var(--line)}
+.story-my-block .story-strip-head{margin:0 0 8px}
+.story-my-button{width:100%;display:flex;align-items:center;gap:11px;text-align:left;min-height:64px;padding:2px 0}
+.story-avatar-large{width:56px;height:56px;margin:0;flex:none}
+.story-avatar-large .nemo-char{width:56px;height:56px;display:block}
+.story-my-copy{flex:1;min-width:0}
+.story-my-copy b{display:block;font-size:14px;color:var(--ink);font-weight:800}
+.story-my-copy small{display:block;margin-top:2px;font-size:11px;color:var(--sub);white-space:normal;word-break:keep-all}
+.story-my-button em{font-style:normal;flex:none;padding:7px 10px;border-radius:999px;background:var(--soft);color:var(--ink);font-size:11px;font-weight:800}
 .story-friends-block{padding:10px 12px 11px}
 .story-friends-block .story-strip-head{margin:0 0 8px}
 .story-friends-block .story-circles{margin:0 -1px}
@@ -84,4 +85,14 @@
 .story-person .story-avatar.story-avatar-nemo .nemo-char{width:42px;height:42px}
 .story-card-owner .story-avatar.story-avatar-nemo{width:38px;height:38px;border:0;background:transparent;overflow:visible}
 .story-card-owner .story-avatar.story-avatar-nemo .nemo-char{width:38px;height:38px}
-@media(max-width:430px){.story-own-row{padding:10px 11px}.story-friends-block{padding:9px 11px 10px}.story-own-nemo,.story-own-nemo .nemo-char{width:50px;height:50px}.story-avatar.story-avatar-nemo,.story-avatar.story-avatar-nemo .nemo-char{width:46px;height:46px}}
+@media(max-width:430px){.story-my-block{padding:10px 11px}.story-friends-block{padding:9px 11px 10px}.story-avatar-large,.story-avatar-large .nemo-char{width:52px;height:52px}.story-my-button em{font-size:10px;padding:6px 9px}.story-avatar.story-avatar-nemo,.story-avatar.story-avatar-nemo .nemo-char{width:46px;height:46px}}
+
+/* ===== 20260925: 스토리는 친구 탭에서, 마감 전에는 잠금 티저 ===== */
+.story-lock-copy{
+  margin:7px 1px 0;
+  color:var(--sub);
+  font-size:11px;
+}
+.friend-story-strip{
+  margin-bottom:12px;
+}
