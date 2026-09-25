@@ -87,7 +87,40 @@ function decorate(){syncBanner();var main=document.getElementById('main'),u=U();
 }
 var q=false,storyObserver=null,storyWatchTimer=null;function watchStory(){var main=document.getElementById('main');if(main&&storyObserver)storyObserver.observe(main,{childList:true,subtree:true});}function decorateSafe(){if(storyObserver)storyObserver.disconnect();decorate();clearTimeout(storyWatchTimer);storyWatchTimer=setTimeout(watchStory,0);}function queue(){if(q)return;q=true;setTimeout(function(){q=false;decorateSafe();},35);}var main=document.getElementById('main');if(main){storyObserver=new MutationObserver(queue);watchStory();}
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='f-story-comment'&&window.__planonCloseDraft){window.__planonCloseDraft.comment=(e.target.value||'').slice(0,40);var p=document.getElementById('story-compose-preview');if(p)p.innerHTML=cardHTML(window.__planonCloseDraft);}});
-document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-story-act]');if(!a)return;e.preventDefault();var x=a.dataset.storyAct;if(x==='close-day')composer();else if(x==='finish-private')finish('private');else if(x==='finish-friends')finish('friends');else if(x==='view-own')viewOwn(closeFor(B.todayKey()));else if(x==='view-date')viewOwn(closeFor(a.dataset.date));else if(x==='locked-story')lockPrompt();else if(x==='close-from-lock'){B.closeModal();composer();}else if(x==='go-friends')goFriends();else if(x==='reload-stories')loadStories(true);else if(x==='view-friend-story')viewFriend(a.dataset.id);else if(x==='story-prev'){if(ST.viewIndex>0){ST.viewIndex--;drawFriendViewer();}}else if(x==='story-next'){if(ST.viewIndex<ST.stories.length-1){ST.viewIndex++;drawFriendViewer();}}else if(x==='react')sendReaction(a.dataset.closing,a.dataset.mood);else if(x==='close-layer')closeLayer();});
+var fixedStoryTapAt=0;
+function handleStoryAction(a){
+  if(!a)return;
+  var x=a.dataset.storyAct;
+  if(x==='close-day')composer();
+  else if(x==='finish-private')finish('private');
+  else if(x==='finish-friends')finish('friends');
+  else if(x==='view-own')viewOwn(closeFor(B.todayKey()));
+  else if(x==='view-date')viewOwn(closeFor(a.dataset.date));
+  else if(x==='locked-story')lockPrompt();
+  else if(x==='close-from-lock'){B.closeModal();composer();}
+  else if(x==='go-friends')goFriends();
+  else if(x==='reload-stories')loadStories(true);
+  else if(x==='view-friend-story')viewFriend(a.dataset.id);
+  else if(x==='story-prev'){if(ST.viewIndex>0){ST.viewIndex--;drawFriendViewer();}}
+  else if(x==='story-next'){if(ST.viewIndex<ST.stories.length-1){ST.viewIndex++;drawFriendViewer();}}
+  else if(x==='react')sendReaction(a.dataset.closing,a.dataset.mood);
+  else if(x==='close-layer')closeLayer();
+}
+/* iPhone Safari에서 fixed 하단 버튼이 click까지 못 가는 경우가 있어 pointerup에서 먼저 처리해요. */
+document.addEventListener('pointerup',function(e){
+  var a=e.target.closest&&e.target.closest('#planon-day-close-fixed [data-story-act]');
+  if(!a)return;
+  fixedStoryTapAt=Date.now();
+  e.preventDefault();
+  e.stopPropagation();
+  handleStoryAction(a);
+},true);
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('[data-story-act]');if(!a)return;
+  if(a.closest&&a.closest('#planon-day-close-fixed')&&Date.now()-fixedStoryTapAt<700){e.preventDefault();return;}
+  e.preventDefault();
+  handleStoryAction(a);
+});
 window.addEventListener('online',function(){retryPending();});
 document.addEventListener('visibilitychange',function(){if(!document.hidden)retryPending();});
 setInterval(function(){if(navigator.onLine!==false)retryPending();},30000);

@@ -1,0 +1,7 @@
+오늘 마감하기 모바일 터치 수정
+- iPhone Safari에서 fixed 하단 마감 버튼을 pointerup 단계에서 우선 처리
+- 중복 click 방지
+- 버튼 pointer-events / touch-action 보강
+- 마감 모달 z-index를 하단 고정바보다 높게 조정
+- 졸린 네모 왼쪽 위 꿈방울 수정 유지
+- 친구 탭 스토리 구조 및 기존 기능 유지

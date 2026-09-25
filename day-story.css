@@ -96,3 +96,18 @@
 .friend-story-strip{
   margin-bottom:12px;
 }
+
+/* ===== iPhone Safari: 오늘 마감하기 터치 안정화 ===== */
+.day-close-fixed{
+  pointer-events:none;
+}
+.day-close-fixed button{
+  pointer-events:auto;
+  position:relative;
+  z-index:2;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+#modal.open{
+  z-index:10080 !important;
+}

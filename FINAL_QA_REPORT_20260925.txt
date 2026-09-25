@@ -1,0 +1,57 @@
+PLAN:ON FINAL QA REPORT — 2026-09-25
+
+Code-level/static verification of the latest integrated build.
+
+✅ JavaScript syntax
+   19 modules passed node --check
+✅ Main action routing
+   352 static data-act values all have handlers
+✅ bottom navigation
+   handler tab present
+✅ settings
+   handler open-settings present
+✅ day/week + button
+   handler add-schedule present
+✅ timetable + button
+   handler add-block present
+✅ Today core 1-3
+   isCore migration + toggle + 3-item guard present
+✅ Task start/end work log
+   persistent start timestamp, sessions, course weekly sum present
+✅ Weather duplicate/click
+   header shows current weather only; rain chip opens detailed weather
+✅ Mobile close button code path
+   pointerup capture + touch-action fallback present
+✅ Closing card immutability
+   snapshot is taken at close time and existing card is not regenerated
+✅ Story placement/lock
+   story strip is on Friends main tab; before close shows locked teaser
+✅ 24h friend stories
+   friend stories filter visibility + 24-hour cutoff
+✅ Single story reaction
+   client prevents duplicate reaction and DB has unique constraint in SQL
+✅ Sleepy Nemo bubbles
+   two sleep bubbles are positioned above-left of the body
+✅ localStorage quota recovery
+   frees backup space before retrying save
+✅ Backup/sync safeguards
+   IndexedDB vault, snapshots, guard snapshot, last-good backup present
+✅ Supabase story SQL
+   tables + RLS helpers/policies + deletion RPC included
+✅ Posted card/reaction DB lock
+   no UPDATE/DELETE policies for closing/reaction tables
+✅ PWA app shell
+   current modules are pre-cached
+🟡 Index local references
+   repo must retain existing: apple-touch-icon.png, icon-512.png
+🟡 Real iPhone Safari tap
+   code path verified; physical Safari tap must be confirmed after deployment/cache refresh
+🟡 Live Supabase A/B account E2E
+   requires SQL already applied to skku-planner + two authenticated accounts/devices
+🟡 Actual weather network response
+   Open-Meteo/geolocation behavior must be confirmed on deployed browser with location permission
+
+Summary:
+PASS 20 / FAIL 0 / MANUAL 4
+
+MANUAL means the code is present, but a real iPhone/Supabase/network environment is needed to prove the end-to-end behavior.
