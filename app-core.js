@@ -3183,11 +3183,26 @@ function saveTrk(){
 }
 function featOn(k){var v=S.settings[k];return v===undefined?!S.settings.liteHome:v!==false;}
 function todayKey(){return dkey(new Date());}
+function letterAccentColor(){
+  var c=String(defCol()||'#dce9f7').toLowerCase();
+  var map={
+    '#faefdc':'#9b7449',
+    '#ebebee':'#747784',
+    '#f8dedd':'#b96570',
+    '#fbe3cf':'#b8734d',
+    '#f8edc4':'#9d7b25',
+    '#dce9f7':'#5d83aa',
+    '#d9efe6':'#4f8e76',
+    '#e3efd6':'#6f914e',
+    '#e7e1f4':'#7e6aa7'
+  };
+  return map[c]||'color-mix(in oklab,'+c+' 70%,#111 30%)';
+}
 function letterBar(){
   if(!S.settings.letterOn)return '';
   var k=todayKey(),L=S.letters[k];
   if(!L||L.seen||!L.text)return '';
-  return '<section class="letter" style="border-left-color:var(--planner-color)!important"><div class="lt-h"><span>어제의 내가 남긴 말</span><button class="lt-x" data-act="letter-seen" aria-label="오늘은 그만 보기">✕</button></div>'+
+  return '<section class="letter" style="--letter-accent:'+esc(letterAccentColor())+';border-left-width:5px!important;border-left-color:var(--letter-accent)!important"><div class="lt-h"><span>어제의 내가 남긴 말</span><button class="lt-x" data-act="letter-seen" aria-label="오늘은 그만 보기">✕</button></div>'+
     '<p>'+esc(L.text)+'</p></section>';
 }
 function letterCard(k){

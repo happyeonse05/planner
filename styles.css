@@ -1676,7 +1676,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
   vertical-align:middle;
 }
 
-/* ===== final letter accent fix 20260925-1641 ===== */
-section.letter{
-  border-left-color:var(--planner-color) !important;
+
+/* ===== letter accent: palette-aware, this card only ===== */
+.letter{
+  border-left-width:5px;
+  border-left-color:var(--letter-accent,var(--planner-color,#dce9f7));
 }
