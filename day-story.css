@@ -96,6 +96,3 @@
 .friend-story-strip{
   margin-bottom:12px;
 }
-
-/* sleepy 네모의 졸림 방울은 네모 몸통 밖으로 보여야 해요 */
-.story-avatar.story-avatar-nemo{overflow:visible}
