@@ -13,7 +13,7 @@ function nemoSVG(mood,cls){
   }else if(m==='angry'){
     face='<path d="M29 35 L37 38" fill="none" stroke="#5a4033" stroke-width="4" stroke-linecap="round"/><path d="M61 35 L53 38" fill="none" stroke="#5a4033" stroke-width="4" stroke-linecap="round"/><circle cx="34" cy="40" r="3.6" fill="#5a4033"/><circle cx="58" cy="40" r="3.6" fill="#5a4033"/><path d="M42 52 Q46 46 50 52" fill="none" stroke="#5a4033" stroke-width="3.8" stroke-linecap="round"/>';
   }else if(m==='sleepy'){
-    face='<path d="M27 40 L39 39" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><path d="M53 39 L65 40" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><circle cx="46" cy="49" r="3.8" fill="none" stroke="#5a4033" stroke-width="3.8"/><circle cx="16" cy="42" r="2.5" fill="none" stroke="#b98e70" stroke-width="2.8"/><circle cx="19" cy="52" r="3.1" fill="none" stroke="#b98e70" stroke-width="2.8"/>';
+    face='<path d="M27 40 L39 39" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><path d="M53 39 L65 40" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><circle cx="46" cy="49" r="3.8" fill="none" stroke="#5a4033" stroke-width="3.8"/><circle cx="4.5" cy="42" r="2.5" fill="none" stroke="#b98e70" stroke-width="2.8"/><circle cx="-1.5" cy="52" r="3.1" fill="none" stroke="#b98e70" stroke-width="2.8"/>';
   }else{
     face='<ellipse cx="34" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/><ellipse cx="58" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/>';
   }
