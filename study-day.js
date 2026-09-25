@@ -14,5 +14,6 @@ function date(v){
 function pad(n){return String(n).padStart(2,'0');}
 function key(v){var d=date(v);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function tomorrowKey(v){var d=date(v);d.setDate(d.getDate()+1);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-window.PLANON_STUDY_DAY={boundaryHour:BOUNDARY_HOUR,date:date,key:key,tomorrowKey:tomorrowKey};
+function isBeforeBoundary(v){var d=cloneDate(v);return d.getHours()<BOUNDARY_HOUR;}
+window.PLANON_STUDY_DAY={boundaryHour:BOUNDARY_HOUR,date:date,key:key,tomorrowKey:tomorrowKey,isBeforeBoundary:isBeforeBoundary};
 })();

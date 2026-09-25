@@ -9,6 +9,18 @@ function modal(){return B.modal&&B.modal();}
 function todo(id){var s=state();return s&&Array.isArray(s.todos)?s.todos.find(function(x){return x.id===id;}):null;}
 function now(){return Date.now();}
 function dateKey(ts){try{var d=new Date(ts);return B.studyDayKey?B.studyDayKey(d):(window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.key(d):B.dkey(d));}catch(e){return '';}}
+function splitStudySegments(startMs,endMs){
+  startMs=Number(startMs||0);endMs=Number(endMs||0);if(!isFinite(startMs)||!isFinite(endMs)||endMs<=startMs)return [];
+  var out=[],cur=startMs,guard=0;
+  while(cur<endMs&&guard++<370){
+    var d=new Date(cur),sd=(window.PLANON_STUDY_DAY?window.PLANON_STUDY_DAY.date(d):d);
+    var boundary=new Date(sd.getFullYear(),sd.getMonth(),sd.getDate()+1,(window.PLANON_STUDY_DAY&&window.PLANON_STUDY_DAY.boundaryHour)||5,0,0,0).getTime();
+    var en=Math.min(endMs,boundary);
+    out.push({startAt:cur,endAt:en,date:dateKey(cur),sec:Math.max(1,Math.round((en-cur)/1000))});
+    cur=en;
+  }
+  return out;
+}
 function sessions(t){if(!t)return[];if(!Array.isArray(t.workSessions))t.workSessions=[];return t.workSessions;}
 function activeStart(t){var n=Number(t&&t.workStartedAt||0);return Number.isFinite(n)&&n>0?n:0;}
 function totalSec(t,includeActive){
@@ -32,7 +44,7 @@ function todaySec(t){
     var s=Number(x.sec);if(!Number.isFinite(s)||s<0)s=Math.max(0,Number(x.min||0)*60);
     sec+=s;
   });
-  var st=activeStart(t);if(st&&dateKey(st)===k)sec+=Math.max(0,Math.round((now()-st)/1000));
+  var st=activeStart(t);if(st)splitStudySegments(st,now()).forEach(function(seg){if(seg.date===k)sec+=seg.sec;});
   return Math.max(0,Math.round(sec));
 }
 function weekBounds(){
@@ -48,7 +60,7 @@ function sessionSec(x){
 function weekSec(t){
   if(!t)return 0;var w=weekBounds(),sec=0;
   sessions(t).forEach(function(x){var ts=Number(x&&x.startAt||0);if(!ts&&x&&x.date){try{ts=new Date(x.date+'T12:00:00').getTime();}catch(e){ts=0;}}if(ts>=w[0]&&ts<w[1])sec+=sessionSec(x);});
-  var st=activeStart(t);if(st>=w[0]&&st<w[1])sec+=Math.max(0,Math.round((now()-st)/1000));
+  var st=activeStart(t);if(st){splitStudySegments(st,now()).forEach(function(seg){if(seg.endAt>w[0]&&seg.startAt<w[1]){var a=Math.max(seg.startAt,w[0]),b=Math.min(seg.endAt,w[1]);if(b>a)sec+=Math.max(0,Math.round((b-a)/1000));}});}
   return Math.max(0,Math.round(sec));
 }
 function courseWeekSec(name){
@@ -82,7 +94,7 @@ function stop(t,silent){
   if(!t)return 0;
   var st=activeStart(t);if(!st)return 0;
   var en=now(),sec=Math.max(1,Math.round((en-st)/1000));
-  sessions(t).push({startAt:st,endAt:en,sec:sec,min:Math.floor(sec/60),date:dateKey(st)});
+  splitStudySegments(st,en).forEach(function(seg){sessions(t).push({startAt:seg.startAt,endAt:seg.endAt,sec:seg.sec,min:Math.floor(seg.sec/60),date:seg.date});});
   if(t.workSessions.length>500)t.workSessions=t.workSessions.slice(-500);
   t.workStartedAt=null;
   syncLegacy(t);

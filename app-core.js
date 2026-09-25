@@ -3761,13 +3761,24 @@ function tickFocus(){
   }
   el.textContent=fLabel(left);
 }
+function focusStudySegments(fromMs,toMs,totalMin){
+  var segs=[],cur=fromMs,left=Math.max(0,Math.round(totalMin)),guard=0;
+  while(cur<toMs&&guard++<370){
+    var d=new Date(cur),sd=studyDayDate(d),boundary=new Date(sd.getFullYear(),sd.getMonth(),sd.getDate()+1,(window.PLANON_STUDY_DAY&&window.PLANON_STUDY_DAY.boundaryHour)||5,0,0,0).getTime();
+    var en=Math.min(toMs,boundary),raw=(en-cur)/60000,segMin;
+    if(en>=toMs)segMin=left;else{segMin=Math.min(left,Math.max(0,Math.round(raw)));left-=segMin;}
+    segs.push({key:studyDayKey(new Date(cur)),from:new Date(cur),to:new Date(en),min:segMin});cur=en;
+  }
+  return segs.filter(function(x){return x.min>0;});
+}
 function addFocus(min){
-  if(min<1)return;
-  var k=todayKey(),now=new Date(),from=new Date(now.getTime()-min*60000);
-  if(dkey(from)!==k)from=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  S.focus[k]=(S.focus[k]||0)+min;
-  (S.fsess[k]=S.fsess[k]||[]).push({start:pad(from.getHours())+':'+pad(from.getMinutes()),end:pad(now.getHours())+':'+pad(now.getMinutes()),tid:F&&F.tid||null,min:min});
-  if(F&&F.tid){var t=S.todos.find(function(x){return x.id===F.tid;});if(t)t.focusMin=(t.focusMin||0)+min;}
+  min=Math.max(0,Math.round(Number(min)||0));if(min<1)return;
+  var now=new Date(),fromMs=now.getTime()-min*60000,segs=focusStudySegments(fromMs,now.getTime(),min),tid=F&&F.tid||null;
+  segs.forEach(function(seg){
+    S.focus[seg.key]=(S.focus[seg.key]||0)+seg.min;
+    (S.fsess[seg.key]=S.fsess[seg.key]||[]).push({start:pad(seg.from.getHours())+':'+pad(seg.from.getMinutes()),end:pad(seg.to.getHours())+':'+pad(seg.to.getMinutes()),tid:tid,min:seg.min});
+  });
+  if(tid){var t=S.todos.find(function(x){return x.id===tid;});if(t)t.focusMin=(t.focusMin||0)+min;}
   save();
 }
 var DDAY_CATS={couple:{label:'커플',icon:'♥'},exam:{label:'시험',icon:'✎'},birthday:{label:'생일',icon:'✦'},travel:{label:'여행',icon:'✈'},deadline:{label:'마감',icon:'!'},anniversary:{label:'기념일',icon:''},graduation:{label:'입학·졸업',icon:''},other:{label:'기타',icon:'—'}};
@@ -6979,23 +6990,26 @@ window.addEventListener('offline',function(){setSyncUI('local');try{inAppToast('
 window.addEventListener('online',function(){if(Sync.db){setSyncUI('saving');retrySync();}else setSyncUI('local');});
 document.addEventListener('visibilitychange',function(){
   if(document.hidden)flush();
-  else{updateNow();checkMorningBriefing();if(F&&M.type==='focus'){catchUp();tickFocus();}if(Sync.db&&!memoTimer&&!Sync.timer&&!Sync.busy)pull();if(Sync.kind==='supa'&&Sync.uid){friendRequestLoad();cheerDeliverDue();}}
+  else{syncStudyDayBoundary();updateNow();checkMorningBriefing();if(F&&M.type==='focus'){catchUp();tickFocus();}if(Sync.db&&!memoTimer&&!Sync.timer&&!Sync.busy)pull();if(Sync.kind==='supa'&&Sync.uid){friendRequestLoad();cheerDeliverDue();}}
 });
 setInterval(updateNow,60000);
 setInterval(tickFocus,500);
 setInterval(checkReminders,60000);
 setInterval(checkMorningBriefing,60000);
 setInterval(function(){if(Sync.kind==='supa'&&Sync.uid)cheerDeliverDue();},60000);
-/* 공부 하루는 오전 5시에 바뀌어요. 자정에는 어제 기록을 그대로 유지하고, 5시에 새 하루로 넘어갑니다. */
+/* 공부 하루는 오전 5시에만 바뀌어요. 00:00~04:59는 여전히 전날 공부일입니다. */
 var lastStudyDayKey=todayKey();
-setInterval(function(){
+function syncStudyDayBoundary(){
   var nextKey=todayKey();
-  if(nextKey===lastStudyDayKey)return;
+  if(nextKey===lastStudyDayKey)return false;
   var prevKey=lastStudyDayKey;lastStudyDayKey=nextKey;
   if(dkey(U.date)===prevKey)U.date=parseKey(nextKey);
+  /* 미완료 할 일 이월도 공부일이 실제로 바뀐 이 순간에만 실행됩니다. */
   carryOver();pruneLetters();render(true);
   try{window.dispatchEvent(new CustomEvent('planon:studydaychange',{detail:{oldKey:prevKey,newKey:nextKey}}));}catch(e){}
-},30000);
+  return true;
+}
+setInterval(syncStudyDayBoundary,30000);
 setInterval(function(){if(Sync.db&&!document.hidden&&!Sync.busy&&!Sync.timer&&!memoTimer&&!M.type){pull();if(Sync.kind==='supa')friendLoad();}},45000);
 registerSW();
 if(typeof S!=='undefined'&&S.settings&&S.settings.friendNotify)registerSW();

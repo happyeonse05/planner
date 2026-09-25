@@ -3,6 +3,13 @@
 begin;
 create extension if not exists pgcrypto;
 
+create or replace function public.planon_study_date_kr()
+returns date language sql stable as $$
+  select ((now() at time zone 'Asia/Seoul') - interval '5 hours')::date;
+$$;
+revoke all on function public.planon_study_date_kr() from public;
+grant execute on function public.planon_study_date_kr() to authenticated;
+
 create table if not exists public.day_closings (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -15,6 +22,7 @@ create table if not exists public.day_closings (
   study_minutes integer check(study_minutes is null or study_minutes>=0),
   wake_time text,
   nemo_mood text check(nemo_mood is null or nemo_mood in ('basic','happy','proud','sad','gloomy','angry','sleepy')),
+  nemo_color text check(nemo_color is null or nemo_color ~ '^#[0-9A-Fa-f]{6}$'),
   comment text check(comment is null or char_length(comment)<=40),
   visibility text not null default 'private' check(visibility in ('friends','private')),
   created_at timestamptz not null default now(),
@@ -22,6 +30,7 @@ create table if not exists public.day_closings (
 );
 
 alter table public.day_closings add column if not exists nemo_mood text;
+alter table public.day_closings add column if not exists nemo_color text;
 
 create table if not exists public.story_reactions (
   id uuid primary key default gen_random_uuid(),
@@ -53,7 +62,7 @@ returns boolean language sql stable security definer set search_path=public as $
       and c.visibility='friends'
       and c.closed_at>now()-interval '24 hours'
       and public.planner_are_friends(viewer,c.user_id)
-      and public.planner_has_closed_day(viewer,c.date)
+      and public.planner_has_closed_day(viewer,public.planon_study_date_kr())
   );
 $$;
 revoke all on function public.planner_has_closed_day(uuid,date) from public;
@@ -77,7 +86,7 @@ create policy day_closings_friend_select on public.day_closings
     and visibility='friends'
     and closed_at>now()-interval '24 hours'
     and public.planner_are_friends(auth.uid(),user_id)
-    and public.planner_has_closed_day(auth.uid(),date)
+    and public.planner_has_closed_day(auth.uid(),public.planon_study_date_kr())
   );
 -- Intentionally no UPDATE/DELETE policy: posted cards are immutable.
 

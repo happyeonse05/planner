@@ -40,3 +40,16 @@ select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace wher
 select to_regclass('public.day_closings') as day_closings, to_regclass('public.story_reactions') as story_reactions;
 select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('planner_has_closed_day','planner_owns_closing','planner_can_view_closing') order by p.proname;
 select tablename,policyname,cmd from pg_policies where schemaname='public' and tablename in ('day_closings','story_reactions') order by tablename,policyname;
+
+-- 05:00 study-day verification
+select public.planon_study_date_kr() as current_study_date;
+select tablename,policyname,cmd,qual,with_check
+from pg_policies
+where schemaname='public'
+  and ((tablename='planner_friend_cheers' and policyname='cheers_insert_friend')
+    or (tablename='day_closings' and policyname='day_closings_friend_select'))
+order by tablename,policyname;
+select p.proname, pg_get_functiondef(p.oid)
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='public' and p.proname in ('planon_study_date_kr','planner_can_view_closing')
+order by p.proname;

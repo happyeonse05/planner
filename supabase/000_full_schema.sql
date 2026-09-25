@@ -146,6 +146,7 @@ create table if not exists public.day_closings (
   study_minutes integer check(study_minutes is null or study_minutes>=0),
   wake_time text,
   nemo_mood text check(nemo_mood is null or nemo_mood in ('basic','happy','proud','sad','gloomy','angry','sleepy')),
+  nemo_color text check(nemo_color is null or nemo_color ~ '^#[0-9A-Fa-f]{6}$'),
   comment text check(comment is null or char_length(comment)<=40),
   visibility text not null default 'private' check(visibility in ('friends','private')),
   created_at timestamptz not null default now(),
@@ -153,6 +154,7 @@ create table if not exists public.day_closings (
 );
 
 alter table public.day_closings add column if not exists nemo_mood text;
+alter table public.day_closings add column if not exists nemo_color text;
 create table if not exists public.story_reactions (
   id uuid primary key default gen_random_uuid(),
   closing_id uuid not null references public.day_closings(id) on delete cascade,
@@ -194,9 +196,12 @@ create index if not exists idx_story_reactions_closing on public.story_reactions
 create or replace function public.planner_are_friends(a uuid,b uuid) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.planner_friendships f where (f.user_a=a and f.user_b=b) or (f.user_a=b and f.user_b=a));$$;
 revoke all on function public.planner_are_friends(uuid,uuid) from public; grant execute on function public.planner_are_friends(uuid,uuid) to authenticated;
 
+create or replace function public.planon_study_date_kr() returns date language sql stable as $$select ((now() at time zone 'Asia/Seoul') - interval '5 hours')::date;$$;
+revoke all on function public.planon_study_date_kr() from public; grant execute on function public.planon_study_date_kr() to authenticated;
+
 create or replace function public.planner_has_closed_day(u uuid,d date) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.day_closings c where c.user_id=u and c.date=d);$$;
 create or replace function public.planner_owns_closing(u uuid,cid uuid) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.day_closings c where c.id=cid and c.user_id=u);$$;
-create or replace function public.planner_can_view_closing(viewer uuid,cid uuid) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.day_closings c where c.id=cid and c.user_id<>viewer and c.visibility='friends' and c.closed_at>now()-interval '24 hours' and public.planner_are_friends(viewer,c.user_id) and public.planner_has_closed_day(viewer,c.date));$$;
+create or replace function public.planner_can_view_closing(viewer uuid,cid uuid) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.day_closings c where c.id=cid and c.user_id<>viewer and c.visibility='friends' and c.closed_at>now()-interval '24 hours' and public.planner_are_friends(viewer,c.user_id) and public.planner_has_closed_day(viewer,public.planon_study_date_kr()));$$;
 revoke all on function public.planner_has_closed_day(uuid,date) from public; revoke all on function public.planner_owns_closing(uuid,uuid) from public; revoke all on function public.planner_can_view_closing(uuid,uuid) from public;
 grant execute on function public.planner_has_closed_day(uuid,date),public.planner_owns_closing(uuid,uuid),public.planner_can_view_closing(uuid,uuid) to authenticated;
 
@@ -249,7 +254,7 @@ create policy shared_write on public.planner_shared_appointments for all to auth
 create policy meet_links_owner on public.planner_meet_links for all to authenticated using(owner_id=auth.uid()) with check(owner_id=auth.uid());
 create policy meet_answers_owner_read on public.planner_meet_answers for select to authenticated using(exists(select 1 from public.planner_meet_links l where l.token=planner_meet_answers.token and l.owner_id=auth.uid()));
 -- cheers
-create policy cheers_insert_friend on public.planner_friend_cheers for insert to authenticated with check(auth.uid()=from_user and public.planner_are_friends(auth.uid(),to_user) and deliver_date=current_date+1);
+create policy cheers_insert_friend on public.planner_friend_cheers for insert to authenticated with check(auth.uid()=from_user and public.planner_are_friends(auth.uid(),to_user) and deliver_date=public.planon_study_date_kr()+1);
 create policy cheers_select_receiver on public.planner_friend_cheers for select to authenticated using(auth.uid()=to_user);
 create policy cheers_update_receiver on public.planner_friend_cheers for update to authenticated using(auth.uid()=to_user) with check(auth.uid()=to_user);
 -- safety
@@ -259,7 +264,7 @@ create policy reports_read_own on public.planner_user_reports for select to auth
 -- day closing stories
 create policy day_closings_owner_select on public.day_closings for select to authenticated using(user_id=auth.uid());
 create policy day_closings_owner_insert on public.day_closings for insert to authenticated with check(user_id=auth.uid());
-create policy day_closings_friend_select on public.day_closings for select to authenticated using(user_id<>auth.uid() and visibility='friends' and closed_at>now()-interval '24 hours' and public.planner_are_friends(auth.uid(),user_id) and public.planner_has_closed_day(auth.uid(),date));
+create policy day_closings_friend_select on public.day_closings for select to authenticated using(user_id<>auth.uid() and visibility='friends' and closed_at>now()-interval '24 hours' and public.planner_are_friends(auth.uid(),user_id) and public.planner_has_closed_day(auth.uid(),public.planon_study_date_kr()));
 create policy story_reactions_select on public.story_reactions for select to authenticated using(from_user_id=auth.uid() or public.planner_owns_closing(auth.uid(),closing_id));
 create policy story_reactions_insert on public.story_reactions for insert to authenticated with check(from_user_id=auth.uid() and public.planner_can_view_closing(auth.uid(),closing_id));
 

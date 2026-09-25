@@ -111,3 +111,14 @@
 #modal.open{
   z-index:10080 !important;
 }
+
+
+/* ===== Story: 오늘 한 일 직접 선택해서 카드에 올리기 ===== */
+.story-count-toggle{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:6px 0 10px;border:1px solid var(--line);border-radius:13px;background:var(--card);cursor:pointer}
+.story-count-toggle input{width:18px;height:18px;accent-color:var(--planner-color);flex:none}
+.story-count-toggle span{min-width:0}.story-count-toggle b,.story-count-toggle small{display:block}.story-count-toggle b{font-size:12px}.story-count-toggle small{margin-top:2px;color:var(--sub);font-size:10px}
+.story-picker-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 2px 6px}.story-picker-head b{font-size:12px}.story-picker-head small{font-size:10px;color:var(--sub)}
+.story-task-picker{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow:auto;padding:1px}.story-task-picker.empty{padding:11px;border-radius:12px;background:var(--soft);color:var(--sub);font-size:11px;max-height:none}
+.story-task-pick{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-align:left}.story-task-pick>i{width:20px;height:20px;border-radius:7px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;font-size:12px;font-weight:900}.story-task-pick.on{border-color:color-mix(in srgb,var(--planner-color) 76%,var(--line));background:color-mix(in srgb,var(--planner-color) 13%,var(--card))}.story-task-pick.on>i{background:var(--planner-color);border-color:var(--planner-color)}.story-task-pick>span{min-width:0;flex:1}.story-task-pick b,.story-task-pick small{display:block}.story-task-pick b{font-size:12px;white-space:normal;overflow-wrap:break-word}.story-task-pick small{margin-top:2px;color:var(--sub);font-size:10px}
+.story-card-highlights{margin-top:11px;padding:10px 11px;border-radius:14px;background:color-mix(in srgb,var(--story-accent) 9%,var(--soft))}.story-card-highlights>small{display:block;margin-bottom:5px;color:var(--sub);font-size:9px;font-weight:800}.story-card-highlights>div{display:flex;align-items:flex-start;gap:6px;margin-top:4px;min-width:0}.story-card-highlights i{font-style:normal;font-size:10px;font-weight:900;line-height:16px;flex:none}.story-card-highlights span{min-width:0;display:flex;align-items:baseline;gap:5px}.story-card-highlights b{font-size:10px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.story-card-highlights em{font-style:normal;color:var(--sub);font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
+@media(max-width:430px){.story-task-picker{max-height:155px}.story-card-highlights b{max-width:135px}}

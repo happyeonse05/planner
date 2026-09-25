@@ -1,0 +1,46 @@
+PLAN:ON 05:00 FULL QA REPORT · V2
+
+PASS 31 / 31
+
+PASS | JS syntax all modules
+PASS | index local app assets exist
+PASS | GitHub icons preserved externally | ZIP intentionally does not replace apple-touch-icon.png / icon-512.png
+PASS | service worker app shell assets exist
+PASS | PWA includes study-day.js
+PASS | 05:00 boundary module
+PASS | rollover only on study-day key change
+PASS | storage quota recovery
+PASS | today core max 3
+PASS | today letter duplicate suppressed
+PASS | course full name CSS override
+PASS | 00:00-04:59 sleepy logic
+PASS | sleepy bubbles top-left outside
+PASS | worklog uses study-day key
+PASS | focus time splits at 05:00
+PASS | mobile close-day pointerup
+PASS | story located in friends tab
+PASS | story locked until own close
+PASS | story true 24h query
+PASS | story latest one per friend
+PASS | story reaction one per user client guard
+PASS | weather header current only
+PASS | rain chip opens weather details
+PASS | market free basic colors = 5 | free themes=5
+PASS | dot backgrounds paid catalog items | dot products=21
+PASS | admin dynamic ownership
+PASS | SQL 05:00 helper
+PASS | cheer RLS uses study date
+PASS | story RLS 24h + current study day
+PASS | privacy.html exists
+PASS | background assets retained | count=18
+
+실기기/실서버에서만 최종 확인 가능한 항목:
+- iPhone Safari 실제 터치/화면 고정바
+- Supabase A/B 두 계정 RLS·동기화·친구 스토리·반응
+- 실제 위치 권한을 이용한 날씨 응답
+- GitHub Pages 배포 캐시
+
+SQL 상태:
+- 이미 RUN_THIS_5AM_STUDY_DAY.sql 또는 RUN_THIS_5AM_FINAL.sql을 실행했다면 이번 V2 검증 때문에 SQL을 다시 실행할 필요는 없음.
+- 05:00 패치를 아직 실행하지 않았다면 RUN_THIS_5AM_FINAL.sql을 1회 실행.
+- 스토리 테이블/RLS 자체도 아직 적용 전이라면 RUN_THIS_IN_SUPABASE_SQL_EDITOR.sql 전체를 실행.

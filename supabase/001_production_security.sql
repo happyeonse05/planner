@@ -309,6 +309,16 @@ $$;
 revoke all on function public.planner_are_friends(uuid, uuid) from public;
 grant execute on function public.planner_are_friends(uuid, uuid) to authenticated;
 
+create or replace function public.planon_study_date_kr()
+returns date
+language sql
+stable
+as $$
+  select ((now() at time zone 'Asia/Seoul') - interval '5 hours')::date;
+$$;
+revoke all on function public.planon_study_date_kr() from public;
+grant execute on function public.planon_study_date_kr() to authenticated;
+
 drop policy if exists cheers_insert_friend on public.planner_friend_cheers;
 create policy cheers_insert_friend
 on public.planner_friend_cheers
@@ -317,7 +327,7 @@ to authenticated
 with check (
   auth.uid() = from_user
   and public.planner_are_friends(auth.uid(), to_user)
-  and deliver_date = current_date + 1
+  and deliver_date = public.planon_study_date_kr() + 1
 );
 
 drop policy if exists cheers_select_receiver on public.planner_friend_cheers;
