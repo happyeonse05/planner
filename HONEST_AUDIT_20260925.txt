@@ -1,0 +1,30 @@
+PLAN:ON honest audit — 2026-09-25 21:24 KST hotfix
+
+이번 핫픽스에서 실제로 고친 회귀/누락:
+1) 일간 화면의 친구 스토리 DOM 감시가 자기 자신이 만든 DOM 변경을 다시 감지해 반복 갱신하던 문제 수정.
+   - 월간/주간/할 일/시간표 탭, 상단 +, 설정 버튼 클릭이 버벅이거나 먹지 않을 수 있던 원인 후보 제거.
+2) worklog DOM 감시도 자기 변경을 반복 감지하지 않도록 안정화.
+3) 상단 현재 날씨에서 미래 강수 시각(예: 22시 비 61%)을 표시하지 않도록 강제.
+   - 상단은 현재 날씨만 표시.
+   - '곧 비 · 강수확률' 칩은 유지하고 누르면 오늘 날씨 상세 모달을 연다.
+4) 할 일 과목명이 모바일에서 '경...'처럼 잘리지 않도록 전체 이름 표시/줄바꿈 허용.
+5) PWA 앱 셸에 today-core.css, day-story.css, day-story.js 추가.
+6) 중복 legacy exam-prep-auto switch case 제거.
+
+보존 확인(정적):
+- 월간/주간/일간/할 일/시간표 tab 액션 존재
+- + 일정(add-schedule), 설정(open-settings) 액션 존재
+- 친구 약속 잡기와 약속 후 추억 확인 액션 존재
+- 오늘의 핵심(core-toggle) 존재
+- 어제의 내가 남긴 말 오늘 중복 문구 없음
+- Planon Shop/Market 모듈 유지
+- day_closings/story_reactions SQL 및 RLS 파일 유지
+- 모든 JS node --check 통과
+
+아직 이 환경에서 100% 실서버 검증할 수 없는 것:
+- skku-planner 실제 Supabase에 SQL이 적용됐는지 여부
+- A/B 두 실제 계정의 친구 스토리/반응/동기화 end-to-end
+- 실제 결제/크리에이터 정산 (현재 의도대로 테스트 결제/확장 구조만 구현)
+
+Supabase:
+- 친구 스토리 기능을 쓰려면 RUN_THIS_IN_SUPABASE_SQL_EDITOR.sql 을 skku-planner SQL Editor에서 1회 실행해야 함.

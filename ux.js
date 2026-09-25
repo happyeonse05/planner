@@ -88,7 +88,7 @@ function decorateEmpties(){
     if(!(/남은 할 일이 없|아직 적은 일이 없|아직 수업이 없|이번 주 기록이 아직 없|이 주에 적은 일은 다 끝냈|기록 없음|아직 반복 할 일이 없/.test(text)))return;
     var mood=moodFor(text);
     el.dataset.uxDone='1';
-    el.innerHTML='<span class="ux-empty-wrap"><span class="ux-empty-text">'+esc(text)+'</span></span>'; /* 표정 없이 문구만 */
+    el.innerHTML='<span class="ux-empty-wrap"><span class="ux-face '+mood+'"><i class="ux-point"></i><i class="ux-mouth"></i></span><span class="ux-empty-text">'+esc(text)+'</span></span>';
   });
 }
 

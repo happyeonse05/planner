@@ -211,9 +211,10 @@
     afterRender:function(){
       if(!isTodayDay()){hide();return;}
       // weather.js가 먼저 캐시를 채울 수 있으므로 즉시 + 짧은 재확인.
+      suppressLegacyFutureRainTitle();
       refresh(false);
-      setTimeout(function(){refresh(false);},500);
-      setTimeout(function(){refresh(false);},1800);
+      setTimeout(function(){suppressLegacyFutureRainTitle();refresh(false);},500);
+      setTimeout(function(){suppressLegacyFutureRainTitle();refresh(false);},1800);
     },
     refresh:function(){return refresh(true);}
   };
@@ -224,6 +225,16 @@
     mo.observe(document.getElementById('modal'),{childList:true,subtree:true});
   }catch(e){}
 
+
+  function suppressLegacyFutureRainTitle(){
+    try{
+      document.querySelectorAll('#top .wx-title-weather').forEach(function(el){
+        var t=(el.textContent||'').replace(/\s+/g,' ').trim();
+        if(/^(?:\d{1,2}시(?:부터)?\s*비|\d{1,2}시\s*·?\s*비)/.test(t))el.remove();
+      });
+      if(window.PLANON_WEATHER&&typeof window.PLANON_WEATHER.renderInline==='function')window.PLANON_WEATHER.renderInline();
+    }catch(e){}
+  }
   function openWeatherDetails(){
     try{
       if(window.PLANON_WEATHER&&typeof window.PLANON_WEATHER.details==='function'){
@@ -239,7 +250,9 @@
     var target=e.target&&e.target.closest?e.target.closest('#planon-rain-chip'):null;
     if(!target)return;
     e.preventDefault();
-    openWeatherDetails();
+    if(!openWeatherDetails()&&window.PLANON_WEATHER&&typeof window.PLANON_WEATHER.refresh==='function'){
+      window.PLANON_WEATHER.refresh().then(function(){openWeatherDetails();});
+    }
   });
   document.addEventListener('keydown',function(e){
     if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='planon-rain-chip'){

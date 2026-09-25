@@ -1,0 +1,8 @@
+긴급 수정
+- 일간 화면 story/worklog MutationObserver 자기반복 제거: 월간/주간/할 일/시간표/+ / 설정 클릭 멈춤 회귀 수정
+- 상단 날씨에는 현재 날씨만 표시: 22시 비 같은 미래 강수 중복 제거
+- 곧 비 강수칩 클릭 시 오늘 날씨 상세 모달 연결 유지/보강
+- 할 일 과목명이 경...처럼 잘리지 않고 경제학 입문 전체 표시
+- 캐시 버전 갱신
+- PWA 오프라인 앱 셸에 today-core/day-story JS·CSS 추가
+- 중복된 legacy exam-prep-auto switch case 정리

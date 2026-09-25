@@ -1740,7 +1740,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .todo-course-week{font-size:10px}
 }
 
-/* 일간 시간 칩: 수업 이름(경제학입문 등)이 "경..."으로 잘리지 않게 — 이름은 통째로, 강의실·시간이 다음 줄로 */
-.hchip{flex-wrap:wrap;row-gap:1px}
-.hchip span{flex:0 0 auto;max-width:100%}
-.hchip small{min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== 2026-09-25 course name full display ===== */
+.todo-course-meta.ctag{width:100%!important;max-width:100%!important;flex-wrap:wrap!important;align-items:flex-start!important}
+.todo-course-name{max-width:100%!important;overflow:visible!important;text-overflow:clip!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:anywhere!important}
+@media(max-width:520px){.todo-course-name{max-width:100%!important}.todo-course-week{white-space:normal!important}}
