@@ -6769,6 +6769,38 @@ if(typeof S!=='undefined'&&S.settings&&S.settings.friendNotify)registerSW();
 var friendPollTick=0;
 setInterval(function(){if(Sync.kind!=='supa'||!Sync.uid)return;friendPollTick++;if(document.hidden&&friendPollTick%2)return;friendRequestLoad();},12000);
 
+/* ---------- 분리 파일 호환 브리지 ----------
+   nemo.js / recipes.js / selfchat.js는 원래 app core와 같은 스코프에서
+   S/U/M과 여러 helper를 보던 코드예요. 파일 분리 후에도 같은 상태를
+   보도록 연결합니다. */
+try{
+  Object.defineProperties(window,{
+    S:{configurable:true,get:function(){return S;},set:function(v){S=v;}},
+    U:{configurable:true,get:function(){return U;},set:function(v){U=v;}},
+    M:{configurable:true,get:function(){return M;},set:function(v){M=v;}}
+  });
+}catch(e){}
+window.$=$;
+window.esc=esc;
+window.uid=uid;
+window.bad=bad;
+window.armed=armed;
+window.save=save;
+window.render=render;
+window.openModal=openModal;
+window.closeModal=closeModal;
+window.inAppToast=inAppToast;
+window.dkey=dkey;
+window.pad=pad;
+window.dow=dow;
+window.mdTxt=mdTxt;
+window.courseNames=courseNames;
+window.shrinkImage=shrinkImage;
+window.diaryDateKey=diaryDateKey;
+window.DAYS=DAYS;
+window.refreshTaskAssign=refreshTaskAssign;
+window.bindTaskDrag=bindTaskDrag;
+
 /* ---------- UX 모듈 브리지 ---------- */
 window.PLANON_UX_BRIDGE={
   state:function(){return S;}, ui:function(){return U;}, modal:function(){return M;},
