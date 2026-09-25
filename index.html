@@ -1150,6 +1150,24 @@ body{word-break:keep-all;overflow-wrap:break-word}
 @media(max-width:430px){.home-quick-actions{justify-content:flex-start}.home-quick-actions .tbtn{font-size:13px}}
 
 /* ===== 네모 캐릭터 · 이름 기본 색 자동 연동 ===== */
+
+/* ===== 오늘 시간대별 강수 예보 ===== */
+#planon-rain-chip{
+  display:none;width:max-content;max-width:100%;
+  align-items:center;gap:6px;margin-top:6px;
+  padding:7px 11px;border-radius:999px;
+  background:color-mix(in srgb,var(--card) 90%,transparent);
+  border:1px solid color-mix(in srgb,var(--line) 85%,transparent);
+  color:var(--ink);font-size:12px;font-weight:750;
+  line-height:1.2;box-shadow:0 1px 2px rgba(0,0,0,.03)
+}
+#planon-rain-chip.on{display:inline-flex}
+#planon-rain-chip svg{width:15px;height:15px;flex:none;stroke:currentColor}
+#planon-rain-chip .rain-sub{color:var(--sub);font-weight:650}
+@media(max-width:390px){
+  #planon-rain-chip{font-size:11px;padding:6px 9px}
+}
+
 .nemo-home-head{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 10px;padding:2px 0 10px;border-bottom:1px solid var(--line);color:var(--ink)!important}
 .nemo-home-head .nemo-copy{min-width:0;display:block!important;flex:1}.nemo-home-head .nemo-copy b{display:block;font-size:14px}.nemo-home-head .nemo-copy small{display:block;margin-top:2px;color:var(--sub);font-size:11px;line-height:1.35}
 .nemo-char{display:block;flex:none;overflow:visible}.home .nemo-char{overflow:visible;max-width:none;white-space:normal}.nemo-char svg{display:block;width:100%;height:100%;overflow:visible}
@@ -4556,7 +4574,6 @@ function homeStrip(){
   var gapLine=gapHomeLine(k),stk=dayCloseStreak();
   var evening=hour>=17?'<div class="home-evening">'+(featOn('showDiary')?'<button data-act="open-diary">'+diaryTargetMinutes()+'분 일기</button><span></span>':'')+'<button data-act="open-day-close">'+(todayClose()?'하루 마감 완료':'하루 마감')+(stk>=2?' · '+stk+'일째':'')+'</button></div>':'';
   var main=nextCard+todo+gapLine+evening;
-  if(!main)main='<div class="home-empty-summary"><span class="mini-square"></span><span><b>오늘은 아직 비어 있어요</b><small>일정이나 할 일을 추가하면 여기서 바로 이어서 볼 수 있어요.</small></span></div>';
   var quick='<div class="home-quick-actions"><button class="tbtn" data-act="add-schedule" data-date="'+k+'">+ 일정</button><button class="tbtn" data-act="add-dd" data-date="'+k+'">D-day</button>'+(featOn('showDiary')?'<button class="tbtn" data-act="open-diary-library">일기</button>':'')+'</div>';
   var savedNemoMood=diaryMoodForDate(k),nemoMood=savedNemoMood||nemoMoodForToday(tot,dn,hour),nemoCopy=nemoHomeCopy(nemoMood,tot,dn,!!savedNemoMood);
   var nemo='<div class="nemo-home-head">'+nemoSVG(nemoMood,'nemo-home-char')+'<span class="nemo-copy"><b>'+esc(nemoCopy[0])+'</b><small>'+esc(nemoCopy[1])+'</small></span></div>';
@@ -6338,6 +6355,7 @@ function render(reset){
     },250);
   }  if(window.PLANON_UX&&typeof window.PLANON_UX.afterRender==='function'){try{window.PLANON_UX.afterRender();}catch(e){}}
   if(window.PLANON_WEATHER&&typeof window.PLANON_WEATHER.afterRender==='function'){try{window.PLANON_WEATHER.afterRender();}catch(e){}}
+  if(window.PLANON_RAIN&&typeof window.PLANON_RAIN.afterRender==='function'){try{window.PLANON_RAIN.afterRender();}catch(e){}}
 }
 
 
@@ -8208,5 +8226,205 @@ document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
 </script>
 <script src="ux.js"></script>
 <script src="weather.js"></script>
+
+<script>
+/* ===== 강수 시간 안내: 기존 weather.js의 현재 기온 표시를 보완해요 ===== */
+(function(){
+  'use strict';
+
+  var CACHE_KEY='planon.rain.forecast.v1';
+  var COORD_KEY='planon.rain.coords.v1';
+  var CACHE_MS=15*60*1000;
+  var pending=null;
+
+  function todayLocal(){
+    var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+day;
+  }
+  function isTodayDayView(){
+    try{
+      if(typeof U==='undefined'||U.tab!=='day'||!U.date)return false;
+      var d=U.date,n=new Date();
+      return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
+    }catch(e){return false;}
+  }
+  function timeLabel(iso){
+    var h=Number(String(iso||'').slice(11,13));
+    if(!isFinite(h))return '';
+    var ap=h<12?'오전':'오후',hh=h%12||12;
+    return ap+' '+hh+'시';
+  }
+  function umbrellaSVG(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+      '<path d="M4 12a8 8 0 0 1 16 0H4Z"/><path d="M12 4v13.5a2.5 2.5 0 0 0 5 0"/></svg>';
+  }
+  function ensureChip(){
+    if(!isTodayDayView())return null;
+    var ttl=document.querySelector('#top .ttl');
+    if(!ttl)return null;
+    var chip=document.getElementById('planon-rain-chip');
+    if(!chip){
+      chip=document.createElement('div');
+      chip.id='planon-rain-chip';
+      chip.setAttribute('aria-live','polite');
+      ttl.appendChild(chip);
+    }
+    return chip;
+  }
+  function hide(){
+    var chip=document.getElementById('planon-rain-chip');
+    if(chip)chip.classList.remove('on');
+  }
+  function appFallbackPoint(){
+    try{
+      if(typeof S!=='undefined'&&S.settings){
+        var home=(S.settings.homeStation||'').trim();
+        if(home&&typeof originPoint==='function'){
+          var p=originPoint(home);
+          if(p&&isFinite(p.lat)&&isFinite(p.lng))return {lat:+p.lat,lng:+p.lng,source:'home'};
+        }
+        var school=S.settings.school||'',camp=S.settings.schoolCampus||'';
+        if(school==='skku'){
+          if(String(camp).indexOf('수원')>=0)return {lat:37.3003,lng:126.9708,source:'campus'};
+          if(String(camp).indexOf('서울')>=0)return {lat:37.5882,lng:126.9936,source:'campus'};
+        }
+        var campusMap={
+          '수원':{lat:37.2636,lng:127.0286},'서울':{lat:37.5665,lng:126.9780},
+          '인천':{lat:37.4563,lng:126.7052},'대전':{lat:36.3504,lng:127.3845},
+          '부산':{lat:35.1796,lng:129.0756},'대구':{lat:35.8714,lng:128.6014},
+          '광주':{lat:35.1595,lng:126.8526},'울산':{lat:35.5384,lng:129.3114},
+          '천안':{lat:36.8151,lng:127.1139},'용인':{lat:37.2411,lng:127.1776},
+          '제주':{lat:33.4996,lng:126.5312}
+        };
+        for(var k in campusMap)if(String(camp).indexOf(k)>=0)return {lat:campusMap[k].lat,lng:campusMap[k].lng,source:'campus'};
+      }
+    }catch(e){}
+    return null;
+  }
+  function cachedCoords(){
+    try{
+      var x=JSON.parse(sessionStorage.getItem(COORD_KEY)||'null');
+      if(x&&isFinite(x.lat)&&isFinite(x.lng)&&Date.now()-x.at<60*60*1000)return x;
+    }catch(e){}
+    return null;
+  }
+  function rememberCoords(p){
+    try{sessionStorage.setItem(COORD_KEY,JSON.stringify({lat:p.lat,lng:p.lng,at:Date.now()}));}catch(e){}
+    return p;
+  }
+  function getCoords(){
+    var c=cachedCoords();
+    if(c)return Promise.resolve(c);
+    return new Promise(function(resolve){
+      var fallback=appFallbackPoint();
+      if(!navigator.geolocation){resolve(fallback);return;}
+      navigator.geolocation.getCurrentPosition(function(pos){
+        resolve(rememberCoords({lat:pos.coords.latitude,lng:pos.coords.longitude,source:'geo'}));
+      },function(){
+        resolve(fallback);
+      },{enableHighAccuracy:false,timeout:4500,maximumAge:30*60*1000});
+    });
+  }
+  function cacheRead(lat,lng){
+    try{
+      var x=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+      if(!x||!x.data||Date.now()-x.at>CACHE_MS)return null;
+      if(Math.abs(x.lat-lat)>.08||Math.abs(x.lng-lng)>.08)return null;
+      return x.data;
+    }catch(e){return null;}
+  }
+  function cacheWrite(lat,lng,data){
+    try{localStorage.setItem(CACHE_KEY,JSON.stringify({lat:lat,lng:lng,at:Date.now(),data:data}));}catch(e){}
+  }
+  function fetchForecast(p){
+    if(!p)return Promise.resolve(null);
+    var cached=cacheRead(p.lat,p.lng);
+    if(cached)return Promise.resolve(cached);
+    var url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(p.lat.toFixed(4))+
+      '&longitude='+encodeURIComponent(p.lng.toFixed(4))+
+      '&hourly=precipitation_probability,precipitation,rain,showers,weather_code'+
+      '&current=precipitation,rain,showers,weather_code'+
+      '&forecast_days=1&timezone=auto';
+    return fetch(url,{cache:'no-store'}).then(function(r){
+      if(!r.ok)throw new Error('weather '+r.status);
+      return r.json();
+    }).then(function(data){cacheWrite(p.lat,p.lng,data);return data;}).catch(function(){return null;});
+  }
+  function rainInfo(data){
+    if(!data||!data.hourly||!Array.isArray(data.hourly.time))return null;
+    var h=data.hourly,day=todayLocal(),now=new Date(),nowHour=now.getHours();
+    var probs=h.precipitation_probability||[],prec=h.precipitation||[],rain=h.rain||[],showers=h.showers||[],codes=h.weather_code||[];
+    var rows=[];
+    for(var i=0;i<h.time.length;i++){
+      var ts=String(h.time[i]||'');
+      if(ts.slice(0,10)!==day)continue;
+      var hr=Number(ts.slice(11,13));
+      if(hr<nowHour)continue;
+      var p=Number(probs[i]||0),mm=Number(prec[i]||0)+Number(rain[i]||0)+Number(showers[i]||0),code=Number(codes[i]||0);
+      rows.push({time:ts,hour:hr,p:p,mm:mm,code:code});
+    }
+    if(!rows.length)return null;
+
+    var currentWet=data.current&&(Number(data.current.precipitation||0)>0.05||Number(data.current.rain||0)>0.05||Number(data.current.showers||0)>0.05||Number(data.current.weather_code||0)>=51);
+    var cur=rows[0];
+    if(currentWet){
+      var cp=Math.max(cur?cur.p:0,0);
+      return {html:umbrellaSVG()+'<span>지금 비'+(cp?(' · 강수확률 '+Math.round(cp)+'%'):'')+'</span>',show:true};
+    }
+
+    // '언제부터'가 유용하도록 첫 35% 이상 시간을 찾되,
+    // 실제 강수량이 잡힌 시간은 확률이 조금 낮아도 포함해요.
+    var first=-1;
+    for(var j=0;j<rows.length;j++){
+      if(rows[j].p>=35||rows[j].mm>0.08||rows[j].code>=51){first=j;break;}
+    }
+    if(first<0)return null;
+
+    var end=first,maxP=rows[first].p;
+    for(var k=first+1;k<rows.length;k++){
+      if(rows[k].hour-rows[end].hour>1)break;
+      if(rows[k].p<25&&rows[k].mm<=0.03&&rows[k].code<51)break;
+      end=k;maxP=Math.max(maxP,rows[k].p);
+    }
+    // 시작 후 몇 시간의 더 높은 확률도 놓치지 않게 근처 4시간 안에서 최고값을 봐요.
+    for(var z=first;z<Math.min(rows.length,first+5);z++)maxP=Math.max(maxP,rows[z].p);
+
+    var label=timeLabel(rows[first].time);
+    return {
+      html:umbrellaSVG()+'<span>'+label+'부터 강수 <span class="rain-sub">· 최고 '+Math.round(maxP)+'%</span></span>',
+      show:true
+    };
+  }
+  function paint(data){
+    if(!isTodayDayView()){hide();return;}
+    var chip=ensureChip();if(!chip)return;
+    var info=rainInfo(data);
+    if(!info){chip.classList.remove('on');chip.innerHTML='';return;}
+    chip.innerHTML=info.html;chip.classList.add('on');
+  }
+  function refresh(force){
+    if(!isTodayDayView()){hide();return;}
+    if(pending&&!force)return pending;
+    pending=getCoords().then(fetchForecast).then(function(data){paint(data);return data;}).finally(function(){pending=null;});
+    return pending;
+  }
+
+  window.PLANON_RAIN={
+    afterRender:function(){
+      if(!isTodayDayView()){hide();return;}
+      ensureChip();
+      setTimeout(function(){refresh(false);},120);
+    },
+    refresh:function(){return refresh(true);}
+  };
+
+  // render()보다 이 스크립트가 늦게 로드되는 경우에도 첫 화면을 바로 채워요.
+  setTimeout(function(){try{window.PLANON_RAIN.afterRender();}catch(e){}},250);
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden)setTimeout(function(){refresh(false);},250);
+  });
+})();
+</script>
+
 </body>
 </html>
