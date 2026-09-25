@@ -230,6 +230,12 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
 .mini{flex:none;font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px;background:var(--soft);text-align:center}.mini.on{background:var(--planner-color);color:var(--planner-ink,#1c1c1e)}.mini:disabled{opacity:.48;cursor:not-allowed}
 .tododel{width:24px;height:24px;padding:0;border-radius:50%;font-size:16px;line-height:24px;color:var(--sub)}
 .empty{color:var(--sub);font-size:13px;padding:8px 2px}
+
+.todo-empty-plain{
+  list-style:none;padding:28px 2px 22px;text-align:center;
+  color:var(--sub);font-size:13px;
+}
+
 .bar{height:5px;border-radius:3px;background:var(--soft);overflow:hidden;margin:0 2px 4px}
 .bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
 .add{display:flex;gap:8px;margin-top:8px}
@@ -1154,10 +1160,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
 /* ===== 오늘 시간대별 강수 예보 ===== */
 #planon-rain-chip{
   display:none;width:max-content;max-width:100%;
-  align-items:center;gap:6px;margin-top:6px;
+  align-items:center;gap:6px;margin-top:7px;
   padding:7px 11px;border-radius:999px;
-  background:color-mix(in srgb,var(--card) 90%,transparent);
-  border:1px solid color-mix(in srgb,var(--line) 85%,transparent);
+  background:color-mix(in srgb,var(--planner-color) 28%,var(--card));
+  border:1px solid color-mix(in srgb,var(--planner-color) 55%,var(--line));
   color:var(--ink);font-size:12px;font-weight:750;
   line-height:1.2;box-shadow:0 1px 2px rgba(0,0,0,.03)
 }
@@ -4957,7 +4963,7 @@ function nemoSVG(mood,cls){
   }else if(m==='sleepy'){
     face='<path d="M27 40 L39 39" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><path d="M53 39 L65 40" fill="none" stroke="#5a4033" stroke-width="4.2" stroke-linecap="round"/><circle cx="46" cy="49" r="3.8" fill="none" stroke="#5a4033" stroke-width="3.8"/><circle cx="8" cy="41" r="2.6" fill="none" stroke="#b98e70" stroke-width="2.8"/><circle cx="8" cy="51" r="3.2" fill="none" stroke="#b98e70" stroke-width="2.8"/>';
   }else{
-    face='<circle cx="34" cy="37" r="3.6" fill="#5a4033"/><circle cx="58" cy="37" r="3.6" fill="#5a4033"/><path d="M41 47 Q46 53 51 47" fill="none" stroke="#5a4033" stroke-width="3.8" stroke-linecap="round"/>';
+    face='<ellipse cx="34" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/><ellipse cx="58" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/>';
   }
   return '<span class="nemo-char '+esc(cls)+'" aria-hidden="true"><svg viewBox="0 0 92 92" role="img" focusable="false">'+
     '<path d="M72 14 L85 7 Q89 6 88 11 L84 27 Z" fill="#f8ddb2" stroke="#b98e70" stroke-width="3" stroke-linejoin="round"/>'+
@@ -5224,7 +5230,8 @@ function topHTML(){
     t=plannerModeMeta().schedule;s=plannerMode()==='exam'?'반복되는 공부 블록 · 고정 공부 시간':plannerMode()==='other'?'반복되는 고정 일정':plannerMode()==='school'?'반복되는 수업 · 고정 일정':'매주 반복되는 강의 · 고정 일정';plus='add-block';
   }
   var jump=(U.tab==='month'||U.tab==='week'||U.tab==='day');
-  return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small>'+esc(s)+'</small>':'')+'</div>'+
+  var rainSlot=(U.tab==='day'&&today)?'<div id="planon-rain-chip" aria-live="polite"></div>':'';
+  return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small>'+esc(s)+'</small>':'')+rainSlot+'</div>'+
     (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>'+(U.tab==='day'?'<button class="tbtn navg top-focus-btn" data-act="focus-free" aria-label="집중 타이머">'+ICO_CLOCK+'집중</button>':''):'')+
     (plus?'<button class="ibtn plus navg" data-act="'+plus+'" aria-label="추가">+</button>':'')+
     modeSwitchButtonHTML()+bellBtnHTML().replace('class="ibtn bell"','class="ibtn bell icog"')+searchBtn.replace('class="ibtn"','class="ibtn icog"')+
@@ -5547,7 +5554,7 @@ function sideTodo(k,title){
   return '<section class="card"><div class="card-h"><h3>'+esc(title)+'</h3><span class="cnt">'+nOpen+' 남음 · '+nDone+' 완료</span></div>'+
     (tot?'<div class="bar"><i style="width:'+Math.round(nDone/tot*100)+'%"></i></div>':'')+
     '<div class="add" style="margin:4px 0 6px"><input data-draft="'+id+'" data-scope="day" data-key="'+k+'" placeholder="새 할 일 (예: 내일 3시 과제)" enterkeyhint="done" value="'+esc(U.drafts[id]||'')+'"><button data-act="add">추가</button></div>'+
-    '<ul class="todos">'+((openR.map(function(r){return rtLi(r,false);}).join('')+openT.map(function(t){return todoItem(t,{focus:k===todayKey(),today:true});}).join(''))||'<li class="empty">'+(nDone?'다 끝냈어요':'아직 적은 일이 없어요')+'</li>')+'</ul>'+
+    '<ul class="todos">'+((openR.map(function(r){return rtLi(r,false);}).join('')+openT.map(function(t){return todoItem(t,{focus:k===todayKey(),today:true});}).join(''))||'<li class="todo-empty-plain">'+(nDone?'다 끝냈어요':'아직 적은 일이 없어요')+'</li>')+'</ul>'+
     (nDone?'<div class="donelbl">완료됨</div><ul class="todos">'+doneR.map(function(r){return rtLi(r,true);}).join('')+doneT.map(function(t){return todoItem(t,{today:true});}).join('')+'</ul>':'')+
     '</section>';
 }
@@ -8228,201 +8235,227 @@ document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
 <script src="weather.js"></script>
 
 <script>
-/* ===== 강수 시간 안내: 기존 weather.js의 현재 기온 표시를 보완해요 ===== */
+/* ===== 강수확률 요약 v2: 강한 비 여부와 무관하게 확률 자체를 보여줘요 ===== */
 (function(){
   'use strict';
 
-  var CACHE_KEY='planon.rain.forecast.v1';
-  var COORD_KEY='planon.rain.coords.v1';
-  var CACHE_MS=15*60*1000;
+  var API_CACHE='planon.rain.forecast.v2';
   var pending=null;
 
-  function todayLocal(){
-    var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
-    return y+'-'+m+'-'+day;
-  }
-  function isTodayDayView(){
+  function isTodayDay(){
     try{
       if(typeof U==='undefined'||U.tab!=='day'||!U.date)return false;
-      var d=U.date,n=new Date();
-      return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
+      var a=U.date,b=new Date();
+      return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
     }catch(e){return false;}
+  }
+  function localDay(){
+    var d=new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   }
   function timeLabel(iso){
     var h=Number(String(iso||'').slice(11,13));
     if(!isFinite(h))return '';
-    var ap=h<12?'오전':'오후',hh=h%12||12;
-    return ap+' '+hh+'시';
+    return (h<12?'오전 ':'오후 ')+(h%12||12)+'시';
   }
-  function umbrellaSVG(){
-    return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
-      '<path d="M4 12a8 8 0 0 1 16 0H4Z"/><path d="M12 4v13.5a2.5 2.5 0 0 0 5 0"/></svg>';
+  function icon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 16 0H4Z"/><path d="M12 4v13.5a2.5 2.5 0 0 0 5 0"/></svg>';
   }
-  function ensureChip(){
-    if(!isTodayDayView())return null;
-    var ttl=document.querySelector('#top .ttl');
-    if(!ttl)return null;
-    var chip=document.getElementById('planon-rain-chip');
-    if(!chip){
-      chip=document.createElement('div');
-      chip.id='planon-rain-chip';
-      chip.setAttribute('aria-live','polite');
-      ttl.appendChild(chip);
-    }
-    return chip;
+  function chip(){
+    return document.getElementById('planon-rain-chip');
   }
   function hide(){
-    var chip=document.getElementById('planon-rain-chip');
-    if(chip)chip.classList.remove('on');
+    var el=chip();if(el){el.classList.remove('on');el.innerHTML='';}
   }
-  function appFallbackPoint(){
-    try{
-      if(typeof S!=='undefined'&&S.settings){
-        var home=(S.settings.homeStation||'').trim();
-        if(home&&typeof originPoint==='function'){
-          var p=originPoint(home);
-          if(p&&isFinite(p.lat)&&isFinite(p.lng))return {lat:+p.lat,lng:+p.lng,source:'home'};
-        }
-        var school=S.settings.school||'',camp=S.settings.schoolCampus||'';
-        if(school==='skku'){
-          if(String(camp).indexOf('수원')>=0)return {lat:37.3003,lng:126.9708,source:'campus'};
-          if(String(camp).indexOf('서울')>=0)return {lat:37.5882,lng:126.9936,source:'campus'};
-        }
-        var campusMap={
-          '수원':{lat:37.2636,lng:127.0286},'서울':{lat:37.5665,lng:126.9780},
-          '인천':{lat:37.4563,lng:126.7052},'대전':{lat:36.3504,lng:127.3845},
-          '부산':{lat:35.1796,lng:129.0756},'대구':{lat:35.8714,lng:128.6014},
-          '광주':{lat:35.1595,lng:126.8526},'울산':{lat:35.5384,lng:129.3114},
-          '천안':{lat:36.8151,lng:127.1139},'용인':{lat:37.2411,lng:127.1776},
-          '제주':{lat:33.4996,lng:126.5312}
-        };
-        for(var k in campusMap)if(String(camp).indexOf(k)>=0)return {lat:campusMap[k].lat,lng:campusMap[k].lng,source:'campus'};
+
+  function forecastObject(v,depth){
+    if(!v||depth>6)return null;
+    if(typeof v==='string'){
+      try{return forecastObject(JSON.parse(v),depth+1);}catch(e){return null;}
+    }
+    if(typeof v!=='object')return null;
+    if(v.hourly&&Array.isArray(v.hourly.time)&&Array.isArray(v.hourly.precipitation_probability))return v;
+    if(v.data){
+      var d=forecastObject(v.data,depth+1);if(d)return d;
+    }
+    if(v.forecast){
+      var f=forecastObject(v.forecast,depth+1);if(f)return f;
+    }
+    var keys=Object.keys(v);
+    for(var i=0;i<Math.min(keys.length,40);i++){
+      var r=forecastObject(v[keys[i]],depth+1);
+      if(r)return r;
+    }
+    return null;
+  }
+  function findWeatherJsCache(){
+    var stores=[];
+    try{stores.push(localStorage);}catch(e){}
+    try{stores.push(sessionStorage);}catch(e){}
+    for(var s=0;s<stores.length;s++){
+      var st=stores[s];
+      for(var i=0;i<st.length;i++){
+        try{
+          var k=st.key(i),raw=st.getItem(k);
+          if(!raw||raw.indexOf('precipitation_probability')<0)continue;
+          var o=forecastObject(raw,0);
+          if(o)return o;
+        }catch(e){}
       }
-    }catch(e){}
+    }
     return null;
   }
-  function cachedCoords(){
-    try{
-      var x=JSON.parse(sessionStorage.getItem(COORD_KEY)||'null');
-      if(x&&isFinite(x.lat)&&isFinite(x.lng)&&Date.now()-x.at<60*60*1000)return x;
-    }catch(e){}
-    return null;
-  }
-  function rememberCoords(p){
-    try{sessionStorage.setItem(COORD_KEY,JSON.stringify({lat:p.lat,lng:p.lng,at:Date.now()}));}catch(e){}
-    return p;
-  }
-  function getCoords(){
-    var c=cachedCoords();
-    if(c)return Promise.resolve(c);
-    return new Promise(function(resolve){
-      var fallback=appFallbackPoint();
-      if(!navigator.geolocation){resolve(fallback);return;}
-      navigator.geolocation.getCurrentPosition(function(pos){
-        resolve(rememberCoords({lat:pos.coords.latitude,lng:pos.coords.longitude,source:'geo'}));
-      },function(){
-        resolve(fallback);
-      },{enableHighAccuracy:false,timeout:4500,maximumAge:30*60*1000});
-    });
-  }
-  function cacheRead(lat,lng){
-    try{
-      var x=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
-      if(!x||!x.data||Date.now()-x.at>CACHE_MS)return null;
-      if(Math.abs(x.lat-lat)>.08||Math.abs(x.lng-lng)>.08)return null;
-      return x.data;
-    }catch(e){return null;}
-  }
-  function cacheWrite(lat,lng,data){
-    try{localStorage.setItem(CACHE_KEY,JSON.stringify({lat:lat,lng:lng,at:Date.now(),data:data}));}catch(e){}
-  }
-  function fetchForecast(p){
-    if(!p)return Promise.resolve(null);
-    var cached=cacheRead(p.lat,p.lng);
-    if(cached)return Promise.resolve(cached);
-    var url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(p.lat.toFixed(4))+
-      '&longitude='+encodeURIComponent(p.lng.toFixed(4))+
-      '&hourly=precipitation_probability,precipitation,rain,showers,weather_code'+
-      '&current=precipitation,rain,showers,weather_code'+
-      '&forecast_days=1&timezone=auto';
-    return fetch(url,{cache:'no-store'}).then(function(r){
-      if(!r.ok)throw new Error('weather '+r.status);
-      return r.json();
-    }).then(function(data){cacheWrite(p.lat,p.lng,data);return data;}).catch(function(){return null;});
-  }
-  function rainInfo(data){
-    if(!data||!data.hourly||!Array.isArray(data.hourly.time))return null;
-    var h=data.hourly,day=todayLocal(),now=new Date(),nowHour=now.getHours();
-    var probs=h.precipitation_probability||[],prec=h.precipitation||[],rain=h.rain||[],showers=h.showers||[],codes=h.weather_code||[];
-    var rows=[];
-    for(var i=0;i<h.time.length;i++){
-      var ts=String(h.time[i]||'');
+  function summary(data){
+    if(!data||!data.hourly)return null;
+    var h=data.hourly,times=h.time||[],probs=h.precipitation_probability||[];
+    var prec=h.precipitation||[],rain=h.rain||[],showers=h.showers||[];
+    var day=localDay(),now=new Date(),nowHour=now.getHours(),rows=[];
+    for(var i=0;i<times.length;i++){
+      var ts=String(times[i]||'');
       if(ts.slice(0,10)!==day)continue;
       var hr=Number(ts.slice(11,13));
       if(hr<nowHour)continue;
-      var p=Number(probs[i]||0),mm=Number(prec[i]||0)+Number(rain[i]||0)+Number(showers[i]||0),code=Number(codes[i]||0);
-      rows.push({time:ts,hour:hr,p:p,mm:mm,code:code});
+      rows.push({
+        time:ts,
+        hour:hr,
+        p:Number(probs[i]||0),
+        mm:Number(prec[i]||0)+Number(rain[i]||0)+Number(showers[i]||0)
+      });
     }
     if(!rows.length)return null;
 
-    var currentWet=data.current&&(Number(data.current.precipitation||0)>0.05||Number(data.current.rain||0)>0.05||Number(data.current.showers||0)>0.05||Number(data.current.weather_code||0)>=51);
-    var cur=rows[0];
-    if(currentWet){
-      var cp=Math.max(cur?cur.p:0,0);
-      return {html:umbrellaSVG()+'<span>지금 비'+(cp?(' · 강수확률 '+Math.round(cp)+'%'):'')+'</span>',show:true};
-    }
-
-    // '언제부터'가 유용하도록 첫 35% 이상 시간을 찾되,
-    // 실제 강수량이 잡힌 시간은 확률이 조금 낮아도 포함해요.
+    // 사용자가 원하는 건 "비가 올 가능성"이므로 40%부터 표시.
+    // 실제 강수량 예보가 있으면 확률이 조금 낮아도 표시.
     var first=-1;
     for(var j=0;j<rows.length;j++){
-      if(rows[j].p>=35||rows[j].mm>0.08||rows[j].code>=51){first=j;break;}
+      if(rows[j].p>=40||rows[j].mm>0.05){first=j;break;}
     }
     if(first<0)return null;
 
-    var end=first,maxP=rows[first].p;
+    var peak=rows[first].p,end=first;
     for(var k=first+1;k<rows.length;k++){
       if(rows[k].hour-rows[end].hour>1)break;
-      if(rows[k].p<25&&rows[k].mm<=0.03&&rows[k].code<51)break;
-      end=k;maxP=Math.max(maxP,rows[k].p);
+      if(rows[k].p<30&&rows[k].mm<=0.02)break;
+      end=k;peak=Math.max(peak,rows[k].p);
     }
-    // 시작 후 몇 시간의 더 높은 확률도 놓치지 않게 근처 4시간 안에서 최고값을 봐요.
-    for(var z=first;z<Math.min(rows.length,first+5);z++)maxP=Math.max(maxP,rows[z].p);
+    // 시작 후 4시간 내 최고 확률도 같이 반영.
+    for(var z=first;z<Math.min(rows.length,first+5);z++)peak=Math.max(peak,rows[z].p);
 
-    var label=timeLabel(rows[first].time);
     return {
-      html:umbrellaSVG()+'<span>'+label+'부터 강수 <span class="rain-sub">· 최고 '+Math.round(maxP)+'%</span></span>',
-      show:true
+      first: rows[first],
+      peak: Math.round(peak),
+      html: icon()+'<span><b>'+timeLabel(rows[first].time)+'부터 비</b><span class="rain-sub"> · 강수확률 '+Math.round(rows[first].p)+'%'+(peak>rows[first].p?' · 최고 '+Math.round(peak)+'%':'')+'</span></span>'
     };
   }
   function paint(data){
-    if(!isTodayDayView()){hide();return;}
-    var chip=ensureChip();if(!chip)return;
-    var info=rainInfo(data);
-    if(!info){chip.classList.remove('on');chip.innerHTML='';return;}
-    chip.innerHTML=info.html;chip.classList.add('on');
+    if(!isTodayDay()){hide();return false;}
+    var el=chip();if(!el)return false;
+    var s=summary(data);
+    if(!s){hide();return false;}
+    el.innerHTML=s.html;
+    el.classList.add('on');
+    return true;
   }
+
+  function cachedOwn(){
+    try{
+      var x=JSON.parse(localStorage.getItem(API_CACHE)||'null');
+      if(x&&x.data&&Date.now()-x.at<15*60*1000)return x.data;
+    }catch(e){}
+    return null;
+  }
+  function saveOwn(data){
+    try{localStorage.setItem(API_CACHE,JSON.stringify({at:Date.now(),data:data}));}catch(e){}
+  }
+
+  function coordsFromStorage(){
+    var stores=[];
+    try{stores.push(localStorage);}catch(e){}
+    try{stores.push(sessionStorage);}catch(e){}
+    var latKeys=['lat','latitude'],lngKeys=['lng','lon','longitude'];
+    function walk(v,depth){
+      if(!v||depth>5)return null;
+      if(typeof v==='string'){try{return walk(JSON.parse(v),depth+1);}catch(e){return null;}}
+      if(typeof v!=='object')return null;
+      var lat=null,lng=null;
+      for(var i=0;i<latKeys.length;i++)if(isFinite(Number(v[latKeys[i]])))lat=Number(v[latKeys[i]]);
+      for(var j=0;j<lngKeys.length;j++)if(isFinite(Number(v[lngKeys[j]])))lng=Number(v[lngKeys[j]]);
+      if(lat!=null&&lng!=null&&Math.abs(lat)<=90&&Math.abs(lng)<=180)return {lat:lat,lng:lng};
+      var ks=Object.keys(v);
+      for(var k=0;k<Math.min(ks.length,30);k++){var r=walk(v[ks[k]],depth+1);if(r)return r;}
+      return null;
+    }
+    for(var s=0;s<stores.length;s++){
+      for(var n=0;n<stores[s].length;n++){
+        try{
+          var r=walk(stores[s].getItem(stores[s].key(n)),0);
+          if(r)return r;
+        }catch(e){}
+      }
+    }
+    return null;
+  }
+  function fallbackCampus(){
+    try{
+      var c=(S&&S.settings&&S.settings.schoolCampus)||'';
+      if(/수원|자연과학/.test(c))return {lat:37.3003,lng:126.9708};
+      if(/서울|인문사회/.test(c))return {lat:37.5882,lng:126.9936};
+    }catch(e){}
+    return null;
+  }
+  function getCoords(){
+    var stored=coordsFromStorage();
+    if(stored)return Promise.resolve(stored);
+    return new Promise(function(resolve){
+      var fallback=fallbackCampus();
+      if(!navigator.geolocation){resolve(fallback);return;}
+      navigator.geolocation.getCurrentPosition(function(p){
+        resolve({lat:p.coords.latitude,lng:p.coords.longitude});
+      },function(){resolve(fallback);},{enableHighAccuracy:false,timeout:6000,maximumAge:30*60*1000});
+    });
+  }
+  function fetchForecast(p){
+    if(!p)return Promise.resolve(null);
+    var u='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(p.lat.toFixed(4))+
+      '&longitude='+encodeURIComponent(p.lng.toFixed(4))+
+      '&hourly=precipitation_probability,precipitation,rain,showers'+
+      '&forecast_days=1&timezone=auto';
+    return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();})
+      .then(function(d){saveOwn(d);return d;}).catch(function(){return null;});
+  }
+
   function refresh(force){
-    if(!isTodayDayView()){hide();return;}
-    if(pending&&!force)return pending;
-    pending=getCoords().then(fetchForecast).then(function(data){paint(data);return data;}).finally(function(){pending=null;});
+    if(!isTodayDay()){hide();return Promise.resolve(null);}
+    if(!force){
+      var fromWeather=findWeatherJsCache();
+      if(fromWeather&&paint(fromWeather))return Promise.resolve(fromWeather);
+      var own=cachedOwn();
+      if(own&&paint(own))return Promise.resolve(own);
+    }
+    if(pending)return pending;
+    pending=getCoords().then(fetchForecast).then(function(d){if(d)paint(d);return d;})
+      .finally(function(){pending=null;});
     return pending;
   }
 
   window.PLANON_RAIN={
     afterRender:function(){
-      if(!isTodayDayView()){hide();return;}
-      ensureChip();
-      setTimeout(function(){refresh(false);},120);
+      if(!isTodayDay()){hide();return;}
+      // weather.js가 먼저 캐시를 채울 수 있으므로 즉시 + 짧은 재확인.
+      refresh(false);
+      setTimeout(function(){refresh(false);},500);
+      setTimeout(function(){refresh(false);},1800);
     },
     refresh:function(){return refresh(true);}
   };
 
-  // render()보다 이 스크립트가 늦게 로드되는 경우에도 첫 화면을 바로 채워요.
+  // weather.js가 모달을 열면서 최신 예보를 저장하는 경우도 바로 반영.
+  try{
+    var mo=new MutationObserver(function(){if(isTodayDay())setTimeout(function(){refresh(false);},120);});
+    mo.observe(document.getElementById('modal'),{childList:true,subtree:true});
+  }catch(e){}
+
   setTimeout(function(){try{window.PLANON_RAIN.afterRender();}catch(e){}},250);
-  document.addEventListener('visibilitychange',function(){
-    if(!document.hidden)setTimeout(function(){refresh(false);},250);
-  });
 })();
 </script>
 
