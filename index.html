@@ -8341,10 +8341,12 @@ document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
     // 시작 후 4시간 내 최고 확률도 같이 반영.
     for(var z=first;z<Math.min(rows.length,first+5);z++)peak=Math.max(peak,rows[z].p);
 
+    var isNow=(first===0&&rows[first].hour===nowHour);
     return {
       first: rows[first],
       peak: Math.round(peak),
-      html: icon()+'<span><b>'+timeLabel(rows[first].time)+'부터 비</b><span class="rain-sub"> · 강수확률 '+Math.round(rows[first].p)+'%'+(peak>rows[first].p?' · 최고 '+Math.round(peak)+'%':'')+'</span></span>'
+      isNow:isNow,
+      html: icon()+'<span><b>'+(isNow?'지금부터 비':timeLabel(rows[first].time)+'부터 비')+'</b><span class="rain-sub"> · 강수확률 '+Math.round(rows[first].p)+'%'+(peak>rows[first].p?' · 최고 '+Math.round(peak)+'%':'')+'</span></span>'
     };
   }
   function paint(data){
@@ -8459,5 +8461,59 @@ document.addEventListener('dragend',function(){setTimeout(bindTaskDrag,0);});
 })();
 </script>
 
+<script>
+/* ===== 날씨 모달 강수 시작 시각 보정 ===== */
+(function(){
+  'use strict';
+  function hourRowsFromModal(modal){
+    if(!modal)return [];
+    var found={},nodes=modal.querySelectorAll('*');
+    for(var i=0;i<nodes.length;i++){
+      var el=nodes[i],t=(el.innerText||'').replace(/\s+/g,' ').trim();
+      if(!t||t.length>90)continue;
+      var hm=t.match(/^(\d{1,2})시\b/),pm=t.match(/비\s*(\d{1,3})%/);
+      if(!hm||!pm)continue;
+      var h=+hm[1],p=+pm[1];
+      if(h>=0&&h<=23&&p>=0&&p<=100)found[h]=Math.max(found[h]||0,p);
+    }
+    return Object.keys(found).map(function(h){return {hour:+h,p:found[h]};}).sort(function(a,b){return a.hour-b.hour;});
+  }
+  function smallestTextNode(modal){
+    var nodes=modal.querySelectorAll('*'),best=null;
+    for(var i=0;i<nodes.length;i++){
+      var t=(nodes[i].innerText||'').replace(/\s+/g,' ').trim();
+      if(!(/\d{1,2}시\s*[~～-]\s*\d{1,2}시/.test(t)&&/비\s*예상/.test(t)))continue;
+      if(!best||t.length<(best.innerText||'').length)best=nodes[i];
+    }
+    return best;
+  }
+  function patchWeatherModal(){
+    var modal=document.getElementById('modal');
+    if(!modal||!modal.classList.contains('open')||(modal.innerText||'').indexOf('오늘 날씨')<0)return;
+    var rows=hourRowsFromModal(modal);if(!rows.length)return;
+    var curHour=new Date().getHours(),current=null,first=null,peak=0;
+    rows.forEach(function(r){if(r.hour>=curHour){if(!current&&r.hour===curHour)current=r;if(!first&&r.p>=40)first=r;peak=Math.max(peak,r.p);}});
+    if(!first)return;
+    var currentHigh=current&&current.p>=40;
+    var msg=currentHigh?('지금부터 비 가능성 · 현재 '+current.p+'% · 최고 '+peak+'%'):(first.hour+'시부터 비 가능성 · '+first.p+'% · 최고 '+peak+'%');
+    var target=smallestTextNode(modal);
+    if(target)target.textContent=msg;
+    var top=document.getElementById('top');
+    if(top){
+      var els=top.querySelectorAll('button,span,div'),best=null;
+      for(var i=0;i<els.length;i++){
+        var tt=(els[i].innerText||'').replace(/\s+/g,' ').trim();
+        if(/^우산\s*챙기/.test(tt)&&(!best||tt.length<(best.innerText||'').length))best=els[i];
+      }
+      if(best)best.textContent=currentHigh?('☂ 지금 비 '+current.p+'%'):('☂ '+first.hour+'시부터 비 '+first.p+'%');
+    }
+  }
+  var queued=false;
+  function queuePatch(){if(queued)return;queued=true;setTimeout(function(){queued=false;try{patchWeatherModal();}catch(e){}},80);}
+  document.addEventListener('click',function(){setTimeout(queuePatch,120);},true);
+  try{var modal=document.getElementById('modal');if(modal)new MutationObserver(queuePatch).observe(modal,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});}catch(e){}
+  setTimeout(queuePatch,300);
+})();
+</script>
 </body>
 </html>
