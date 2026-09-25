@@ -3985,7 +3985,7 @@ function topHTML(){
     t=plannerModeMeta().schedule;s=plannerMode()==='exam'?'반복되는 공부 블록 · 고정 공부 시간':plannerMode()==='other'?'반복되는 고정 일정':plannerMode()==='school'?'반복되는 수업 · 고정 일정':'매주 반복되는 강의 · 고정 일정';plus='add-block';
   }
   var jump=(U.tab==='month'||U.tab==='week'||U.tab==='day');
-  var rainSlot=(U.tab==='day'&&today)?'<div id="planon-rain-chip" aria-live="polite"></div>':'';
+  var rainSlot=(U.tab==='day'&&today)?'<button type="button" id="planon-rain-chip" data-rain-details="1" aria-live="polite" aria-label="강수 예보 자세히 보기"></button>':'';
   return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small>'+esc(s)+'</small>':'')+rainSlot+'</div>'+
     (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>'+(U.tab==='day'?'<button class="tbtn navg top-focus-btn" data-act="focus-free" aria-label="집중 타이머">'+ICO_CLOCK+'집중</button>':''):'')+
     (plus?'<button class="ibtn plus navg" data-act="'+plus+'" aria-label="추가">+</button>':'')+

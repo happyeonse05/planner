@@ -1,0 +1,51 @@
+PLANON verification report — 2026-09-25
+
+1. JavaScript syntax
+- app-core.js: PASS
+- autoschedule.js: PASS
+- clock.js: PASS
+- config.js: PASS
+- nemo.js: PASS
+- portfolio-vault.js: PASS
+- private-tally.js: PASS
+- recipes.js: PASS
+- selfchat.js: PASS
+- sw.js: PASS
+- ux.js: PASS
+- weather-extra.js: PASS
+- weather.js: PASS
+
+2. Main UI action wiring
+- literal data-act controls: 326
+- matching switch handlers: 381
+- unhandled literal actions: 0
+
+3. Weather
+- rain summary chip is now a real button
+- click/tap opens the weather detail modal
+- if weather.js has no cache yet, it loads first and automatically reopens the full details
+- full details retain 10 hourly cards: time / weather icon / temperature / precipitation probability
+- refresh / close / toggle / details handlers: PASS
+
+4. Recent feature wiring
+- settings grouped: PASS
+- nemo moods: PASS
+- letter palette: PASS
+- cheer svg: PASS
+- dday custom icons: PASS
+- autoschedule: PASS
+- weather hourly: PASS
+- rain click: PASS
+- portfolio: PASS
+
+5. Packaging
+- modular JS/CSS references: present
+- backgrounds/: preserved
+- apple-touch-icon.png / icon-512.png / manifest.webmanifest are existing GitHub repo assets and are intentionally not recreated in this ZIP
+
+6. What cannot be proven by static verification
+- Supabase login / cross-device sync / friend request / appointment / cheer delivery need live production accounts and database policies for full end-to-end verification.
+- Their code paths were preserved; this pass verifies syntax and event wiring, not live backend state.
+
+7. Cleanup note
+- duplicate legacy switch label: exam-prep-auto x2. The current exam form uses the first implementation, so it is not blocking; it should be cleaned in a later refactor.

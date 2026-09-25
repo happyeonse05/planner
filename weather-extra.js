@@ -224,6 +224,30 @@
     mo.observe(document.getElementById('modal'),{childList:true,subtree:true});
   }catch(e){}
 
+  function openWeatherDetails(){
+    try{
+      if(window.PLANON_WEATHER&&typeof window.PLANON_WEATHER.details==='function'){
+        window.PLANON_WEATHER.details();
+        return true;
+      }
+      var fallback=document.querySelector('[data-wx-act="details"]');
+      if(fallback){fallback.click();return true;}
+    }catch(e){}
+    return false;
+  }
+  document.addEventListener('click',function(e){
+    var target=e.target&&e.target.closest?e.target.closest('#planon-rain-chip'):null;
+    if(!target)return;
+    e.preventDefault();
+    openWeatherDetails();
+  });
+  document.addEventListener('keydown',function(e){
+    if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='planon-rain-chip'){
+      e.preventDefault();
+      openWeatherDetails();
+    }
+  });
+
   setTimeout(function(){try{window.PLANON_RAIN.afterRender();}catch(e){}},250);
 })();
 

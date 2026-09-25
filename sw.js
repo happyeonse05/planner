@@ -1,4 +1,4 @@
-const PLANON_SW='20260925-1705';
+const PLANON_SW='20260925-1718';
 self.addEventListener('install',e=>{self.skipWaiting();});
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
