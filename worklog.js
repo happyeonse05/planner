@@ -52,7 +52,13 @@ function weekSec(t){
 }
 function courseWeekSec(name){
   var s=state();if(!s||!Array.isArray(s.todos)||!name)return 0;
-  return s.todos.filter(function(t){return String(t.course||'')===String(name);}).reduce(function(n,t){return n+weekSec(t);},0);
+  var mine=s.todos.filter(function(t){return String(t.course||'')===String(name);});
+  var sec=mine.reduce(function(n,t){return n+weekSec(t);},0);
+  /* 집중 타이머로 공부한 시간도 같은 과목에 합산 */
+  var ids={};mine.forEach(function(t){ids[t.id]=1;});
+  var w=weekBounds(),a=dateKey(w[0]),b=dateKey(w[1]-1);
+  Object.keys(s.fsess||{}).forEach(function(k){if(k<a||k>b)return;(s.fsess[k]||[]).forEach(function(x){if(x&&x.tid&&ids[x.tid])sec+=Number(x.min||0)*60;});});
+  return Math.max(0,Math.round(sec));
 }
 
 function fmt(sec){
@@ -111,11 +117,11 @@ function decorateRow(row){
   var id=row&&row.dataset&&row.dataset.tid,t=id&&todo(id);if(!t)return;
   var q=summary(t),txt=row.querySelector('.ttxt');
   var cm=row.querySelector('.todo-course-meta'),cw=cm&&cm.querySelector('.todo-course-week');
-  if(cw&&t.course){var ws=courseWeekSec(t.course),wt=ws?'이번 주 '+fmt(ws):'이번 주 0분';if(cw.textContent!==wt)cw.textContent=wt;}
+  if(cw&&t.course){var ws=courseWeekSec(t.course);cw.textContent=ws?'이번 주 '+fmt(ws):'이번 주 0분';}
   var tag=row.querySelector('.worklog-tag');
   if(q.short){
     if(!tag){tag=document.createElement('em');tag.className='worklog-tag';if(cm)cm.insertAdjacentElement('afterend',tag);else if(txt)txt.appendChild(tag);}
-    if(tag.textContent!==q.short)tag.textContent=q.short;tag.classList.toggle('active',q.active);
+    tag.textContent=q.short;tag.classList.toggle('active',q.active);
   }else if(tag)tag.remove();
 
   var btn=row.querySelector('.worklog-btn');
@@ -126,7 +132,7 @@ function decorateRow(row){
     if(focus)row.insertBefore(btn,focus);else if(del)row.insertBefore(btn,del);else if(grip)row.insertBefore(btn,grip);else row.appendChild(btn);
   }
   btn.dataset.workAction=q.active?'stop':'start';btn.dataset.workId=t.id;
-  var bt=q.active?'끝':'시작';if(btn.textContent!==bt)btn.textContent=bt;
+  btn.textContent=q.active?'끝':'시작';
   btn.classList.toggle('active',q.active);
   btn.setAttribute('aria-label',q.active?'작업 기록 끝내기':'작업 기록 시작');
   btn.title=q.active?('현재 '+fmt(Math.max(1,Math.round((now()-activeStart(t))/1000)))+' 기록 중'):'타이머 화면 없이 작업시간 기록';
@@ -154,7 +160,7 @@ function decorateCourseWeeks(){
   document.querySelectorAll('.course .cname[data-name]').forEach(function(b){
     var name=b.dataset.name||'',row=b.closest('.course');if(!row||!name)return;
     var host=row.querySelector('.course-week-study');if(!host){host=document.createElement('span');host.className='course-week-study';var cd=row.querySelector('.cd');if(cd)cd.insertAdjacentElement('afterend',host);else b.insertAdjacentElement('afterend',host);}
-    var sec=courseWeekSec(name),ht='이번 주 공부 '+fmt(sec);if(host.textContent!==ht)host.textContent=ht;
+    var sec=courseWeekSec(name);host.textContent='이번 주 공부 '+fmt(sec);
   });
 }
 function decorateAll(){
@@ -163,20 +169,11 @@ function decorateAll(){
   decorateModal();
 }
 
-var queued=false,mainObserver=null,modalObserver=null,watchTimer=null;
-function queue(){if(queued)return;queued=true;setTimeout(function(){queued=false;decorateAllSafe();},20);}
+var queued=false;
+function queue(){if(queued)return;queued=true;setTimeout(function(){queued=false;decorateAll();},20);}
 var main=document.getElementById('main'),mod=document.getElementById('modal');
-function watchWorklog(){
-  if(main&&mainObserver)mainObserver.observe(main,{childList:true,subtree:true});
-  if(mod&&modalObserver)modalObserver.observe(mod,{childList:true,subtree:true});
-}
-function decorateAllSafe(){
-  if(mainObserver)mainObserver.disconnect();if(modalObserver)modalObserver.disconnect();
-  decorateAll();clearTimeout(watchTimer);watchTimer=setTimeout(watchWorklog,0);
-}
-if(main){mainObserver=new MutationObserver(queue);}
-if(mod){modalObserver=new MutationObserver(queue);}
-watchWorklog();
+if(main)new MutationObserver(queue).observe(main,{childList:true,subtree:true});
+if(mod)new MutationObserver(queue).observe(mod,{childList:true,subtree:true});
 
 document.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('[data-work-action]');if(!b)return;
@@ -205,5 +202,5 @@ setInterval(function(){
 },15000);
 
 window.PLANON_WORKLOG={start:start,end:end,totalSec:totalSec,todaySec:todaySec,weekSec:weekSec,courseWeekSec:courseWeekSec,decorate:decorateAll};
-decorateAllSafe();
+decorateAll();
 })();

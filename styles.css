@@ -1740,8 +1740,33 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .todo-course-week{font-size:10px}
 }
 
+/* 일간 시간 칩: 수업 이름(경제학입문 등)이 "경..."으로 잘리지 않게 — 이름은 통째로, 강의실·시간이 다음 줄로 */
+.hchip{flex-wrap:wrap;row-gap:1px}
+.hchip span{flex:0 0 auto;max-width:100%}
+.hchip small{min-width:0;overflow:hidden;text-overflow:ellipsis}
 
-/* ===== 2026-09-25 course name full display ===== */
-.todo-course-meta.ctag{width:100%!important;max-width:100%!important;flex-wrap:wrap!important;align-items:flex-start!important}
-.todo-course-name{max-width:100%!important;overflow:visible!important;text-overflow:clip!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:anywhere!important}
-@media(max-width:520px){.todo-course-name{max-width:100%!important}.todo-course-week{white-space:normal!important}}
+/* 하단 탭 6개 (친구 탭 복구) */
+.nav{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:360px){.nav button{font-size:11.5px}}
+
+/* 할 일 과목 표시: 이름만 깔끔하게, 좁아도 이름이 사라지지 않게 */
+.todo-course-meta.ctag{width:auto;max-width:100%}
+.todo-course-name{max-width:100%!important;min-width:0;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:keep-all;overflow-wrap:break-word;line-height:1.3}
+.todo-course-week{display:none!important}
+
+/* 주간 돌아보기: 과목별 공부 시간 */
+.course-study{margin:4px 2px 12px}
+.course-study-list{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.course-study-row{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid var(--line);font-size:13px}
+.course-study-row:last-child{border-bottom:0}
+.course-study-row i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+.course-study-row span{flex:1;min-width:0;word-break:keep-all;overflow-wrap:break-word}
+.course-study-row b{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.course-study-row.zero b{color:var(--sub);font-weight:600}
+
+/* 네모 문구 깨짐: 버튼 줄이 옆자리를 반씩 뺏지 않게 + 글자 단위로 쪼개지지 않게 */
+.home-clean{flex-wrap:wrap}
+.home-clean>.home-main{flex:1 1 230px;min-width:0}
+.home-clean>.home-quick-actions{flex:0 0 auto;margin-left:auto}
+.nemo-home-head .nemo-copy{flex:1 1 auto;min-width:0}
+.nemo-home-head .nemo-copy b,.nemo-home-head .nemo-copy small{overflow-wrap:break-word!important;word-break:keep-all}

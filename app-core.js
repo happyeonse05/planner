@@ -1438,7 +1438,50 @@ function postMeetRowHTML(r,compact){
   var place=p.place||'장소 미정';
   return '<section class="postmeet'+(compact?' compact':'')+'"><b>'+esc([when,clock].filter(Boolean).join(' '))+'에 '+esc(place)+'에서 '+esc(who)+'님 만났어?</b><small>'+esc(p.what||'약속')+' · 맞다고 하면 바로 추억에 기록돼요.</small><div class="acts"><button class="b-save" data-act="postmeet-yes" data-id="'+esc(r.request_id)+'">응, 맞아</button><button class="b-ghost" data-act="postmeet-no" data-id="'+esc(r.request_id)+'">아니야</button></div></section>';
 }
-function postMeetNudgesHTML(){return pendingPostMeets().slice(0,3).map(function(r){return postMeetRowHTML(r);}).join('');}
+function postMeetNudgesHTML(){
+  var a=pendingPostMeets().slice(0,3).map(function(r){return postMeetRowHTML(r);});
+  var b=pendingLocalPostMeets().slice(0,Math.max(0,3-a.length)).map(localPostMeetRowHTML);
+  return a.concat(b).join('');
+}
+/* ----- 직접 입력한 약속도(연결된 친구 이름과 같으면) 끝나면 확인 → 추억 ----- */
+function localMeetFriend(ev){
+  if(!ev||ev.sharedRequestId||typeof FriendSync==='undefined'||!FriendSync.friends)return null;
+  if(ev.friendId){var byId=FriendSync.friends.find(function(f){return f.id===ev.friendId;});if(byId)return byId;}
+  var nm=String(ev.person||'').trim().replace(/님$/,'');if(!nm)return null;
+  return FriendSync.friends.find(function(f){return friendLabel(f).trim()===nm||String(f.name||'').trim()===nm||String(f.code||'')===nm;})||null;
+}
+function pendingLocalPostMeets(){
+  if(!Sync.uid||!FriendSync.loaded)return [];
+  var now=new Date(),tk=dkey(now),nm=now.getHours()*60+now.getMinutes(),from=dkey(addDays(now,-14));
+  return (S.events||[]).filter(function(ev){
+    if(!ev||ev.kind!=='appointment'||ev.sharedRequestId||ev.metAsked||!ev.date||!ev.start)return false;
+    var end=ev.end?toMin(ev.end):toMin(ev.start)+60;
+    if(ev.date<from||ev.date>tk||(ev.date===tk&&end>nm))return false;
+    return !!localMeetFriend(ev);
+  }).sort(function(a,b){return (a.date+a.start)<(b.date+b.start)?-1:1;});
+}
+function localPostMeetRowHTML(ev){
+  var f=localMeetFriend(ev),tk=todayKey();
+  var when=ev.date===tk?'오늘':mdTxt(parseKey(ev.date));
+  var clock=timeShort(ev.start)+(ev.end?'~'+timeShort(ev.end):'');
+  var place=ev.place||'장소 미정';
+  return '<section class="postmeet"><b>'+esc(when+' '+clock)+'에 '+esc(place)+'에서 '+esc(friendLabel(f))+'님 만났어?</b><small>'+esc(ev.what||'약속')+' · 맞다고 하면 바로 추억에 기록돼요.</small><div class="acts"><button class="b-save" data-act="postmeet-local-yes" data-id="'+esc(ev.id)+'">응, 맞아</button><button class="b-ghost" data-act="postmeet-local-no" data-id="'+esc(ev.id)+'">아니야</button></div></section>';
+}
+function postMeetLocalAnswer(id,yes){
+  var ev=(S.events||[]).find(function(x){return x.id===id;});if(!ev)return;
+  var f=localMeetFriend(ev);ev.metAsked=yes?'yes':'no';save();
+  if(!yes||!f){inAppToast(yes?'확인했어요':'안 만난 약속으로 표시했어요');softRender();return;}
+  var info=ev.placeInfo||(ev.place?placeInfoFromText(ev.place):null),lk={line:'약속',station:''};
+  try{if(info)lk=memoryLineOf(info);}catch(e){}
+  var ins={owner_id:Sync.uid,friend_id:f.id,line:lk.line||'약속',station:lk.station||'',visited_at:ev.date,place:'',what:ev.what||'함께한 약속'};
+  var local=Object.assign({id:'local-memory-'+uid(),created_at:new Date().toISOString()},ins);
+  var done=function(){inAppToast('확인했어요 · 바로 추억에 기록했어요');softRender();};
+  var keepLocal=function(){if(!Array.isArray(S.settings.friendMemories))S.settings.friendMemories=[];S.settings.friendMemories.push(local);if(!(FriendSync.memories||[]).some(function(m){return m.id===local.id;}))FriendSync.memories.push(local);save();done();};
+  var sb=friendDb();
+  if(!sb){keepLocal();return;}
+  sb.from('planner_friend_memories').insert(ins).select().single().then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);done();}).catch(keepLocal);
+}
+
 function ensureMemoryFromSharedNow(row){
   if(!row||!Sync.uid)return Promise.resolve(false);
   var rid=row.request_id,fid=sharedFriendOf(row);
@@ -4049,7 +4092,7 @@ function topHTML(){
 }
 function navHTML(){
   var scheduleLabel=plannerMode()==='exam'?'공부':(plannerMode()==='other'?'스케줄':'시간표');
-  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable',scheduleLabel]];
+  var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable',scheduleLabel],['friends','친구']];
   return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'">'+t[1]+dot+'</button>';}).join('');
 }
 function friendPendingCount(){
@@ -4066,7 +4109,7 @@ function viewFriends(){
 /* ---------- 할 일 컴포넌트 ---------- */
 function todoItem(t,o){
   o=o||{};
-  var courseMeta=(t.course&&!o.nocourse?'<span class="todo-course-meta ctag" data-course="'+esc(t.course)+'" style="--c:'+courseColor(t.course)+'"><span class="todo-course-name">'+esc(t.course)+'</span><span class="todo-course-week" aria-live="polite"></span></span>':'');
+  var courseMeta=(t.course&&!o.nocourse?'<span class="todo-course-meta ctag" data-course="'+esc(t.course)+'" style="--c:'+courseColor(t.course)+'"><span class="todo-course-name">'+esc(t.course)+'</span></span>':'');
   return '<li class="todo '+(t.done?'done':'')+'" data-tid="'+t.id+'">'+
     '<button class="chk" data-act="toggle" data-id="'+t.id+'" aria-label="완료 체크">✓</button>'+
     (o.coreToggle?'<button class="core-star '+(t.isCore?'on':'')+'" data-act="core-toggle" data-id="'+t.id+'" aria-label="오늘의 핵심 '+(t.isCore?'해제':'선택')+'">'+(t.isCore?'★':'☆')+'</button>':'')+
@@ -4328,6 +4371,23 @@ function printWeekly(){
 function weekFocusMinutes(mon){
   var sum=0;for(var i=0;i<7;i++){var k=dkey(addDays(mon,i));sum+=Number(S.focus[k]||0);}return sum;
 }
+/* ----- 과목별 이번 주 공부 시간 (집중 타이머 + 작업 기록) ----- */
+function courseStudyMinutes(mon){
+  var a=dkey(mon),b=dkey(addDays(mon,6)),map={},byId={},nowMs=Date.now();
+  (S.todos||[]).forEach(function(t){if(t&&t.course)byId[t.id]=t;});
+  Object.keys(S.fsess||{}).forEach(function(k){if(k<a||k>b)return;(S.fsess[k]||[]).forEach(function(x){var t=x&&x.tid&&byId[x.tid];if(t)map[t.course]=(map[t.course]||0)+Number(x.min||0);});});
+  Object.keys(byId).forEach(function(id){var t=byId[id];
+    (Array.isArray(t.workSessions)?t.workSessions:[]).forEach(function(x){if(!x)return;var k=x.date||(x.startAt?dkey(new Date(Number(x.startAt))):'');if(!k||k<a||k>b)return;var sec=Number(x.sec);if(!isFinite(sec)||sec<0)sec=Number(x.min||0)*60;map[t.course]=(map[t.course]||0)+sec/60;});
+    var st=Number(t.workStartedAt||0);if(st>0){var k2=dkey(new Date(st));if(k2>=a&&k2<=b)map[t.course]=(map[t.course]||0)+Math.max(0,(nowMs-st)/60000);}
+  });
+  var names=[];(S.classes||[]).forEach(function(c){if(c&&c.name&&names.indexOf(c.name)<0)names.push(c.name);});
+  Object.keys(map).forEach(function(n){if(names.indexOf(n)<0)names.push(n);});
+  return names.map(function(n){return {name:n,min:Math.round(map[n]||0)};}).sort(function(x,y){return y.min-x.min;});
+}
+function courseStudyHTML(mon){
+  var rows=courseStudyMinutes(mon);if(!rows.length)return '';
+  return '<div class="course-study"><span class="lbl">과목별 공부 시간</span><div class="course-study-list">'+rows.map(function(r){return '<div class="course-study-row'+(r.min?'':' zero')+'" style="--c:'+courseColor(r.name)+'"><i></i><span>'+esc(r.name)+'</span><b>'+(r.min?durLong(r.min):'0분')+'</b></div>';}).join('')+'</div></div>';
+}
 function reviewHTML(mon){
   if(S.settings.showWeeklyReview===false)return '';
   var thisMon=mondayOf(new Date()),today=dkey(new Date());
@@ -4343,7 +4403,7 @@ function reviewHTML(mon){
   var best=Object.keys(courseDone).sort(function(a,b){return courseDone[b]-courseDone[a];})[0]||'–';
   return '<section class="card"><div class="card-h"><h3>'+(dkey(mon)===dkey(thisMon)?'이번 주 돌아보기':'이 주 돌아보기')+'</h3><span class="cnt">반복 포함 '+dn+'/'+tot+'</span></div>'+
     '<div class="week-review-grid"><div><b>'+pct+'%</b><small>완료율</small></div><div><b>'+durLong(focus)+'</b><small>집중'+(deltaTxt?' · '+deltaTxt:'')+'</small></div><div><b>'+esc(best)+'</b><small>완료가 많은 과목</small></div></div>'+
-    (tot?'<div class="bar" style="margin:8px 2px 10px"><i style="width:'+pct+'%"></i></div>':'')+
+    (tot?'<div class="bar" style="margin:8px 2px 10px"><i style="width:'+pct+'%"></i></div>':'')+courseStudyHTML(mon)+
     '<span class="lbl">이번 주 한 줄 회고</span><textarea class="week-retro" data-weekretro="'+mk+'" maxlength="240" placeholder="잘한 점, 다음 주에 바꿀 점을 짧게 남겨보세요">'+esc(S.weeklyRetro[mk]||'')+'</textarea>'+
     (left.length?'<ul class="todos">'+left.map(function(t){return todoItem(t,{tag:true});}).join('')+'</ul>'+
       '<div class="acts"><button class="b-save" data-act="carry-over" data-mon="'+mk+'">못 한 일 '+left.length+'개 다음 주로 넘기기</button></div>'
@@ -4403,8 +4463,46 @@ function schoolInfoCard(){
   var checked=S.settings.schoolLastChecked?new Date(S.settings.schoolLastChecked):null,sub=checked?'마지막 확인 '+(checked.getMonth()+1)+'/'+checked.getDate()+' '+pad(checked.getHours())+':'+pad(checked.getMinutes()):'공식 사이트에서 최신 내용을 확인해요';
   if(!featOn('showSchoolLinks')||!S.settings.schoolConfigured)return ''; return '<section class="card school-info"><div class="card-h"><div class="school-name">'+esc(p.name)+'<small>'+esc(camp)+' 캠퍼스 · '+sub+'</small></div></div><div class="school-links">'+(links.length?links.slice(0,4).map(function(l){return '<button class="tbtn" data-act="school-link" data-url="'+esc(l.url)+'">'+esc(l.name)+'</button>';}).join(''):'<span class="empty">학교 정보를 설정에서 연결해보세요</span>')+'</div></section>';
 }
+/* ---------- 일간: 하루 마감 후 요약 화면 ---------- */
+function dayCloseCard(k){try{return window.PLANON_DAY_STORY&&typeof window.PLANON_DAY_STORY.closeFor==='function'?window.PLANON_DAY_STORY.closeFor(k):null;}catch(e){return null;}}
+function dayClosedMode(k){return !!dayCloseCard(k)&&U.dayFullView!==k;}
+function closedDayHTML(d){
+  var k=dkey(d),tk=todayKey(),c=dayCloseCard(k),st=dayCloseStats(k);
+  var saved=(typeof diaryMoodForDate==='function')?diaryMoodForDate(k):'';
+  var mood=saved||(st.total&&st.done>=st.total?'happy':(typeof nemoMoodForToday==='function'?nemoMoodForToday(st.total,st.done,k===tk?new Date().getHours():20):'basic'));
+  var copy=(typeof nemoHomeCopy==='function')?nemoHomeCopy(mood,st.total,st.done,!!saved):['오늘의 네모',''];
+  var face=(typeof nemoSVG==='function')?nemoSVG(mood,'closed-nemo'):'';
+  var hero='<section class="card closed-hero">'+face+'<div class="closed-hero-copy"><small>'+esc(mdTxt(d)+' '+DAYS[dow(d)]+'요일')+' · 마감 완료</small><b>'+esc(copy[0])+'</b><span>할 일 '+st.done+'/'+st.total+' 완료</span></div></section>';
+  var storyCard='';
+  try{if(c&&window.PLANON_DAY_STORY.cardHTML)storyCard='<button class="closed-story-card" data-story-act="view-date" data-date="'+k+'" aria-label="마감 카드 크게 보기">'+window.PLANON_DAY_STORY.cardHTML(c)+'</button>';}catch(e){}
+  var story='<section class="closed-story">'+storyCard+(k===tk?'<div id="closed-story-strip"></div>':'')+'</section>';
+  /* 시간별 한 일 */
+  var items=itemsFor(d).filter(function(it){return !it.skipped&&it.kind!=='todo';}),notes=S.hourNotes[k]||{},hrs={};
+  items.forEach(function(it){var h=Math.floor(it.start/60);(hrs[h]=hrs[h]||{items:[],note:''}).items.push(it);});
+  Object.keys(notes).forEach(function(h){if(String(notes[h]||'').trim())(hrs[h]=hrs[h]||{items:[],note:''}).note=String(notes[h]).trim();});
+  var hourRows=Object.keys(hrs).map(Number).sort(function(a,b){return a-b;}).map(function(h){var x=hrs[h];
+    return '<li class="closed-hour"><span class="closed-hour-t">'+h+':00</span><div class="closed-hour-b">'+
+      x.items.map(function(it){return '<span class="closed-hour-it" style="--c:'+it.color+'"><i></i>'+esc(it.name)+'<small>'+fmt(it.start)+(it.openEnd?'':'–'+fmt(it.end))+'</small></span>';}).join('')+
+      (x.note?'<p>'+esc(x.note)+'</p>':'')+'</div></li>';}).join('');
+  var hours='<section class="card closed-sec"><div class="card-h"><h3>시간별로 한 일</h3></div>'+(hourRows?'<ul class="closed-hours">'+hourRows+'</ul>':'<p class="closed-empty">시간별 기록이 없어요</p>')+'</section>';
+  /* 하려고 한 일 (한 건 선 긋기) */
+  var tds=sortTodos(S.todos.filter(function(t){return t.scope==='day'&&t.key===k;})),rts=routinesFor(d);
+  var planRows=rts.map(function(r){var dn=routineDone(r,k);return '<li class="'+(dn?'done':'')+'"><i></i><span>'+esc(r.text||r.name||'반복 할 일')+'</span></li>';}).join('')+
+    tds.map(function(t){return '<li class="'+(t.done?'done':'')+'"><i></i><span>'+esc(t.text)+'</span>'+(t.course?'<small>'+esc(t.course)+'</small>':'')+'</li>';}).join('');
+  var plans='<section class="card closed-sec"><div class="card-h"><h3>하려고 한 일</h3><span class="cnt">'+st.done+'/'+st.total+'</span></div>'+(planRows?'<ul class="closed-plans">'+planRows+'</ul>':'<p class="closed-empty">적어둔 할 일이 없었어요</p>')+'</section>';
+  /* 내일의 나에게 */
+  var letter='';
+  if(S.settings.letterOn){
+    if(k===tk)letter=letterCard(k);
+    else{var nx=S.letters[dkey(addDays(d,1))];if(nx&&nx.text)letter='<section class="card"><div class="card-h"><h3>다음 날의 나에게</h3></div><p class="lt-got">'+esc(nx.text)+'</p></section>';}
+  }
+  var tail='<div class="closed-actions"><button class="tbtn" data-act="day-full-view" data-date="'+k+'">기록 고치기 · 전체 보기</button></div>';
+  return '<div class="closed-day">'+hero+story+hours+plans+letter+tail+'</div>';
+}
 function viewDay(){
   var d=U.date,k=dkey(d),tk=dkey(new Date());
+  if(dayClosedMode(k))return closedDayHTML(d);
+  var backToClosed=dayCloseCard(k)?'<div class="closed-back"><button class="tbtn" data-act="day-closed-view">마감 요약으로 보기</button></div>':'';
   var memo=memoOf(k);
   var over=(k===tk)?S.todos.filter(function(t){return !t.done&&t.scope==='day'&&t.key<tk;}):[];
   var warn=over.length?'<section class="card warn"><div class="card-h"><h3>밀린 할 일 '+over.length+'개</h3><button class="tbtn" data-act="move-all-today">모두 오늘로</button></div><ul class="todos">'+
@@ -4413,7 +4511,7 @@ function viewDay(){
     '<section class="card s-memo" data-memo-drop="'+k+'"><div class="card-h"><h3>하루 메모</h3></div><textarea class="memo" data-memo="'+k+'" placeholder="기억할 것, 오늘 있었던 일">'+esc(memo.text)+'</textarea>'+
     memoPhotosHTML(k,memo.photos)+'<label class="tbtn memo-addphoto">사진 추가<input type="file" accept="image/*" multiple data-memophoto="'+k+'" hidden></label></section>':'')+
     (featOn('showLog')?'<div class="s-log">'+logCard(k)+'</div>':'')+'<div class="s-letter">'+letterCard(k)+'</div></div>';
-  return (k===tk?homeStrip()+schoolInfoCard():'')+'<div class="dayg">'+timelineHTML(d)+side+'</div>';
+  return backToClosed+(k===tk?homeStrip()+schoolInfoCard():'')+'<div class="dayg">'+timelineHTML(d)+side+'</div>';
 }
 
 /* ---------- 화면: 할 일 ---------- */
@@ -5137,9 +5235,10 @@ function render(reset){
   $('#top').innerHTML=topHTML();
   $('#top').classList.toggle('navtop',U.tab==='month'||U.tab==='week'||U.tab==='day');
   var v={month:viewMonth,week:viewWeek,day:viewDay,todo:viewTodo,ttable:viewTable,settings:viewSettings,friends:viewFriends}[U.tab]();
-  if(U.tab==='month'||U.tab==='week'||U.tab==='day')v=topBar()+v;
-  if(U.tab!=='settings'&&U.tab!=='ttable'&&U.tab!=='friends')v=letterBar()+v;
-  if(U.tab==='day')v=appointmentPrecheckHTML()+postMeetNudgesHTML()+memoryNudgeHTML()+v;
+  var closedDay=U.tab==='day'&&dayClosedMode(dkey(U.date));
+  if((U.tab==='month'||U.tab==='week'||U.tab==='day')&&!closedDay)v=topBar()+v;
+  if(U.tab==='day'&&!closedDay&&dkey(U.date)===todayKey())v=letterBar()+v; /* 오늘 일간에서만 한 번 */
+  if(U.tab==='day'){var nudges=appointmentPrecheckHTML()+postMeetNudgesHTML()+memoryNudgeHTML();v=closedDay?v+nudges:nudges+v;}
   if(Sync.kind==='supa'&&!Sync.uid&&Sync.ready&&U.tab!=='settings'&&lsGet('planner.loginNudge')!=='off')
     v='<section class="nudge"><span>로그인하면 아이폰·아이패드가 같은 플래너를 봐요</span><button class="tbtn plus" data-act="open-login">로그인</button><button class="lt-x" data-act="nudge-off" aria-label="닫기">✕</button></section>'+v;
   main.innerHTML=(storageOK?'':'<div class="note">이 브라우저에서는 저장이 막혀 있어요. 새로고침하면 내용이 사라질 수 있어요.</div>')+(Sync.loading?'<div class="note">계정 플래너 불러오는 중…</div>':'')+v;
@@ -6150,6 +6249,10 @@ function act(a,e){
     case 'candidate-final':finalizeCandidate(a.dataset.v);break;
     case 'postmeet-yes':postMeetAnswer(id,true);break;
     case 'postmeet-no':postMeetAnswer(id,false);break;
+    case 'day-full-view':U.dayFullView=a.dataset.date||dkey(U.date);render(true);break;
+    case 'day-closed-view':U.dayFullView='';render(true);break;
+    case 'postmeet-local-yes':postMeetLocalAnswer(id,true);break;
+    case 'postmeet-local-no':postMeetLocalAnswer(id,false);break;
     case 'appointment-counter':counterAppointment();break;
     case 'friend-notify':friendNotifyToggle();if(M.type==='notices')setTimeout(drawNotices,400);break;
     case 'open-notices':openNotices();break;
@@ -6207,6 +6310,7 @@ function act(a,e){
     case 'open-day-close':openDayClose();break;
     case 'save-day-close':saveDayClose();break;
     case 'exam-prep-auto':{var box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add'),course=$('#f-ecourse')?$('#f-ecourse').value:'',kind=M.kind||'시험',range=$('#f-erange-text')?$('#f-erange-text').value.trim():'',mats=$('#f-ematerials')?$('#f-ematerials').value.trim():'';var vals=[];if(range)vals.push(range+' 복습');else vals.push('시험 범위 확인');if(mats)vals.push(mats+' 정리');else vals.push('PPT·필기 정리');vals.push((course&&course!=='기타'?course+' ':'')+'핵심 내용 복습');vals.push('예상문제 풀기');vals.push(kind+' 전 최종 복습');var existing=[].slice.call(document.querySelectorAll('[data-prep-text]')).map(function(i){return i.value.trim();});vals.forEach(function(v){if(existing.indexOf(v)>=0)return;var rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(v)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);});break;}
+    case 'exam-prep-auto':{var rg=$('#f-prep-range')?$('#f-prep-range').value.trim():'',mt=$('#f-prep-material')?$('#f-prep-material').value.trim():'',box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add');if(box&&add){var vals=[];if(rg){rg.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 복습');});}if(mt){mt.split(/[,·/]/).map(function(v){return v.trim();}).filter(Boolean).forEach(function(v){vals.push(v+' 보기');});}vals.push('헷갈리는 부분 다시 보기','예상문제·연습문제 풀기','시험 전 최종 복습');var existing=Array.from(box.querySelectorAll('[data-prep-text]')).map(function(x){return x.value.trim();});vals.filter(function(v,i,a){return v&&a.indexOf(v)===i&&existing.indexOf(v)<0;}).forEach(function(v){var rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(v)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);});}break;}
     case 'exam-prep-add':{var pi=$('#f-prep-new'),pv=pi&&pi.value.trim();if(pv){var box=$('#exam-prep'),add=box&&box.querySelector('.exam-prep-add'),rid=uid(),lab=document.createElement('label');lab.className='exam-prep-row';lab.innerHTML='<input type="checkbox" data-prep-id="'+esc(rid)+'"><input type="text" data-prep-text="'+esc(rid)+'" value="'+esc(pv)+'"><button type="button" data-act="exam-prep-del" data-id="'+esc(rid)+'">×</button>';box.insertBefore(lab,add);pi.value='';}break;}
     case 'exam-prep-del':{var pr=a.closest('.exam-prep-row');if(pr)pr.remove();break;}
     case 'settings-home':U.settingsPage='';render();break;
