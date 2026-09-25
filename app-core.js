@@ -3187,7 +3187,7 @@ function letterBar(){
   if(!S.settings.letterOn)return '';
   var k=todayKey(),L=S.letters[k];
   if(!L||L.seen||!L.text)return '';
-  return '<section class="letter"><div class="lt-h"><span>어제의 내가 남긴 말</span><button class="lt-x" data-act="letter-seen" aria-label="오늘은 그만 보기">✕</button></div>'+
+  return '<section class="letter" style="border-left-color:var(--planner-color)!important"><div class="lt-h"><span>어제의 내가 남긴 말</span><button class="lt-x" data-act="letter-seen" aria-label="오늘은 그만 보기">✕</button></div>'+
     '<p>'+esc(L.text)+'</p></section>';
 }
 function letterCard(k){
@@ -4876,7 +4876,7 @@ function friendNotifyToggle(){
     else{S.settings.friendNotify=false;save();friendNote(pm==='denied'?'알림이 막혀 있어요. 브라우저(또는 아이폰 설정 → 알림)에서 이 사이트 알림을 허용해주세요':'알림 허용을 선택하지 않았어요');}
   }).catch(function(){friendNote('알림 권한을 요청하지 못했어요');});
 }
-function registerSW(){try{if(navigator.serviceWorker&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}}
+function registerSW(){try{if(navigator.serviceWorker&&location.protocol==='https:')navigator.serviceWorker.register('sw.js?v=20260925-1641',{updateViaCache:'none'}).then(function(r){try{r.update();}catch(e){}}).catch(function(){});}catch(e){}}
 function friendNotifyNudgeHTML(){
   if(S.settings.friendNotify||!notifySupported()||Notification.permission==='denied'||S.settings.friendNotifyAsked)return '';
   if(!FriendSync.friends.length&&!(FriendSync.invitesOut||[]).length)return '';

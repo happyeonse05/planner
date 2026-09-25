@@ -1675,3 +1675,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
   height:10px;
   vertical-align:middle;
 }
+
+/* ===== final letter accent fix 20260925-1641 ===== */
+section.letter{
+  border-left-color:var(--planner-color) !important;
+}

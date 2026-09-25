@@ -105,11 +105,14 @@
     for(var z=first;z<Math.min(rows.length,first+5);z++)peak=Math.max(peak,rows[z].p);
 
     var isNow=(first===0&&rows[first].hour===nowHour);
+    var cur=data.current||{},code=Number(cur.weather_code),nowRain=(Number(cur.rain||0)+Number(cur.showers||0)>0.01)||(code>=51&&code<=67)||(code>=80&&code<=82)||(code>=95&&code<=99);
+    var label=nowRain?'비 오는 중':(isNow?'곧 비':timeLabel(rows[first].time)+'부터 비');
     return {
       first: rows[first],
       peak: Math.round(peak),
       isNow:isNow,
-      html: icon()+'<span><b>'+(isNow?'지금부터 비':timeLabel(rows[first].time)+'부터 비')+'</b><span class="rain-sub"> · 강수확률 '+Math.round(rows[first].p)+'%'+(peak>rows[first].p?' · 최고 '+Math.round(peak)+'%':'')+'</span></span>'
+      nowRain:nowRain,
+      html: icon()+'<span><b>'+label+'</b><span class="rain-sub"> · 강수확률 '+Math.round(rows[first].p)+'%'+(peak>rows[first].p?' · 최고 '+Math.round(peak)+'%':'')+'</span></span>'
     };
   }
   function paint(data){
@@ -183,6 +186,7 @@
     if(!p)return Promise.resolve(null);
     var u='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(p.lat.toFixed(4))+
       '&longitude='+encodeURIComponent(p.lng.toFixed(4))+
+      '&current=weather_code,precipitation,rain,showers'+
       '&hourly=precipitation_probability,precipitation,rain,showers'+
       '&forecast_days=1&timezone=auto';
     return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();})
@@ -256,7 +260,7 @@
     rows.forEach(function(r){if(r.hour>=curHour){if(!current&&r.hour===curHour)current=r;if(!first&&r.p>=40)first=r;peak=Math.max(peak,r.p);}});
     if(!first)return;
     var currentHigh=current&&current.p>=40;
-    var msg=currentHigh?('지금부터 비 가능성 · 현재 '+current.p+'% · 최고 '+peak+'%'):(first.hour+'시부터 비 가능성 · '+first.p+'% · 최고 '+peak+'%');
+    var msg=currentHigh?('곧 비 · 현재 강수확률 '+current.p+'% · 최고 '+peak+'%'):(first.hour+'시부터 비 가능성 · '+first.p+'% · 최고 '+peak+'%');
     var target=smallestTextNode(modal);
     if(target)target.textContent=msg;
     var top=document.getElementById('top');
