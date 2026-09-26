@@ -5344,7 +5344,7 @@ function viewSettings(){
     '<div class="setrow"><span>'+esc(plannerModeMeta().schedule)+' 비우기<small>'+esc(blockWord)+'·고정 일정이 모두 지워져요</small></span><button class="tbtn" data-act="reset-classes">비우기</button></div></section>';
   var lastChat=S.selfchat.length?S.selfchat[S.selfchat.length-1]:null;
   var chatHTML='<section class="card"><button class="setrow chatrow" data-act="open-chat"><span>나와의 채팅<small>'+(lastChat?esc((lastChat.text||'사진').slice(0,30)):'떠오른 생각, 링크, 메모를 나한테 보내요')+'</small></span><span class="chev">›</span></button></section>';
-  var diaryShortcut='<section class="card diary-settings-card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>과거는 읽기 · 오늘은 쓰기 · 미래는 잠금</small></span><span class="chev">›</span></button>'+
+  var diaryShortcut='<section class="card diary-settings-card"><button class="setrow diary-library-shortcut" data-act="open-diary-library"><span>일기장<small>지난 날도 쓰기 · 오늘 기록 · 미래는 잠금</small></span><span class="chev">›</span></button>'+
       '<div class="setrow"><span>오늘의 일기 시간<small>일기 버튼과 타이머에 바로 반영돼요</small></span><div class="seg" style="margin:0">'+[5,10,20,30].map(function(n){return '<button data-act="set-diary-minutes" data-v="'+n+'" class="'+(diaryMinutes()===n?'on':'')+'">'+n+'분</button>';}).join('')+'</div></div></section>';
   /* 설정 첫 화면은 6개 기능 묶음만 보여주고, 세부 옵션은 카테고리 안에서 열어요. */
   var settingsPage=U.settingsPage||'';
