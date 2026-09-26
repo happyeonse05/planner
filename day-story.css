@@ -238,3 +238,5 @@
 .story-memory-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
 .story-memory-actions button{min-height:44px}
 @media(max-width:390px){.story-mood-picks{grid-template-columns:repeat(2,minmax(0,1fr))!important}.story-memory-actions{grid-template-columns:1fr}}
+
+.story-cheer-notes{display:grid;gap:7px;margin-top:10px}.story-cheer-notes>b{font-size:12px}.story-cheer-notes article{position:relative;padding:10px 12px;border-radius:14px;background:var(--soft);border:1px solid var(--line)}.story-cheer-notes article span{font-size:11px;font-weight:800}.story-cheer-notes article p{margin:4px 0 2px;font-size:12px;line-height:1.45;word-break:break-word}.story-cheer-notes article small{font-size:9px;color:var(--sub)}
