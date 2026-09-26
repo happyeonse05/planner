@@ -7,13 +7,13 @@ function save(){try{B.save&&B.save();}catch(e){}}
 function migrate(){
   var s=state();if(!s)return;s.settings=s.settings||{};
   if(![5,10,20,30].includes(Number(s.settings.diaryMinutes)))s.settings.diaryMinutes=10;
-  /* One-time correction requested for the 9/24 entry that belongs to 9/25.
-     Only move a 9/24 row when its actual finish timestamp is 9/25, so genuine 9/24 entries are untouched. */
+  /* 9/24→9/25 보정도 새벽 5시 공부일 경계를 지켜요.
+     9/25 05:00 이후에 끝난 기록만 9/25로 옮기고, 00:00~04:59 기록은 9/24에 남겨요. */
   if(!s.settings.fixDiary0925v1&&Array.isArray(s.diaries)){
     s.diaries.forEach(function(x){
       if(!x||String(x.date||x.studyDate)!=='2026-09-24'||!x.finishedAt)return;
       var d=new Date(Number(x.finishedAt));
-      if(d.getFullYear()===2026&&d.getMonth()===8&&d.getDate()===25){x.date='2026-09-25';x.studyDate='2026-09-25';x.calendarDateFixed=true;}
+      if(d.getFullYear()===2026&&d.getMonth()===8&&d.getDate()===25&&d.getHours()>=5){x.date='2026-09-25';x.studyDate='2026-09-25';}
     });
     s.settings.fixDiary0925v1=true;save();
   }
@@ -26,7 +26,7 @@ function migrate(){
   }
 }
 function clean(){
-  /* Writing view stays focused on today's entry; history remains available from diary library/settings. */
+  /* Writing view stays focused; past dates can also be opened from the diary library. */
   document.querySelectorAll('.diary-history').forEach(function(x){x.style.display='none';});
   /* Old monthly sky panel is superseded by BokBokBok capsule gacha. */
   document.querySelectorAll('section,article,.card,.mb-card').forEach(function(x){
