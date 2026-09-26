@@ -1,7 +1,13 @@
 /* PLAN:ON default Nemo UI refinement — 2026-09-27 */
 
 /* Five-tab Nemo navigation: 월간 / 주간 / 일간 / 시간표 / 친구 */
-#nav.nav>button.nemo-nav-tab{transition:background .16s ease,transform .16s ease}
+#nav.nav>button.nemo-nav-tab{
+  transition:background .16s ease,transform .16s ease;
+  min-width:0!important;
+  min-height:54px!important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
 #nav.nav>button.nemo-nav-tab .navico{width:29px!important;height:29px!important}
 #nav.nav>button.nemo-nav-tab .navico svg{width:29px!important;height:29px!important;overflow:visible}
 #nav.nav>button.nemo-nav-month.on{background:#fff0f5!important}
@@ -9,6 +15,15 @@
 #nav.nav>button.nemo-nav-day.on{background:#fff6df!important}
 #nav.nav>button.nemo-nav-ttable.on{background:#effaf5!important}
 #nav.nav>button.nemo-nav-friends.on{background:#f5f0ff!important}
+#nav.nav>button.nemo-nav-todo.on{background:#fff1f5!important}
+#nav.nav>button.nemo-nav-tab .navlabel{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:430px){
+  #nav.nav{gap:2px!important;padding-left:4px!important;padding-right:4px!important}
+  #nav.nav>button.nemo-nav-tab{padding:7px 0!important;min-height:52px!important}
+  #nav.nav>button.nemo-nav-tab .navico,
+  #nav.nav>button.nemo-nav-tab .navico svg{width:26px!important;height:26px!important}
+  #nav.nav>button.nemo-nav-tab .navlabel{font-size:10.5px!important;letter-spacing:-.03em}
+}
 #nav.nav>button.nemo-nav-tab.on .navlabel{color:var(--ink)!important;font-weight:850!important}
 
 /* End-of-day diary prompt. Uses the existing Nemo SVG system: no generated image asset. */
