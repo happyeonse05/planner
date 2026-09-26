@@ -6,5 +6,13 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
-  "description": "시간표, 일정, 할 일, 기록을 한곳에서 관리하는 개인 플래너"
+  "description": "시간표, 일정, 할 일, 기록을 한곳에서 관리하는 개인 플래너",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

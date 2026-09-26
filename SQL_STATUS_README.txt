@@ -1,13 +1,12 @@
 PLAN:ON SQL 안내
 
-이번 버전에서 새 SQL 1개가 필요합니다.
+1) 이미 RUN_THIS_5AM_STUDY_DAY.sql 또는 RUN_THIS_5AM_FINAL.sql을 Supabase에 실행했다면:
+   -> 이번 검증본 때문에 다시 실행할 SQL 없음.
 
-1) 기존 PLANON SQL을 이미 모두 적용한 사용자
-   -> RUN_THIS_LOCATION_PERMISSION.sql 을 Supabase SQL Editor에서 1회 실행하세요.
+2) 스토리/RLS는 적용했지만 05:00 공부일 패치는 아직이면:
+   -> RUN_THIS_5AM_FINAL.sql 1회 실행.
 
-2) 새 프로젝트를 처음 만드는 경우
-   -> supabase/000_full_schema.sql 최신본에 위치 권한 테이블까지 포함되어 있습니다.
+3) day_closings / story_reactions부터 아직 안 만들었다면:
+   -> RUN_THIS_IN_SUPABASE_SQL_EDITOR.sql 전체 실행.
 
-위치 권한 테이블은 GPS 좌표를 저장하지 않습니다.
-저장되는 값은 계정별 현재 위치 사용 동의 여부(enabled true/false)뿐입니다.
-브라우저/아이폰의 실제 위치 권한은 사용자가 직접 허용해야 하며 SQL로 강제로 허용할 수 없습니다.
+이번 V2의 추가 검증/클라이언트 수정은 DB 스키마 변경이 없어서 새 SQL 재작성은 필요하지 않습니다.

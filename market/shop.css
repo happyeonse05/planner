@@ -28,3 +28,6 @@
 .market-mb-sheet .market-buy{background:#FFE9A8!important;color:#5E4A18!important}
 .market-mb-sheet .market-apply{background:#EEE6F8!important;color:#6E5A98!important}
 .market-mb-sheet [data-market-preview]{background:#F7F3FB;color:#8E7BC8;border-radius:14px;min-height:44px}
+
+/* 기능팩 시너지 안내 */
+.pack-synergy{margin:10px 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--planner-color) 16%,var(--card));font-family:'Gowun Dodum',sans-serif}.pack-synergy small{display:block;font-size:9px;letter-spacing:.08em;color:var(--sub);font-weight:800}.pack-synergy b{display:block;margin-top:3px;font-size:12px;line-height:1.5}

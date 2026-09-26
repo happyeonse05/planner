@@ -346,7 +346,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
   --bg:#000000; --card:#111113; --ink:#f5f5f7; --sub:#8e8e93; --line:#242427; --soft:#1c1c1f;
   --accent:#f5f5f7; --accent-ink:#000000; --now:#ff6b6b; --edge:#2a2a2e; --hi:#18181b;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif;
+body{font-family:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
   background:var(--bg);letter-spacing:-.01em}
 h1,h3,.nm,.cname,.big,.tl-h b{font-weight:700;letter-spacing:-.025em}
 .top{padding:16px 16px 10px}
@@ -1163,11 +1163,11 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .nemo-home-head{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 10px;padding:2px 0 10px;border-bottom:1px solid var(--line);color:var(--ink)!important}
 .nemo-home-head .nemo-copy{min-width:0;display:block!important;flex:1}.nemo-home-head .nemo-copy b{display:block;font-size:14px}.nemo-home-head .nemo-copy small{display:block;margin-top:2px;color:var(--sub);font-size:11px;line-height:1.35}
 .nemo-char{display:block;flex:none;overflow:visible}.home .nemo-char{overflow:visible;max-width:none;white-space:normal}.nemo-char svg{display:block;width:100%;height:100%;overflow:visible}
-.nemo-home-char{width:52px;height:52px;flex:none}.nemo-settings-preview{display:flex;align-items:center;gap:12px;margin:-2px 0 12px;padding:11px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line)}
-.nemo-settings-preview .nemo-char{width:70px;height:70px}.nemo-settings-preview>div:last-child{min-width:0}.nemo-settings-preview b{display:block;font-size:13px}.nemo-settings-preview small{display:block;margin-top:3px;color:var(--sub);font-size:11px;line-height:1.45}
-.nemo-mood-samples{display:flex;gap:6px;margin-top:8px}.nemo-mood-sample{display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:10px;font-weight:700;color:var(--sub)}.nemo-mood-sample .nemo-char{width:22px;height:22px}
+.nemo-home-char{width:52px;height:52px;flex:none}.nemo-settings-preview{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:-2px 0 12px;padding:11px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line);overflow:hidden}
+.nemo-settings-head{display:flex;align-items:center;gap:12px;min-width:0}.nemo-settings-head>.nemo-char{width:70px;height:70px}.nemo-settings-copy{min-width:0;flex:1}.nemo-settings-preview b{display:block;font-size:13px}.nemo-settings-preview small{display:block;margin-top:3px;color:var(--sub);font-size:11px;line-height:1.45}
+.nemo-mood-samples{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin-top:10px}.nemo-mood-sample{min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:4px 5px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:10px;font-weight:700;color:var(--sub);white-space:nowrap}.nemo-mood-sample .nemo-char{width:22px;height:22px}
 .diary-mood-pick{margin:12px 0 6px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}.diary-mood-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:9px}.diary-mood-head b{font-size:13px}.diary-mood-head small{font-size:11px;color:var(--sub);text-align:right}.diary-mood-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.diary-mood-btn{min-width:0;padding:6px 2px 5px;border:1px solid transparent;border-radius:11px;background:var(--soft);text-align:center;color:var(--sub);font-size:9.5px;font-weight:750}.diary-mood-btn .nemo-char{width:34px;height:34px;margin:0 auto 2px}.diary-mood-btn.on{background:color-mix(in srgb,var(--planner-color) 28%,var(--card));border-color:var(--planner-color);color:var(--ink);box-shadow:0 0 0 1px color-mix(in srgb,var(--planner-color) 28%,transparent)}.diary-mood-auto{width:100%;margin-top:7px;height:32px;border-radius:10px;background:transparent;border:1px dashed var(--line);font-size:11px;font-weight:700;color:var(--sub);text-align:center}.diary-mood-auto.on{border-style:solid;border-color:var(--planner-color);background:color-mix(in srgb,var(--planner-color) 12%,var(--card));color:var(--ink)}.diary-saved-mood{display:flex;align-items:center;gap:7px;margin-top:9px;width:max-content;max-width:100%;padding:5px 9px 5px 5px;border-radius:999px;background:color-mix(in srgb,var(--planner-color) 18%,var(--soft));font-size:11px;font-weight:800;color:var(--ink)}.diary-saved-mood .nemo-char{width:28px;height:28px}@media(max-width:520px){.diary-mood-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.diary-mood-btn .nemo-char{width:32px;height:32px}}
-@media(max-width:380px){.nemo-home-char{width:46px;height:46px}.nemo-settings-preview .nemo-char{width:62px;height:62px}}
+@media(max-width:380px){.nemo-home-char{width:46px;height:46px}.nemo-settings-head>.nemo-char{width:62px;height:62px}.nemo-mood-samples{gap:5px}.nemo-mood-sample{padding:4px 3px;font-size:9.5px}.nemo-mood-sample .nemo-char{width:21px;height:21px}}
 /* ===== 레시피 노트 ===== */
 .recipe-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.recipe-head h3{margin:0;font-size:18px}.recipe-list{display:flex;flex-direction:column;gap:8px}.recipe-card{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:left}.recipe-card:active{background:var(--soft)}.recipe-card b{display:block;font-size:15px}.recipe-card small{display:block;margin-top:4px;color:var(--sub);font-size:12px;line-height:1.45}.recipe-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.recipe-meta span{padding:4px 8px;border-radius:999px;background:var(--soft);font-size:10px;font-weight:700;color:var(--sub)}.recipe-empty{padding:24px 8px;text-align:center;color:var(--sub);font-size:13px;line-height:1.6}.recipe-ta{display:block;width:100%;min-height:118px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:11px 12px;font:inherit;font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:10px}.recipe-ta:focus{outline:2px solid var(--accent);border-color:transparent}.recipe-help{margin:-3px 2px 10px;color:var(--sub);font-size:11px;line-height:1.45}
 
@@ -1746,9 +1746,16 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .hchip span{flex:0 0 auto;max-width:100%}
 .hchip small{min-width:0;overflow:hidden;text-overflow:ellipsis}
 
-/* 하단 탭 6개 (친구 탭 복구) */
-.nav{grid-template-columns:repeat(6,minmax(0,1fr))}
-@media (max-width:360px){.nav button{font-size:11.5px}}
+/* 하단 탭은 실제 표시 개수에 맞춰 app-core.js가 균등 배치 */
+.nav{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;min-width:0;overflow:hidden}
+.nav button{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 0 6px;touch-action:manipulation}
+.navico{width:22px;height:22px;display:grid;place-items:center;flex:none}
+.navico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.navlabel{display:block;font-size:11px;line-height:1.15;white-space:nowrap}
+.nav button.on .navico{transform:translateY(-1px)}
+.top{position:relative;z-index:12}
+.top button{position:relative;z-index:1;pointer-events:auto;touch-action:manipulation}
+@media (max-width:360px){.navlabel{font-size:10.5px}}
 
 /* 할 일 과목 표시: 이름만 깔끔하게, 좁아도 이름이 사라지지 않게 */
 .todo-course-meta.ctag{width:auto;max-width:100%}
@@ -1833,3 +1840,71 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .memory-photo-place small{font-size:12px;line-height:1.45;color:var(--sub,#8f8a84);word-break:keep-all}
 .appointment-memory-photo>em{display:block;margin-top:10px;text-align:right;font-style:normal;font-size:9px;letter-spacing:.08em;color:var(--sub,#8f8a84)}
 .memory-pair-mb,.memory-pair-nemo{display:flex;width:100%;height:100%;align-items:center;justify-content:center}
+
+/* ===== settings information architecture: 6 clear groups ===== */
+.settings-overview{padding-bottom:14px}
+.settings-flow{margin:10px 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--soft) 52%,var(--card))}
+.settings-flow-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:9px}.settings-flow-title b{font-size:14px}.settings-flow-title small{color:var(--sub);font-size:11px}
+.settings-flow-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.settings-flow-step{min-width:0;padding:9px 7px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center}.settings-flow-step b{display:block;font-size:11.5px;line-height:1.25}.settings-flow-step small{display:block;margin-top:4px;color:var(--sub);font-size:9.5px;line-height:1.35}.settings-flow-arrow{display:none}
+@media(max-width:430px){.settings-flow-steps{grid-template-columns:1fr 1fr}.settings-flow-step{padding:9px 8px}}
+
+.settings-hub-grid{display:grid;grid-template-columns:1fr;gap:9px;margin-top:12px}
+.settings-hub-card{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) 20px;align-items:center;gap:11px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px 12px;box-shadow:none;color:var(--ink);font:inherit;cursor:pointer}
+.settings-hub-card:active{transform:scale(.985);background:var(--soft)}
+.settings-hub-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--soft);border:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
+.settings-hub-icon svg{width:23px;height:23px;fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.settings-hub-copy{min-width:0;display:block}
+.settings-hub-copy b{display:block;font-size:14px;line-height:1.25}
+.settings-hub-copy small{display:block;margin-top:3px;color:var(--sub);font-size:11.5px;line-height:1.4}
+.settings-hub-copy em{display:inline-block;margin-top:6px;padding:3px 7px;border-radius:999px;background:var(--soft);color:var(--sub);font-size:10px;font-style:normal;font-weight:700}
+.settings-hub-card>.chev{font-size:22px;color:var(--sub);justify-self:end}
+.settings-feature-note{margin:8px 0 12px;padding:12px 13px;border:1px solid var(--line);background:var(--soft);border-radius:14px}
+.settings-feature-note b{display:block;font-size:13px}
+.settings-feature-note small{display:block;margin-top:4px;color:var(--sub);font-size:11.5px;line-height:1.55}
+.settings-feature-note.compact{margin:4px 0 8px}
+@media(min-width:560px){.settings-hub-grid{grid-template-columns:1fr 1fr}}
+
+/* 20260926 mobile nav/click safety */
+#nav.nav{width:100%;max-width:100%;min-width:0;overflow:hidden}
+#nav.nav button{min-width:0;max-width:100%;overflow:visible}
+body{overflow-x:hidden}
+main{max-width:100%;overflow-x:hidden}
+
+/* 20260926 iPhone top controls + five-tab bottom nav hardening */
+#nav.nav{
+  display:grid!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  grid-auto-flow:column;
+  gap:0!important;
+  padding:5px 8px calc(7px + env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+}
+#nav.nav>button{
+  width:100%!important;
+  min-width:0!important;
+  height:54px;
+  padding:5px 0 4px!important;
+  margin:0!important;
+  border-radius:12px;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  overflow:hidden!important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+#nav.nav .navico{display:grid!important;width:23px!important;height:23px!important;place-items:center!important;flex:none!important}
+#nav.nav .navico svg{display:block!important;width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.65!important}
+#nav.nav .navlabel{display:block!important;max-width:100%;font-size:10.5px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#top.top,#top.top button{pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent}
+#top.top{isolation:isolate;z-index:30!important}
+#top.top button{z-index:31!important}
+/* 시간표 배경화면 만들기 */
+.tt-maker-group{margin:18px 0}.tt-maker-group>b{display:block;margin-bottom:9px;font-size:15px}.tt-maker-seg{margin:0!important}.tt-maker-choices,.tt-maker-bg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tt-maker-choices button,.tt-maker-bg button{min-width:0;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px;text-align:left;font:inherit;color:var(--text)}.tt-maker-choices button.on,.tt-maker-bg button.on{outline:2px solid var(--planner-color);border-color:transparent}.tt-maker-choices button:disabled{opacity:.42}.tt-maker-choices span{display:block;font-weight:700}.tt-maker-choices small{display:block;margin-top:3px;color:var(--muted);font-size:11px}.tt-maker-bg button{display:flex;align-items:center;gap:8px}.tt-maker-bg i{width:24px;height:24px;border-radius:8px;border:1px solid var(--line);flex:0 0 auto}
+
+/* friend scheduling privacy */
+.privacy-availability-note{margin:8px 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);display:grid;gap:4px}.privacy-availability-note b{font-size:12px}.privacy-availability-note small{font-size:10px;color:var(--sub);line-height:1.5}
