@@ -1977,12 +1977,33 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 }
 
 
-/* 2026-09-26 final bottom navigation: compact, evenly spread, original pastel icons */
-.nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%!important;gap:0!important;padding:5px 4px calc(4px + env(safe-area-inset-bottom,0px))!important;background:var(--card)!important;border-top:1px solid var(--line)!important;overflow:hidden!important;flex:none!important}
-.nav>button{min-width:0!important;width:100%!important;margin:0!important;padding:3px 0 2px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:1px!important;border-radius:10px!important}
-.navico{width:28px!important;height:28px!important;display:grid!important;place-items:center!important;color:inherit!important}
-.navico svg{width:28px!important;height:28px!important;display:block!important;fill:initial;stroke:initial}
+
+/* 2026-09-26 iPhone nav: actual tab count, wider spacing, compact bottom area */
+:root{padding-bottom:0!important}
+#app{height:100dvh!important;min-height:100dvh!important}
+.nav{
+  display:grid!important;
+  grid-template-columns:repeat(var(--nav-count,5),minmax(0,1fr))!important;
+  width:100%!important;
+  min-width:0!important;
+  gap:0!important;
+  padding:5px 2px 6px!important;
+  background:var(--card)!important;
+  border-top:1px solid var(--line)!important;
+  overflow:hidden!important;
+  flex:none!important;
+}
+.nav>button{
+  min-width:0!important;width:100%!important;margin:0!important;
+  padding:3px 0 2px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:1px!important;border-radius:10px!important;
+}
+.navico{width:28px!important;height:28px!important;display:grid!important;place-items:center!important}
+.navico svg{width:28px!important;height:28px!important;display:block!important}
 .navlabel{font-size:11px!important;line-height:1.05!important;margin:0!important}
 .nav button.on{background:transparent!important;color:var(--ink)!important;font-weight:800!important}
 .nav button.on .navico{transform:none!important}
-@media(max-width:560px){body{padding-bottom:0!important}.nav{padding-left:2px!important;padding-right:2px!important}}
+@supports(padding:max(0px)){
+  .nav{padding-bottom:max(6px,calc(env(safe-area-inset-bottom,0px) - 18px))!important}
+}
