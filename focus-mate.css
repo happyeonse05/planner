@@ -109,3 +109,6 @@
 .fm2-back{display:grid;place-items:center;padding:0 0 3px;line-height:1;font-size:28px}
 .fm-pill{bottom:calc(158px + env(safe-area-inset-bottom,0px))}
 .fm-choose-grid.two{grid-template-columns:1fr 1fr}.fm-choose-grid.two .fm-choose-art{width:84px;height:84px}
+
+/* PLANON restore3 typography */
+#modal.fm2-on,#modal.fm2-on *,.fm-choose,.fm-choose *,.fm-pill,.fm-pill *{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif!important}
