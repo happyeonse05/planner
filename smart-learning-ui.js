@@ -26,14 +26,17 @@ function hideLegacyWhenOff(){
   });
 }
 
-function simplifySettings(){
-  var u=B.ui&&B.ui();
-  if(!u||u.tab!=='settings')return;
-  var sec=document.querySelector('.smart-settings');
-  if(!sec)return;
+function smartSettingsSummary(){
+  var p=prefs(),bits=[];
+  bits.push(p.enabled!==false?'켜짐':'꺼짐');
+  bits.push(+p.bufferPct===30?'여유 있게':+p.bufferPct===10?'빡빡하게':'보통');
+  return bits.join(' · ');
+}
+function smartSettingsModal(){
   var p=prefs(),undo=U(),last=undo&&undo.last&&undo.last();
-  sec.innerHTML=
-    '<div class="card-h"><h3>스마트 계획</h3><span class="cnt">간단 설정</span></div>'+
+  B.openModal(
+    '<h3>스마트 계획 설정</h3>'+
+    '<p class="hint">프로필에서는 설정 한 줄만 보여요. 세부 옵션은 여기에서만 바꿀 수 있어요.</p>'+
     '<div class="setrow"><span class="smart-setting-copy"><b>Smart Plan</b><small>자동 분할·재배치·마감 감지·지금 할 일 추천</small></span><button class="tbtn" data-learning-setting="enabled">'+(p.enabled!==false?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span class="smart-setting-copy"><b>계획 여유</b><small>빈 시간을 전부 공부로 채우지 않아요</small></span><select class="sel" data-learning-buffer>'+
       '<option value="30"'+(+p.bufferPct===30?' selected':'')+'>여유 있게</option>'+
@@ -41,10 +44,20 @@ function simplifySettings(){
       '<option value="10"'+(+p.bufferPct===10?' selected':'')+'>빡빡하게</option>'+
     '</select></div>'+
     '<div class="setrow"><span class="smart-setting-copy"><b>공부 일정 자동 이동</b><small>수업·시험·친구 약속은 자동으로 움직이지 않아요</small></span><button class="tbtn" data-learning-setting="autoMove">'+(p.autoMove!==false?'켜짐':'꺼짐')+'</button></div>'+
+    '<div class="setrow"><span class="smart-setting-copy"><b>자동 분할 최대 길이</b><small>긴 공부는 이 길이 안쪽으로 나눠 제안해요</small></span><select class="sel" data-learning-session><option value="60"'+(+p.maxSessionMin===60?' selected':'')+'>60분</option><option value="50"'+(+p.maxSessionMin===50?' selected':'')+'>50분</option><option value="40"'+(+p.maxSessionMin===40?' selected':'')+'>40분</option><option value="30"'+(+p.maxSessionMin===30?' selected':'')+'>30분</option></select></div>'+
     (last?'<button class="setrow smart-recent-undo" data-learning-act="undo"><span class="smart-setting-copy"><b>최근 자동 계획 변경</b><small>'+esc(last.changeReason||'자동 계획')+' · '+new Date(last.timestamp||Date.now()).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+'</small></span><span class="chev">되돌리기</span></button>':'')+
-    '<div class="smart-status">AI API 없이 규칙 기반으로 작동해요.</div>';
+    '<div class="smart-status">AI API 없이 규칙 기반으로 작동해요.</div>'+
+    '<div class="acts"><button class="b-save" data-learning-act="close-settings">완료</button></div>'
+  );
 }
-
+function simplifySettings(){
+  var u=B.ui&&B.ui();
+  if(!u||u.tab!=='settings')return;
+  var sec=document.querySelector('.smart-settings');
+  if(!sec)return;
+  var p=prefs();
+  sec.innerHTML='<button class="setrow chatrow" data-learning-act="open-settings"><span><b>스마트 계획 설정</b><small>'+esc(smartSettingsSummary())+' · 눌러서 세부 설정</small></span><span class="chev">›</span></button>';
+}
 function pendingMissed(){
   var q=Q();if(!q||!smartOn()||prefs().missedSuggestions===false)return [];
   return q.missed().filter(function(t){return !L.hasFailure(t)&&!L.isDismissed(t);});
@@ -163,10 +176,12 @@ document.addEventListener('click',function(e){
   if(a.dataset.learningSetting){
     var p=prefs(),k=a.dataset.learningSetting;
     p[k]=p[k]===false;
-    B.save();B.render(true);return;
+    B.save();smartSettingsModal();return;
   }
 
   var act=a.dataset.learningAct;
+  if(act==='open-settings'){smartSettingsModal();return;}
+  if(act==='close-settings'){B.closeModal();B.render(true);return;}
   if(act==='undo'){var un=U();if(un&&un.undo)un.undo();return;}
   if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p)q.preview(p);}return;}
   if(act==='buffer-relax'){prefs().bufferPct=30;suppressNudge('buffer');B.save();B.render(true);B.toast('자동 계획을 조금 더 여유 있게 잡을게요.');return;}
@@ -183,9 +198,14 @@ document.addEventListener('click',function(e){
 });
 
 document.addEventListener('change',function(e){
-  if(e.target&&e.target.matches('[data-learning-buffer]')){
+  if(!e.target)return;
+  if(e.target.matches('[data-learning-buffer]')){
     prefs().bufferPct=Number(e.target.value)||20;
-    B.save();B.render(true);
+    B.save();smartSettingsModal();return;
+  }
+  if(e.target.matches('[data-learning-session]')){
+    prefs().maxSessionMin=Math.max(30,Math.min(60,Number(e.target.value)||60));
+    B.save();smartSettingsModal();
   }
 });
 
