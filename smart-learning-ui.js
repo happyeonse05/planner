@@ -63,6 +63,7 @@ function reasonCard(){
     '<div class="smart-learning-meta"><b>오늘 못 한 이유가 있을까요?</b><small>'+(xs.length>1?'1/'+xs.length:'한 번 탭하면 끝')+'</small></div>'+
     '<small><strong>'+esc(t.text||'할 일')+'</strong> · 다음 계획을 더 현실적으로 잡는 데만 사용해요.</small>'+
     '<div class="smart-learning-reasons">'+buttons+'</div>'+
+    '<div class="smart-actions"><button type="button" class="tbtn" data-learning-act="replan-one" data-id="'+esc(t.id)+'">다시 잡기</button></div>'+
     '<button type="button" class="smart-learning-skip" data-learning-skip="'+esc(t.id)+'">건너뛰기</button>';
   var nowCard=document.querySelector('.smart-now');
   if(nowCard&&nowCard.parentNode)nowCard.insertAdjacentElement('afterend',card);
@@ -167,6 +168,7 @@ document.addEventListener('click',function(e){
 
   var act=a.dataset.learningAct;
   if(act==='undo'){var un=U();if(un&&un.undo)un.undo();return;}
+  if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p)q.preview(p);}return;}
   if(act==='buffer-relax'){prefs().bufferPct=30;suppressNudge('buffer');B.save();B.render(true);B.toast('자동 계획을 조금 더 여유 있게 잡을게요.');return;}
   if(act==='buffer-keep'){suppressNudge('buffer');B.render(true);return;}
   if(act==='short-block'){prefs().maxSessionMin=Math.max(30,Math.min(60,Number(a.dataset.min)||40));suppressNudge('short-block');B.save();B.render(true);B.toast('앞으로 자동 분할을 더 짧게 제안할게요.');return;}
