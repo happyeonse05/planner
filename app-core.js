@@ -2261,6 +2261,62 @@ function saveFriendMemory(){
   if(sb){sb.from('planner_friend_memories').insert(ins).select().single().then(function(r){if(r.error&&ins.photo&&/photo/i.test(r.error.message||'')){FriendSync.noMemPhoto=true;delete ins.photo;inAppToast(userMsg('사진은 지금 저장할 수 없어서 기록만 남겼어요','사진은 SQL 실행 후에 저장돼요. 기록은 남겼어요'));return sb.from('planner_friend_memories').insert(ins).select().single();}return r;}).then(function(r){if(r.error)throw r.error;FriendSync.memories.push(r.data);FriendSync.memoryError='';reset();inAppToast(done);}).catch(function(e){S.settings.friendMemories.push(row);save();FriendSync.memoryError=e&&e.message||'';reset();var msg=$('#memory-msg');if(msg)msg.textContent='이 기기에 먼저 저장했어요. 서버 권한이 복구되면 친구와도 공유돼요.';});}
   else{S.settings.friendMemories.push(row);save();FriendSync.memories.push(row);reset();inAppToast(done);}
 }
+
+/* ===== 친구 ID: 정확한 ID로 친구 추가 / 14일 2회 변경 ===== */
+var FriendIdSync={loaded:false,loading:false,handle:'',changesLeft:2,resetAt:'',error:''};
+function normalizeFriendId(v){return String(v||'').trim().toLowerCase().replace(/^@+/,'');}
+function validFriendId(v){return /^[a-z0-9][a-z0-9._]{2,14}[a-z0-9]$/.test(v)&&v.length>=4&&v.length<=16;}
+function friendIdStatusText(){
+  if(FriendIdSync.loading)return 'ID 정보를 불러오는 중…';
+  if(FriendIdSync.error)return FriendIdSync.error;
+  var n=Math.max(0,Number(FriendIdSync.changesLeft==null?2:FriendIdSync.changesLeft));
+  return FriendIdSync.handle?('@'+FriendIdSync.handle+' · 앞으로 14일 내 '+n+'회 변경 가능'):'아직 ID가 없어요 · 처음 설정은 변경 횟수에 포함하지 않아요';
+}
+function friendIdLoad(force){
+  if(!Sync.uid||!friendDb())return Promise.resolve(null);
+  if(FriendIdSync.loading||(!force&&FriendIdSync.loaded))return Promise.resolve(FriendIdSync);
+  FriendIdSync.loading=true;FriendIdSync.error='';
+  return friendDb().rpc('planner_my_user_id_info').then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};FriendIdSync.loaded=true;FriendIdSync.loading=false;FriendIdSync.handle=d.handle||'';FriendIdSync.changesLeft=Number(d.changes_left==null?2:d.changes_left);FriendIdSync.resetAt=d.reset_at||'';S.settings.friendUserId=FriendIdSync.handle;
+    if((U.tab==='settings'&&U.settingsPage==='profile')||U.tab==='friends')render(true);return FriendIdSync;
+  }).catch(function(e){FriendIdSync.loaded=true;FriendIdSync.loading=false;FriendIdSync.error=/planner_my_user_id_info|does not exist|schema cache/i.test(e&&e.message||'')?'ID 기능 서버 설정이 아직 필요해요':'ID 정보를 불러오지 못했어요';if((U.tab==='settings'&&U.settingsPage==='profile')||U.tab==='friends')render(true);return null;});
+}
+function friendIdError(e){
+  var s=String(e&&e.message||e||'');
+  if(/handle_taken/i.test(s))return '이미 사용 중인 ID예요';
+  if(/handle_reserved/i.test(s))return '최근 사용된 ID라 30일 뒤에 사용할 수 있어요';
+  if(/handle_change_limit/i.test(s))return 'ID는 14일 동안 최대 2번만 바꿀 수 있어요';
+  if(/invalid_handle/i.test(s))return 'ID는 영문 소문자·숫자·점·밑줄 4~16자로 만들어주세요';
+  if(/does not exist|schema cache|planner_set_user_id/i.test(s))return 'ID 기능 서버 설정이 아직 필요해요';
+  return 'ID를 저장하지 못했어요. 잠시 뒤 다시 시도해주세요';
+}
+function setFriendId(v){
+  v=normalizeFriendId(v);var msg=$('#friend-id-status');
+  if(!validFriendId(v)){if(msg)msg.textContent='영문 소문자·숫자·점·밑줄 4~16자로 입력해주세요';return;}
+  if(!Sync.uid||!friendDb()){if(msg)msg.textContent='로그인 후 ID를 만들 수 있어요';return;}
+  if(msg)msg.textContent='ID 확인 중…';
+  friendDb().rpc('planner_set_user_id',{h:v}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};FriendIdSync.loaded=true;FriendIdSync.handle=d.handle||v;FriendIdSync.changesLeft=Number(d.changes_left==null?2:d.changes_left);FriendIdSync.resetAt=d.reset_at||'';FriendIdSync.error='';S.settings.friendUserId=FriendIdSync.handle;save();inAppToast('@'+FriendIdSync.handle+'로 저장했어요');render(true);
+  }).catch(function(e){if(msg)msg.textContent=friendIdError(e);});
+}
+function friendInviteByUserId(to,label){
+  if(!to||to===Sync.uid){friendNote(to===Sync.uid?'내 ID는 친구로 추가할 수 없어요':'ID를 찾지 못했어요');return Promise.resolve(false);}
+  if(isBlockedUser(to)){friendNote('차단한 사용자는 친구로 추가할 수 없어요');return Promise.resolve(false);}
+  if(FriendSync.friends.some(function(f){return f.id===to;})){friendNote('이미 연결된 친구예요');return Promise.resolve(false);}
+  var back=(FriendSync.invitesIn||[]).find(function(x){return x.from_user===to;});if(back){friendInviteRespond(back.id,true);return Promise.resolve(true);}
+  return friendDb().from('planner_friend_invites').upsert({from_user:Sync.uid,to_user:to,status:'pending',created_at:new Date().toISOString(),responded_at:null},{onConflict:'from_user,to_user'}).then(function(x){
+    if(x.error)throw x.error;var el=$('#f-friend-id');if(el)el.value='';friendNote((label?'@'+label+'에게 ':'')+'친구 요청을 보냈어요. 상대가 수락하면 연결돼요');return friendInviteLoad().then(function(){return true;});
+  }).catch(function(e){friendNote(/block|policy|row-level security/i.test(e&&e.message||'')?'상대와 차단 상태이거나 요청을 보낼 수 없어요':friendSqlHint(e));return false;});
+}
+function friendAddById(v){
+  v=normalizeFriendId(v);if(!validFriendId(v)){friendNote('ID는 영문 소문자·숫자·점·밑줄 4~16자예요');return;}
+  if(!Sync.uid||!friendDb()){friendNote('먼저 로그인해주세요');return;}
+  friendNote('@'+v+' 찾는 중…');
+  friendDb().rpc('planner_resolve_user_id',{h:v}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||null,to=d&&d.user_id;if(!to){friendNote('해당 ID를 찾지 못했어요');return;}return friendInviteByUserId(to,d.handle||v);
+  }).catch(function(e){friendNote(/does not exist|schema cache|planner_resolve_user_id/i.test(e&&e.message||'')?'ID 친구추가 서버 설정이 아직 필요해요':'ID를 찾지 못했어요');});
+}
+
 function friendAdd(code){
   var sb=friendDb(),c=String(code||'').trim().toUpperCase();if(!sb){friendNote('먼저 로그인해주세요');return;}if(!/^[A-Z2-9]{8}$/.test(c)){friendNote('8자리 초대코드를 입력해주세요');return;}
   sb.from('planner_friend_codes').select('user_id').eq('code',c).maybeSingle().then(function(r){if(r.error)throw r.error;if(!r.data){friendNote('초대코드를 찾지 못했어요');return;}var to=r.data.user_id;if(to===Sync.uid){friendNote('내 초대코드는 입력할 수 없어요');return;}
@@ -4453,7 +4509,7 @@ function viewWeek(){
   var mon=mondayOf(U.date),n=S.settings.weekend?7:5;
   var dates=[];for(var i=0;i<n;i++)dates.push(addDays(mon,i));
   var wk0=dkey(mon),wk6=dkey(addDays(mon,n-1)),un=S.classes.filter(function(c){return c.day==null;}),unA=S.events.filter(function(e){return e.kind==='appointment'&&!e.start&&e.date>=wk0&&e.date<=wk6;});
-  return '<section class="card tt-card"><div class="card-h"><h3>시간표</h3><div class="tt-actions"><button class="tbtn" data-act="week-export">주간표 이미지</button><button class="tbtn" data-act="week-print">인쇄</button><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'주말 숨기기':'주말 보기')+'</button></div></div>'+ 
+  return '<section class="card tt-card"><div class="card-h"><h3>시간표</h3><div class="tt-actions"><button class="tbtn" data-act="week-export">배경화면·이미지</button><button class="tbtn" data-act="week-print">예쁘게 인쇄</button><button class="tbtn" data-act="toggle-weekend">'+(S.settings.weekend?'주말 숨기기':'주말 보기')+'</button></div></div>'+ 
     gridHTML(dates,{head:true})+'</section>'+ 
     (un.length?'<section class="card"><div class="card-h"><h3>시간 미정 수업</h3></div><div class="slots">'+
       un.map(function(c){return '<button class="slot c" style="--c:'+c.color+'" data-act="view-block" data-id="'+c.id+'>'+esc(c.name)+'</button>';}).join('')+'</div></section>':'')+
@@ -4530,6 +4586,150 @@ function exportWeeklyImage(){
     },'image/png');
   }catch(err){openModal('<h3>이미지 저장을 못 했어요</h3><p class="hint">인쇄 버튼을 이용하면 같은 주간표를 출력할 수 있어요.</p><div class="acts"><button class="b-save" data-act="close">확인</button></div>');}
 }
+
+/* ===== 주간 플래너 배경화면 · 인쇄 내보내기 v2 =====
+   - 폰 / iPad 세로·가로 / MacBook / A4 세로·가로 / A5
+   - 시간표형 / 할 일형 / 하이브리드형
+   - 현재 캐릭터(네모·먼별·먼돌) 빼꼼 장식 on/off
+*/
+var WEEK_EXPORT_DRAFT={device:'phone',layout:'hybrid',character:'auto',background:'current'};
+function weekExportSpec(k){
+  var m={
+    phone:{w:1290,h:2796,label:'폰 배경화면',paper:false,page:''},
+    ipadp:{w:2048,h:2732,label:'iPad 세로',paper:false,page:''},
+    ipadl:{w:2732,h:2048,label:'iPad 가로',paper:false,page:''},
+    mac:{w:2560,h:1600,label:'MacBook 16:10',paper:false,page:''},
+    a4p:{w:2480,h:3508,label:'A4 세로',paper:true,page:'A4 portrait'},
+    a4l:{w:3508,h:2480,label:'A4 가로',paper:true,page:'A4 landscape'},
+    a5p:{w:1748,h:2480,label:'A5 세로',paper:true,page:'A5 portrait'}
+  };return m[k]||m.phone;
+}
+function weekExportCharacterAvailable(kind){
+  return typeof timetableWallpaperCharacterAvailable==='function'?timetableWallpaperCharacterAvailable(kind):kind==='none'||kind==='nemo'||kind==='auto';
+}
+function weekExportCharacterSvg(kind){
+  if(kind==='none')return '';
+  return typeof timetableWallpaperCharSVG==='function'?timetableWallpaperCharSVG(kind):'';
+}
+function openWeeklyExportMaker(mode){
+  var printMode=mode==='print';
+  WEEK_EXPORT_DRAFT={device:printMode?'a4p':'phone',layout:'hybrid',character:'auto',background:printMode?'paper':'current'};
+  var mb=weekExportCharacterAvailable('byeol'),md=weekExportCharacterAvailable('dol');
+  openModal('<h3>주간 플래너 내보내기</h3><p class="hint">폰·아이패드·맥 배경화면과 A4/A5 인쇄에 맞춰 여백과 글자 크기를 따로 잡아요. 캐릭터는 일정 글자를 가리지 않고 시간표 모서리에서 살짝 빼꼼 보여요.</p>'+
+    '<div class="tt-maker-group"><b>크기</b><div class="week-export-devices">'+
+      [['phone','폰'],['ipadp','iPad 세로'],['ipadl','iPad 가로'],['mac','MacBook'],['a4p','A4 세로'],['a4l','A4 가로'],['a5p','A5']].map(function(x){return '<button data-act="week-exp-device" data-v="'+x[0]+'" class="'+(WEEK_EXPORT_DRAFT.device===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+
+    '</div></div>'+
+    '<div class="tt-maker-group"><b>구성</b><div class="week-export-devices">'+
+      [['hybrid','하이브리드','일정+할 일'],['timetable','시간표형','수업·일정 중심'],['todo','할 일형','과제·시험 중심']].map(function(x){return '<button data-act="week-exp-layout" data-v="'+x[0]+'" class="'+(WEEK_EXPORT_DRAFT.layout===x[0]?'on':'')+'"><span>'+x[1]+'</span><small>'+x[2]+'</small></button>';}).join('')+
+    '</div></div>'+
+    '<div class="tt-maker-group"><b>캐릭터</b><div class="week-export-devices">'+
+      '<button class="on" data-act="week-exp-char" data-v="auto"><span>현재 캐릭터</span><small>적용 중인 네모·먼별·먼돌</small></button>'+
+      '<button data-act="week-exp-char" data-v="nemo"><span>네모</span><small>빼꼼</small></button>'+
+      '<button data-act="week-exp-char" data-v="byeol"'+(mb?'':' disabled')+'><span>먼별</span><small>'+(mb?'빼꼼':'구매·체험 필요')+'</small></button>'+
+      '<button data-act="week-exp-char" data-v="dol"'+(md?'':' disabled')+'><span>먼돌</span><small>'+(md?'빼꼼':'구매·체험 필요')+'</small></button>'+
+      '<button data-act="week-exp-char" data-v="none"><span>없음</span><small>완전 깔끔하게</small></button>'+
+    '</div></div>'+
+    '<div class="tt-maker-group"><b>배경</b><div class="week-export-devices">'+
+      [['current','현재 테마'],['cream','크림'],['pink','연핑크'],['mint','민트'],['paper','인쇄용 흰색']].map(function(x){return '<button data-act="week-exp-bg" data-v="'+x[0]+'" class="'+(WEEK_EXPORT_DRAFT.background===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+
+    '</div></div>'+
+    '<p class="hint">인쇄용은 배경을 흰색으로 두면 잉크를 덜 써요. 캐릭터 ‘없음’을 고르면 장식 없이 플래너만 저장돼요.</p>'+
+    '<div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="tbtn" data-act="week-exp-print">인쇄/PDF</button><button class="b-save" data-act="week-exp-save">이미지 저장</button></div>');
+}
+function weekExportBg(opts){
+  var spec=weekExportSpec(opts.device),skin=(window.PLANON_MARKET_THEME&&window.PLANON_MARKET_THEME.exportStyle?window.PLANON_MARKET_THEME.exportStyle():null)||{},map={cream:'#fff9ec',pink:'#fff2f6',mint:'#eff9f4',paper:'#ffffff'};
+  if(opts.background==='current'){
+    if(skin.paper)return skin.paper;
+    try{var v=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();if(/^#|rgb/.test(v))return v;}catch(e){}
+  }
+  return map[opts.background]||'#fffdf9';
+}
+function weekExportLoadCharacter(kind){
+  var svg=weekExportCharacterSvg(kind);if(!svg)return Promise.resolve(null);
+  return new Promise(function(resolve){
+    try{
+      var blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),im=new Image();
+      im.onload=function(){URL.revokeObjectURL(url);resolve(im);};im.onerror=function(){URL.revokeObjectURL(url);resolve(null);};im.src=url;
+    }catch(e){resolve(null);}
+  });
+}
+function weekExportRows(c,layout){
+  var out=[];
+  if(layout!=='todo'){
+    (c.labels||[]).forEach(function(a){out.push({text:a.text,meta:a.kind,color:a.color||S.settings.defColor||'#dce9f7',kind:'label'});});
+    (c.items||[]).forEach(function(it){out.push({text:it.name,meta:weeklyItemTime(it),color:it.color||S.settings.defColor||'#dce9f7',kind:'item'});});
+  }else{
+    (c.labels||[]).forEach(function(a){if(a.kind==='시험'||a.kind==='D-day')out.push({text:a.text,meta:a.kind,color:a.color||S.settings.defColor||'#dce9f7',kind:'label'});});
+  }
+  if(layout!=='timetable')(c.todos||[]).forEach(function(t){out.push({text:(t.done?'✓ ':'□ ')+t.text,meta:t.course||'할 일',color:t.course?courseColor(t.course):(S.settings.defColor||'#dce9f7'),kind:'todo'});});
+  return out;
+}
+function weekExportPaint(canvas,model,opts,charImg){
+  var sp=weekExportSpec(opts.device),W=sp.w,H=sp.h,ctx=canvas.getContext('2d'),bg=weekExportBg(opts),paper=opts.background==='paper'?'#fff':(bg||'#fffdf9'),ink='#302c29',sub='#8d8580',line=opts.background==='paper'?'#d9d9d9':'rgba(120,105,90,.20)',soft=opts.background==='paper'?'#fafafa':'rgba(255,255,255,.62)',accent=S.settings.defColor||'#dce9f7';
+  canvas.width=W;canvas.height=H;ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);ctx.textBaseline='top';
+  var portrait=H>W*1.18,margin=Math.round(W*(portrait?.055:.035)),topSafe=sp.paper?Math.round(H*.045):(opts.device==='phone'?Math.round(H*.16):Math.round(H*.08)),titleSize=Math.round(Math.min(W,H)*(portrait?.032:.027));
+  var first=model.dates[0].date,last=model.dates[model.dates.length-1].date;
+  ctx.fillStyle=ink;ctx.font='800 '+titleSize+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(first.getFullYear()+'년 '+(first.getMonth()+1)+'월 주간 플래너',margin,topSafe);
+  ctx.fillStyle=sub;ctx.font='550 '+Math.round(titleSize*.46)+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText((first.getMonth()+1)+'/'+first.getDate()+' – '+(last.getMonth()+1)+'/'+last.getDate()+' · '+(opts.layout==='timetable'?'시간표형':opts.layout==='todo'?'할 일형':'하이브리드'),margin,topSafe+titleSize*1.18);
+  var gridTop=topSafe+titleSize*2.05,footerH=Math.round(H*(portrait?.09:.105)),gridBottom=H-margin-footerH,days=model.dates,n=days.length;
+  function cardPath(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function peek(x,y,w,h,i){
+    if(!charImg)return;
+    var size=Math.min(w*0.44,h*0.54),px=x+w-size*.72,py=y-size*.31;
+    ctx.save();cardPath(x,y,w,h,Math.max(12,Math.round(Math.min(w,h)*.035)));ctx.clip();ctx.globalAlpha=opts.background==='paper'?.72:.86;try{ctx.drawImage(charImg,px,py,size,size);}catch(e){}ctx.restore();
+  }
+  function drawCard(c,i,x,y,w,h){
+    var r=Math.max(12,Math.round(Math.min(w,h)*.035));canvasRoundRect(ctx,x,y,w,h,r,sp.paper?'#fff':soft,line);peek(x,y,w,h,i);
+    var pad=Math.max(14,Math.round(w*.065)),head=Math.max(34,Math.round(Math.min(w,h)*.12));
+    ctx.fillStyle=i>=5?'#bb6d63':ink;ctx.font='750 '+Math.max(18,Math.round(Math.min(w,h)*.062))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(DAYS[dow(c.date)]+' '+c.date.getDate(),x+pad,y+pad);
+    var rows=weekExportRows(c,opts.layout),yy=y+pad+head,rowH=Math.max(38,Math.round((h-pad*2-head)/Math.max(5,Math.min(9,rows.length||5)))),maxRows=Math.max(3,Math.floor((h-pad*2-head)/rowH));
+    rows.slice(0,maxRows).forEach(function(row){
+      var rh=rowH-6;canvasRoundRect(ctx,x+pad,yy,w-pad*2,rh,Math.max(8,Math.round(rh*.22)),sp.paper?'#fafafa':'rgba(255,255,255,.72)',null);
+      ctx.fillStyle=row.color||accent;ctx.fillRect(x+pad,yy,Math.max(4,Math.round(w*.015)),rh);
+      var fs=Math.max(13,Math.round(Math.min(w,h)*.04));ctx.fillStyle=ink;ctx.font='650 '+fs+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+      var text=canvasLines(ctx,row.text,w-pad*2-Math.max(28,w*.09),1)[0];ctx.fillText(text,x+pad+Math.max(12,w*.04),yy+Math.max(6,rh*.12));
+      if(row.meta&&rh>36){ctx.fillStyle=sub;ctx.font='500 '+Math.max(10,Math.round(fs*.72))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(String(row.meta).slice(0,28),x+pad+Math.max(12,w*.04),yy+rh-Math.max(16,fs*.85));}
+      yy+=rowH;
+    });
+    if(rows.length>maxRows){ctx.fillStyle=sub;ctx.font='600 '+Math.max(11,Math.round(Math.min(w,h)*.035))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('+'+(rows.length-maxRows)+'개 더',x+pad,Math.min(y+h-pad-18,yy));}
+    if(!rows.length){ctx.fillStyle=sub;ctx.font='500 '+Math.max(13,Math.round(Math.min(w,h)*.045))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('여유로운 날',x+pad,yy+8);}
+  }
+  if(portrait){
+    var gap=Math.max(10,Math.round(H*.0055)),cardH=(gridBottom-gridTop-gap*(n-1))/n,cardW=W-margin*2;
+    days.forEach(function(c,i){drawCard(c,i,margin,gridTop+i*(cardH+gap),cardW,cardH);});
+  }else{
+    var gap2=Math.max(10,Math.round(W*.005)),cardW2=(W-margin*2-gap2*(n-1))/n,cardH2=gridBottom-gridTop;
+    days.forEach(function(c,i){drawCard(c,i,margin+i*(cardW2+gap2),gridTop,cardW2,cardH2);});
+  }
+  var fy=H-footerH+Math.round(footerH*.14),weekTodos=(model.weekTodos||[]).slice(0,5);
+  ctx.fillStyle=ink;ctx.font='750 '+Math.max(18,Math.round(Math.min(W,H)*.015))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('이번 주 할 일',margin,fy);
+  ctx.fillStyle=sub;ctx.font='520 '+Math.max(13,Math.round(Math.min(W,H)*.0115))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+  var footer=weekTodos.length?weekTodos.map(function(t){return (t.done?'✓ ':'□ ')+t.text;}).join('   ·   '):'주간 할 일이 아직 없어요';
+  var fl=canvasLines(ctx,footer,W-margin*2,2);fl.forEach(function(s,i){ctx.fillText(s,margin,fy+Math.max(26,titleSize*.7)+i*Math.max(20,titleSize*.45));});
+  ctx.textAlign='right';ctx.fillStyle=sub;ctx.font='500 '+Math.max(11,Math.round(Math.min(W,H)*.0095))+'px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('PLAN:ON',W-margin,H-margin*.72);ctx.textAlign='left';
+}
+function renderWeeklyExportCanvas(opts){
+  opts=Object.assign({},WEEK_EXPORT_DRAFT,opts||{});
+  return weekExportLoadCharacter(opts.character).then(function(img){var c=document.createElement('canvas');weekExportPaint(c,weeklyExportModel(),opts,img);return c;});
+}
+function saveWeeklyExport(opts){
+  opts=Object.assign({},WEEK_EXPORT_DRAFT,opts||{});
+  var sp=weekExportSpec(opts.device);closeModal();inAppToast(sp.label+' 이미지를 만드는 중…');
+  renderWeeklyExportCanvas(opts).then(function(c){c.toBlob(function(blob){
+    if(!blob){inAppToast('이미지를 만들지 못했어요');return;}
+    var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='플래논-주간-'+opts.device+'-'+dkey(mondayOf(U.date))+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},3000);inAppToast(sp.label+' 이미지를 만들었어요');
+  },'image/png');}).catch(function(){inAppToast('이미지를 만들지 못했어요');});
+}
+function printWeeklyExport(opts){
+  opts=Object.assign({},WEEK_EXPORT_DRAFT,opts||{});var sp=weekExportSpec(opts.device),w=null;
+  try{w=window.open('','_blank');}catch(e){}
+  if(!w){inAppToast('인쇄 창을 열 수 없어요. 팝업을 허용해주세요');return;}
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>PLAN:ON 주간 플래너</title><style>@page{size:'+(sp.page||'auto')+';margin:0}html,body{margin:0;background:white;width:100%;height:100%}body{display:grid;place-items:center}img{display:block;max-width:100%;max-height:100vh;width:auto;height:auto}@media print{img{width:100%;height:auto;max-height:none}}</style></head><body><p style="font-family:sans-serif;color:#888">플래너를 준비하는 중…</p></body></html>');
+  w.document.close();
+  renderWeeklyExportCanvas(opts).then(function(c){c.toBlob(function(blob){
+    if(!blob){w.close();return;}var url=URL.createObjectURL(blob);w.document.body.innerHTML='<img id="p" src="'+url+'" alt="주간 플래너">';var im=w.document.getElementById('p');im.onload=function(){setTimeout(function(){try{w.focus();w.print();}catch(e){}setTimeout(function(){URL.revokeObjectURL(url);},3000);},120);};
+  },'image/png');}).catch(function(){try{w.close();}catch(e){}});
+}
+
 var TT_WALLPAPER_DRAFT={device:'phone',character:'auto',background:'current'};
 function timetableWallpaperCharacterAvailable(kind){
   if(kind==='none'||kind==='nemo'||kind==='auto')return true;
@@ -5201,12 +5401,14 @@ function moveTopItem(id,dir){
 }
 function profileHTML(){
   if(!Sync.uid)return '<section class="card"><div class="card-h"><h3>프로필</h3></div><p class="hint">로그인하면 친구에게 보일 이름과 사진을 설정할 수 있어요.</p></section>';
-  var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',home=(S.settings.homeStation||'').trim(),initial=(n||'?').charAt(0);
+  var n=(S.settings.profileName||'').trim(),photo=S.settings.profilePhoto||'',home=(S.settings.homeStation||'').trim(),initial=(n||'?').charAt(0);if(!FriendIdSync.loaded&&!FriendIdSync.loading)setTimeout(function(){friendIdLoad(false);},0);
   return '<section class="card"><div class="card-h"><h3>프로필</h3><span class="cnt">친구에게 표시</span></div>'+
     '<div class="profile-photo-row"><div class="profile-photo">'+(photo?'<img src="'+esc(photo)+'" alt="프로필 사진">':esc(initial))+'</div><div class="profile-photo-actions"><label class="tbtn" style="display:grid;place-items:center;padding:0 12px">사진 선택<input type="file" accept="image/*" data-profile-photo hidden></label>'+(photo?'<button class="tbtn" data-act="profile-photo-remove">사진 삭제</button>':'')+'</div></div>'+
     '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div>'+
     '<div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile-name">이름 저장</button></div>'+
-    '<div id="profile-name-status" class="hint" style="margin-top:-4px">'+(n?'저장됨 ✓':'아직 저장된 이름이 없어요')+'</div>'+
+    '<div id="profile-name-status" class="hint" style="margin-top:-4px">'+(n?'저장됨 ✓':'아직 저장된 이름이 없어요')+'</div>'+    '<div class="setrow"><span>플래논 ID<small>친구가 @ID로 나를 찾을 수 있어요 · 영문 소문자·숫자·점·밑줄 4~16자</small></span></div>'+
+    '<div class="row"><span class="friend-id-at">@</span><input class="fld" style="margin:0" id="f-friend-user-id" maxlength="16" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="happyeonse05" value="'+esc(FriendIdSync.handle||S.settings.friendUserId||'')+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-friend-id">ID 저장</button></div>'+
+    '<div id="friend-id-status" class="hint" style="margin-top:-4px">'+esc(friendIdStatusText())+'</div>'+
     '<div class="setrow"><span>현재 위치 사용<small>현재 위치를 가까운 교통 거점으로 바꿀 때만 사용하고 좌표는 저장하지 않아요. 계정별 동의 상태만 서버에 저장해요.</small></span><button class="tbtn'+(locationPermissionOn()?' on':'')+'" data-act="toggle-location-permission">'+(locationPermissionOn()?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>기본 출발지<small>약속 장소 추천과 시간별 출발지의 기본값으로 사용해요.</small></span></div>'+
     '<input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="예: 성균관대역, 낙성대역, 학교" value="'+esc(home)+'">'+originDatalist()+
@@ -5406,7 +5608,7 @@ function friendHTML(){
     '<div class="setrow"><span>2. 둘 다 비는 시간만 골라서 약속<small>상대 일정 제목은 공유하지 않아요 · 가능한 칸/불가능한 칸만 계산해요 · 앱 없는 친구는 링크로</small></span></div>'+
     '<div class="setrow"><span>3. 만나고 나면 추억으로 쌓여요<small>만난 곳·사진이 모여 추억 리포트가 돼요</small></span></div>'+
     '<p class="hint">메모·나와의 채팅·생활기록·회고·사진은 언제나 비공개예요.</p><button class="tbtn plus" style="width:100%;height:42px;margin-top:4px" data-act="open-login">로그인하고 시작하기</button></section>';
-  var myCode=FriendSync.code||storedFriendCode()||'생성 중';
+  if(!FriendIdSync.loaded&&!FriendIdSync.loading)setTimeout(function(){friendIdLoad(false);},0);var myCode=FriendSync.code||storedFriendCode()||'생성 중';
   var invIn=(FriendSync.invitesIn||[]).map(function(x){var n=inviteName(x.from_user);return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,invitePhoto(x.from_user))+'<div class="fc-name"><b>'+esc(n)+'</b><small>친구 요청을 보냈어요</small></div><button class="tbtn" data-act="friend-invite-decline" data-id="'+x.id+'">거절</button><button class="tbtn fc-pri b-save" data-act="friend-invite-accept" data-id="'+x.id+'">수락</button></div></div>';}).join('');
   var reqIn=(FriendSync.requests||[]).filter(function(r){return r.to_user===Sync.uid&&r.status==='pending';}).map(function(r){var p=r.payload||{},n=requestFriendCode(r.from_user),rf=FriendSync.friends.find(function(y){return y.id===r.from_user;});return '<div class="fcard req"><div class="fc-top">'+friendAvatar(n,rf&&rf.photo,'',rf&&rf.id)+'<div class="fc-name"><b>'+esc(n)+' · '+esc(p.what||p.title||'약속')+'</b><small>'+esc([p.date?slotText(p.date,p.start?toMin(p.start):null,p.start?(p.end?toMin(p.end):toMin(p.start)+60):null):'',p.place].filter(function(x){return !!x;}).join(' · ')||'약속 요청')+'</small></div><button class="tbtn b-save" data-act="appointment-open" data-id="'+r.id+'">확인</button></div></div>';}).join('');
   var rows=sortedFriends().map(function(f){var n=friendLabel(f),pinned=friendPinIndex(f.id)>=0;
@@ -5416,6 +5618,10 @@ function friendHTML(){
   var ferr=[FriendSync.error,FriendSync.inviteError,FriendSync.busyError].filter(function(x){return !!x;}).filter(function(x,i,a){return a.indexOf(x)===i;}).map(function(x){return '<p class="hint" style="color:var(--now)">'+esc(x)+'</p>';}).join('');
   var nf=FriendSync.friends.length;
   return storyTop+'<section class="card"><div class="card-h"><h3>친구</h3><span class="cnt">'+(FriendSync.loaded?(nf?nf+'명':'연결됨'):'확인 중')+'</span></div>'+
+    '<div class="fsec">ID로 친구 추가</div>'+
+    '<div class="row friend-id-add"><span class="friend-id-at">@</span><input class="fld" style="margin:0" id="f-friend-id" maxlength="16" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="친구 ID"><button class="b-save" style="height:44px;padding:0 14px" data-act="friend-add-id">요청</button></div>'+
+    '<p class="hint">내 ID · '+(FriendIdSync.handle?'@'+esc(FriendIdSync.handle):'설정 → 내 프로필에서 만들 수 있어요')+' · 정확한 ID로만 찾아요.</p>'+
+    '<div class="fsec">초대코드로 추가</div>'+
     '<button class="codebox" style="width:100%;text-align:left" data-act="friend-copy-code"><span><small>내 초대코드 · 눌러서 복사</small><span class="code">'+esc(myCode)+'</span></span><span class="tbtn" style="display:grid;place-items:center">복사</span></button>'+
     '<div class="row"><input class="fld" style="margin:0" id="f-friend-code" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="친구 초대코드 8자리"><button class="b-save" style="height:44px;padding:0 14px" data-act="friend-add">요청 보내기</button></div>'+
     '<p class="hint">친구가 수락하면 연결돼요.</p>'+ferr+(FriendSync.msg?'<p class="hint">'+esc(FriendSync.msg)+'</p>':'')+
@@ -6506,14 +6712,20 @@ function act(a,e){
     case 'edit-block':{var b=S.classes.find(function(x){return x.id===id;});if(b)openCourse(b.name);break;}
     case 'edit-block-direct':{var bd=S.classes.find(function(x){return x.id===id;});if(bd)openBlock(bd,null,a.dataset.date);break;}
     case 'toggle-weekend':S.settings.weekend=!S.settings.weekend;save();render();break;
-    case 'week-export':exportWeeklyImage();break;
+    case 'week-export':openWeeklyExportMaker('image');break;
+    case 'week-exp-device':if(!a.disabled){WEEK_EXPORT_DRAFT.device=a.dataset.v||'phone';a.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===a);});if(/^a[45]/.test(WEEK_EXPORT_DRAFT.device)&&WEEK_EXPORT_DRAFT.background==='current')WEEK_EXPORT_DRAFT.background='paper';}break;
+    case 'week-exp-layout':WEEK_EXPORT_DRAFT.layout=a.dataset.v||'hybrid';a.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===a);});break;
+    case 'week-exp-char':if(!a.disabled){WEEK_EXPORT_DRAFT.character=a.dataset.v||'auto';a.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===a);});}break;
+    case 'week-exp-bg':WEEK_EXPORT_DRAFT.background=a.dataset.v||'current';a.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===a);});break;
+    case 'week-exp-save':saveWeeklyExport(WEEK_EXPORT_DRAFT);break;
+    case 'week-exp-print':printWeeklyExport(WEEK_EXPORT_DRAFT);break;
     case 'wallpaper-phone':openTimetableWallpaperMaker('phone');break;
     case 'wallpaper-pad':openTimetableWallpaperMaker('pad');break;
     case 'tt-wall-device':TT_WALLPAPER_DRAFT.device=a.dataset.v||'phone';a.parentNode.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===a);});break;
     case 'tt-wall-char':if(!a.disabled){TT_WALLPAPER_DRAFT.character=a.dataset.v||'auto';a.parentNode.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===a);});}break;
     case 'tt-wall-bg':TT_WALLPAPER_DRAFT.background=a.dataset.v||'current';a.parentNode.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===a);});break;
     case 'tt-wall-save':{var tw=Object.assign({},TT_WALLPAPER_DRAFT);closeModal();exportTimetableWallpaper(tw.device,tw);break;}
-    case 'week-print':printWeekly();break;
+    case 'week-print':openWeeklyExportMaker('print');break;
     case 'add-at':{var ah=Number(a.dataset.h);openEvent(null,{date:a.dataset.date,start:pad(ah)+':00',end:pad(Math.min(ah+1,23))+':'+(ah>=23?'59':'00')});break;}
     case 'open-login':openLogin();break;
     case 'signup-mode':switchAuthMode(true);break;
@@ -6521,12 +6733,14 @@ function act(a,e){
     case 'toggle-password':togglePassword(a.dataset.target,a);break;
     case 'save-profile':saveProfile();break;
     case 'save-profile-name':saveProfileName();break;
+    case 'save-friend-id':setFriendId($('#f-friend-user-id')?$('#f-friend-user-id').value:'');break;
     case 'save-home-station':saveHomeStation();break;
     case 'clear-home-station':clearHomeStation();break;
     case 'profile-crop-save':saveProfileCrop();break;
     case 'profile-photo-remove':S.settings.profilePhoto='';save();friendPush().then(function(){friendNote('프로필 사진을 삭제했어요');render();});break;
     case 'friend-copy-code':friendCopyCode();break;
     case 'friend-add':friendAdd($('#f-friend-code')?$('#f-friend-code').value:'');break;
+    case 'friend-add-id':friendAddById($('#f-friend-id')?$('#f-friend-id').value:'');break;
     case 'friend-pin':toggleFriendPin(id);break;
     case 'friend-detail':U.friendDetailId=id;U.tab='friends';U.friendsPage='detail';U.settingsPage='';render(true);break;
     case 'friends-home':U.friendsPage='';render(true);break;
