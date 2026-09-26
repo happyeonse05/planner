@@ -1,4 +1,4 @@
-const PLANON_SW='20260927-0130';
+const PLANON_SW='20260927-0520';
 const CACHE='planon-prod-'+PLANON_SW;
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./apple-touch-icon.png","./icon-512.png",
