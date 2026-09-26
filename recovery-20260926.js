@@ -7,16 +7,9 @@ function save(){try{B.save&&B.save();}catch(e){}}
 function migrate(){
   var s=state();if(!s)return;s.settings=s.settings||{};
   if(![5,10,20,30].includes(Number(s.settings.diaryMinutes)))s.settings.diaryMinutes=10;
-  /* One-time correction requested for the 9/24 entry that belongs to 9/25.
-     Only move a 9/24 row when its actual finish timestamp is 9/25, so genuine 9/24 entries are untouched. */
-  if(!s.settings.fixDiary0925v1&&Array.isArray(s.diaries)){
-    s.diaries.forEach(function(x){
-      if(!x||String(x.date||x.studyDate)!=='2026-09-24'||!x.finishedAt)return;
-      var d=new Date(Number(x.finishedAt));
-      if(d.getFullYear()===2026&&d.getMonth()===8&&d.getDate()===25){x.date='2026-09-25';x.studyDate='2026-09-25';x.calendarDateFixed=true;}
-    });
-    s.settings.fixDiary0925v1=true;save();
-  }
+  /* 오전 5시 전까지는 전날 공부일로 기록합니다.
+     예전 9/25 달력 날짜 강제 보정은 더 이상 실행하지 않고 마이그레이션 완료 표시만 남겨요. */
+  if(!s.settings.fixDiary0925v1){s.settings.fixDiary0925v1=true;save();}
   /* exact duplicate exams/course deliverables only */
   if(!s.settings.dedupeSchedule0926v1&&Array.isArray(s.exams)){
     var seen={};s.exams=s.exams.filter(function(x){
