@@ -1983,3 +1983,10 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
   #nav.nav .navico{margin-left:auto;margin-right:auto}
   #nav.nav .navlabel{max-width:100%;white-space:nowrap;text-align:center}
 }
+
+/* 2026-09-26 keep six bottom tabs balanced on iPhone, including character themes */
+@media(max-width:560px){
+ #nav.nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%;gap:0!important;padding-left:8px!important;padding-right:8px!important}
+ #nav.nav>button{min-width:0!important;width:auto!important;justify-self:stretch!important;margin:0!important;transform:none!important}
+ .mbon #nav.nav .mb-nav{width:100%!important;min-width:0!important;margin:0!important;padding-left:0!important;padding-right:0!important}
+}
