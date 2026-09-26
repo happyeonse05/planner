@@ -1,0 +1,18 @@
+.smart-learning-reasons{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.smart-learning-reasons button{min-height:34px;padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700}
+.smart-learning-skip{margin-top:7px;font-size:11px;color:var(--sub);text-decoration:underline}
+.smart-learning-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.smart-learning-meta small{margin:0!important}
+.smart-nudge{border:1px solid color-mix(in srgb,var(--planner-color) 38%,var(--line))}
+.smart-setting-copy{min-width:0}
+.smart-setting-copy b{display:block;font-size:14px}
+.smart-setting-copy small{display:block;color:var(--sub);font-size:11px;line-height:1.4;margin-top:3px}
+.smart-completed-toggle{list-style:none!important;padding:4px 0!important;border:0!important;background:transparent!important}
+.smart-completed-toggle button{width:100%;text-align:left;padding:8px 4px;font-size:12px;font-weight:800;color:var(--sub)}
+.smart-completed-hidden{display:none!important}
+.smart-completed-toggle.open button{color:var(--ink)}
+.smart-settings .smart-recent-undo{margin-top:4px}
+@media(max-width:390px){
+  .smart-learning-reasons{gap:6px}
+  .smart-learning-reasons button{font-size:11px;padding:7px 9px}
+}
