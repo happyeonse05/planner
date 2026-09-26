@@ -2007,3 +2007,21 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 @supports(padding:max(0px)){
   .nav{padding-bottom:max(6px,calc(env(safe-area-inset-bottom,0px) - 18px))!important}
 }
+
+/* 2026-09-27 compact holiday subtitle on narrow iPhones */
+#top .ttl small.day-holiday-sub{
+  font-size:11px!important;
+  letter-spacing:-.02em!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+}
+#top .ttl small.day-holiday-sub .wx-title-weather{
+  height:25px!important;
+  padding:0 8px!important;
+  margin:0 4px!important;
+  font-size:11px!important;
+}
+#top .ttl small.day-holiday-sub .wx-title-weather .wx-ico{
+  width:13px!important;
+  height:13px!important;
+}
