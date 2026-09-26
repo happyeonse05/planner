@@ -166,17 +166,21 @@ function suggestEstimate(t){
   var seen={},samples=[];
   all.forEach(function(x){if(!x.taskId||seen[x.taskId])return;seen[x.taskId]=1;samples.push(x);});
   samples=samples.slice(0,8);
-  if(samples.length<3)return null;
-  var ratio=clamp(median(samples.map(function(x){return x.ratio;})),0.70,1.50);
+  var tookLonger=recentRecords(60).filter(function(r){
+    if(!r||r.reason!=='TOOK_LONGER')return false;
+    return sameKind(t,{course:r.course||'',taskType:r.taskType||'general',text:''});
+  }).slice(-8);
+  if(samples.length<3&&tookLonger.length<3)return null;
+  var ratio=samples.length>=3?clamp(median(samples.map(function(x){return x.ratio;})),0.70,1.50):1.25;
   var base=Math.max(20,num(t.estimatedMinutes||t.estimateMin||t.dur||60));
   var minutes=round5(base*ratio);
   if(Math.abs(minutes-base)<5)return null;
   return {
     minutes:minutes,
-    count:samples.length,
+    count:Math.max(samples.length,tookLonger.length),
     ratio:ratio,
     percent:Math.round((ratio-1)*100),
-    source:'recent-actual'
+    source:samples.length>=3?'recent-actual':'repeated-took-longer'
   };
 }
 
