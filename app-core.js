@@ -1342,7 +1342,7 @@ function ppHTML(P){
   var modes=(P.allowUndecided?[['undecided','미정']]:[]).concat([['pick','지역·역 고르기'],['other','직접 입력']]);
   var h='<div class="place-mode">'+modes.map(function(m){return '<button class="'+(P.mode===m[0]?'on':'')+'" data-act="pp-mode" data-v="'+m[0]+'">'+m[1]+'</button>';}).join('')+'</div>';
   if(P.mode==='undecided')h+='<p class="hint">장소는 나중에 같이 정해도 돼요. 아래에 후보를 올려두면 친구가 골라요.</p>';
-  else if(P.mode==='other')h+='<input class="fld" id="pp-other" maxlength="80" placeholder="해외여행, 놀이공원, 학교 등 자유롭게 입력" value="'+esc(P.other)+'"><p class="hint">예: 도쿄 디즈니랜드 · 한강 놀이터 · 오사카 여행</p>';
+  else if(P.mode==='other')h+='<input class="fld" id="pp-other" maxlength="80" placeholder="해외여행, 놀이공원, 학교 등 자유롭게 입력" value="'+esc(P.other)+'"><p class="hint">예: 도쿄 놀이공원 · 한강 놀이터 · 오사카 여행</p>';
   else{
     var region=P.region,isSeoul=region==='서울특별시',cities=region?regionCities(region):[],ds=P.city?regionDistricts(region,P.city):[];
     h+='<div class="place-search"><input class="fld" id="pp-q" autocomplete="off" enterkeyhint="search" placeholder="~시 ~구로 입력하거나 지하철역 입력하세요" value="'+esc(P.q)+'"></div><div id="pp-results">'+ppResultsHTML(P.q)+'</div>'+
@@ -1832,7 +1832,7 @@ function setMemoryPhoto(file,memId){
     sb.from('planner_friend_memories').update({photo:url}).eq('id',memId).then(function(r){if(r.error)throw r.error;row.photo=url;drawFriendMemories();inAppToast('사진을 넣었어요');}).catch(function(e){inAppToast(userMsg('사진을 저장하지 못했어요. 잠시 뒤 다시 해주세요',/photo|column/i.test(e&&e.message||'')?'사진 저장 서버 설정이 필요해요. 최신 production migration을 적용해주세요':(e&&e.message)));});
   });
 }
-/* ----- 우리 추억 리포트 (인스타 스토리용 이미지) ----- */
+/* ----- 우리 추억 리포트 (세로형 스토리용 이미지) ----- */
 function reportRange(period){
   var tk=dkey(new Date()),y=+tk.slice(0,4);
   if(period==='year')return {from:y+'-01-01',to:y+'-12-31',label:y+'년'};
@@ -4582,14 +4582,14 @@ function exportTimetableWallpaper(device,opts){
     var active=[];days.forEach(function(d){var k=dkey(d);S.classes.forEach(function(x){if(x.day===dow(d)&&x.start&&x.end&&clsActive(x,k))active.push(x);});});
     var hs=S.settings.hStart!=null?+S.settings.hStart:9,he=S.settings.hEnd!=null?+S.settings.hEnd:22;
     active.forEach(function(x){hs=Math.min(hs,Math.floor(toMin(x.start)/60));he=Math.max(he,Math.ceil(toMin(x.end)/60));});he=Math.max(hs+1,he);
-    ctx.fillStyle=ink;ctx.font=(phone?'800 54px':'800 64px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('시간표',padX,phone?365:210);
-    ctx.fillStyle=sub;ctx.font=(phone?'500 25px':'500 30px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(mon.getFullYear()+' · '+(mon.getMonth()+1)+'월 '+Math.ceil(mon.getDate()/7)+'주차',padX,phone?430:285);
+    ctx.fillStyle=ink;ctx.font=(phone?'800 54px':'800 64px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('시간표',padX,phone?365:210);
+    ctx.fillStyle=sub;ctx.font=(phone?'500 25px':'500 30px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(mon.getFullYear()+' · '+(mon.getMonth()+1)+'월 '+Math.ceil(mon.getDate()/7)+'주차',padX,phone?430:285);
     var timeW=phone?72:100,gx=padX+timeW,gw=W-padX*2-timeW,gh=H-top-bottom,colW=gw/n,rowH=gh/(he-hs);
     ctx.strokeStyle=grid;ctx.lineWidth=2;
     for(i=0;i<=n;i++){ctx.beginPath();ctx.moveTo(gx+i*colW,top);ctx.lineTo(gx+i*colW,top+gh);ctx.stroke();}
-    for(var h=hs;h<=he;h++){var y=top+(h-hs)*rowH;ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx+gw,y);ctx.stroke();if(h<he){ctx.fillStyle=sub;ctx.font=(phone?'500 20px':'500 24px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(String(h),padX,y+7);}}
-    days.forEach(function(d,di){var x=gx+di*colW;ctx.fillStyle=ink;ctx.font=(phone?'700 25px':'700 30px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(DAYS[dow(d)],x+12,top-50);var k=dkey(d);S.classes.filter(function(z){return z.day===dow(d)&&z.start&&z.end&&clsActive(z,k);}).forEach(function(z){var a=toMin(z.start),b=toMin(z.end),yy=top+((a-hs*60)/60)*rowH,hh=Math.max(28,((b-a)/60)*rowH-5),xx=x+5,ww=colW-10;canvasRoundRect(ctx,xx,yy,ww,hh,phone?15:18,z.color||def,null);ctx.fillStyle='#292522';ctx.font=(phone?'700 21px':'700 26px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';var lines=canvasLines(ctx,z.name||'수업',ww-24,2);lines.forEach(function(t,j){ctx.fillText(t,xx+12,yy+12+j*(phone?27:32));});if(hh>(phone?80:95)){ctx.font=(phone?'500 16px':'500 19px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(timeShort(z.start)+'–'+timeShort(z.end),xx+12,yy+hh-(phone?29:34));}});});
-    function finish(){ctx.fillStyle=sub;ctx.font=(phone?'500 18px':'500 22px')+' Gowun Dodum,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('PLAN:ON · '+new Date().getFullYear(),padX,H-(phone?120:100));c.toBlob(function(blob){if(!blob){inAppToast('이미지를 만들지 못했어요');return;}var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='플래논-시간표-'+(phone?'폰':'패드')+'-'+dkey(mon)+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},3000);inAppToast((phone?'폰':'패드')+' 시간표 배경화면을 만들었어요');},'image/png');}
+    for(var h=hs;h<=he;h++){var y=top+(h-hs)*rowH;ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx+gw,y);ctx.stroke();if(h<he){ctx.fillStyle=sub;ctx.font=(phone?'500 20px':'500 24px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(String(h),padX,y+7);}}
+    days.forEach(function(d,di){var x=gx+di*colW;ctx.fillStyle=ink;ctx.font=(phone?'700 25px':'700 30px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(DAYS[dow(d)],x+12,top-50);var k=dkey(d);S.classes.filter(function(z){return z.day===dow(d)&&z.start&&z.end&&clsActive(z,k);}).forEach(function(z){var a=toMin(z.start),b=toMin(z.end),yy=top+((a-hs*60)/60)*rowH,hh=Math.max(28,((b-a)/60)*rowH-5),xx=x+5,ww=colW-10;canvasRoundRect(ctx,xx,yy,ww,hh,phone?15:18,z.color||def,null);ctx.fillStyle='#292522';ctx.font=(phone?'700 21px':'700 26px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';var lines=canvasLines(ctx,z.name||'수업',ww-24,2);lines.forEach(function(t,j){ctx.fillText(t,xx+12,yy+12+j*(phone?27:32));});if(hh>(phone?80:95)){ctx.font=(phone?'500 16px':'500 19px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText(timeShort(z.start)+'–'+timeShort(z.end),xx+12,yy+hh-(phone?29:34));}});});
+    function finish(){ctx.fillStyle=sub;ctx.font=(phone?'500 18px':'500 22px')+' -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';ctx.fillText('PLAN:ON · '+new Date().getFullYear(),padX,H-(phone?120:100));c.toBlob(function(blob){if(!blob){inAppToast('이미지를 만들지 못했어요');return;}var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='플래논-시간표-'+(phone?'폰':'패드')+'-'+dkey(mon)+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},3000);inAppToast((phone?'폰':'패드')+' 시간표 배경화면을 만들었어요');},'image/png');}
     var ch=opts.character||'auto',sz=phone?190:230;drawTimetableWallpaperCharacter(ctx,ch,W-padX-sz,phone?335:185,sz,finish);
   }catch(e){openModal('<h3>배경화면 저장을 못 했어요</h3><p class="hint">잠시 뒤 다시 시도해 주세요.</p><div class="acts"><button class="b-save" data-act="close">확인</button></div>');}
 }
@@ -5058,6 +5058,7 @@ function viewSettings(){
   var syncHTML='<section class="card"><div class="card-h"><h3>저장 상태</h3>'+syncStateHTML(false)+'</div><p class="hint">시간표·시험·할 일·설정은 변경 즉시 이 기기에 저장되고, 로그인 중이면 계정에도 동기화돼요. 같은 계정으로 다시 로그인하면 자동으로 불러와요.</p>'+(Sync.uid&&SyncUI.state==='error'?'<p class="hint" style="color:var(--now)">'+esc(syncReason()||'계정 서버와 맞추지 못했어요. 다시 시도해주세요.')+'</p><div class="note" style="word-break:break-word;user-select:text;-webkit-user-select:text"><b style="display:block;margin-bottom:5px">오류 상세</b>'+esc(Sync.lastError||Sync.diag||'오류 정보 없음')+'</div>':'')+'<div class="acts">'+(Sync.uid&&SyncUI.state==='error'?'<button class="b-ghost" data-act="sync-retry">다시 시도</button>':'')+'<button class="b-ghost" data-act="open-backup">백업·복원</button></div></section>';
   var supportHTML='<section class="card"><div class="card-h"><h3>도움</h3></div>'+
     '<div class="setrow"><span>개인정보처리방침<small>수집·저장·공유·삭제되는 데이터를 확인해요</small></span><button class="tbtn" data-act="open-privacy">보기</button></div>'+
+    '<div class="setrow"><span>오픈소스·데이터 고지<small>Supabase JS와 날씨 데이터 라이선스를 확인해요</small></span><a class="tbtn" href="third-party-notices.html" target="_blank" rel="noopener" style="display:grid;place-items:center;text-decoration:none">보기</a></div>'+
     '<div class="setrow"><span>문의·오류 신고<small>학교 정보 수정·학교 추가·기능 제안도 여기로 보내요</small></span><button class="tbtn" data-act="open-feedback">열기</button></div></section>';
   var appearanceHTML='<section class="card settings-clean-card"><div class="card-h"><h3>화면 꾸미기</h3><span class="cnt">보이는 것만 정리</span></div>'+ 
     '<p class="hint settings-clean-intro">색상·배경·캐릭터는 서로 따로 적용돼요. 캐릭터는 기본·먼별·먼돌 중 하나만 선택해요.</p>'+ 
