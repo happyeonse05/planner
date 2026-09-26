@@ -200,7 +200,7 @@ function stripHTML(){
 function decorate(){syncBanner();var main=document.getElementById('main'),u=U();if(!main||!u)return;var old=document.getElementById('planon-day-close-fixed');if(old)old.remove();var strip=main.querySelector('.friend-story-strip');if(strip&&!(u.tab==='friends'&&!u.friendsPage))strip.remove();var hist=main.querySelector('.day-close-history');if(hist)hist.remove();var pref=main.querySelector('.story-settings-card');if(pref)pref.remove();document.body.classList.remove('planon-day-close-visible');
 
   /* 설정 첫 화면에서 마감 스토리 기본 공개 범위를 고를 수 있어요. */
-  if(u.tab==='settings'&&!u.settingsPage){var sw=document.createElement('div');sw.innerHTML=storySettingsHTML();var sc=sw.firstElementChild;if(sc)main.insertBefore(sc,main.firstChild);return;}
+  if(u.tab==='settings'&&u.settingsPage==='social'){var sw=document.createElement('div');sw.innerHTML=storySettingsHTML();var sc=sw.firstElementChild;if(sc)main.insertBefore(sc,main.firstChild);return;}
 
   /* 친구 탭 최상단 스토리는 app-core에서도 직접 넣고, 여기서 최신 내용으로 교체해요. */
   if(u.tab==='friends'&&!u.friendsPage){
