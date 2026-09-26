@@ -1,8 +1,6 @@
 /* PLANON recovery UI patch 2026-09-26 */
 .diary-history{display:none!important}
-.nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;align-items:stretch!important}
-.nav>button,.nav>a{min-width:0!important;width:100%!important;justify-self:stretch!important}
-@media(max-width:430px){.nav{column-gap:0!important}.nav>button,.nav>a{padding-left:2px!important;padding-right:2px!important}}
+
 button,a,[role="button"],[data-act],[data-mb],[data-rel-open],[data-market-open]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #modal.open{pointer-events:auto}.sheet{pointer-events:auto}
 .rel-duo{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
