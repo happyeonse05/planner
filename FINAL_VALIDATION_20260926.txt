@@ -1,0 +1,11 @@
+PASS
+- diary explicit date authoritative: OK
+- settings diary banner removed: OK
+- sync last save text: OK
+- home now next deadline: OK
+- 5am home effective minute: OK
+- replan detected: OK
+- replan confirm: OK
+- autoschedule 5am aware: OK
+- JS syntax: all root + market JS OK
+- SQL change: none required

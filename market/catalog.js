@@ -7,7 +7,8 @@ var P={
   checkTimetable:900, cozyTimetable:900,
   softChecks:700, ribbonNemo:900, weeklyScrapbook:900, retroFrame:900, ddayWidget:800,
   examPack:1500, weeklyPack:1500, midtermTemplate:1500,
-  butterBundle:2900, strawberryBundle:2900, mintBundle:2900, seasonalPack:1900
+  butterBundle:2900, strawberryBundle:2900, mintBundle:2900, seasonalPack:1900,
+  meonbyeolTheme:2900
 };
 var C={
   theme:'테마', timetable:'시간표 디자인', background:'배경', icons:'아이콘/체크박스',
@@ -62,6 +63,7 @@ var products=[
   official({id:'check-deco-timetable',category:'timetable',productType:'timetable',name:'체크 다꾸 시간표',description:'시간표 칸에 잔잔한 체크 패턴과 둥근 수업 블록을 적용해요.',price:P.checkTimetable,tags:['시간표','체크'],thumbnail:{colors:['#fffaf0','#eddcb9','#c7a974','#75603e'],pattern:'check'},payload:{timetableStyle:'check'}}),
   official({id:'cozy-ivory-timetable',category:'timetable',productType:'timetable',name:'포근한 아이보리 시간표',description:'아이보리 종이 느낌의 시간표 카드와 부드러운 수업 블록.',price:P.cozyTimetable,tags:['시간표','아이보리'],thumbnail:{colors:['#fffaf1','#f3eadc','#dfcdb2','#8c765a']},payload:{timetableStyle:'cozy'}}),
   official({id:'soft-check-icons',category:'icons',productType:'icons',name:'말랑 체크 아이콘',description:'체크박스와 완료 표시를 둥글고 말랑한 스타일로 바꿔요.',price:P.softChecks,tags:['아이콘','체크'],thumbnail:{colors:['#fff7df','#e5c16f','#6f5b2d','#ffffff']},payload:{iconStyle:'soft'}}),
+  official({id:'meonbyeol-theme',category:'character',productType:'meonbyeol',name:'먼별 테마',description:'먼지 별사탕 먼별이 플래너에 이사 와요. 할 일 먼지를 누르면 빛나는 별사탕으로 변하고, 먼별 탭에서 말 걸기·기상 챌린지·힐링하기·오늘의 꽃·이달의 하늘·미용실(별로 색 교환)을 쓸 수 있어요. 적용 후 언제든 해제 가능.',price:P.meonbyeolTheme,tags:['캐릭터','먼별','테마'],thumbnail:{colors:['#EDE4F6','#FFFDFC','#FFE08A','#8E7BC8']},payload:{meonbyeol:true}}),
   official({id:'ribbon-nemo',category:'character',productType:'character',name:'리본 네모',description:'네모 캐릭터에 작은 리본 포인트가 생겨요. 표정 기능은 그대로 유지돼요.',price:P.ribbonNemo,tags:['캐릭터','네모'],thumbnail:{colors:['#fae7e8','#c88f9d','#fff7f7','#7b555f']},payload:{characterStyle:'ribbon'}}),
   official({id:'weekly-scrapbook-export',category:'weeklyExport',productType:'weeklyExport',name:'주간 스크랩북 저장 디자인',description:'주간 플래너 이미지 저장 시 크림 종이·진한 포인트 선으로 출력해요.',price:P.weeklyScrapbook,tags:['주간','저장'],thumbnail:{colors:['#fffaf0','#f2dfbd','#8a6a3d','#d6c09a']},payload:{exportStyle:{paper:'#fffaf0',ink:'#3b3026',sub:'#8b7966',line:'#e6d4b8',soft:'#f7ead2'}}}),
   official({id:'retro-review-frame',category:'frame',productType:'frame',name:'회고 포토카드 프레임',description:'일기·주간 회고 카드에 폴라로이드처럼 얇은 프레임을 적용해요.',price:P.retroFrame,tags:['회고','프레임'],thumbnail:{colors:['#fffdf7','#f0dfcb','#c99f7b','#6d5544']},payload:{frameStyle:'polaroid'}}),

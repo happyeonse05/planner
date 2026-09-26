@@ -1,0 +1,47 @@
+PLANON Smart Plan v2 validation — 2026-09-26
+
+IMPLEMENTED
+- Additive schema v8 migration. Existing fields are retained.
+- todos: movable, autoScheduleEnabled, estimatedMinutes, remainingMinutes (optional/defaulted).
+- events/classes/exams default fixed; appointments/classes/exams locked.
+- Startup carryOver no longer changes past unfinished dates. It only marks missedAt.
+- Rule-based scheduling with 20% default buffer, daily maximum, 20-minute hard minimum and 30–60 minute preferred blocks.
+- Assignment split proposal, missed-work proposal, editable preview, explicit apply/cancel.
+- Undo stores whole pre-change planner state and saves restored state through normal save/sync path.
+- Deadline risk levels computed from remaining work vs actual free capacity; home emphasizes danger only.
+- “Now is a good time” recommendation card.
+- Estimated-time field + completed same-course focus history suggestion.
+- Exam study-plan proposal stored as normal movable todo blocks.
+- Smart-plan settings toggles and sync/save status.
+- No LLM/AI API.
+
+AUTOMATED / CODE-LEVEL TESTS
+A PASS: 120 minutes with Tue/Fri fully blocked -> Mon/Wed/Thu 40/40/40, remaining 0.
+B PASS: missed 40-minute movable block -> proposed as a full 40-minute block, not silently moved.
+C PASS: undo snapshot restored changed date exactly to original value.
+D PASS: 180 minutes required / 90 minutes available -> danger, shortage 90.
+E PASS: fixed appointment object remained byte-for-byte logically unchanged during proposal generation.
+Syntax PASS: node --check on all project JS files and market JS files.
+Imports PASS: every local JS path referenced by index.html exists.
+Static duplicate ID PASS: no duplicate IDs in index.html.
+New-module duplicate function declaration PASS: none found.
+Migration PASS (static): schema version 8 and additive smart fields present.
+Carry-over PASS (static): carryOver no longer assigns old task key to today.
+
+DATA SAFETY REVIEW
+- backupData() deep-clones the complete state object; new fields therefore enter backups without an allow-list change.
+- restore/load paths call normalize/migrate; schema v8 defaults missing fields without deleting legacy fields.
+- save() remains the single normal persistence path (localStorage -> account vault -> IndexedDB backup -> sync scheduling).
+- Undo restoration calls the same save() path, so restored local data is queued for normal cloud sync.
+- Existing merge/snapshot/deletion guards were left intact.
+
+NOT DIRECTLY VERIFIED IN THIS ENVIRONMENT
+F: real logout -> Supabase -> relogin round-trip (requires a live authenticated account/browser session).
+G: simultaneous second physical device conflict behavior (reviewed existing merge logic, not live two-device tested).
+H: live Supabase backup download/restore round-trip (schema path reviewed; no authenticated backend session here).
+Physical iPhone Safari/PWA rendering and touch behavior were not device-tested. Responsive rules for <=390px were added and no new fixed-width modal layout was introduced.
+
+KNOWN REMAINING RISKS
+- Existing app-core.js is still large legacy code. New Smart Plan logic is modular, but older planner UI/storage code remains in app-core.js to avoid a risky large refactor in the same release.
+- Live Supabase/RLS/network failures cannot be fully simulated by static/node tests.
+- “Now is a good time” scoring is intentionally simple/rule-based; it may need tuning from real usage.

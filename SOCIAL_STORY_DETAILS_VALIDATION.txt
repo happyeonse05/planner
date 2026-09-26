@@ -1,0 +1,17 @@
+PASS
+- friend story stable embed: OK
+- circular story UI: OK
+- day closing story remains: OK
+- private closing can publish later: OK
+- two Nemo appointment story: OK
+- appointment pose selection: OK
+- appointment story reactions: OK
+- Nemo contextual states: OK
+- couple milestones: OK
+- lecture details: OK
+- exam details: OK
+- monthly cheer count: OK
+- card image save: OK
+- card detailed study fields: OK
+- social SQL patch: OK
+- JavaScript syntax: 20 files OK

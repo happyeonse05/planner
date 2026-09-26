@@ -1770,3 +1770,51 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .home-clean>.home-quick-actions{flex:0 0 auto;margin-left:auto}
 .nemo-home-head .nemo-copy{flex:1 1 auto;min-width:0}
 .nemo-home-head .nemo-copy b,.nemo-home-head .nemo-copy small{overflow-wrap:break-word!important;word-break:keep-all}
+
+
+/* ===== 2026-09-26 home: 지금 / 다음 / 곧 마감 ===== */
+.home-context{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}
+.home-context-row{position:relative;min-width:0;min-height:66px;padding:10px 30px 10px 11px;border:1px solid var(--line);border-radius:13px;background:var(--card);text-align:left;color:var(--ink)}
+.home-context-row small{display:block;color:var(--sub);font-size:10.5px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-context-row b{display:block;font-size:13px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-context-row>span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:18px}
+.home-context-row.empty{opacity:.72}
+.home-deadline{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:end;padding:10px 2px 8px;border-top:1px solid var(--line)}
+.home-deadline small{grid-column:1/-1;color:var(--sub);font-size:11px;margin-bottom:3px}.home-deadline b{min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home-deadline em{font-style:normal;color:var(--sub);font-size:12px;font-weight:750}.home-deadline.empty{opacity:.72}
+@media(max-width:390px){.home-context{grid-template-columns:1fr}.home-context-row{min-height:58px}}
+
+
+/* ===== 20260926-0855: contextual Nemo + detail sheets + monthly cheers ===== */
+.nemo-state-shell{position:relative;display:inline-block;line-height:0;overflow:visible}
+.nemo-state-shell>.nemo-state-base{position:relative;z-index:1}
+.nemo-state-accessory{position:absolute;inset:-6% -16% -16% -16%;width:132%;height:122%;z-index:3;pointer-events:none;overflow:visible}
+.nemo-home-head .nemo-state-shell{flex:none}
+.planon-detail-list{display:grid;gap:8px;margin:8px 0 14px}
+.planon-detail-list>div{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:11px 12px;border-radius:13px;background:var(--soft)}
+.planon-detail-list small{font-size:12px;color:var(--sub);flex:none}
+.planon-detail-list b{font-size:13px;line-height:1.45;text-align:right;word-break:keep-all}
+.planon-detail-title{font-size:13px;font-weight:800;margin:14px 0 8px}
+.planon-milestones{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:4px 0 10px}
+.planon-milestones .planon-detail-title{grid-column:1/-1;margin:0 0 2px}
+.planon-milestones>div:not(.planon-detail-title){padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:var(--card)}
+.planon-milestones span{display:block;color:var(--sub);font-size:11px}
+.planon-milestones b{display:block;margin-top:3px;font-size:12px}
+.planon-next-milestone{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--planner-color) 32%,#fff);margin:8px 0 14px}
+.planon-next-milestone small{grid-column:1/-1;color:var(--sub);font-size:11px}
+.planon-next-milestone b{font-size:16px}
+.planon-next-milestone span{text-align:right;font-size:12px;color:var(--sub);align-self:center}
+.planon-detail-section{margin:12px 0}
+.planon-check-row{display:flex;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.planon-check-row i{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-style:normal;font-weight:800}
+.planon-check-row.done span{text-decoration:line-through;color:var(--sub)}
+.planon-detail-link{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);text-align:left}
+.planon-detail-link span{font-weight:700} .planon-detail-link b{font-size:11px;color:var(--sub);font-weight:600;text-align:right}
+.month-cheer-summary{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 12px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--planner-color) 28%,#fff);border:1px solid color-mix(in srgb,var(--planner-color) 52%,var(--line));text-align:left}
+.month-cheer-summary>span{display:flex;align-items:center;gap:8px;min-width:0}
+.month-cheer-summary b{font-size:13px}
+.month-cheer-summary em{font-style:normal;font-weight:800;font-size:12px;padding:4px 8px;border-radius:999px;background:var(--card)}
+.appointment-story-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:13px;border-radius:16px;background:color-mix(in srgb,var(--planner-color) 27%,#fff);border:1px solid color-mix(in srgb,var(--planner-color) 58%,var(--line))}
+.appointment-story-cta>div{min-width:0}
+.appointment-story-cta b{display:block;font-size:13px}
+.appointment-story-cta small{display:block;color:var(--sub);font-size:11px;line-height:1.45;margin-top:3px}
+.appointment-story-cta .b-save{flex:none;height:38px;font-size:12px;padding:0 12px}

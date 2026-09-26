@@ -1,0 +1,33 @@
+PLANON 안정화 패치 2026-09-26
+
+이번 패치는 기능 추가가 아니라 데이터 손실/동기화 회귀 위험 완화에 집중했습니다.
+
+추가로 발견하여 수정한 위험
+1. smartPlan 설정이 PREF_KEYS에 없어 기기간 bufferPct, autoSplit 등의 설정 병합에서 누락될 수 있던 문제
+   -> smartPlan을 동기화 설정 병합 대상에 추가.
+2. Undo 직후 원격 상태가 다시 우선될 여지
+   -> Undo는 복원 상태를 authoritative save로 표시한 뒤 기존 save/sync 경로를 사용하도록 변경.
+3. 스마트 필드 백업/normalize 회귀 확인용 stability-regression.js 추가.
+
+정적 검증 통과
+- app-core.js node --check
+- smart-data.js / undo.js / scheduling.js / planner.js / exams.js / smart-ui.js node --check
+- stability-regression.js node --check
+- index.html의 로컬 script src 누락 검사 통과
+- index.html 정적 duplicate id 없음
+- smartPlan이 PREF_KEYS에 포함됨 확인
+- Undo authoritative save hook 연결 확인
+
+데이터 보존 구조
+- 기존 JSON state에 additive optional field 방식 유지
+- backupData 전체 state deep-copy 유지
+- normalize/migration에서 smart fields 보존
+- IndexedDB current vault / ring / last-good 구조 유지
+- Supabase mergeStateV2 항목별 sync metadata 구조 유지
+- 친구 약속/수업/시험 고정 일정 보호 유지
+
+아직 실제 외부 환경이 필요한 검증
+- 실제 Supabase 계정 두 기기 동시 편집 네트워크 왕복
+- 실제 iPhone Safari/PWA에서 장시간 사용/백그라운드 복귀
+- 네트워크가 끊겼다가 복구되는 실제 Supabase 세션
+이 항목은 코드/모의 검증으로 '실기기 통과'라고 표시하지 않았습니다.

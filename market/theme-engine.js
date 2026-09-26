@@ -29,9 +29,11 @@ function buildStyle(override){
 }
 function renderStyle(override){var st=document.getElementById('planon-market-runtime-style');if(!st){st=document.createElement('style');st.id='planon-market-runtime-style';document.head.appendChild(st);}st.textContent=buildStyle(override);var any=st.textContent.trim().length>0;if(any)document.documentElement.setAttribute('data-planon-market','1');else document.documentElement.removeAttribute('data-planon-market');}
 function reapply(){renderStyle(preview&&preview.override||null);}
-function saveRender(){var b=B();if(b&&b.save)b.save();if(b&&b.render)b.render();setTimeout(reapply,0);}
+function fire(){try{window.dispatchEvent(new Event('planon-market-change'));}catch(e){}}
+function saveRender(){var b=B();if(b&&b.save)b.save();if(b&&b.render)b.render();setTimeout(reapply,0);setTimeout(fire,0);}
+function deactivate(type){var m=state();if(!m)return;delete m.active[type];saveRender();}
 function setActive(type,id){var m=state();if(!m)return false;var p=product(id);if(!p||!owned(p))return false;m.active[type]=id;saveRender();return true;}
-function clearPreview(){if(previewTimer)clearTimeout(previewTimer);previewTimer=null;preview=null;reapply();var n=document.getElementById('planon-market-preview-pill');if(n)n.remove();}
+function clearPreview(){if(previewTimer)clearTimeout(previewTimer);previewTimer=null;preview=null;reapply();fire();var n=document.getElementById('planon-market-preview-pill');if(n)n.remove();}
 function previewProduct(p,ms){if(!p)return;clearPreview();var type=p.productType;if(type==='bundle'){var ov={};(p.bundleItems||[]).forEach(function(id){var q=product(id);if(q)ov[q.productType]=q.id;});preview={override:ov};}else{var ov={};ov[type]=p.id;preview={override:ov};}renderStyle(preview.override);var pill=document.createElement('div');pill.id='planon-market-preview-pill';pill.textContent='미리 적용 중 · 10초 뒤 원래대로';document.body.appendChild(pill);previewTimer=setTimeout(clearPreview,ms||10000);}
 function applyPreset(p){if(!p||!owned(p)||!p.payload||!p.payload.settings)return false;var b=B(),s=b&&b.state&&b.state(),m=state();if(!s||!m)return false;var keys=Object.keys(p.payload.settings),backup={};keys.forEach(function(k){backup[k]=s.settings[k];s.settings[k]=JSON.parse(JSON.stringify(p.payload.settings[k]));});m.lastPresetBackup={at:Date.now(),productId:p.id,settings:backup};m.active[p.productType]=p.id;saveRender();return true;}
 function undoPreset(){var b=B(),s=b&&b.state&&b.state(),m=state();if(!s||!m||!m.lastPresetBackup)return false;var x=m.lastPresetBackup;Object.keys(x.settings||{}).forEach(function(k){s.settings[k]=x.settings[k];});delete m.lastPresetBackup;delete m.active.preset;delete m.active.studyTemplate;saveRender();return true;}
@@ -45,7 +47,7 @@ function decorateLegacyLocks(){
 }
 document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-act="set-defcolor"],[data-act="set-bg"]'):null;if(!a)return;var kind=a.dataset.act==='set-defcolor'?'color':'background';if(canUseLegacy(kind,a.dataset.v)){var m=state();if(m&&m.active){if(kind==='color')delete m.active.theme;else delete m.active.background;}return;}e.preventDefault();e.stopImmediatePropagation();requireLegacy(kind,a.dataset.v);},true);
 
-window.PLANON_MARKET_THEME={state:state,account:account,isAdmin:isAdmin,owned:owned,product:product,activate:activate,preview:previewProduct,clearPreview:clearPreview,reapply:reapply,resetVisual:resetVisual,undoPreset:undoPreset,exportStyle:exportStyle,legacyProduct:legacyProduct,canUseLegacy:canUseLegacy,requireLegacy:requireLegacy,grandfatherLegacy:grandfatherLegacy};
+window.PLANON_MARKET_THEME={previewOverride:function(){return preview&&preview.override||null;},deactivate:deactivate,state:state,account:account,isAdmin:isAdmin,owned:owned,product:product,activate:activate,preview:previewProduct,clearPreview:clearPreview,reapply:reapply,resetVisual:resetVisual,undoPreset:undoPreset,exportStyle:exportStyle,legacyProduct:legacyProduct,canUseLegacy:canUseLegacy,requireLegacy:requireLegacy,grandfatherLegacy:grandfatherLegacy};
 setTimeout(function(){grandfatherLegacy();reapply();decorateLegacyLocks();},0);
 var main=document.getElementById('main');if(main)new MutationObserver(function(){setTimeout(function(){reapply();decorateLegacyLocks();},0);}).observe(main,{childList:true,subtree:false});
 })();

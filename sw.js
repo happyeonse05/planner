@@ -1,6 +1,6 @@
-const PLANON_SW='20260926-0209';
+const PLANON_SW='20260926-mb1';
 const CACHE='planon-app-'+PLANON_SW;
-const APP_SHELL=["./","./index.html","./styles.css","./worklog.css","./day-story.css","./today-core.css","./portfolio.css","./app-core.js","./worklog.js","./day-story.js","./ux.js","./weather.js","./weather-extra.js","./autoschedule.js","./clock.js","./private-tally.js","./portfolio-vault.js","./nemo.js","./recipes.js","./selfchat.js","./config.js","./study-day.js","./privacy.html","./nemo-diary.png","./market/shop.css","./market/catalog.js","./market/theme-engine.js","./market/payment-adapter.js","./market/shop.js"];
+const APP_SHELL=["./","./index.html","./styles.css","./worklog.css","./day-story.css","./today-core.css","./portfolio.css","./app-core.js","./worklog.js","./day-story.js","./ux.js","./weather.js","./weather-extra.js","./autoschedule.js","./clock.js","./private-tally.js","./portfolio-vault.js","./nemo.js","./recipes.js","./selfchat.js","./config.js","./study-day.js","./privacy.html","./nemo-diary.png","./market/shop.css","./market/catalog.js","./market/theme-engine.js","./market/payment-adapter.js","./market/shop.js","./meonbyeol.js","./meonbyeol.css"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(APP_SHELL.map(u=>c.add(u).catch(()=>null)))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('planon-app-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{
