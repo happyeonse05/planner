@@ -9,7 +9,7 @@
   "description": "Flan:on(플래논) — 일정, 할 일, 시간표, 기록과 친구를 함께 잇는 플래너",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "icon-512.png?v=20260927-0115",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
