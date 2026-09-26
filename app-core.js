@@ -6541,7 +6541,8 @@ function addTodo(scope,key,text,draftId,due,course){
   if(q.due&&!due)due=q.due;
   if(q.course&&!course)course=q.course;
   if(q.key||q.time||q.due||(q.course&&q.course===course&&text!==q.text))msg=quickTodoToast(q);
-  S.todos.push({id:uid(),text:q.text,done:false,star:false,isCore:false,scope:scope,key:key,due:due||null,course:course||'',time:time,estimateMin:natural&&natural.estimateMin?natural.estimateMin:null,created:Date.now(),order:Date.now()});
+  var estMin=natural&&natural.estimateMin?Number(natural.estimateMin):null;
+  S.todos.push({id:uid(),text:q.text,done:false,star:false,isCore:false,scope:scope,key:key,due:due||null,course:course||'',time:time,estimateMin:estMin,estimatedMinutes:estMin,remainingMinutes:estMin,movable:true,autoScheduleEnabled:true,created:Date.now(),order:Date.now()});
   delete U.drafts[draftId];
   save();U.refocus=draftId;render();
   if(msg)inAppToast(msg);
