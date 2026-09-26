@@ -218,8 +218,7 @@ function decorate(){syncBanner();var main=document.getElementById('main'),u=U();
     bar.id='planon-day-close-fixed';
     bar.className='day-close-fixed';
     bar.innerHTML=c?'<button data-story-act="view-own">오늘 마감 완료 ✓ 카드 보기</button>':'<button data-story-act="close-day">오늘 마감하기</button>';
-    main.appendChild(bar);
-    document.body.classList.add('planon-day-close-visible');
+    /* 오늘 마감은 화면 중간에 고정하지 않고 일간 콘텐츠의 진짜 마지막에 둔다.\n       스크롤을 끝까지 내렸을 때만 만나도록 하여 할 일 흐름을 가리지 않는다. */\n    main.appendChild(bar);\n    bar.style.position='static';\n    bar.style.inset='auto';\n    bar.style.width='auto';\n    bar.style.margin='18px 0 calc(110px + env(safe-area-inset-bottom))';\n    bar.style.zIndex='1';\n    document.body.classList.remove('planon-day-close-visible');
   }else if(k!==tk&&c&&!closedView){
     var btn=document.createElement('button');
     btn.className='day-close-history';
