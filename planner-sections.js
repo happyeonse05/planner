@@ -1,6 +1,6 @@
 /* 시간표 탭 섹션 접기 + 표시 설정
    - 강의·고정 일정 / D-day / 시험 일정: 기본은 접힘, 제목을 눌러야 펼쳐져요
-   - D-day는 접혀 있어도 커플 디데이(♡)를 제일 먼저 보여주고, 펼치면 커플 디데이가 맨 위
+   - D-day도 시험 일정과 동일하게 접힌 상태에서 요약만 보여주고, 펼치면 커플 디데이가 맨 위
    - 설정 > '시간표·홈 표시'에서 각 섹션과 홈의 '곧 마감' 줄을 아예 숨길 수 있어요
    데이터는 건드리지 않고 화면만 바꿔요. */
 (function(){'use strict';
@@ -35,7 +35,7 @@ function apply(){var u=B.ui(),main=document.getElementById('main');if(!u||!main)
   if(u.tab!=='ttable')return;var secs=findSections(main);
   Object.keys(secs).forEach(function(k){var sec=secs[k];if(!sec)return;
     if(p.hide[k]){sec.style.display='none';return;}sec.style.display='';
-    if(k==='dday'){coupleFirst(sec);sec.classList.remove('ps-fold','ps-closed');sec.removeAttribute('data-ps-key');var oldSum=sec.querySelector(':scope > .ps-sum');if(oldSum)oldSum.remove();var oldCaret=sec.querySelector('.card-h > .ps-caret');if(oldCaret)oldCaret.remove();return;}
+    if(k==='dday')coupleFirst(sec);
     if(!p.fold){sec.classList.remove('ps-fold','ps-closed');return;}
     sec.classList.add('ps-fold');sec.dataset.psKey=k;var open=!!OPEN[k];sec.classList.toggle('ps-closed',!open);
     var head=sec.querySelector('.card-h');if(head&&!head.querySelector('.ps-caret')){head.insertAdjacentHTML('afterbegin','<span class="ps-caret" aria-hidden="true"></span>');head.setAttribute('role','button');head.setAttribute('tabindex','0');}
@@ -45,7 +45,7 @@ document.addEventListener('click',function(e){var head=e.target.closest&&e.targe
 /* 설정 화면: 표시 설정 진입 */
 function inject(){var u=B.ui(),main=document.getElementById('main');if(!main||!u||u.tab!=='settings'||u.settingsPage)return;if(main.querySelector('[data-ps-entry]'))return;var sec=document.createElement('section');sec.className='card';sec.setAttribute('data-ps-entry','1');sec.innerHTML='<button class="setrow chatrow" data-ps="open"><span>시간표·홈 표시<small>강의·D-day·시험 일정 접기/숨기기 · 일간 맨 위 시험 목록 · 곧 마감 줄</small></span><span class="chev">›</span></button>';var cards=main.querySelectorAll(':scope > section.card');if(cards.length>2)cards[2].before(sec);else main.appendChild(sec);}
 function sheet(){var p=pref();var sw=function(on,attr){return '<button class="ux-switch '+(on?'on':'')+'" '+attr+' role="switch" aria-checked="'+(on?'true':'false')+'"></button>';};
-  B.openModal('<h3>시간표·홈 표시</h3><p class="hint">끄면 화면에서만 숨겨요. 수업·D-day·시험 데이터는 그대로예요.</p><div class="ux-feature-list"><div class="ux-feature-row"><span class="ux-feature-copy"><b>강의·시험 접어두기</b><small>D-day는 기념일을 바로 볼 수 있게 항상 펼쳐두고, 강의·시험과 일간 맨 위 목록만 접어요</small></span>'+sw(p.fold,'data-ps="fold"')+'</div>'+KEYS.map(function(x){return '<div class="ux-feature-row"><span class="ux-feature-copy"><b>'+esc(x.t)+' 보이기</b><small>'+esc(x.sub)+'</small></span>'+sw(!p.hide[x.k],'data-ps="hide" data-k="'+x.k+'"')+'</div>';}).join('')+'</div><div class="acts"><button class="b-save" data-ps="close">완료</button></div>');}
+  B.openModal('<h3>시간표·홈 표시</h3><p class="hint">끄면 화면에서만 숨겨요. 수업·D-day·시험 데이터는 그대로예요.</p><div class="ux-feature-list"><div class="ux-feature-row"><span class="ux-feature-copy"><b>강의·D-day·시험 접어두기</b><small>강의·D-day·시험 일정은 기본으로 접어두고 제목을 누르면 펼쳐져요</small></span>'+sw(p.fold,'data-ps="fold"')+'</div>'+KEYS.map(function(x){return '<div class="ux-feature-row"><span class="ux-feature-copy"><b>'+esc(x.t)+' 보이기</b><small>'+esc(x.sub)+'</small></span>'+sw(!p.hide[x.k],'data-ps="hide" data-k="'+x.k+'"')+'</div>';}).join('')+'</div><div class="acts"><button class="b-save" data-ps="close">완료</button></div>');}
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ps]');if(!a)return;var v=a.dataset.ps,p=pref();
   if(v==='open'){sheet();return;}if(v==='close'){B.closeModal();B.render();return;}
   if(v==='fold'){p.fold=!p.fold;B.save();sheet();return;}
