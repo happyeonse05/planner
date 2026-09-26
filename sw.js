@@ -1,4 +1,4 @@
-const PLANON_SW='20260926-finaltouch1';
+const PLANON_SW='20260926-restore2';
 const CACHE='planon-20260926-rel1-prod0926'+PLANON_SW;
 const APP_SHELL=["./","./index.html","./apple-touch-icon.png","./icon-512.png","./styles.css","./worklog.css","./day-story.css","./today-core.css","./portfolio.css","./app-core.js","./worklog.js","./day-story.js","./ux.js","./weather.js","./weather-extra.js","./autoschedule.js","./clock.js","./private-tally.js","./portfolio-vault.js","./nemo.js","./recipes.js","./selfchat.js","./config.js","./study-day.js","./privacy.html","./nemo-diary.png","./market/shop.css","./market/functional-packs.css","./market/catalog.js","./market/theme-engine.js","./market/payment-adapter.js","./market/shop.js","./market/functional-packs.js","./meonbyeol.js","./meonbyeol.css","./meonbyeol-social.js","./focus-mate.js","./focus-mate.css","./planner-sections.js","./planner-sections.css","./relationship-theme.js","./relationship-theme.css"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(APP_SHELL.map(u=>c.add(u).catch(()=>null)))).then(()=>self.skipWaiting()));});
