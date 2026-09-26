@@ -2025,3 +2025,14 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
   width:13px!important;
   height:13px!important;
 }
+
+/* 2026-09-27 weekly export maker + friend ID */
+.week-export-devices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}
+.week-export-devices button{min-height:42px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:8px 10px;font-weight:750;text-align:left}
+.week-export-devices button span,.week-export-devices button small{display:block}
+.week-export-devices button small{font-size:10px;color:var(--sub);margin-top:2px;font-weight:550}
+.week-export-devices button.on{border-color:color-mix(in srgb,var(--planner-color) 75%,var(--line));background:color-mix(in srgb,var(--planner-color) 42%,var(--card))}
+.week-export-devices button:disabled{opacity:.42}
+.friend-id-at{flex:none;font-weight:850;color:var(--sub);font-size:18px;margin-right:-4px}
+.friend-id-add .fld{min-width:0}
+@media(max-width:390px){.week-export-devices{grid-template-columns:1fr 1fr}.week-export-devices button{padding:7px 8px;font-size:12px}}
