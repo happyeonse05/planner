@@ -4259,7 +4259,8 @@ function topHTML(){
   }
   var jump=(U.tab==='month'||U.tab==='week'||U.tab==='day');
   var rainSlot=(U.tab==='day'&&today)?'<button type="button" id="planon-rain-chip" data-rain-details="1" aria-live="polite" aria-label="강수 예보 자세히 보기"></button>':'';
-  return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small>'+esc(s)+'</small>':'')+rainSlot+'</div>'+
+  var subClass=(U.tab==='day'&&holi(dkey(d)))?' class="day-holiday-sub"':'';
+  return '<div class="ttl">'+(jump?'<button class="h1b" data-act="jump" aria-label="날짜로 이동"><h1>'+esc(t)+' <span class="caret">⌄</span></h1></button>':'<h1>'+esc(t)+'</h1>')+(s?'<small'+subClass+'>'+esc(s)+'</small>':'')+rainSlot+'</div>'+
     (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>'+(U.tab==='day'?'<button class="tbtn navg top-focus-btn" data-act="focus-free" aria-label="집중 타이머">'+ICO_CLOCK+'집중</button>':''):'')+
     (plus?'<button class="ibtn plus navg" data-act="'+plus+'" aria-label="추가">+</button>':'')+
     modeSwitchButtonHTML()+bellBtnHTML().replace('class="ibtn bell"','class="ibtn bell icog"')+searchBtn.replace('class="ibtn"','class="ibtn icog"')+
@@ -4276,7 +4277,7 @@ function navHTML(){
     day:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="18" height="23" rx="4" fill="#FFF5D9" stroke="#D8C18B" stroke-width="2"/><path d="M11 11h10M11 16h10M11 21h6" stroke="#A89466" stroke-width="1.7" stroke-linecap="round"/><path d="M22 19l5 5-4 3-5-5z" fill="#F2C06A" stroke="#D89A3A" stroke-width="1.3"/></svg>',
     todo:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="5" fill="#F3EAFB" stroke="#B8A0DC" stroke-width="2"/><path d="M11 16l3 3 7-8" stroke="#8D73B7" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     ttable:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#E6F5EE" stroke="#8CC4AC" stroke-width="2"/><path d="M16 10v6l4 3" stroke="#6AA88E" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
-    friends:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="20" cy="12" r="7" fill="#FCE3EC" stroke="#E79ABA" stroke-width="2"/><circle cx="12" cy="18" r="8" fill="#E9E0F7" stroke="#B8A0DC" stroke-width="2"/><circle cx="9.5" cy="18" r="1.2" fill="#5E5468" stroke="none"/><circle cx="14.5" cy="18" r="1.2" fill="#5E5468" stroke="none"/><path d="M10.5 21q1.5 1.2 3 0" stroke="#5E5468" stroke-width="1.3" fill="none"/></svg>'
+    friends:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="15" y="5" width="13" height="13" rx="4" fill="#FCE3EC" stroke="#E79ABA" stroke-width="2"/><circle cx="19" cy="11" r="1" fill="#5E5468" stroke="none"/><circle cx="24" cy="11" r="1" fill="#5E5468" stroke="none"/><rect x="4" y="12" width="17" height="16" rx="5" fill="#E9E0F7" stroke="#B8A0DC" stroke-width="2"/><circle cx="9.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/><circle cx="15.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/></svg>'
   };
   return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'"><span class="navico">'+(navIcons[t[0]]||'')+'</span><span class="navlabel">'+t[1]+'</span>'+dot+'</button>';}).join('');
 }
