@@ -42,6 +42,7 @@ function addStyles(){
   .auto-plan-row b{display:block;font-size:13px}
   .auto-plan-row small{display:block;margin-top:2px;color:var(--sub);font-size:11px}
   .auto-plan-row em{font-style:normal;font-weight:800;font-size:12px;white-space:nowrap}
+  .auto-core-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--planner-color) 12%,var(--card))}.auto-core-copy b,.auto-core-copy small{grid-column:1}.auto-core-copy small{color:var(--sub);font-size:11px;line-height:1.45}.auto-core-copy button{grid-column:2;grid-row:1/3}.auto-core-flow{display:flex;align-items:center;gap:5px;margin-top:10px;overflow:auto}.auto-core-flow span{font-size:10px;font-weight:800;white-space:nowrap}.auto-core-flow i{width:18px;height:1px;background:var(--line);flex:none}@media(max-width:390px){.auto-core-copy{grid-template-columns:1fr}.auto-core-copy button{grid-column:1;grid-row:auto;width:100%;margin-top:5px}}
   .auto-plan-summary{padding:11px 12px;border-radius:12px;background:color-mix(in srgb,var(--planner-color) 24%,var(--card));font-size:12px;line-height:1.5}
   .auto-plan-warn{padding:11px 12px;border-radius:12px;background:color-mix(in srgb,var(--now) 10%,var(--card));color:var(--ink);font-size:12px;line-height:1.5}
   [data-act="split-todo-open"]{display:none!important}
@@ -76,6 +77,7 @@ function inject(){
   var u=ui();
   if(!u)return;
   injectRiskRadar();
+  injectCoreHero();
   injectSettings();
   if(u.tab!=='todo'||u.qscope==='routine')return;
   var input=document.querySelector('#main input[data-draft="quick"]');
@@ -94,6 +96,15 @@ function inject(){
   injectReplan(card);
 }
 
+
+function injectCoreHero(){
+  var u=ui();if(!u||u.tab!=='home'||document.querySelector('.auto-core-hero'))return;
+  var main=document.querySelector('#main');if(!main)return;
+  var g=replanGroup(),risk=riskRows()[0],card=document.createElement('section');card.className='card auto-core-hero';
+  var status=g?'<b>틀어진 계획 '+durText(g.minutes)+' 다시 살리기</b><small>'+esc(g.parent.text)+' · 기존 미래 일정은 건드리지 않고 다시 제안해요.</small><button class="tbtn" data-auto-act="replan" data-id="'+esc(g.parent.id)+'">복구 제안 보기</button>':risk?'<b>마감 전 시간이 부족해요</b><small>'+esc(risk.todo.text)+' · '+durText(risk.shortage)+' 부족</small><button class="tbtn" data-auto-act="risk-replan" data-id="'+esc(risk.todo.id)+'">다시 계산</button>':'<b>계획이 틀어져도 다시 살려요</b><small>할 일 · 마감 · 예상시간만 적으면 빈 시간에 나눠 제안해요. 확인 전에는 일정이 바뀌지 않아요.</small><button class="tbtn" data-auto-act="goto-todo">계획 제안 만들기</button>';
+  card.innerHTML='<div class="card-h"><h3>PLANON 자동 계획</h3><span class="cnt">규칙 기반</span></div><div class="auto-core-copy">'+status+'</div><div class="auto-core-flow"><span>최소 입력</span><i></i><span>빈 시간 제안</span><i></i><span>확인 적용</span><i></i><span>다시 살리기</span></div>';
+  var first=main.querySelector('.home,.card');if(first)first.parentNode.insertBefore(card,first);else main.prepend(card);
+}
 
 function studyPrefs(){
   var s=state(),x=s.settings||(s.settings={});
@@ -385,6 +396,7 @@ function click(e){
   var a=e.target.closest&&e.target.closest('[data-auto-act]');
   if(!a)return;
   var act=a.dataset.autoAct;
+  if(act==='goto-todo'){if(B.setTab)B.setTab('todo');else{var t=document.querySelector('[data-tab="todo"]');if(t)t.click();}return;}
   if(act==='preview'){preview();return;}
   if(act==='confirm'){commit();return;}
   if(act==='replan'){previewReplan(a.dataset.id||'');return;}
