@@ -18,8 +18,7 @@ function nemoSVG(mood,cls){
     face='<ellipse cx="34" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/><ellipse cx="58" cy="39" rx="4.4" ry="2.8" fill="#5a4033"/>';
   }
   return '<span class="nemo-char '+esc(cls)+'" aria-hidden="true"><svg viewBox="0 0 92 92" role="img" focusable="false">'+
-    '<path d="M72 14 L85 7 Q89 6 88 11 L84 27 Z" fill="#f8ddb2" stroke="#b98e70" stroke-width="3" stroke-linejoin="round"/>'+
-    '<path d="M77 13 L85 19 M80 9 L87 14 M74 18 L83 26" fill="none" stroke="#fff1d3" stroke-width="2" stroke-linecap="round"/>'+
+
     '<rect x="10" y="14" width="72" height="66" rx="14" fill="var(--planner-color,#dce9f7)" stroke="#b98e70" stroke-width="3.5"/>'+
     '<path d="M24 80 Q24 89 31 89 Q38 89 38 80" fill="var(--planner-color,#dce9f7)" stroke="#b98e70" stroke-width="3.5" stroke-linejoin="round"/>'+
     '<path d="M55 80 Q55 89 62 89 Q69 89 69 80" fill="var(--planner-color,#dce9f7)" stroke="#b98e70" stroke-width="3.5" stroke-linejoin="round"/>'+face+'</svg></span>';
