@@ -821,14 +821,10 @@ var NAVI={
  friends:'<svg viewBox="0 0 32 32"><circle cx="20" cy="12" r="7" fill="#FCE3EC" stroke="#E79ABA" stroke-width="2"/><circle cx="12" cy="18" r="8" fill="#E9E0F7" stroke="#B8A0DC" stroke-width="2"/><circle cx="9.5" cy="18" r="1.2" fill="#5E5468"/><circle cx="14.5" cy="18" r="1.2" fill="#5E5468"/><path d="M10.5 21q1.5 1.2 3 0" stroke="#5E5468" stroke-width="1.3" fill="none"/><circle cx="18" cy="11" r="1" fill="#5E5468"/><circle cx="22" cy="11" r="1" fill="#5E5468"/></svg>',
  meonbyeol:'<svg viewBox="0 0 32 32"><path d="'+(typeof cloudPath==='function'?cloudPath(16,17,11,9):'')+'" fill="#FFFDFC" stroke="#DCCDF2" stroke-width="2"/><path d="M11 17q2-1.6 4 0M17 17q2-1.6 4 0" stroke="#5E5468" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="9.5" cy="20" rx="2" ry="1.2" fill="#F7C8D8"/><ellipse cx="22.5" cy="20" rx="2" ry="1.2" fill="#F7C8D8"/><path d="'+starPath(26,6,4)+'" fill="#F2C94C"/></svg>'
 };
-function navHTML(tabs,cur,pending){var t=tabs.slice();if(!NAVI.__b)NAVI.__b=NAVI.meonbyeol;NAVI.meonbyeol=NAVI.__b;if(charType()==='dol')NAVI.meonbyeol='<svg viewBox="0 0 32 32"><path d="M16 5q9 0 10.5 9q1 8-4.8 10.6q-5.7 2.6-11.4 0Q4.5 22 5.5 14Q7 5 16 5z" fill="#E6E0EE" stroke="#A79BB4" stroke-width="2"/><path d="M11 16h3M18 16h3" stroke="#5E5468" stroke-width="2" stroke-linecap="round"/><circle cx="9.5" cy="19" r="1.5" fill="#F7C8D8"/><circle cx="22.5" cy="19" r="1.5" fill="#F7C8D8"/></svg>';return t.map(function(x){var dot=x[0]==='friends'&&pending>0?'<i class="navdot"></i>':'';return '<button data-act="tab" data-tab="'+x[0]+'" class="mb-nav'+(cur===x[0]?' on':'')+'">'+(NAVI[x[0]]||'')+'<span>'+x[1]+'</span>'+dot+'</button>';}).join('');}
-
-/* ---------- Shop: 미리보기 제거 · 3일 무료체험만 사용 ---------- */
-function sync(){trialCheck();var on=isOn(),dol=on&&charType()==='dol',todoOn=on&&st().todoTheme!==false;document.documentElement.classList.toggle('mbon',on);document.documentElement.classList.toggle('mb-dol',dol);document.documentElement.classList.toggle('mb-byeol',on&&!dol);document.documentElement.classList.toggle('mb-todo-off',on&&!todoOn);var u=B.ui();if(!on&&u&&u.tab==='meonbyeol'){u.tab='day';try{B.render(true);}catch(e){}}if(on){checkClose();if(document.getElementById('mb-byeol')&&!document.getElementById('mb-byeol').firstChild)mount();}}
-window.addEventListener('planon-market-change',function(){sync();try{var nav=document.getElementById('nav');if(nav)B.render();}catch(e){}});
-var mainEl=document.getElementById('main');if(mainEl)new MutationObserver(function(){setTimeout(sync,0);}).observe(mainEl,{childList:true});
-window.PLANON_MEONBYEOL={on:isOn,view:function(){setTimeout(mount,0);return view();},nav:navHTML,
-  svg:function(id,tint,o){return byeolSVG(id||'mbx',tint||(isOn()?curTint():BASE),o||{});},
+function navHTML(tabs,cur,pending){
+  /* Character themes must not replace the app's global bottom navigation. */
+  return null;
+},
   myTint:function(){return curTint();},baseTint:function(){return BASE;},
   state:function(){return st();},say:say,addStars:addStars,icoStar:icoStar,icoLemon:icoLemon,
   openDraw:openDraw,openPick:openPick,starPath:starPath,dolSVG:dolSVG,charSVG:charSVG,charType:charType,charName:charName,exprFor:exprFor,curExpr:curExpr,flash:flash,EXPRS:EXPRS,isHatched:function(){return !!st().hatched;},rubBurst:function(x,y){spawnAt(x,y);},pop:pop,chime:chime};
