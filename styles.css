@@ -1935,3 +1935,27 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 .settings-quick-restore{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}
 .couple-display-seg{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:430px){.couple-display-seg button{font-size:11px;padding-left:5px;padding-right:5px}}
+
+
+/* PLANON restore3: expanded anniversaries, compact review, mobile stability */
+.clickable-row{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.clickable-row:active{background:var(--soft)}
+.schedule-list-row>.chev{margin-left:auto;color:var(--sub)}
+.dday-list-entry+.dday-list-entry{border-top:1px solid var(--line)}
+.couple-inline-wrap{margin:0 0 10px 42px;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--soft) 72%,transparent)}
+.couple-inline-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:6px}
+.couple-inline-head b{font-size:12px}.couple-inline-head small{font-size:10px;color:var(--sub)}
+.couple-inline-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px}
+.couple-inline-item{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:6px 7px;border-radius:8px;text-align:left;background:var(--card);border:1px solid var(--line)}
+.couple-inline-item span{flex:none;font-size:11px;font-weight:700}
+.couple-inline-item b{min-width:0;font-size:10.5px;font-weight:500;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weekly-review-card{padding:0;overflow:hidden}
+.weekly-review-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.weekly-review-summary::-webkit-details-marker{display:none}
+.weekly-review-summary>span:first-child{min-width:0}.weekly-review-summary b{display:block;font-size:14px}.weekly-review-summary small{display:block;margin-top:2px;color:var(--sub);font-size:11px}
+.weekly-review-summary .cnt{flex:none;font-size:10.5px}
+.weekly-review-card[open] .weekly-review-summary{border-bottom:1px solid var(--line)}
+.weekly-review-body{padding:10px 12px 12px}
+#app,#main,.top,.nav{-webkit-font-smoothing:antialiased}
+#main{contain:paint}
+@media(max-width:560px){.couple-inline-wrap{margin-left:0}.couple-inline-list{grid-template-columns:1fr}.dday-list-card .setrow{gap:7px;flex-wrap:wrap}.dday-list-card .setrow>.ddn{margin-left:auto}}
