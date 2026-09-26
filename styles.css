@@ -2036,3 +2036,12 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 .friend-id-at{flex:none;font-weight:850;color:var(--sub);font-size:18px;margin-right:-4px}
 .friend-id-add .fld{min-width:0}
 @media(max-width:390px){.week-export-devices{grid-template-columns:1fr 1fr}.week-export-devices button{padding:7px 8px;font-size:12px}}
+
+/* 2026-09-27 timed repeating routines */
+.routine-time-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.routine-time-grid label{min-width:0}.routine-time-grid .fld{margin-top:5px}
+.routine-master{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 12px}
+.routine-master span b,.routine-master span small{display:block}.routine-master span small{font-size:11px;color:var(--sub);margin-top:2px}
+.rt{display:flex;align-items:center;gap:8px}.rt .ttxt{flex:1;min-width:0}
+.rt.routine-off{opacity:.5}.routine-inline-toggle{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 9px;font-size:10px;font-weight:800;color:var(--sub)}
+@media(max-width:380px){.routine-time-grid{grid-template-columns:1fr}}
