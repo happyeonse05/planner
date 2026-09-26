@@ -17,7 +17,7 @@ var C={
   widget:'위젯', preset:'플래너 세팅', studyTemplate:'공부 템플릿', bundle:'번들',
   studentPack:'학생', examPack:'수험', workPack:'직장 · 프로젝트', startupPack:'창업', creatorPack:'크리에이터 · N잡', travelPack:'여행', fandomPack:'팬덤', petPack:'반려생활', lifePack:'라이프', moneyPack:'머니 · 생활', decoPack:'다꾸', relationTheme:'관계 테마'
 };
-function official(x){return Object.assign({creatorId:'planon-official',creatorName:'Planon',currency:'KRW',forSale:true,marketVersion:2},x);}
+function official(x){return Object.assign({creatorId:'planon-official',creatorName:'Flan:on',currency:'KRW',forSale:true,marketVersion:2},x);}
 function theme(id,name,color,theme,isFree){return official({id:id,category:'theme',productType:'theme',name:name,description:(isFree?'처음부터 무료로 쓸 수 있는 기본 컬러.':'기본 무료 컬러와 다른 특색 컬러. 앱 전체 포인트가 같은 톤으로 맞춰져요.'),price:isFree?0:P.specialColor,isFree:!!isFree,legacyColor:color,tags:[isFree?'무료':'특색 컬러','컬러'],thumbnail:{colors:[theme.background,theme.card,theme.primary,theme.icon]},payload:{theme:theme}});}
 function bg(id,name,key,color,dot){return official({id:id,category:'background',productType:'background',name:name,description:'플래논에서 쓰던 작은 도트무늬 배경. 기본 컬러 5종과 별도로 구매하는 꾸미기 아이템이에요.',price:P.dotBackground,legacyBg:key,tags:['도트','배경','다꾸'],thumbnail:{colors:[color,dot,color,dot],pattern:'dots'},payload:{background:{color:color,dot:dot,size:40,legacyKey:key}}});}
 var products=[
@@ -35,8 +35,8 @@ var products=[
   theme('special-lavender','라벤더 컬러','#e7e1f4',{background:'#f2eef9',primary:'#e7e1f4',secondary:'#f7f4fb',card:'#fefcff',schedule:'#e7e1f4',border:'#ded7eb',button:'#f5f1fa',icon:'#6e6081',ink:'#39343f',sub:'#8d8497',iconStyle:'line'},false),
 
   /* 관계 테마 — 기능팩/캐릭터/다꾸와 독립 슬롯 */
-  official({id:'couple-together-theme',category:'relationTheme',productType:'relationTheme',name:'애인과 함께',description:'기억의 페이지 FINAL의 데이트 흐름을 PLANON에 옮긴 커플 관계 테마. 약속 → 서로 수락 → 티켓 → 데이트 마감 → 기억의 페이지 → 월간 Chapter로 이어져요. 먼별&먼돌 커플 세트가 포함되며 적용 전에 누가 먼별/먼돌인지 정해요.',price:P.coupleTogether,tags:['커플','기억의 페이지','먼별','먼돌'],thumbnail:{colors:['#FFF8EE','#F5DDE5','#E7E0F2','#8B7281']},payload:{relationKey:'couple',includesPair:true},bundleItems:['meonbyeol-theme','meondol-theme']}),
-  official({id:'friend-together-theme',category:'relationTheme',productType:'relationTheme',name:'친구랑 함께',description:'실제 PLANON 친구 또는 내가 만든 가상 상대와 함께 집중해요. 나만·분할·상대만 보기, 클리어 피드, 같이 집중, 누적 집중시간 대결을 지원해요.',price:0,isFree:true,tags:['친구','집중','대결','함께'],thumbnail:{colors:['#EEF5F0','#E6ECF7','#FFF9EA','#66756E']},payload:{relationKey:'friend'}}),
+  official({id:'couple-together-theme',category:'relationTheme',productType:'relationTheme',name:'애인과 함께',description:'기억의 페이지 FINAL의 데이트 흐름을 Flan:on에 옮긴 커플 관계 테마. 약속 → 서로 수락 → 티켓 → 데이트 마감 → 기억의 페이지 → 월간 Chapter로 이어져요. 먼별&먼돌 커플 세트가 포함되며 적용 전에 누가 먼별/먼돌인지 정해요.',price:P.coupleTogether,tags:['커플','기억의 페이지','먼별','먼돌'],thumbnail:{colors:['#FFF8EE','#F5DDE5','#E7E0F2','#8B7281']},payload:{relationKey:'couple',includesPair:true},bundleItems:['meonbyeol-theme','meondol-theme']}),
+  official({id:'friend-together-theme',category:'relationTheme',productType:'relationTheme',name:'친구랑 함께',description:'실제 Flan:on 친구 또는 내가 만든 가상 상대와 함께 집중해요. 나만·분할·상대만 보기, 클리어 피드, 같이 집중, 누적 집중시간 대결을 지원해요.',price:0,isFree:true,tags:['친구','집중','대결','함께'],thumbnail:{colors:['#EEF5F0','#E6ECF7','#FFF9EA','#66756E']},payload:{relationKey:'friend'}}),
 
   /* 전체 테마 */
   official({id:'butter-yellow-theme',category:'theme',productType:'theme',name:'버터 옐로우 테마',description:'버터처럼 포근한 옐로우. 카드·버튼·일정·체크 포인트가 한 세트로 바뀌어요.',price:P.butterTheme,tags:['다꾸','옐로우'],thumbnail:{colors:['#fff1b8','#fff9df','#f5ce62','#8c6723']},payload:{theme:{background:'#fff1b8',primary:'#f5ce62',secondary:'#fff5d2',card:'#fffdf4',schedule:'#f5d984',border:'#ead89e',button:'#fff0b9',icon:'#7a5c25',ink:'#3d351e',sub:'#8e815d',iconStyle:'soft'}}}),
