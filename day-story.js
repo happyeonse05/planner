@@ -182,14 +182,19 @@ function ownStoryCircleHTML(mine){
 function lockedFriendHTML(f){return '<button class="story-circle locked" data-story-act="locked-story"><span class="story-ring">'+avatarHTML(f.id,false,'basic',f.color||'','basic')+'</span><span>'+esc(friendName(f.id))+'</span></button>';}
 function storyGroups(){var out=[],seen={};ST.stories.forEach(function(c){if(!seen[c.userId]){seen[c.userId]=1;out.push(c);}});return out;}
 function friendStoryHTML(c){var cnt=ST.stories.filter(function(x){return x.userId===c.userId;}).length;return '<button class="story-circle" data-story-act="view-friend-story" data-id="'+esc(c.userId)+'"><span class="story-ring">'+avatarHTML(c.userId,false,c.type==='appointment'?'happy':closingMood(c),c.nemoColor,c.nemoState||'basic')+(cnt>1?'<i class="story-count">'+cnt+'</i>':'')+'</span><span>'+esc(friendName(c.userId))+'</span></button>';}
+function cheerStoryHTML(){
+  var s=S(),rows=(s&&s.settings&&Array.isArray(s.settings.cheerReceivedLog)?s.settings.cheerReceivedLog:[]).slice().sort(function(a,b){return Number(b.receivedAt||0)-Number(a.receivedAt||0);}).slice(0,3);
+  if(!rows.length)return '';
+  return '<div class="story-cheer-notes"><b>응원 쪽지</b>'+rows.map(function(x){return '<article><span>'+esc(x.fromName||'친구')+'</span><p>'+esc(x.message||'')+'</p><small>'+esc(fmtDate(x.date||B.todayKey()))+'</small></article>';}).join('')+'</div>';
+}
 function stripHTML(){
   var mine=closeFor(B.todayKey()),friends=FS().friends||[],own=ownStoryCircleHTML(mine),head='<div class="story-social-head"><div><b>스토리</b><small>플래논에서 만든 기록만</small></div></div>';
-  if(!friends.length)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'</div><div class="story-zero"><span>친구를 연결하면 서로의 하루를 볼 수 있어</span><button data-story-act="go-friends">친구 연결</button></div></section>';
-  if(!mine)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles locked">'+own+friends.slice(0,8).map(lockedFriendHTML).join('')+'</div><p class="story-lock-copy">오늘을 마감하면 친구 스토리가 열려</p></section>';
-  if(ST.loading)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'<div class="story-strip-skeleton"><i></i><i></i><i></i></div></div></section>';
-  if(ST.error)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'</div><div class="story-zero"><span>스토리를 불러오지 못했어요</span><button data-story-act="reload-stories">다시 시도</button></div></section>';
+  if(!friends.length)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'</div><div class="story-zero"><span>친구를 연결하면 서로의 하루를 볼 수 있어</span><button data-story-act="go-friends">친구 연결</button></div>'+cheerStoryHTML()+'</section>';
+  if(!mine)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles locked">'+own+friends.slice(0,8).map(lockedFriendHTML).join('')+'</div><p class="story-lock-copy">오늘을 마감하면 친구 스토리가 열려</p>'+cheerStoryHTML()+'</section>';
+  if(ST.loading)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'<div class="story-strip-skeleton"><i></i><i></i><i></i></div></div>'+cheerStoryHTML()+'</section>';
+  if(ST.error)return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+'</div><div class="story-zero"><span>스토리를 불러오지 못했어요</span><button data-story-act="reload-stories">다시 시도</button></div>'+cheerStoryHTML()+'</section>';
   var groups=storyGroups();
-  return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+(groups.length?groups.map(friendStoryHTML).join(''):'')+'</div>'+(groups.length?'':'<p class="story-none">아직 올라온 친구 기록이 없어</p>')+'</section>';
+  return '<section class="card friend-story-strip social">'+head+'<div class="story-circles">'+own+(groups.length?groups.map(friendStoryHTML).join(''):'')+'</div>'+(groups.length?'':'<p class="story-none">아직 올라온 친구 기록이 없어</p>')+''+cheerStoryHTML()+'</section>';
 }
 
 function decorate(){syncBanner();var main=document.getElementById('main'),u=U();if(!main||!u)return;var old=document.getElementById('planon-day-close-fixed');if(old)old.remove();var strip=main.querySelector('.friend-story-strip');if(strip&&!(u.tab==='friends'&&!u.friendsPage))strip.remove();var hist=main.querySelector('.day-close-history');if(hist)hist.remove();var pref=main.querySelector('.story-settings-card');if(pref)pref.remove();document.body.classList.remove('planon-day-close-visible');
