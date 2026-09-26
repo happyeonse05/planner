@@ -65,6 +65,7 @@ function pendingMissed(){
 
 function reasonCard(){
   if(document.querySelector('.smart-failure-card'))return;
+  var q=Q();if(!q||q.missed().length!==1)return;
   var xs=pendingMissed();if(!xs.length)return;
   var t=xs[0],mark=smartHomeMarker();if(!mark)return;
   var card=document.createElement('section');
