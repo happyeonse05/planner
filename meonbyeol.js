@@ -583,7 +583,7 @@ function talkLine(){var h=hourNow(),p=dayProgress(),m=st(),fm=focusToday(),L=[];
 
 /* ---------- 레몬사탕(하루 3개) · 주운 것 ---------- */
 var FINDS=[
- {n:'피카츄 꼬치',k:'skewer',c:['#FFE27A','#FFE27A','#FFE27A'],line:'피카츄 모양 꼬치 발견! 노랗고 말랑해.',w:5},
+ {n:'노랑말랑 꼬치',k:'skewer',c:['#FFE27A','#FFE27A','#FFE27A'],line:'노랑말랑 꼬치 발견! 노랗고 말랑해.',w:5},
  {n:'떡꼬치',k:'skewer',c:['#F4A98A','#F4A98A','#F4A98A'],line:'떡꼬치가 하나 남아 있었어! 달콤짭짤.',w:6},
  {n:'별사탕 꼬치',k:'skewer',c:['#F7B6C8','#C9B2EC','#BDEBD8'],line:'별사탕 꼬치 주웠어! 먹기 아까워.',w:5},
  {n:'세잎클로버',k:'clover3',line:'평범한 세잎클로버지만… 귀엽잖아.',w:6},
