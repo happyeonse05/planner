@@ -700,7 +700,7 @@ function drawCards(){var box=document.getElementById('mb-cards');if(!box)return;
   '<section class="mb-card"><h3>오늘의 꽃</h3>'+(f?pokaHTML(f,m.day.key,m.album.length||1,false):'<button class="mb-big" data-mb="flower">'+charName()+'가 꽃밭에서 골라올게</button>')+albumHTML()+'</section>'+
   (grid?'<section class="mb-card"><h3>이번 주 집중</h3>'+grid+'</section>':'')+
   '<section class="mb-card"><h3>복복복 별가챠</h3>'+gachaHTML()+'</section>'+
-  familyHTML()+'<section class="mb-card"><h3>'+charName()+' 옷장</h3><p class="mb-sub">꽃핀은 별, 리본은 레몬사탕으로 받을 수 있어. 나머지는 Planon Shop 옷장 상품이야. 누르면 입고 벗어.</p>'+wardrobeHTML()+'</section>'+
+  familyHTML()+'<section class="mb-card"><h3>'+charName()+' 옷장</h3><p class="mb-sub">꽃핀은 별, 리본은 레몬사탕으로 받을 수 있어. 나머지는 Flan:on Shop 옷장 상품이야. 누르면 입고 벗어.</p>'+wardrobeHTML()+'</section>'+
   '<section class="mb-card"><h3>'+charName()+' 주머니</h3>'+pouchHTML()+'</section>';
   refreshPills();}
 function mount(){paintHero();drawCards();var m=st();if(m.lastVisit!==tk()){m.lastVisit=tk();B.save();}}
