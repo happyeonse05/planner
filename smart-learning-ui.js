@@ -83,6 +83,17 @@ function reasonCard(){
   else mark.insertAdjacentElement('afterend',card);
 }
 
+function singleMissedCard(){
+  if(document.querySelector('.smart-single-missed')||document.querySelector('.smart-failure-card'))return;
+  var q=Q();if(!q||!smartOn()||prefs().missedSuggestions===false)return;
+  var xs=q.missed();if(xs.length!==1)return;
+  var t=xs[0],mark=smartHomeMarker();if(!mark)return;
+  var c=document.createElement('section');
+  c.className='card smart-card smart-single-missed';
+  c.innerHTML='<b>계획이 조금 밀렸어요</b><small>'+esc(t.text||'할 일')+' · 빈 시간에 다시 잡을 수 있어요.</small><div class="smart-actions"><button class="b-save" data-learning-act="replan-one" data-id="'+esc(t.id)+'">다시 잡기</button><button class="tbtn" data-learning-act="leave-one">나중에</button></div>';
+  mark.insertAdjacentElement('afterend',c);
+}
+
 function nudgeSuppressed(key){
   var st=L.store();return st.nudges&&st.nudges[key]===today();
 }
@@ -137,6 +148,7 @@ function afterRender(){
   simplifySettings();
   if(smartOn()){
     reasonCard();
+    singleMissedCard();
     bufferNudge();
     procrastinationNudge();
     reorderHome();
@@ -183,6 +195,8 @@ document.addEventListener('click',function(e){
   if(act==='open-settings'){smartSettingsModal();return;}
   if(act==='close-settings'){B.closeModal();B.render(true);return;}
   if(act==='undo'){var un=U();if(un&&un.undo)un.undo();return;}
+  if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p&&p.changes&&p.changes.length)q.preview(p);else B.toast('옮길 수 있는 빈 시간이 없어요');}return;}
+  if(act==='leave-one'){var card=a.closest('.smart-single-missed');if(card)card.remove();return;}
   if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p)q.preview(p);}return;}
   if(act==='buffer-relax'){prefs().bufferPct=30;suppressNudge('buffer');B.save();B.render(true);B.toast('자동 계획을 조금 더 여유 있게 잡을게요.');return;}
   if(act==='buffer-keep'){suppressNudge('buffer');B.render(true);return;}
