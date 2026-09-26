@@ -181,3 +181,50 @@
   .closed-diary-wait .diary-banner-copy{min-width:0!important}
   .closed-diary-wait .diary-banner-copy b{font-size:21px}
 }
+
+
+/* ===== 20260926-0855: circular social stories + two-Nemo appointment cards ===== */
+.friend-story-strip.social{padding:16px 14px 14px;overflow:hidden}
+.story-social-head{display:flex;justify-content:space-between;align-items:flex-end;margin:0 2px 12px}
+.story-social-head b{display:block;font-size:18px;letter-spacing:-.03em}
+.story-social-head small{display:block;color:var(--sub);font-size:11px;margin-top:2px}
+.friend-story-strip.social .story-circles{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 5px;scrollbar-width:none}
+.friend-story-strip.social .story-circles::-webkit-scrollbar{display:none}
+.story-circle{width:68px;flex:0 0 68px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:none}
+.story-circle>span:last-child{width:100%;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.story-ring{position:relative;width:61px;height:61px;border-radius:50%;padding:3px;display:grid;place-items:center;background:linear-gradient(145deg,color-mix(in srgb,var(--planner-color) 72%,#fff),#f2c8b0);box-shadow:0 0 0 1px color-mix(in srgb,var(--planner-color) 50%,var(--line))}
+.story-circle.locked .story-ring{filter:grayscale(.6);opacity:.58;background:var(--soft)}
+.story-circle .story-avatar{width:55px;height:55px;border-radius:50%;background:var(--card);display:grid;place-items:center;overflow:visible}
+.story-circle .story-avatar .nemo-char{width:47px!important;height:47px!important}
+.story-circle .story-avatar .nemo-state-shell{width:47px;height:47px}
+.story-plus{position:absolute;right:-2px;bottom:-1px;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:var(--planner-color);border:2px solid var(--card);font-style:normal;font-size:12px;font-weight:900;color:var(--ink)}
+.story-count{position:absolute;right:-3px;top:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;display:grid;place-items:center;background:var(--ink);color:var(--card);border:2px solid var(--card);font-style:normal;font-size:9px;font-weight:800}
+.story-own-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.story-own-card-actions button{height:42px;border-radius:13px;font-weight:800}
+.story-publish-card{background:color-mix(in srgb,var(--planner-color) 48%,#fff);border:1px solid color-mix(in srgb,var(--planner-color) 72%,var(--line))}
+.story-pair{display:grid;grid-template-columns:1fr 48px 1fr;align-items:end;gap:5px;margin:22px auto 10px;max-width:330px}
+.story-pair>div{display:grid;place-items:center;min-width:0}
+.story-pair .story-pair-nemo{width:112px!important;height:112px!important}
+.story-pair .nemo-state-shell{width:112px;height:112px}
+.story-pose-icon{width:38px;height:38px;align-self:center;color:#9e765a}
+.story-pose-text{align-self:center;justify-self:center;font-size:9px;letter-spacing:.12em;font-weight:900;color:var(--sub);writing-mode:vertical-rl}
+.story-pair-names{text-align:center;font-size:17px;font-weight:800;margin:4px 0 18px}
+.story-appointment-place{margin:0 0 18px;padding:15px;border-radius:18px;background:var(--soft);text-align:center}
+.story-appointment-place b{display:block;font-size:17px}
+.story-appointment-place small{display:block;color:var(--sub);margin-top:5px;font-size:12px}
+.story-pose-picks{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.story-pose-picks button{height:38px;border-radius:12px;background:var(--soft);font-size:11px;font-weight:750}
+.story-pose-picks button.on{background:color-mix(in srgb,var(--planner-color) 48%,#fff);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--planner-color) 75%,var(--line))}
+.story-simple-reactions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.story-simple-reactions button{min-height:66px;border-radius:16px;background:var(--soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.story-simple-reactions button b{font-size:23px;line-height:1}
+.story-simple-reactions .story-reaction-icon{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--ink)}
+.story-simple-reactions .story-reaction-icon path:first-child{vector-effect:non-scaling-stroke}
+.story-simple-reactions button small{font-size:10px;color:var(--sub)}
+.story-simple-reactions button.on{background:color-mix(in srgb,var(--planner-color) 42%,#fff)}
+@media(max-width:430px){
+  .story-pair .story-pair-nemo{width:94px!important;height:94px!important}
+  .story-pair .nemo-state-shell{width:94px;height:94px}
+  .story-pose-picks{grid-template-columns:repeat(2,1fr)}
+  .story-own-card-actions{grid-template-columns:1fr}
+}
