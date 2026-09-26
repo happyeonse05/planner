@@ -297,7 +297,7 @@ function openModeSwitch(){M={type:'mode-switch'};openModal('<h3>플래너 유형
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,liteHome:true,showTodoTab:true,locationEnabled:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],recipes:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,remindMinutes:30,liteHome:true,showTodoTab:true,locationEnabled:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],recipes:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -421,6 +421,7 @@ function normalize(s){
   if(!o.settings.defColor&&lsGet('planner.defColor'))o.settings.defColor=lsGet('planner.defColor');
   if(!o.settings.calItem)o.settings.calItem='study';
   if(!o.settings.calDday||o.settings.calDday==='star')o.settings.calDday='icon';
+  if([10,30,60].indexOf(Number(o.settings.remindMinutes))<0)o.settings.remindMinutes=30;
   /* 이전 버전에서 '기본'으로 저장된 배경도 이름 기본 색 연동으로 한 번 교정 */
   if(o.settings.bgLinkedV3===undefined){if(!o.settings.bg||o.settings.bg==='plain')o.settings.bg='rainbow';o.settings.bgLinkedV3=true;}
   o.settings.monthItems=Object.assign({appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},o.settings.monthItems||{});
@@ -3607,7 +3608,7 @@ function askReminderPermission(){
 function checkReminders(){
   if(!S.settings.remindOn||!('Notification' in window)||Notification.permission!=='granted')return;
   var d=new Date(),k=dkey(d),now=d.getHours()*60+d.getMinutes(),changed=false;
-  itemsFor(d).filter(function(it){return !it.skipped&&it.start>=now&&it.start-now<=30;}).forEach(function(it){
+  itemsFor(d).filter(function(it){return !it.skipped&&it.start>=now&&it.start-now<=Number(S.settings.remindMinutes||30);}).forEach(function(it){
     var key=k+'|'+it.id+'|'+it.start;
     if(S.settings.notified[key])return;
     try{new Notification('곧 시작해요',{body:it.name+' · '+timeShort(fmt(it.start))});}catch(e){}
@@ -4284,6 +4285,7 @@ function renderNav(){
   if(!nav)return;
   nav.innerHTML=navHTML();
   var count=nav.children.length||1;
+  nav.style.setProperty('--nav-count',String(count));
   nav.style.gridTemplateColumns='repeat('+count+',minmax(0,1fr))';
   nav.style.minWidth='0';
   nav.style.maxWidth='100%';
@@ -5103,7 +5105,8 @@ function viewSettings(){
 
   var notificationHTML='<section class="card settings-clean-card"><div class="card-h"><h3>알림</h3><span class="cnt">필요한 것만</span></div>'+ 
     '<p class="hint settings-clean-intro">일정 알림과 친구 알림을 한곳에서 관리해요.</p>'+ 
-    '<div class="setrow"><span>가까운 일정 알림<small>'+(isIOSDevice()&&!isStandalonePWA()?'아이폰은 홈 화면에 추가한 앱에서 켤 수 있어요 · 현재 '+reminderPermissionLabel():'30분 전 시스템 알림 · 현재 '+reminderPermissionLabel())+'</small></span><button class="tbtn'+(S.settings.remindOn?' on':'')+'" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'켜기')+'</button></div>'+ 
+    '<div class="setrow"><span>가까운 일정 알림<small>'+(isIOSDevice()&&!isStandalonePWA()?'아이폰은 홈 화면에 추가한 앱에서 켤 수 있어요 · 현재 '+reminderPermissionLabel():String(S.settings.remindMinutes||30)+'분 전 시스템 알림 · 현재 '+reminderPermissionLabel())+'</small></span><button class="tbtn'+(S.settings.remindOn?' on':'')+'" data-act="toggle-remind">'+(S.settings.remindOn?'켜짐':'켜기')+'</button></div>'+ 
+    '<div class="setrow"><span>일정 알림 시점<small>수업·일정 시작 전에 알려줘요</small></span><div class="seg" style="margin:0">'+[10,30,60].map(function(n){return '<button data-act="set-remind-min" data-v="'+n+'" class="'+((S.settings.remindMinutes||30)===n?'on':'')+'">'+(n===60?'1시간':n+'분')+' 전</button>';}).join('')+'</div></div>'+ 
     '<div class="setrow"><span>아침 브리핑<small>오늘 '+esc(blockWord)+'·마감·'+esc(gapWord)+'·할 일을 알려줘요</small></span><div style="display:flex;align-items:center;gap:6px"><input class="sel" type="time" id="set-brief-time" value="'+esc(S.settings.morningBriefingTime||'08:00')+'" style="width:92px"><button class="tbtn'+(S.settings.morningBriefing?' on':'')+'" data-act="toggle-morning-brief">'+(S.settings.morningBriefing?'켜짐':'켜기')+'</button></div></div>'+ 
     '<div class="setrow"><span>친구 요청 · 약속 알림<small>'+(!notifySupported()?'이 브라우저는 알림을 지원하지 않아요':notifySupported()&&Notification.permission==='denied'?'알림이 막혀 있어요. 브라우저·기기 설정에서 허용해주세요':'친구 요청과 약속 변화를 알려줘요')+'</small></span><button class="tbtn'+(friendNotifyOn()?' on':'')+'" data-act="friend-notify">'+(friendNotifyOn()?'켜짐':'꺼짐')+'</button></div>'+ 
   '</section>';
@@ -6850,6 +6853,7 @@ function act(a,e){
     case 'back':U.tab=U.prevTab||'week';render(true);break;
     case 'set-theme':S.settings.theme=a.dataset.v;lsSet('planner.theme',a.dataset.v);save();applyTheme();render();break;
     case 'toggle-remind':if(S.settings.remindOn){S.settings.remindOn=false;save();render();toast('가까운 일정 알림을 껐어요');}else{askReminderPermission();}break;
+    case 'set-remind-min':{var rm=Number(a.dataset.v);if([10,30,60].indexOf(rm)>=0){S.settings.remindMinutes=rm;save();render();toast((rm===60?'1시간':rm+'분')+' 전 알림으로 바꿨어요');}break;}
     case 'add-link':openLink(null);break;
     case 'edit-link':{var lk=S.settings.links.find(function(x){return x.id===id;});if(lk)openLink(lk);break;}
     case 'save-link':saveLink();break;
