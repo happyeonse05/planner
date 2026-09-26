@@ -37,10 +37,15 @@ function clean(){
     var p=row.parentElement;if(!p)return;var key=(row.textContent||'').replace(/\s+/g,' ').trim(),prev=row.previousElementSibling;
     if(prev&&prev.classList.contains('course')&&(prev.textContent||'').replace(/\s+/g,' ').trim()===key)row.remove();
   });
-  /* "오늘 마감하기" belongs after today's work, not floating over the task list. */
+  /* Keep the day-close CTA in its original mobile bottom position above the nav.
+     Do not force it into the middle of the daily task flow. */
   document.querySelectorAll('button').forEach(function(b){
     if((b.textContent||'').trim()!=='오늘 마감하기')return;
-    var fixed=getComputedStyle(b).position;if(fixed==='fixed'||fixed==='sticky'){b.style.position='static';b.style.inset='auto';b.style.width='100%';b.style.margin='14px 0 4px';}
+    var wrap=b.closest('.day-close-fixed');
+    if(wrap){
+      b.style.position='';b.style.inset='';b.style.width='';b.style.margin='';
+      wrap.style.position='';wrap.style.inset='';wrap.style.width='';wrap.style.margin='';
+    }
   });
 }
 function touchFix(e){
