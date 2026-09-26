@@ -3635,6 +3635,16 @@ function homeStrip(){
   var savedNemoMood=diaryMoodForDate(k),nemoMood=savedNemoMood||nemoMoodForToday(tot,dn,hour),nemoCopy=nemoHomeCopy(nemoMood,tot,dn,!!savedNemoMood),nemoState=planonNemoStateForDate(k);
   var nemoFace=(typeof nemoStateSVG==='function'?nemoStateSVG(nemoState,nemoMood,'nemo-home-char'):nemoSVG(nemoMood,'nemo-home-char'));
   var nemo='<div class="nemo-home-head">'+nemoFace+'<span class="nemo-copy"><b>'+esc(nemoCopy[0])+'</b><small>'+esc(nemoCopy[1])+'</small></span></div>';
+  try{
+    var mb=window.PLANON_MEONBYEOL;
+    if(mb&&mb.on&&mb.on()){
+      var nm=mb.charName?mb.charName():(mb.charType&&mb.charType()==='dol'?'먼돌이':'먼별이');
+      var ex=mb.curExpr?mb.curExpr():'normal';
+      var cf=mb.charSVG?mb.charSVG(ex,{noGear:false}):'';
+      var line=ex==='sleepy'?'밤이 늦었어요. 오늘 몫만 하고 같이 쉬어도 돼요':(dn>=tot&&tot?'오늘 할 일을 다 해냈어요':'오늘도 옆에서 같이 계획을 채워가요');
+      nemo='<div class="nemo-home-head character-home-head"><span class="character-home-char">'+cf+'</span><span class="nemo-copy"><b>'+esc(nm+(ex==='sleepy'?'가 졸려해요':'와 함께'))+'</b><small>'+esc(line)+'</small></span></div>';
+    }
+  }catch(e){}
   return '<section class="home home-clean"><div class="home-main">'+nemo+main+'</div>'+quick+'</section>';
 }
 function isStandalonePWA(){
@@ -4335,13 +4345,15 @@ function navHTML(){
   var scheduleLabel=plannerMode()==='exam'?'공부':(plannerMode()==='other'?'스케줄':'시간표');
   var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable',scheduleLabel],['friends','친구']];
   if(S.settings.showTodoTab===false)tabs=tabs.filter(function(t){return t[0]!=='todo';});
+  try{if(window.PLANON_MEONBYEOL&&window.PLANON_MEONBYEOL.on&&window.PLANON_MEONBYEOL.on())tabs.splice(3,0,['meonbyeol',window.PLANON_MEONBYEOL.charType&&window.PLANON_MEONBYEOL.charType()==='dol'?'먼돌':'먼별']);}catch(e){}
   var navIcons={
     month:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="7" width="22" height="20" rx="5" fill="#FCE3EE" stroke="#E79ABA" stroke-width="2"/><path d="M10 5v5M22 5v5" stroke="#E79ABA" stroke-width="2" stroke-linecap="round"/><path d="M10 17h12" stroke="#E79ABA" stroke-width="2"/><path d="M16 13l1.3 2.6 2.9.4-2.1 2 .5 2.9-2.6-1.4-2.6 1.4.5-2.9-2.1-2 2.9-.4z" fill="#F2C94C" stroke="none"/></svg>',
     week:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="7" width="22" height="20" rx="5" fill="#E4F2FC" stroke="#86B9DC" stroke-width="2"/><path d="M10 12v10M14 12v10M18 12v10M22 12v10" stroke="#86B9DC" stroke-width="1.7" stroke-linecap="round"/></svg>',
     day:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="18" height="23" rx="4" fill="#FFF5D9" stroke="#D8C18B" stroke-width="2"/><path d="M11 11h10M11 16h10M11 21h6" stroke="#A89466" stroke-width="1.7" stroke-linecap="round"/><path d="M22 19l5 5-4 3-5-5z" fill="#F2C06A" stroke="#D89A3A" stroke-width="1.3"/></svg>',
     todo:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="5" fill="#F3EAFB" stroke="#B8A0DC" stroke-width="2"/><path d="M11 16l3 3 7-8" stroke="#8D73B7" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     ttable:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#E6F5EE" stroke="#8CC4AC" stroke-width="2"/><path d="M16 10v6l4 3" stroke="#6AA88E" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
-    friends:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="15" y="5" width="13" height="13" rx="4" fill="#FCE3EC" stroke="#E79ABA" stroke-width="2"/><circle cx="19" cy="11" r="1" fill="#5E5468" stroke="none"/><circle cx="24" cy="11" r="1" fill="#5E5468" stroke="none"/><rect x="4" y="12" width="17" height="16" rx="5" fill="#E9E0F7" stroke="#B8A0DC" stroke-width="2"/><circle cx="9.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/><circle cx="15.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/></svg>'
+    friends:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="15" y="5" width="13" height="13" rx="4" fill="#FCE3EC" stroke="#E79ABA" stroke-width="2"/><circle cx="19" cy="11" r="1" fill="#5E5468" stroke="none"/><circle cx="24" cy="11" r="1" fill="#5E5468" stroke="none"/><rect x="4" y="12" width="17" height="16" rx="5" fill="#E9E0F7" stroke="#B8A0DC" stroke-width="2"/><circle cx="9.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/><circle cx="15.5" cy="19" r="1.1" fill="#5E5468" stroke="none"/></svg>',
+    meonbyeol:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 18c0-4 3-7 7-7 1-4 8-5 10-1 4 0 6 3 5 7 1 4-2 8-7 8H12c-4 0-7-3-6-7z" fill="#FFFDF8" stroke="#B8A0DC" stroke-width="2"/><path d="M11 18h3M18 18h3" stroke="#5E5468" stroke-width="1.8" stroke-linecap="round"/><path d="M25 6l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#F2C94C"/></svg>'
   };
   return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'"><span class="navico">'+(navIcons[t[0]]||'')+'</span><span class="navlabel">'+t[1]+'</span>'+dot+'</button>';}).join('');
 }
