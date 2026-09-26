@@ -1,7 +1,7 @@
 :root{
   --bg:#f7f3ec; --card:#fffdf9; --ink:#3b3530; --sub:#9a9086; --line:#e9e2d6; --soft:#f1ebe0;
   --accent:#d9846a; --accent-ink:#fff; --now:#e5534b; --star:#e2b23c;
-  --font-cute:'Hi Melody',cursive;
+  --font-cute:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -1959,3 +1959,9 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 #app,#main,.top,.nav{-webkit-font-smoothing:antialiased}
 #main{contain:paint}
 @media(max-width:560px){.couple-inline-wrap{margin-left:0}.couple-inline-list{grid-template-columns:1fr}.dday-list-card .setrow{gap:7px;flex-wrap:wrap}.dday-list-card .setrow>.ddn{margin-left:auto}}
+
+/* PLANON restore4: iPhone Safari repaint guard */
+@supports (-webkit-touch-callout:none){
+  body{background-attachment:scroll!important}
+  :root[data-bg] body,:root[data-bg^="dot-"] body{background-attachment:scroll!important}
+}
