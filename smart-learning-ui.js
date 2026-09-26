@@ -36,7 +36,7 @@ function smartSettingsModal(){
   var p=prefs(),undo=U(),last=undo&&undo.last&&undo.last();
   B.openModal(
     '<h3>스마트 계획 설정</h3>'+
-    '<p class="hint">프로필에서는 설정 한 줄만 보여요. 세부 옵션은 여기에서만 바꿀 수 있어요.</p>'+
+    '<p class="hint">설정 화면에는 한 줄만 보여요. 세부 옵션은 여기에서만 바꿀 수 있어요.</p>'+
     '<div class="setrow"><span class="smart-setting-copy"><b>Smart Plan</b><small>자동 분할·재배치·마감 감지·지금 할 일 추천</small></span><button class="tbtn" data-learning-setting="enabled">'+(p.enabled!==false?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span class="smart-setting-copy"><b>계획 여유</b><small>빈 시간을 전부 공부로 채우지 않아요</small></span><select class="sel" data-learning-buffer>'+
       '<option value="30"'+(+p.bufferPct===30?' selected':'')+'>여유 있게</option>'+
@@ -52,7 +52,7 @@ function smartSettingsModal(){
 }
 function simplifySettings(){
   var u=B.ui&&B.ui();
-  if(!u||u.tab!=='settings'||u.settingsPage)return;
+  if(!u||u.tab!=='settings'||u.settingsPage!=='plan')return;
   var sec=document.querySelector('.smart-settings');
   if(!sec)return;
   var p=prefs();
@@ -198,7 +198,6 @@ document.addEventListener('click',function(e){
   if(act==='undo'){var un=U();if(un&&un.undo)un.undo();return;}
   if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p&&p.changes&&p.changes.length)q.preview(p);else B.toast('옮길 수 있는 빈 시간이 없어요');}return;}
   if(act==='leave-one'){var card=a.closest('.smart-single-missed');if(card)card.remove();return;}
-  if(act==='replan-one'){var q=Q();if(q){var p=q.buildMissed('week',[a.dataset.id]);if(p)q.preview(p);}return;}
   if(act==='buffer-relax'){prefs().bufferPct=30;suppressNudge('buffer');B.save();B.render(true);B.toast('자동 계획을 조금 더 여유 있게 잡을게요.');return;}
   if(act==='buffer-keep'){suppressNudge('buffer');B.render(true);return;}
   if(act==='short-block'){prefs().maxSessionMin=Math.max(30,Math.min(60,Number(a.dataset.min)||40));suppressNudge('short-block');B.save();B.render(true);B.toast('앞으로 자동 분할을 더 짧게 제안할게요.');return;}
