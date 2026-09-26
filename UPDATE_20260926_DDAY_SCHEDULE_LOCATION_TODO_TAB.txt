@@ -1,0 +1,25 @@
+PLAN:ON update 2026-09-26
+
+1. Couple D-day detail
+- Tap a couple D-day to open a read-only detail first.
+- Shows 100/200/.../1000 days and 1/2/3 year anniversaries as YYYY년 M월 D일 (요일).
+- Fixed the detail modal's Edit button so it opens edit instead of recursively reopening detail.
+
+2. Schedule detail
+- Timed normal schedules open a detail modal on tap, then Edit.
+- All-day schedules open a detail modal on tap, then Edit.
+- Appointment behavior remains separate.
+
+3. Bottom Todo tab visibility
+- Settings > 화면 · 알림 > 화면 꾸미기 > 하단 할 일 버튼.
+- OFF hides only the bottom Todo tab. Todo data is preserved.
+
+4. Location permission
+- Settings > 내 프로필 > 현재 위치 사용.
+- App-level consent is stored per account in public.planner_location_permissions.
+- Browser geolocation is requested only when this is enabled.
+- GPS coordinates are never written to Supabase; only the boolean consent flag is stored.
+- Current-location buttons are blocked until the setting is enabled.
+
+SQL TO RUN
+- RUN_THIS_LOCATION_PERMISSION.sql
