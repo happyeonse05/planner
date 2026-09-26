@@ -12,16 +12,28 @@ var NAV_ICONS={
   week:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4.5" y="7" width="18" height="19" rx="5" fill="#EFF7FF" stroke="#78B5DE" stroke-width="2"/><circle cx="10" cy="15" r="1.05" fill="#5C7D96" stroke="none"/><circle cx="16" cy="15" r="1.05" fill="#5C7D96" stroke="none"/><rect x="18" y="12" width="10" height="13" rx="2.7" fill="#F7FBFF" stroke="#78B5DE" stroke-width="1.8"/><path d="M21 16h4M21 19h4M21 22h3" stroke="#78B5DE" stroke-width="1.5" stroke-linecap="round"/><path d="M8 27q0 2 2 2t2-2" fill="none" stroke="#78B5DE" stroke-width="1.6"/></svg>',
   day:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="19" height="20" rx="5" fill="#FFF6DF" stroke="#C99A45" stroke-width="2"/><circle cx="11" cy="14.5" r="1.1" fill="#7C6237" stroke="none"/><circle cx="17.5" cy="14.5" r="1.1" fill="#7C6237" stroke="none"/><path d="M9 27q0 2 2 2t2-2M16 27q0 2 2 2t2-2" fill="none" stroke="#C99A45" stroke-width="1.6"/><g transform="rotate(-22 25 22)"><rect x="22" y="13" width="5" height="13" rx="2" fill="#F6C76E" stroke="#C99A45" stroke-width="1.5"/><path d="M22 25h5l-2.5 4z" fill="#FFE7B5" stroke="#C99A45" stroke-width="1.4"/></g></svg>',
   ttable:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="7" width="18" height="19" rx="5" fill="#EEFAF4" stroke="#67B391" stroke-width="2"/><circle cx="9.5" cy="15" r="1.05" fill="#4E7C68" stroke="none"/><circle cx="15.5" cy="15" r="1.05" fill="#4E7C68" stroke="none"/><circle cx="23.5" cy="21.5" r="6.2" fill="#F8FFFB" stroke="#67B391" stroke-width="1.9"/><path d="M23.5 18v4l2.6 1.5" stroke="#67B391" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M8 27q0 2 2 2t2-2" fill="none" stroke="#67B391" stroke-width="1.6"/></svg>',
+  todo:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="6" fill="#FFF4F7" stroke="#D98FA7" stroke-width="1.9"/><path d="M10 16l3.2 3.2L21.8 11" fill="none" stroke="#C96F8D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.5" cy="23.5" r="2.2" fill="#F4C7D5" stroke="none"/></svg>',
   friends:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="12" width="15" height="15" rx="4.5" fill="#F4EEFF" stroke="#A98BDA" stroke-width="1.9"/><rect x="14" y="8" width="14" height="15" rx="4.5" fill="#FAF7FF" stroke="#A98BDA" stroke-width="1.9"/><circle cx="9" cy="19" r="1" fill="#6D5B86" stroke="none"/><circle cx="14" cy="19" r="1" fill="#6D5B86" stroke="none"/><circle cx="19" cy="15" r="1" fill="#6D5B86" stroke="none"/><circle cx="24" cy="15" r="1" fill="#6D5B86" stroke="none"/><path d="M20 5.8c1.1-2 4.2-1.1 4.2 1.1 0 2-2.1 3.2-4.2 4.6-2.1-1.4-4.2-2.6-4.2-4.6 0-2.2 3.1-3.1 4.2-1.1z" fill="#E5C9FF" stroke="#A98BDA" stroke-width="1.3"/></svg>'
 };
 
 function migrateFiveTabNav(){
   var s=S();
-  if(!s||!s.settings||s.settings.nemoFiveTabV1)return false;
-  s.settings.nemoFiveTabV1=true;
-  s.settings.showTodoTab=false;
-  B.save();
-  return true;
+  if(!s||!s.settings)return false;
+  var changed=false;
+  /* V1 accidentally forced the user's 할 일 tab OFF.
+     Repair that regression once; after V2, never touch showTodoTab automatically again. */
+  if(s.settings.nemoFiveTabV1===true&&s.settings.nemoFiveTabRepairV2!==true){
+    if(s.settings.showTodoTab===false)s.settings.showTodoTab=true;
+    s.settings.nemoFiveTabRepairV2=true;
+    changed=true;
+  }
+  if(s.settings.nemoFiveTabV1!==true){
+    s.settings.nemoFiveTabV1=true;
+    s.settings.nemoFiveTabRepairV2=true;
+    changed=true;
+  }
+  if(changed)B.save();
+  return changed;
 }
 
 function decorateNav(){
@@ -57,7 +69,7 @@ function diaryReady(k){
   return dayClosed(k)||(Number(st.total||0)>0&&Number(st.done||0)>=Number(st.total||0));
 }
 function diaryCharacter(){
-  if(typeof window.nemoStateSVG==='function')return window.nemoStateSVG('focus','basic','nemo-diary-prompt-char');
+  if(typeof window.nemoStateSVG==='function')return window.nemoStateSVG('diary','basic','nemo-diary-prompt-char');
   if(typeof window.nemoSVG==='function')return window.nemoSVG('basic','nemo-diary-prompt-char');
   return '<span class="nemo-diary-fallback">□</span>';
 }
