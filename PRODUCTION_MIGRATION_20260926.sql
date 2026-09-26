@@ -326,6 +326,34 @@ commit;
 -- Safe to run repeatedly.
 begin;
 
+-- Live beta projects created before the safety tables existed are upgraded here too.
+create table if not exists public.planner_user_blocks (
+  blocker_id uuid not null references auth.users(id) on delete cascade,
+  blocked_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key(blocker_id,blocked_id),
+  check(blocker_id<>blocked_id)
+);
+create table if not exists public.planner_user_reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid not null references auth.users(id) on delete cascade,
+  reported_id uuid not null references auth.users(id) on delete cascade,
+  reason text not null,
+  details text,
+  created_at timestamptz not null default now(),
+  check(reporter_id<>reported_id)
+);
+alter table public.planner_user_blocks enable row level security;
+alter table public.planner_user_reports enable row level security;
+drop policy if exists blocks_own on public.planner_user_blocks;
+create policy blocks_own on public.planner_user_blocks for all to authenticated using(blocker_id=auth.uid()) with check(blocker_id=auth.uid());
+drop policy if exists reports_insert on public.planner_user_reports;
+create policy reports_insert on public.planner_user_reports for insert to authenticated with check(reporter_id=auth.uid());
+drop policy if exists reports_read_own on public.planner_user_reports;
+create policy reports_read_own on public.planner_user_reports for select to authenticated using(reporter_id=auth.uid());
+grant select,insert,update,delete on public.planner_user_blocks to authenticated;
+grant select,insert on public.planner_user_reports to authenticated;
+
 create table if not exists public.planner_user_ids (
   user_id uuid primary key references auth.users(id) on delete cascade,
   handle text not null unique,
