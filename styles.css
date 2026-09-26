@@ -1997,3 +1997,17 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
 .ps-closed .card-h{display:flex!important}
 .ps-closed .card-h>*:not(.ps-headbtn):not(.tbtn):not(.tt-actions){visibility:hidden!important;position:absolute!important;pointer-events:none!important}
 .ps-closed .card-h .ps-headbtn,.ps-closed .card-h>.tbtn,.ps-closed .card-h .tt-actions{visibility:visible!important;position:relative!important;pointer-events:auto!important}
+
+/* 2026-09-26 iPhone bottom bar final geometry: use full width and less dead space below */
+@media(max-width:560px){
+ #nav.nav{
+   left:0!important;right:0!important;bottom:0!important;width:100%!important;
+   grid-template-columns:repeat(6,minmax(0,1fr))!important;
+   padding:7px 3px calc(7px + env(safe-area-inset-bottom,0px))!important;
+   min-height:0!important;height:auto!important;gap:0!important;
+ }
+ #nav.nav>button{width:100%!important;min-width:0!important;margin:0!important;padding:4px 0 2px!important;justify-self:stretch!important}
+ #nav.nav .navico,#nav.nav svg{margin-left:auto!important;margin-right:auto!important}
+ #nav.nav .navlabel,#nav.nav button>span{margin-top:1px!important;line-height:1.1!important}
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
+}
