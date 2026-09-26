@@ -112,3 +112,14 @@
 
 /* PLANON restore3 typography */
 #modal.fm2-on,#modal.fm2-on *,.fm-choose,.fm-choose *,.fm-pill,.fm-pill *{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif!important}
+
+/* 2026-09-26: weekly focus = bars + challenge records */
+.fm-weekbars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;align-items:end;margin-top:8px}
+.fm-weekday{display:grid;gap:4px;text-align:center;min-width:0}
+.fm-weekday.today b{font-weight:900}
+.fm-weekbarbox{height:92px;border-radius:12px;background:var(--soft);display:flex;align-items:flex-end;overflow:hidden;padding:3px}
+.fm-weekbarbox i{display:block;width:100%;min-height:3px;border-radius:9px;background:var(--planner-color)}
+.fm-weekday b{font-size:11px}.fm-weekday small{font-size:10px;color:var(--sub)}
+.fm-weekday em{font-style:normal;font-size:9px;line-height:1.35;color:var(--ink);min-height:25px}.fm-weekday em.empty{color:var(--sub)}
+.fm-weekbar-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;font-size:11px}.fm-weekbar-foot span{color:var(--sub);text-align:right}
+@media(max-width:520px){.fm-weekbars{gap:4px}.fm-weekbarbox{height:72px}.fm-weekday em{font-size:8px}.fm-weekbar-foot{align-items:flex-start;flex-direction:column}}
