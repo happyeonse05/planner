@@ -1,12 +1,12 @@
 {
-  "name": "내 플래너",
-  "short_name": "플래너",
+  "name": "Flan:on · 플래논",
+  "short_name": "플래논",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
-  "description": "시간표, 일정, 할 일, 기록을 한곳에서 관리하는 개인 플래너",
+  "description": "Flan:on(플래논) — 일정, 할 일, 시간표, 기록과 친구를 함께 잇는 플래너",
   "icons": [
     {
       "src": "icon-512.png",
