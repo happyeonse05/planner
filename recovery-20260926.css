@@ -51,3 +51,19 @@ body.planon-day-close-visible #planon-day-close-fixed{
 }
 body.planon-day-close-visible #planon-day-close-fixed>button{width:100%!important;margin:0!important}
 body.planon-day-close-visible main{padding-bottom:110px!important}
+
+/* 2026-09-26 requested hybrid close CTA:
+   while scrolling it follows at the bottom above nav; at the real page end it
+   naturally stops there instead of covering the final content. */
+body.planon-day-close-visible #planon-day-close-fixed{
+  position:sticky!important;
+  left:auto!important;right:auto!important;top:auto!important;
+  bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+  inset-inline:auto!important;
+  width:auto!important;
+  margin:18px 0 8px!important;
+  z-index:10020!important;
+  background:color-mix(in srgb,var(--card) 94%,transparent)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+}
