@@ -2050,8 +2050,8 @@ function cheerIconHTML(cls){
 }
 function cheerStatusHTML(id){
   var e=cheerEligible(id),f=FriendSync.friends.find(function(x){return x.id===id;}),n=f?friendLabel(f):'친구';
-  if(cheerAlreadySent(id))return '<section class="card"><div class="card-h"><h3>응원 쪽지</h3><span class="cnt">보냄 ✓</span></div><p class="hint">오늘 '+esc(n)+'님에게 보낸 응원은 내일 상대가 정한 시간이 지난 뒤 플래논을 열면 확인할 수 있어요.</p></section>';
-  if(e.ok)return '<section class="card cheer-card"><div class="card-h"><h3>오늘 둘 다 완료!</h3><span class="cnt">'+e.mine.done+'/'+e.mine.total+' · '+e.friend.done+'/'+e.friend.total+'</span></div><p class="hint">둘 다 오늘 할 일을 다 했어요. '+esc(n)+'님에게 최대 100자의 수고 메시지를 보내면 내일 설정 시간 이후 플래논에서 확인할 수 있어요.</p><button class="b-save" style="width:100%;height:42px" data-act="cheer-open" data-id="'+esc(id)+'">수고했다고 응원 보내기</button></section>';
+  if(cheerAlreadySent(id))return '<section class="card"><div class="card-h"><h3>응원 쪽지</h3><span class="cnt">보냄 ✓</span></div><p class="hint">오늘 '+esc(n)+'님에게 보낸 응원은 내일 상대가 정한 시간이 지난 뒤 Flan:on(플래논)을 열면 확인할 수 있어요.</p></section>';
+  if(e.ok)return '<section class="card cheer-card"><div class="card-h"><h3>오늘 둘 다 완료!</h3><span class="cnt">'+e.mine.done+'/'+e.mine.total+' · '+e.friend.done+'/'+e.friend.total+'</span></div><p class="hint">둘 다 오늘 할 일을 다 했어요. '+esc(n)+'님에게 최대 100자의 수고 메시지를 보내면 내일 설정 시간 이후 Flan:on(플래논)에서 확인할 수 있어요.</p><button class="b-save" style="width:100%;height:42px" data-act="cheer-open" data-id="'+esc(id)+'">수고했다고 응원 보내기</button></section>';
   var mine=e.mine.total?('내 할 일 '+e.mine.done+'/'+e.mine.total):( '내 오늘 할 일 없음');
   var fr=e.friend.total?('친구 할 일 '+e.friend.done+'/'+e.friend.total):'친구 완료 상태 확인 전';
   return '<section class="card"><div class="card-h"><h3>응원 쪽지</h3></div><p class="hint">'+esc(mine+' · '+fr)+'<br>둘 다 오늘 할 일을 모두 마치면 응원 쪽지를 보낼 수 있어요. 할 일 내용은 공유하지 않고 완료 개수만 확인해요.</p></section>';
@@ -2060,7 +2060,7 @@ function openCheerMessage(id){
   var f=FriendSync.friends.find(function(x){return x.id===id;});if(!f)return;
   var e=cheerEligible(id);if(!e.ok){inAppToast('둘 다 오늘 할 일을 다 한 뒤 보낼 수 있어요');return;}
   M={type:'cheer-message',friendId:id};
-  openModal('<h3>'+esc(friendLabel(f))+'님에게 응원 보내기</h3><div class="cheer-delay-note"><b class="cheer-note-title">'+cheerIconHTML('small')+'<span>오늘 보내고, 내일 받기</span></b><small>바로 전달되지 않아요. 내일 설정 시간 이후 상대가 플래논을 열면 보여요. 답장·대화 기능은 없고 하루에 한 번만 보낼 수 있어요.</small></div><textarea class="diary-text" style="min-height:130px;background-image:none" id="f-cheer-msg" maxlength="100" placeholder="예: 오늘도 수고했어! 진짜 잘했다"></textarea><div class="diary-count" id="cheer-count">0/100</div><p class="hint" id="cheer-msg-status">최대 100자 · 내일 설정 시간 이후 플래논을 열면 보여요</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="cheer-send" data-id="'+esc(id)+'">내일 보내기</button></div>');
+  openModal('<h3>'+esc(friendLabel(f))+'님에게 응원 보내기</h3><div class="cheer-delay-note"><b class="cheer-note-title">'+cheerIconHTML('small')+'<span>오늘 보내고, 내일 받기</span></b><small>바로 전달되지 않아요. 내일 설정 시간 이후 상대가 Flan:on(플래논)을 열면 보여요. 답장·대화 기능은 없고 하루에 한 번만 보낼 수 있어요.</small></div><textarea class="diary-text" style="min-height:130px;background-image:none" id="f-cheer-msg" maxlength="100" placeholder="예: 오늘도 수고했어! 진짜 잘했다"></textarea><div class="diary-count" id="cheer-count">0/100</div><p class="hint" id="cheer-msg-status">최대 100자 · 내일 설정 시간 이후 Flan:on(플래논)을 열면 보여요</p><div class="acts"><button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="cheer-send" data-id="'+esc(id)+'">내일 보내기</button></div>');
   setTimeout(function(){var x=$('#f-cheer-msg');if(x)x.focus();},30);
 }
 function sendCheerMessage(id){
@@ -2074,7 +2074,7 @@ function sendCheerMessage(id){
   sb.from('planner_friend_cheers').insert({from_user:Sync.uid,to_user:id,message:text0,deliver_date:tomorrow}).then(function(r){
     if(r.error)throw r.error;
     S.settings.cheerSent=S.settings.cheerSent||{};S.settings.cheerSent[cheerSentKey(id)]=1;save();
-    closeModal();render();inAppToast('응원을 보냈어요 · 내일 설정 시간 이후 플래논에서 확인할 수 있어요');
+    closeModal();render();inAppToast('응원을 보냈어요 · 내일 설정 시간 이후 Flan:on(플래논)에서 확인할 수 있어요');
   }).catch(function(e){
     var em=e&&e.message||'';
     if(msg)msg.textContent=/duplicate|23505/i.test(em)?'오늘은 이 친구에게 이미 응원을 보냈어요.':(/planner_friend_cheers|schema cache|does not exist/i.test(em)?'응원 기능 서버 설정이 필요해요. 최신 production migration을 적용해주세요.':'보내지 못했어요. 잠시 뒤 다시 시도해주세요.');
@@ -5423,7 +5423,7 @@ function friendHTML(){
     (invOut?'<div class="fsec">보낸 요청</div>'+invOut:'')+
     '<div class="fsec">약속 설정</div>'+availRow+
     '<div class="fsec">응원 쪽지</div>'+
-    '<div class="setrow"><span>받는 시간<small>오늘 받은 응원은 바로 안 보이고 다음 날 이 시간 이후 플래논을 열면 보여요</small></span><input class="fld" style="width:112px;margin:0" type="time" min="08:00" max="23:59" id="set-cheer-time" value="'+esc(cheerReceiveTime())+'"></div>'+
+    '<div class="setrow"><span>받는 시간<small>오늘 받은 응원은 바로 안 보이고 다음 날 이 시간 이후 Flan:on(플래논)을 열면 보여요</small></span><input class="fld" style="width:112px;margin:0" type="time" min="08:00" max="23:59" id="set-cheer-time" value="'+esc(cheerReceiveTime())+'"></div>'+
     '<div class="setrow"><span>친구 요청·약속 알림<small>'+(!notifySupported()?'이 브라우저는 알림을 지원하지 않아요 (아이폰은 홈 화면에 추가 후 사용)':notifySupported()&&Notification.permission==='denied'?'알림이 막혀 있어요. 브라우저·기기 설정에서 허용해주세요':'앱이 열려 있으면 팝업, 다른 화면에 있으면 시스템 알림으로 알려줘요')+'</small></span><button class="tbtn'+(friendNotifyOn()?' on':'')+'" data-act="friend-notify">'+(friendNotifyOn()?'켜짐':'꺼짐')+'</button></div></section>';
 }
 function globalSearchDate(k){
