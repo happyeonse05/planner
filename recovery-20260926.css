@@ -30,3 +30,24 @@ body.planon-day-close-visible #planon-day-close-fixed{
 }
 body.planon-day-close-visible #planon-day-close-fixed>button{width:100%!important;margin:0!important}
 body.planon-day-close-visible main{padding-bottom:150px!important}
+
+/* 2026-09-26 final day-close behavior:
+   CTA is the LAST item in the day document. It scrolls normally and appears only
+   when the user reaches the bottom; it must never float over planner content. */
+body.planon-day-close-visible #planon-day-close-fixed{
+  position:static!important;
+  left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+  inset:auto!important;
+  width:auto!important;
+  margin:18px 0 8px!important;
+  padding:8px!important;
+  z-index:auto!important;
+  border-radius:18px!important;
+  background:var(--card)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  border:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.07)!important;
+}
+body.planon-day-close-visible #planon-day-close-fixed>button{width:100%!important;margin:0!important}
+body.planon-day-close-visible main{padding-bottom:110px!important}
