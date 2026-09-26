@@ -1976,38 +1976,13 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
   .top [data-market-open]{position:relative;z-index:2}
 }
 
-/* 2026-09-26 mobile bottom nav alignment: keep all tabs evenly inside the bar */
-@media(max-width:560px){
-  #nav.nav{grid-auto-flow:column;align-items:stretch;gap:2px;padding-left:6px;padding-right:6px;overflow:hidden!important}
-  #nav.nav button{min-width:0;width:100%;padding-left:0;padding-right:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  #nav.nav .navico{margin-left:auto;margin-right:auto}
-  #nav.nav .navlabel{max-width:100%;white-space:nowrap;text-align:center}
-}
 
-/* 2026-09-26 keep six bottom tabs balanced on iPhone, including character themes */
-@media(max-width:560px){
- #nav.nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%;gap:0!important;padding-left:8px!important;padding-right:8px!important}
- #nav.nav>button{min-width:0!important;width:auto!important;justify-self:stretch!important;margin:0!important;transform:none!important}
- .mbon #nav.nav .mb-nav{width:100%!important;min-width:0!important;margin:0!important;padding-left:0!important;padding-right:0!important}
-}
-
-/* 2026-09-26 collapsed planner cards: no private/detail preview leaks */
-.ps-closed .ps-summary{display:block!important}
-.ps-closed .ps-summary~*{display:none!important}
-.ps-closed .card-h{display:flex!important}
-.ps-closed .card-h>*:not(.ps-headbtn):not(.tbtn):not(.tt-actions){visibility:hidden!important;position:absolute!important;pointer-events:none!important}
-.ps-closed .card-h .ps-headbtn,.ps-closed .card-h>.tbtn,.ps-closed .card-h .tt-actions{visibility:visible!important;position:relative!important;pointer-events:auto!important}
-
-/* 2026-09-26 iPhone bottom bar final geometry: use full width and less dead space below */
-@media(max-width:560px){
- #nav.nav{
-   left:0!important;right:0!important;bottom:0!important;width:100%!important;
-   grid-template-columns:repeat(6,minmax(0,1fr))!important;
-   padding:7px 3px calc(7px + env(safe-area-inset-bottom,0px))!important;
-   min-height:0!important;height:auto!important;gap:0!important;
- }
- #nav.nav>button{width:100%!important;min-width:0!important;margin:0!important;padding:4px 0 2px!important;justify-self:stretch!important}
- #nav.nav .navico,#nav.nav svg{margin-left:auto!important;margin-right:auto!important}
- #nav.nav .navlabel,#nav.nav button>span{margin-top:1px!important;line-height:1.1!important}
- body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
-}
+/* 2026-09-26 final bottom navigation: compact, evenly spread, original pastel icons */
+.nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%!important;gap:0!important;padding:5px 4px calc(4px + env(safe-area-inset-bottom,0px))!important;background:var(--card)!important;border-top:1px solid var(--line)!important;overflow:hidden!important;flex:none!important}
+.nav>button{min-width:0!important;width:100%!important;margin:0!important;padding:3px 0 2px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:1px!important;border-radius:10px!important}
+.navico{width:28px!important;height:28px!important;display:grid!important;place-items:center!important;color:inherit!important}
+.navico svg{width:28px!important;height:28px!important;display:block!important;fill:initial;stroke:initial}
+.navlabel{font-size:11px!important;line-height:1.05!important;margin:0!important}
+.nav button.on{background:transparent!important;color:var(--ink)!important;font-weight:800!important}
+.nav button.on .navico{transform:none!important}
+@media(max-width:560px){body{padding-bottom:0!important}.nav{padding-left:2px!important;padding-right:2px!important}}
