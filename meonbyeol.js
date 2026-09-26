@@ -435,6 +435,8 @@ function st(){var s=S();s.settings=s.settings||{};var m=s.settings.meonbyeol;if(
   if(typeof m.lemons!=='number')m.lemons=0;if(!Array.isArray(m.pouch))m.pouch=[];if(!Array.isArray(m.album))m.album=[];if(!m.pack||typeof m.pack!=='object')m.pack={};if(typeof m.avatar!=='boolean')m.avatar=true;if(m.pokaChar!=='dol')m.pokaChar='byeol';if(!Array.isArray(m.byeols))m.byeols=[];if(typeof m.cur!=='number')m.cur=0;if(typeof m.eggs!=='number')m.eggs=0;if(!m.wear||typeof m.wear!=='object')m.wear={on:{},got:[]};
   if(!m.hatched&&!m.byeols.length&&(m.tints.length>1||m.tint>0)){m.tints.filter(function(i){return i>0;}).forEach(function(i){m.byeols.push({id:'legacy'+i,tint:i,at:m.lastVisit||''});});if(!m.byeols.length)m.byeols.push({id:'legacy0',tint:m.tint,at:''});m.cur=Math.max(0,m.byeols.findIndex(function(b){return b.tint===m.tint;}));m.hatched=true;}
   if(m.byeols.length&&m.byeols[m.cur])m.tint=m.byeols[m.cur].tint;
+  if(!m.daily||typeof m.daily!=='object'||Array.isArray(m.daily))m.daily={};
+  if(m.day&&m.day.key&&m.day.key!==tk())m.daily[m.day.key]={water:Number(m.day.water||0),wake:!!m.day.wake,tuck:!!m.day.tuck,allDone:!!m.day.allDone,close:!!m.day.close};
   if(!m.day||m.day.key!==tk())m.day={key:tk(),todo:[],allDone:false,close:false,wake:false,water:0,tuck:false,snack:0,flower:null,lemon:0,rub:0};
   if(typeof m.day.lemon!=='number')m.day.lemon=0;
   if(!m.lastVisit)m.lastVisit=tk();return m;}
@@ -667,6 +669,26 @@ function packCardHTML(){var m=st(),pk=m.pack,h='';
 function pouchSVG(open){return '<svg viewBox="0 0 60 60" width="56" height="56" aria-hidden="true"><path d="M14 26q-4 26 16 28q20-2 16-28z" fill="#EDE4F6" stroke="#B8A0DC" stroke-width="2"/><path d="M14 26q16 '+(open?'-10':'6')+' 32 0" fill="none" stroke="#B8A0DC" stroke-width="2"/><path d="M22 22q8-6 16 0" stroke="#E79ABA" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="'+starPath(30,40,6)+'" fill="#FFE08A" stroke="#E8B84A" stroke-width="1.2"/>'+(open?'<path d="'+starPath(22,12,3.5)+'" fill="#FFF1C2"/><path d="'+starPath(40,10,3)+'" fill="#FFF1C2"/>':'')+'</svg>';}
 function salonBar(){var m=st(),i=UI.previewTint;if(i==null||m.tints.indexOf(i)>=0)return '';var t=ALLT[i];return '<div class="mb-salon-bar"><span><b>'+esc(t.name)+'</b> 미리보는 중</span><div><button data-mb="buytint" data-pay="star"'+(m.stars<SALON_PRICE?' disabled':'')+'>'+icoStar(13)+' '+SALON_PRICE+'개로 교환</button><button data-mb="buytint" data-pay="lemon"'+(m.lemons<SALON_LEMON?' disabled':'')+'>'+icoLemon(13)+' '+SALON_LEMON+'개로 교환</button><button data-mb="tintcancel">그만 보기</button></div></div>';}
 function pouchHTML(){var m=st();if(!m.pouch.length)return '<small class="mb-sub">아직 주운 게 없어. 레몬사탕을 받거나 말을 걸다 보면 먼별이가 뭔가 주워 와.</small>';var cnt={};m.pouch.forEach(function(x){cnt[x.n]=(cnt[x.n]||0)+1;});return '<div class="mb-pouch">'+Object.keys(cnt).map(function(n){var f=FINDS.find(function(x){return x.n===n;});return f?'<span>'+findSVG(f,30)+'<b>'+esc(n)+'</b><small>×'+cnt[n]+'</small></span>':'';}).join('')+'</div>';}
+var GACHA_COST=5;
+var GACHA_PRIZES=[
+  {n:'민트초코 조각',k:'민트 조각'},{n:'반딧불 숲',k:'배경 조각'},{n:'달 호수',k:'배경 조각'},
+  {n:'오로라꽃',k:'희귀 꽃'},{n:'별가루 병',k:'방 소품'},{n:'작은 오르골',k:'소리 조각'},
+  {n:'기억 포카',k:'포카 조각'},{n:'구름 쿠션',k:'방 소품'}
+];
+function gachaHTML(){
+  var m=st();if(!Array.isArray(m.gachaItems))m.gachaItems=[];
+  var recent=m.gachaItems.slice(-6).reverse();
+  return '<div class="mb-pack mb-gacha"><div class="mb-pack-pouch">'+pouchSVG(true)+'</div><div><p class="mb-sub">별을 넣으면 투명 캡슐 하나가 톡 나와. 배경 조각·포카·소품 같은 복복복 수집품이 들어 있어.</p><button class="mb-big" data-mb="gacha"'+(m.stars<GACHA_COST?' disabled':'')+'>'+icoStar(13)+' '+GACHA_COST+'개로 한 번 뽑기</button></div></div>'+
+    (recent.length?'<div class="mb-pouch">'+recent.map(function(x){return '<span><b>'+esc(x.n)+'</b><small>'+esc(x.k||'수집품')+'</small></span>';}).join('')+'</div>':'<small class="mb-sub">아직 뽑은 캡슐이 없어. 별을 모아서 첫 캡슐을 열어봐.</small>');
+}
+function drawGacha(){
+  var m=st();if(m.stars<GACHA_COST){say('별이 '+(GACHA_COST-m.stars)+'개 모자라. 할 일을 하나씩 반짝이면 금방 모여!');return;}
+  m.stars-=GACHA_COST;if(!Array.isArray(m.gachaItems))m.gachaItems=[];
+  var p=GACHA_PRIZES[Math.floor(Math.random()*GACHA_PRIZES.length)];
+  m.gachaItems.push({n:p.n,k:p.k,at:tk()});if(m.gachaItems.length>120)m.gachaItems=m.gachaItems.slice(-120);
+  B.save();flash('surprised',3000);chime();say('캡슐에서 '+p.n+' 나왔어! 표본함에 넣어둘게.');paintHero();drawCards();
+}
+
 function drawCards(){var box=document.getElementById('mb-cards');if(!box)return;var m=st(),ws=wakeState(),T=toMin(wakeGoal());
   var wakeBtn=ws==='done'?'<button class="mb-big on" disabled>기상 인증 완료 · 연속 '+m.wake.streak+'일</button>':ws==='open'?'<button class="mb-big" data-mb="wake">일어났어! 기상 인증하기</button>':ws==='early'?'<button class="mb-big" disabled>'+fmtM((T-120+1440)%1440)+'부터 인증할 수 있어</button>':'<button class="mb-big" disabled>오늘 인증 시간은 지났어 · 내일 아침에!</button>';
   var f=m.day.flower,grid=(window.PLANON_FOCUS_MATE&&window.PLANON_FOCUS_MATE.weekGridHTML)?window.PLANON_FOCUS_MATE.weekGridHTML():'';
@@ -676,8 +698,8 @@ function drawCards(){var box=document.getElementById('mb-cards');if(!box)return;
   '<section class="mb-card"><h3>'+charName()+'랑 힐링하기</h3><div class="mb-heal">'+
    [['song','뽀롱옹롱'],['orgel','오르골'],['tuck','재워주기'],['snack','간식 주기'],['tea','차 마시기'],['star','별 보기']].map(function(x){return '<button data-mb="heal" data-v="'+x[0]+'">'+ICON[x[0]]+'<span>'+x[1]+'</span></button>';}).join('')+'</div><small class="mb-sub">쓰다듬기는 버튼 대신 위에서 '+charName()+'를 직접 문질러 줘.</small></section>'+
   '<section class="mb-card"><h3>오늘의 꽃</h3>'+(f?pokaHTML(f,m.day.key,m.album.length||1,false):'<button class="mb-big" data-mb="flower">'+charName()+'가 꽃밭에서 골라올게</button>')+albumHTML()+'</section>'+
-  (grid?'<section class="mb-card"><h3>이번 주 집중 그리드</h3>'+grid+'</section>':'')+
-  '<section class="mb-card"><h3>'+(B.parseKey(tk()).getMonth()+1)+'월의 하늘</h3>'+monthSky()+'</section>'+
+  (grid?'<section class="mb-card"><h3>이번 주 집중</h3>'+grid+'</section>':'')+
+  '<section class="mb-card"><h3>복복복 별가챠</h3>'+gachaHTML()+'</section>'+
   familyHTML()+'<section class="mb-card"><h3>'+charName()+' 옷장</h3><p class="mb-sub">꽃핀은 별, 리본은 레몬사탕으로 받을 수 있어. 나머지는 Planon Shop 옷장 상품이야. 누르면 입고 벗어.</p>'+wardrobeHTML()+'</section>'+
   '<section class="mb-card"><h3>'+charName()+' 주머니</h3>'+pouchHTML()+'</section>';
   refreshPills();}
@@ -701,7 +723,7 @@ function openStarView(){var ov=document.createElement('div');ov.className='mb-st
   var iv=setInterval(function(){var sh=document.createElement('b');sh.className='mb-shoot';sh.style.left=(10+Math.random()*60)+'%';sh.style.top=(5+Math.random()*30)+'%';sh.onclick=function(){chime();ov.querySelector('.mb-sv-txt').textContent='소원 빌었어. 하늘이 기억할 거래.';sh.remove();};ov.appendChild(sh);setTimeout(function(){sh.remove();},2600);},3800);
   ov.querySelector('.mb-sv-close').onclick=function(){clearInterval(iv);stopAmb();ov.remove();paintHero();};}
 function wake(){var m=st();if(wakeState()!=='open')return;var k=tk(),s=S(),n=new Date(),hm=pad(n.getHours())+':'+pad(n.getMinutes());s.logs=s.logs||{};var o=s.logs[k]||{};o.wakeGoal=true;if(!o.wake)o.wake=hm;s.logs[k]=o;
-  var y=B.dkey(new Date(B.parseKey(k).getTime()-864e5));m.wake.streak=m.wake.last===y?m.wake.streak+1:1;m.wake.last=k;m.day.wake=true;UI.happy=true;say('일어났구나!! 같이 아침 맞자. 연속 '+m.wake.streak+'일째야!');addStars(3,'기상 인증');chime();drawCards();paintHero();setTimeout(function(){UI.happy=false;paintHero();},3000);}
+  var y=B.dkey(new Date(B.parseKey(k).getTime()-864e5));m.wake.streak=m.wake.last===y?m.wake.streak+1:1;m.wake.last=k;m.day.wake=true;m.daily=m.daily||{};m.daily[k]={water:Number(m.day.water||0),wake:true,tuck:!!m.day.tuck,allDone:!!m.day.allDone,close:!!m.day.close};UI.happy=true;say('일어났구나!! 같이 아침 맞자. 연속 '+m.wake.streak+'일째야!');addStars(3,'기상 인증');chime();drawCards();paintHero();setTimeout(function(){UI.happy=false;paintHero();},3000);}
 function tintTap(i){var m=st(),t=ALLT[i];if(!t)return;
   if(m.tints.indexOf(i)>=0){m.tint=i;UI.previewTint=null;B.save();say(t.name+'으로 바꿨어! 어때?');pop();paintHero();drawCards();return;}
   UI.previewTint=i;paintHero();drawCards();say(t.name+' 미리보기야. 마음에 들면 아래에서 교환해.');pop();var hh=document.querySelector('.mb-hero');if(hh)hh.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -758,7 +780,8 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   else if(act==='stop'){stopAmb();UI.happy=false;UI.drink=null;mbAct('');paintHero();}
   else if(act==='heal')heal(a.dataset.v);
   else if(act==='wake')wake();
-  else if(act==='water'){if(m.day.water>=3)return;m.day.water++;tone(660,0,.15,.04,'triangle');mbAct('mb-sip',900);say(['꿀꺽~ 물 한 잔! 잘했어.','꿀꺽꿀꺽~ 두 잔째!','세 잔 완료!! 몸이 좋아할 거야.'][m.day.water-1]);if(m.day.water===3)addStars(1,'물 3잔');B.save();drawCards();}
+  else if(act==='water'){if(m.day.water>=3)return;m.day.water++;m.daily=m.daily||{};m.daily[tk()]={water:Number(m.day.water||0),wake:!!m.day.wake,tuck:!!m.day.tuck,allDone:!!m.day.allDone,close:!!m.day.close};tone(660,0,.15,.04,'triangle');mbAct('mb-sip',900);say(['꿀꺽~ 물 한 잔! 잘했어.','꿀꺽꿀꺽~ 두 잔째!','세 잔 완료!! 몸이 좋아할 거야.'][m.day.water-1]);if(m.day.water===3)addStars(1,'물 3잔');B.save();drawCards();}
+  else if(act==='gacha')drawGacha();
   else if(act==='tuckinfo')say(m.day.tuck?'오늘 취침 인증 완료! 포근했지.':'밤 9시 넘어서 힐링하기의 재워주기를 하면 자동으로 체크돼!');
   else if(act==='flower'){if(m.day.flower)return;say('꽃밭에서 고르는 중…');mbAct('mb-wiggle',1200);setTimeout(function(){var f=pickFlower();m.day.flower=f;if(m.dex.indexOf(f.n)<0)m.dex.push(f.n);m.album.push({n:f.n,k:tk(),c:charType()});if(m.album.length>400)m.album=m.album.slice(-400);B.save();drawCards();say(f.rare?'별꽃이야…! 흔치 않은 거야. 포카로 남겨뒀어.':f.word);chime();},1200);}
   else if(act==='pokachar'){m.pokaChar=a.dataset.v==='dol'?'dol':'byeol';var ta=m.album.find(function(x){return x.k===tk();});if(ta)ta.c=m.pokaChar;B.save();pop();drawCards();say(m.pokaChar==='dol'?'먼돌이가 포카에 들어갔어. 헤헤, 수줍어해.':'내가 포카에 들어갈게!');}
