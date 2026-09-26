@@ -1,0 +1,57 @@
+/* PLAN:ON default Nemo UI refinement — 2026-09-27 */
+
+/* Five-tab Nemo navigation: 월간 / 주간 / 일간 / 시간표 / 친구 */
+#nav.nav>button.nemo-nav-tab{transition:background .16s ease,transform .16s ease}
+#nav.nav>button.nemo-nav-tab .navico{width:29px!important;height:29px!important}
+#nav.nav>button.nemo-nav-tab .navico svg{width:29px!important;height:29px!important;overflow:visible}
+#nav.nav>button.nemo-nav-month.on{background:#fff0f5!important}
+#nav.nav>button.nemo-nav-week.on{background:#eff7ff!important}
+#nav.nav>button.nemo-nav-day.on{background:#fff6df!important}
+#nav.nav>button.nemo-nav-ttable.on{background:#effaf5!important}
+#nav.nav>button.nemo-nav-friends.on{background:#f5f0ff!important}
+#nav.nav>button.nemo-nav-tab.on .navlabel{color:var(--ink)!important;font-weight:850!important}
+
+/* End-of-day diary prompt. Uses the existing Nemo SVG system: no generated image asset. */
+.nemo-diary-end-card{
+  width:100%!important;
+  min-height:138px!important;
+  margin:14px 0 18px!important;
+  padding:18px 50px 18px 16px!important;
+  display:grid!important;
+  grid-template-columns:104px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:12px!important;
+  border:1px solid color-mix(in srgb,var(--planner-color) 38%,var(--line))!important;
+  border-radius:24px!important;
+  background:color-mix(in srgb,var(--planner-color) 20%,#fffaf1)!important;
+  box-shadow:0 7px 22px rgba(0,0,0,.04)!important;
+  text-align:left!important;
+  color:var(--ink)!important;
+}
+.nemo-diary-end-card .nemo-diary-character{
+  width:100px;height:94px;display:grid;place-items:center;position:relative;overflow:visible
+}
+.nemo-diary-end-card .nemo-diary-character .nemo-state-shell{width:84px;height:84px}
+.nemo-diary-end-card .nemo-diary-character .nemo-char{width:84px;height:84px}
+.nemo-diary-end-card .nemo-diary-character .nemo-state-accessory{inset:-8% -19% -18% -19%;width:138%;height:126%}
+.nemo-diary-end-card .diary-banner-copy{display:block!important;min-width:0!important;padding:0!important}
+.nemo-diary-end-card .diary-banner-copy b{display:block!important;font-size:20px!important;line-height:1.3!important;letter-spacing:-.035em!important;word-break:keep-all!important}
+.nemo-diary-end-card .diary-banner-copy span{display:block!important;margin-top:7px!important;color:var(--sub)!important;font-size:13px!important;line-height:1.5!important;word-break:keep-all!important}
+.nemo-diary-end-card .diary-banner-arrow{right:16px!important;font-size:22px!important}
+.nemo-diary-end-card:active{transform:scale(.995)}
+
+@media(max-width:520px){
+  .nemo-diary-end-card{
+    min-height:126px!important;
+    grid-template-columns:88px minmax(0,1fr)!important;
+    gap:9px!important;
+    padding:15px 40px 15px 12px!important;
+    border-radius:21px!important;
+  }
+  .nemo-diary-end-card .nemo-diary-character{width:86px;height:82px}
+  .nemo-diary-end-card .nemo-diary-character .nemo-state-shell,
+  .nemo-diary-end-card .nemo-diary-character .nemo-char{width:74px;height:74px}
+  .nemo-diary-end-card .diary-banner-copy b{font-size:18px!important}
+  .nemo-diary-end-card .diary-banner-copy span{font-size:12px!important}
+  .nemo-diary-end-card .diary-banner-arrow{right:9px!important}
+}
