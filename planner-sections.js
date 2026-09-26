@@ -18,9 +18,7 @@ function findSections(main){var out={};main.querySelectorAll(':scope > section.c
 function summary(k,sec){
   if(k==='fixed'){var n=sec.querySelectorAll('.course').length;return n?n+'개 과목 · 눌러서 보기':'아직 비어 있어요 · 눌러서 추가';}
   if(k==='exam'){var rs=[].slice.call(sec.querySelectorAll('.setrow')),up=rs.filter(function(r){return !r.classList.contains('past');})[0];if(up){var sp=up.querySelector('span'),nm=sp&&sp.childNodes[0]?(sp.childNodes[0].textContent||'').trim():'';var when=((sp&&sp.querySelector('small'))||{}).textContent||'';return '다음 시험 · <b>'+esc(nm)+'</b> <small>'+esc(when.split(' · ')[0])+'</small>';}return rs.length?'이번 학기 시험은 다 지났어요':'눌러서 추가';}
-  if(k==='dday'){var rows=[].slice.call(sec.querySelectorAll('.setrow'));var c=rows.filter(function(r){var i=r.querySelector('.ddcat-row');return i&&/♡/.test(i.textContent||'');})[0]||null;
-    if(c){var tt=c.querySelector('span > span');var name=tt?(tt.childNodes[0]&&tt.childNodes[0].textContent||'').trim():'';var num=(c.querySelector('.ddn')||{}).textContent||'';return '<span class="ps-couple"><i>♡</i>'+esc(name)+' <b>'+esc(num)+'</b></span>';}
-    return rows.length?rows.length+'개 · 눌러서 보기':'눌러서 추가';}
+  if(k==='dday'){var rows=[].slice.call(sec.querySelectorAll('.setrow'));return rows.length?rows.length+'개 · 눌러서 보기':'눌러서 추가';}
   return '';}
 function coupleFirst(sec){var rows=[].slice.call(sec.querySelectorAll(':scope > .setrow'));var cs=rows.filter(function(r){var i=r.querySelector('.ddcat-row');return i&&/♡/.test(i.textContent||'');});if(!cs.length)return;var first=rows[0];cs.forEach(function(r){r.classList.add('ps-couple-row');first.before(r);});}
 function apply(){var u=B.ui(),main=document.getElementById('main');if(!u||!main)return;var p=pref();
@@ -41,7 +39,7 @@ function apply(){var u=B.ui(),main=document.getElementById('main');if(!u||!main)
     var head=sec.querySelector('.card-h');if(head&&!head.querySelector('.ps-caret')){head.insertAdjacentHTML('afterbegin','<span class="ps-caret" aria-hidden="true"></span>');head.setAttribute('role','button');head.setAttribute('tabindex','0');}
     var sm=sec.querySelector(':scope > .ps-sum');if(!sm){sm=document.createElement('div');sm.className='ps-sum';head.after(sm);}sm.innerHTML=summary(k,sec);});}
 document.addEventListener('click',function(e){var ts=e.target.closest&&e.target.closest('.ps-top-sum');if(!ts)return;OPEN.toplist=!OPEN.toplist;saveOpen();apply();});
-document.addEventListener('click',function(e){var head=e.target.closest&&e.target.closest('.ps-fold > .card-h, .ps-fold > .ps-sum');if(!head)return;if(e.target.closest('button,a,input,select')&&!e.target.closest('.ps-caret'))return;var sec=head.parentNode,k=sec.dataset.psKey;OPEN[k]=sec.classList.contains('ps-closed');saveOpen();sec.classList.toggle('ps-closed',!OPEN[k]);});
+document.addEventListener('click',function(e){var head=e.target.closest&&e.target.closest('.ps-fold > .card-h, .ps-fold > .ps-sum');if(!head)return;if(e.target.closest('button,a,input,select')&&!e.target.closest('.ps-caret'))return;var sec=head.parentNode,k=sec.dataset.psKey;OPEN[k]=sec.classList.contains('ps-closed');saveOpen();apply();});
 /* 설정 화면: 표시 설정 진입 */
 function inject(){var u=B.ui(),main=document.getElementById('main');if(!main||!u||u.tab!=='settings'||u.settingsPage)return;if(main.querySelector('[data-ps-entry]'))return;var sec=document.createElement('section');sec.className='card';sec.setAttribute('data-ps-entry','1');sec.innerHTML='<button class="setrow chatrow" data-ps="open"><span>시간표·홈 표시<small>강의·D-day·시험 일정 접기/숨기기 · 일간 맨 위 시험 목록 · 곧 마감 줄</small></span><span class="chev">›</span></button>';var cards=main.querySelectorAll(':scope > section.card');if(cards.length>2)cards[2].before(sec);else main.appendChild(sec);}
 function sheet(){var p=pref();var sw=function(on,attr){return '<button class="ux-switch '+(on?'on':'')+'" '+attr+' role="switch" aria-checked="'+(on?'true':'false')+'"></button>';};
