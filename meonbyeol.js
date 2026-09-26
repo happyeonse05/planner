@@ -459,8 +459,9 @@ function autoExpr(){if(FLASH.until>Date.now())return FLASH.e;var h=hourNow(),p=d
   var over=(s.todos||[]).filter(function(t){return t&&!t.done&&t.scope==='day'&&t.key<k;}).length;
   var closed=(s.dayCloses||[]).some(function(c){return c&&(c.key||c.date)===k;});
   if(closed||(p.n>=1&&p.d===p.n))return 'proud';
+  /* 밤 10시부터는 먼별/먼돌 모두 하루 진행률보다 '졸림'을 우선해요. */
+  if(h>=22||h<5)return 'sleepy';
   if(over>=3||(p.n>=4&&p.d===0&&h>=18))return 'sad';
-  if(h>=23||h<5)return 'sleepy';
   return 'normal';}
 function curExpr(){var f=faceCfg();return f.mode==='manual'?(f.manual||'normal'):autoExpr();}
 /* 집중 화면: 시작·진행=집중+안경 / 멈춤·휴식=졸림 / 완주=뿌듯 / 짧게 끝=활짝 */
