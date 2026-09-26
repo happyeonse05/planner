@@ -1990,3 +1990,10 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
  #nav.nav>button{min-width:0!important;width:auto!important;justify-self:stretch!important;margin:0!important;transform:none!important}
  .mbon #nav.nav .mb-nav{width:100%!important;min-width:0!important;margin:0!important;padding-left:0!important;padding-right:0!important}
 }
+
+/* 2026-09-26 collapsed planner cards: no private/detail preview leaks */
+.ps-closed .ps-summary{display:block!important}
+.ps-closed .ps-summary~*{display:none!important}
+.ps-closed .card-h{display:flex!important}
+.ps-closed .card-h>*:not(.ps-headbtn):not(.tbtn):not(.tt-actions){visibility:hidden!important;position:absolute!important;pointer-events:none!important}
+.ps-closed .card-h .ps-headbtn,.ps-closed .card-h>.tbtn,.ps-closed .card-h .tt-actions{visibility:visible!important;position:relative!important;pointer-events:auto!important}
