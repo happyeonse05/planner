@@ -20,7 +20,7 @@
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
 body{height:100%;margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   font-size:15px;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
 input,textarea{font:inherit;color:inherit}
@@ -346,7 +346,7 @@ select.fld,.sel{appearance:none;-webkit-appearance:none;background-image:linear-
   --bg:#000000; --card:#111113; --ink:#f5f5f7; --sub:#8e8e93; --line:#242427; --soft:#1c1c1f;
   --accent:#f5f5f7; --accent-ink:#000000; --now:#ff6b6b; --edge:#2a2a2e; --hi:#18181b;
 }
-body{font-family:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   background:var(--bg);letter-spacing:-.01em}
 h1,h3,.nm,.cname,.big,.tl-h b{font-weight:700;letter-spacing:-.025em}
 .top{padding:16px 16px 10px}
@@ -1908,3 +1908,14 @@ main{max-width:100%;overflow-x:hidden}
 
 /* friend scheduling privacy */
 .privacy-availability-note{margin:8px 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);display:grid;gap:4px}.privacy-availability-note b{font-size:12px}.privacy-availability-note small{font-size:10px;color:var(--sub);line-height:1.5}
+
+/* 20260926 rollback: restore original clean system typography + iPhone tap targets */
+html,body,button,input,textarea,select{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif!important}
+button,[role="button"],[data-act],[data-market-open]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media(max-width:600px){button,[data-act],[data-market-open]{min-height:32px}}
+
+.settings-shop-restore{width:100%;height:44px;margin:10px 0 2px!important;display:flex;align-items:center;justify-content:center;font-weight:800!important}
+
+/* FINAL iPhone tap hardening — visual/layout rules intentionally unchanged. */
+button,[role=button],[data-act],[data-market-open]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+[data-act="view-dd"],[data-market-open]{pointer-events:auto!important}
