@@ -52,7 +52,7 @@ function smartSettingsModal(){
 }
 function simplifySettings(){
   var u=B.ui&&B.ui();
-  if(!u||u.tab!=='settings')return;
+  if(!u||u.tab!=='settings'||u.settingsPage)return;
   var sec=document.querySelector('.smart-settings');
   if(!sec)return;
   var p=prefs();
