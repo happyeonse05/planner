@@ -323,6 +323,17 @@ function normalize(s){
     return {id:r.id||uid(),title:title,ingredients:String(r.ingredients||'').slice(0,4000),steps:String(r.steps||'').slice(0,6000),memo:String(r.memo||'').slice(0,3000),favorite:!!r.favorite,createdAt:Number(r.createdAt||Date.now()),updatedAt:Number(r.updatedAt||r.createdAt||Date.now())};
   }).filter(Boolean).slice(0,200);
 
+  if(!Array.isArray(o.routines))o.routines=[];
+  o.routines=o.routines.map(function(r){
+    if(!r||typeof r!=='object')return null;
+    r.days=Array.isArray(r.days)?r.days.map(Number).filter(function(x){return x>=0&&x<=6;}):[0,1,2,3,4,5,6];
+    if(r.enabled===undefined)r.enabled=true;
+    if(r.showTimeline===undefined)r.showTimeline=!!r.time;
+    if(r.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(r.time))r.time='';
+    r.dur=Math.max(10,Math.min(180,Number(r.dur||30)));
+    return r;
+  }).filter(Boolean);
+  if(o.settings.routinesOn===undefined)o.settings.routinesOn=true;
   if(!o.modeStates||typeof o.modeStates!=='object'||Array.isArray(o.modeStates))o.modeStates={};
   if(['university','school','exam','other'].indexOf(o.settings.plannerMode)<0)o.settings.plannerMode='university';
   if(typeof o.settings.profileName!=='string')o.settings.profileName='';
@@ -3253,9 +3264,13 @@ function itemsFor(d){
   var tds=S.todos.filter(function(t){return t.scope==='day'&&t.key===k&&t.time;}).map(function(t){
     var st=toMin(t.time);return {kind:'todo',id:t.id,name:(t.done?'✓ ':'')+t.text,sub:'',start:st,end:Math.min(st+(t.dur||60),1440),color:t.course?courseColor(t.course):'#dce9f7',done:t.done};
   });
+  var rts=(S.settings.routinesOn===false?[]:routinesFor(d)).filter(function(r){return r.time&&r.showTimeline!==false;}).map(function(r){
+    var st=toMin(r.time),dn=routineDone(r,k);
+    return {kind:'routine',id:r.id,name:(dn?'✓ ':'')+r.text,sub:'반복 · '+daysText(r.days),start:st,end:Math.min(st+(r.dur||30),1440),color:'#eadff5',done:dn};
+  });
   var fss=(S.fsess[k]||[]).map(function(x,i){var t=x.tid?S.todos.find(function(y){return y.id===x.tid;}):null;
     var st=toMin(x.start),en=Math.max(toMin(x.end),st+15);return {kind:'focus',id:x.tid||'',name:'집중 '+x.min+'분'+(t?' · '+t.text:''),sub:'',start:st,end:Math.min(en,1440),color:'#e6e6ea'};});
-  return cls.concat(evs,tds,fss).sort(function(a,b){return a.start-b.start||a.end-b.end;});
+  return cls.concat(evs,tds,rts,fss).sort(function(a,b){return a.start-b.start||a.end-b.end;});
 }
 function monthItemOn(id){return !S.settings.monthItems||S.settings.monthItems[id]!==false;}
 function eventOnDate(e,k){
@@ -3275,7 +3290,7 @@ function monthEventMarkerHTML(evs,ads){var e=(evs&&evs[0])||(ads&&ads[0]);if(!e)
 function monthEventChipHTML(e){var cls=eventImportanceClass(e);return '<span class="chip ev '+(cls==='appointment'?'appointment-chip':cls==='important'?'important-chip':'')+'" style="--c:'+(e.color||defCol())+'">'+esc(eventChipLabel(e))+'</span>';}
 
 function appointmentChip(e){return '<button class="adchip" style="--c:'+e.color+'" data-act="edit-event" data-id="'+e.id+'">'+esc(eventChipLabel(e))+'</button>';}
-function actOf(it){return it.kind==='event'?(it.appointment?'edit-event':'view-event-detail'):it.kind==='todo'||(it.kind==='focus'&&it.id)?'edit-todo':it.kind==='focus'?'noop':'view-block';}
+function actOf(it){return it.kind==='event'?(it.appointment?'edit-event':'view-event-detail'):it.kind==='routine'?'edit-rt':it.kind==='todo'||(it.kind==='focus'&&it.id)?'edit-todo':it.kind==='focus'?'noop':'view-block';}
 function layout(items){
   var out=[],cluster=[],cEnd=-1;
   function flush(){
@@ -4149,7 +4164,7 @@ function topBar(){
   if(n===0)return '';
   return items.length?'<div class="toplist">'+items.slice(0,n).map(topItemHTML).join('')+'</div>':'';
 }
-function routinesFor(d){var w=dow(d);return S.routines.filter(function(r){return r.days.indexOf(w)>=0;});}
+function routinesFor(d){var w=dow(d);if(S.settings.routinesOn===false)return [];return S.routines.filter(function(r){return r.enabled!==false&&r.days.indexOf(w)>=0;});}
 function routineDone(r,k){return (S.routineDone[k]||[]).indexOf(r.id)>=0;}
 function daysText(days){
   if(days.length===7)return '매일';
@@ -4402,7 +4417,7 @@ function todoBox(scope,key,title){
   var rtHTML=rts.map(function(r){
     var dn=routineDone(r,key);
     return '<li class="todo '+(dn?'done':'')+'"><button class="chk" data-act="toggle-rt" data-id="'+r.id+'" data-date="'+key+'" aria-label="완료 체크">✓</button>'+
-      '<span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<em class="rp">↻ '+esc(daysText(r.days))+streakTxt(r)+'</em></span></li>';
+      '<span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<em class="rp">'+(r.time?esc(timeShort(r.time))+' · ':'')+'↻ '+esc(daysText(r.days))+streakTxt(r)+'</em></span></li>';
   }).join('');
   return '<section class="card todo-box '+(scope==='week'?'week-todo-card':'')+'"><div class="card-h"><h3>'+esc(title)+'</h3><span class="cnt">'+done+'/'+total+'</span></div>'+
     (total?'<div class="bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div>':'')+
@@ -5013,7 +5028,7 @@ function viewTodo(){
   var qtabs='<div class="seg qscope-tabs" style="margin-bottom:8px">'+
     qs.map(function(q){return '<button data-act="qscope" data-v="'+q[0]+'" class="'+(U.qscope===q[0]?'on':'')+'">'+q[1]+'</button>';}).join('')+'</div>';
   var quickBody=U.qscope==='routine'
-    ? '<button class="routine-quick-add" data-act="add-rt">+ 반복 할 일 추가</button><div class="hint" style="margin:8px 2px 0">요일을 골라두면 해당 날짜의 일간 화면에 자동으로 떠요.</div>'
+    ? '<div class="routine-master"><span><b>반복 루틴</b><small>매일·평일·요일별 생활 루틴</small></span><label class="switch"><input type="checkbox" data-act="toggle-routines-master"'+(S.settings.routinesOn!==false?' checked':'')+'><i></i></label></div><button class="routine-quick-add" data-act="add-rt">+ 반복 루틴 추가</button><div class="hint" style="margin:8px 2px 0">시간을 넣으면 일간 시간표에도 떠요. 각 루틴은 따로 끌 수도 있어요.</div>'
     : '<div class="add" style="margin-top:0"><input data-draft="quick" placeholder="해야 할 일을 적어요" enterkeyhint="done" value="'+esc(U.drafts.quick||'')+'"><button data-act="add-quick">추가</button></div>'+ 
       (U.qopt?'':'<button class="optlink" data-act="qopt">+ 과목·마감일</button>')+(U.qopt?'<div class="duebox"><span>과목</span>'+courseSelect('q-course',U.qcourse||'','sel')+'</div>':'')+
       (U.qopt?'<div class="duebox"><span>마감일</span><input type="date" id="q-due" value="'+esc(U.qdue||'')+'">'+(U.qdue?'<button data-act="clear-qdue">없음</button>':'')+'</div>':'');
@@ -5021,7 +5036,7 @@ function viewTodo(){
   if(U.qscope==='routine'){
     html+='<section class="card"><div class="card-h"><h3>반복 할 일</h3><span class="cnt">'+S.routines.length+'</span></div>'+ 
       (S.routines.length?S.routines.map(function(r){
-        return '<div class="rt"><span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<small>↻ '+esc(daysText(r.days))+streakTxt(r)+'</small></span></div>';
+        return '<div class="rt'+(r.enabled===false?' routine-off':'')+'"><span class="ttxt" data-act="edit-rt" data-id="'+r.id+'">'+esc(r.text)+'<small>'+(r.time?esc(timeShort(r.time))+' · ':'')+'↻ '+esc(daysText(r.days))+(r.enabled===false?' · 꺼짐':'')+streakTxt(r)+'</small></span><button class="routine-inline-toggle" data-act="toggle-routine-one" data-id="'+r.id+'" aria-label="루틴 켜기/끄기">'+(r.enabled===false?'OFF':'ON')+'</button></div>';
       }).join(''):'<div class="empty">아직 반복 할 일이 없어요. 위에서 추가해보세요.</div>')+'</section>';
   }
   var any=false;
@@ -6430,12 +6445,16 @@ function finishDiarySave(){
 }
 
 function openRoutine(r){
-  var x=r||{text:'',days:[0,1,2,3,4,5,6]};
-  M={type:'routine',id:r?r.id:null,days:x.days.slice()};
-  openModal('<h3>'+(r?'반복 할 일 수정':'반복 할 일 추가')+'</h3>'+
-    '<input class="fld" id="f-rtext" placeholder="예: 단어 30개 외우기" maxlength="80" value="'+esc(x.text)+'">'+
+  var x=r||{text:'',days:[0,1,2,3,4,5,6],time:'',dur:30,enabled:true,showTimeline:true};
+  M={type:'routine',id:r?r.id:null,days:(x.days||[0,1,2,3,4,5,6]).slice()};
+  openModal('<h3>'+(r?'반복 루틴 수정':'반복 루틴 추가')+'</h3>'+
+    '<input class="fld" id="f-rtext" placeholder="예: 우유 마시기 · 취침 · 영어 공부" maxlength="80" value="'+esc(x.text||'')+'">'+
+    '<div class="routine-time-grid"><label><span class="lbl">시간 (선택)</span><input class="fld" type="time" id="f-rtime" value="'+esc(x.time||'')+'"></label><label><span class="lbl">예상 시간</span><select class="fld" id="f-rdur">'+[10,15,20,30,45,60,90,120].map(function(n){return '<option value="'+n+'"'+(Number(x.dur||30)===n?' selected':'')+'>'+n+(n<60?'분':n===60?'분 (1시간)':'분')+'</option>';}).join('')+'</select></label></div>'+
+    '<p class="hint">시간을 정하면 일간 시간표에도 그 시각에 떠요. 예: 매일 22:30 우유 마시기, 00:30 취침.</p>'+
     '<span class="lbl">반복 요일</span><div class="seg" id="f-rdays"></div>'+
     '<div class="seg"><button data-act="rt-preset" data-v="all">매일</button><button data-act="rt-preset" data-v="wd">평일</button><button data-act="rt-preset" data-v="we">주말</button></div>'+
+    '<label class="ck"><input type="checkbox" id="f-renabled"'+(x.enabled!==false?' checked':'')+'>이 루틴 사용</label>'+
+    '<label class="ck"><input type="checkbox" id="f-rshow"'+(x.showTimeline!==false?' checked':'')+'>일간 시간표에 표시</label>'+
     '<div class="acts">'+(r?'<button class="b-del" data-act="del-rt">삭제</button>':'')+'<button class="b-ghost" data-act="close">취소</button><button class="b-save" data-act="save-rt">저장</button></div>');
   drawRDays();
   if(!r)setTimeout(function(){var f=$('#f-rtext');if(f)f.focus();},50);
@@ -6445,13 +6464,13 @@ function drawRDays(){
   el.innerHTML=DAYS.map(function(n,i){return '<button data-act="rt-day" data-v="'+i+'" class="'+(M.days.indexOf(i)>=0?'on':'')+'">'+n+'</button>';}).join('');
 }
 function saveRoutine(){
-  var text=$('#f-rtext').value.trim();
+  var text=$('#f-rtext').value.trim(),time=($('#f-rtime')&&$('#f-rtime').value)||'',dur=Number(($('#f-rdur')&&$('#f-rdur').value)||30);
   if(!text){bad('#f-rtext');return;}
   if(!M.days.length){var el=$('#f-rdays');if(el)el.style.outline='2px solid var(--now)';return;}
-  var days=M.days.slice().sort();
-  if(M.id){var r=S.routines.find(function(x){return x.id===M.id;});if(r){r.text=text;r.days=days;}}
-  else S.routines.push({id:uid(),text:text,days:days});
-  save();closeModal();render();
+  var days=M.days.slice().sort(),data={text:text,days:days,time:time,dur:dur,enabled:!!($('#f-renabled')&&$('#f-renabled').checked),showTimeline:!!($('#f-rshow')&&$('#f-rshow').checked)};
+  if(M.id){var r=S.routines.find(function(x){return x.id===M.id;});if(r)Object.assign(r,data);}
+  else S.routines.push(Object.assign({id:uid()},data));
+  save();closeModal();render();inAppToast(time?timeShort(time)+' · '+text+' 루틴을 저장했어요':text+' 루틴을 저장했어요');
 }
 function ringLabel(r){var d=new Date(r.at||0);return (d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
 function copyText(txt,box,okMsg){
@@ -7180,6 +7199,8 @@ function act(a,e){
       if(arr.length)S.routineDone[k]=arr;else delete S.routineDone[k];
       save();render();break;
     }
+    case 'toggle-routines-master':S.settings.routinesOn=!!a.checked;save();render();break;
+    case 'toggle-routine-one':{var ro=S.routines.find(function(x){return x.id===id;});if(ro){ro.enabled=ro.enabled===false;save();render();}break;}
     case 'add-rt':openRoutine(null);break;
     case 'edit-rt':{var rr=S.routines.find(function(x){return x.id===id;});if(rr)openRoutine(rr);break;}
     case 'rt-day':{var v=Number(a.dataset.v),j=M.days.indexOf(v);if(j>=0)M.days.splice(j,1);else M.days.push(v);var rd=$('#f-rdays');if(rd)rd.style.outline='';drawRDays();break;}
