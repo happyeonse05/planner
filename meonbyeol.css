@@ -220,3 +220,6 @@
 .market-mb-preview-cell .art{height:48px;display:grid;place-items:center}.market-mb-preview-cell svg{width:44px;height:44px;overflow:visible}
 .market-mb-preview-cell small{display:block;margin-top:4px;font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:390px){.market-mb-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* PLANON restore3 typography */
+.mbon,.mbon *,.mb-sheet-ov,.mb-sheet-ov *,.mb-demo,.mb-demo *,.mb-starview,.mb-starview *{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif!important}
