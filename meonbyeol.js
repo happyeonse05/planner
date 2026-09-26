@@ -822,11 +822,35 @@ var NAVI={
  meonbyeol:'<svg viewBox="0 0 32 32"><path d="'+(typeof cloudPath==='function'?cloudPath(16,17,11,9):'')+'" fill="#FFFDFC" stroke="#DCCDF2" stroke-width="2"/><path d="M11 17q2-1.6 4 0M17 17q2-1.6 4 0" stroke="#5E5468" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="9.5" cy="20" rx="2" ry="1.2" fill="#F7C8D8"/><ellipse cx="22.5" cy="20" rx="2" ry="1.2" fill="#F7C8D8"/><path d="'+starPath(26,6,4)+'" fill="#F2C94C"/></svg>'
 };
 function navHTML(tabs,cur,pending){
-  /* Character themes must not replace the app's global bottom navigation. */
+  /* Global Planon/Nemo navigation keeps its original icons. Character theme only adds its own tab. */
   return null;
-},
+}
+
+/* ---------- Shop: character theme is isolated from base Nemo ---------- */
+function sync(){
+  trialCheck();
+  var on=isOn(),dol=on&&charType()==='dol',todoOn=on&&st().todoTheme!==false;
+  document.documentElement.classList.toggle('mbon',on);
+  document.documentElement.classList.toggle('mb-dol',dol);
+  document.documentElement.classList.toggle('mb-byeol',on&&!dol);
+  document.documentElement.classList.toggle('mb-todo-off',on&&!todoOn);
+  var u=B.ui();
+  if(!on&&u&&u.tab==='meonbyeol'){u.tab='day';try{B.render(true);}catch(e){}}
+  if(on){checkClose();if(document.getElementById('mb-byeol')&&!document.getElementById('mb-byeol').firstChild)mount();}
+}
+window.addEventListener('planon-market-change',function(){sync();try{B.render(true);}catch(e){}});
+var mainEl=document.getElementById('main');
+if(mainEl)new MutationObserver(function(){setTimeout(sync,0);}).observe(mainEl,{childList:true});
+window.PLANON_MEONBYEOL={
+  on:isOn,
+  view:function(){setTimeout(mount,0);return view();},
+  nav:navHTML,
+  svg:function(id,tint,o){return byeolSVG(id||'mbx',tint||(isOn()?curTint():BASE),o||{});},
   myTint:function(){return curTint();},baseTint:function(){return BASE;},
   state:function(){return st();},say:say,addStars:addStars,icoStar:icoStar,icoLemon:icoLemon,
-  openDraw:openDraw,openPick:openPick,starPath:starPath,dolSVG:dolSVG,charSVG:charSVG,charType:charType,charName:charName,exprFor:exprFor,curExpr:curExpr,flash:flash,EXPRS:EXPRS,isHatched:function(){return !!st().hatched;},rubBurst:function(x,y){spawnAt(x,y);},pop:pop,chime:chime};
+  openDraw:openDraw,openPick:openPick,starPath:starPath,dolSVG:dolSVG,charSVG:charSVG,charType:charType,charName:charName,
+  exprFor:exprFor,curExpr:curExpr,flash:flash,EXPRS:EXPRS,isHatched:function(){return !!st().hatched;},
+  rubBurst:function(x,y){spawnAt(x,y);},pop:pop,chime:chime
+};
 setTimeout(function(){sync();if(isOn())try{B.render();}catch(e){}},50);
 })();
