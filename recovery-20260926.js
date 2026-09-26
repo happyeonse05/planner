@@ -37,16 +37,17 @@ function clean(){
     var p=row.parentElement;if(!p)return;var key=(row.textContent||'').replace(/\s+/g,' ').trim(),prev=row.previousElementSibling;
     if(prev&&prev.classList.contains('course')&&(prev.textContent||'').replace(/\s+/g,' ').trim()===key)row.remove();
   });
-  /* Keep the day-close CTA in its original mobile bottom position above the nav.
-     Do not force it into the middle of the daily task flow. */
-  document.querySelectorAll('button').forEach(function(b){
-    if((b.textContent||'').trim()!=='오늘 마감하기')return;
-    var wrap=b.closest('.day-close-fixed');
-    if(wrap){
-      b.style.position='';b.style.inset='';b.style.width='';b.style.margin='';
-      wrap.style.position='';wrap.style.inset='';wrap.style.width='';wrap.style.margin='';
-    }
-  });
+  /* 오늘 마감하기는 일간 콘텐츠의 진짜 마지막에 둔다. 상단 요약 카드 안이나 고정 버튼으로 두지 않는다. */
+  var main=document.getElementById('main'),u=B.ui&&B.ui();
+  if(main&&u&&u.tab==='day'){
+    var closes=[].slice.call(main.querySelectorAll('button')).filter(function(b){return (b.textContent||'').trim()==='오늘 마감하기';});
+    closes.forEach(function(b){
+      var wrap=b.closest('.day-close-fixed')||b.parentElement;if(!wrap)return;
+      wrap.style.position='static';wrap.style.inset='auto';wrap.style.width='auto';wrap.style.margin='18px 0 calc(112px + env(safe-area-inset-bottom,0px))';
+      b.style.position='static';b.style.inset='auto';b.style.width='100%';b.style.margin='0';
+      main.appendChild(wrap);
+    });
+  }
 }
 function touchFix(e){
   var a=e.target&&e.target.closest&&e.target.closest('button,a,[data-act],[data-mb],[data-rel-open],[data-market-open]');
