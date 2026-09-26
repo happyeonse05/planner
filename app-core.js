@@ -4742,13 +4742,18 @@ function timetableWallpaperCharacterAvailable(kind){
 }
 function currentTimetableWallpaperCharacter(){
   try{var m=window.PLANON_MEONBYEOL;if(m&&m.on&&m.on())return m.charType&&m.charType()==='dol'?'dol':'byeol';}catch(x){}
+  try{var e=window.PLANON_MARKET_THEME,st=e&&e.state&&e.state(),id=st&&st.active&&st.active.character;if(id==='ribbon-nemo')return 'ribbon';}catch(x){}
   return 'nemo';
 }
 function timetableWallpaperCharSVG(kind){
   if(kind==='auto')kind=currentTimetableWallpaperCharacter();
   if(kind==='none')return '';
   try{
-    if(kind==='nemo'&&typeof nemoSVG==='function')return nemoSVG('happy','');
+    if((kind==='nemo'||kind==='ribbon')&&typeof nemoSVG==='function'){
+      var base=nemoSVG('happy','');
+      if(kind==='ribbon')base=base.replace('</svg>','<g transform="translate(7 4)"><ellipse cx="5" cy="4" rx="5" ry="3.4" fill="#F2B6C5" transform="rotate(-20 5 4)"/><ellipse cx="13" cy="4" rx="5" ry="3.4" fill="#F2B6C5" transform="rotate(20 13 4)"/><circle cx="9" cy="4" r="3" fill="#D9829A"/></g></svg>');
+      return base;
+    }
     var m=window.PLANON_MEONBYEOL;
     if(kind==='dol'&&m&&m.dolSVG)return m.dolSVG({expr:'happy',headphone:false});
     if(kind==='byeol'&&m&&m.svg)return m.svg('ttWallpaper',m.myTint?m.myTint():null,{plain:true,expr:'smile'});
