@@ -9,3 +9,24 @@ button,a,[role="button"],[data-act],[data-mb],[data-rel-open],[data-market-open]
 .rel-person{min-width:0;text-align:center}
 .rel-switch{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
 .fm-weekbars{align-items:end}
+
+/* 2026-09-26 iPhone: day-close CTA must stay at the bottom above the tab bar. */
+body.planon-day-close-visible #planon-day-close-fixed{
+  position:fixed!important;
+  left:12px!important;
+  right:12px!important;
+  bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+  top:auto!important;
+  width:auto!important;
+  margin:0!important;
+  padding:8px!important;
+  z-index:10020!important;
+  border-radius:18px!important;
+  background:color-mix(in srgb,var(--card) 92%,transparent)!important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.10)!important;
+}
+body.planon-day-close-visible #planon-day-close-fixed>button{width:100%!important;margin:0!important}
+body.planon-day-close-visible main{padding-bottom:150px!important}
