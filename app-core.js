@@ -297,7 +297,7 @@ function openModeSwitch(){M={type:'mode-switch'};openModal('<h3>플래너 유형
 function defaults(){
   return {
     classes:DEFAULT_CLASSES.map(function(c){return Object.assign({id:uid()},c);}),
-    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,liteHome:true,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],recipes:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
+    events:[],todos:[],routines:[],exams:[],allday:[],hourNotes:{},logs:{},letters:{},focus:{},retro:{},weeklyRetro:{},fsess:{},selfchat:[],diaries:[],dayCloses:[],ddays:[],modeStates:{},trackers:DEFAULT_TRK.map(function(t){return Object.assign({},t);}),routineDone:{},memos:{},schedulePrepTemplates:{},settings:{plannerMode:'university',weekend:true,weekV2:true,colorV2:true,logOn:true,calItem:'study',calDday:'icon',remindOn:false,liteHome:true,showTodoTab:true,locationEnabled:false,notified:{},schoolLastChecked:0,wakeGoal:'09:00',profileName:'',profilePhoto:'',homeStation:'',originRules:[],originWeekOverrides:[],bgLinkedV3:true,schoolConfigured:false,onboardDone:false,logDisplay:{wakeGoal:true,wakeTime:true,sleepTime:true,studyTotal:true},monthItems:{appointment:true,event:true,dday:true,exam:true,allday:true,todo:true},topShow:true,topOrder:[],pinnedFriends:[],blockedUsers:[],friendMemories:[],customSchools:[],recipes:[],links:DEFAULT_LINKS.map(function(l){return {id:uid(),name:l.name,url:l.url};})},updatedAt:0
   };
 }
 function normalize(s){
@@ -352,6 +352,8 @@ function normalize(s){
   if(o.settings.onboardDone===undefined)o.settings.onboardDone=hadSavedSchool;
   if(!o.settings.notified||typeof o.settings.notified!=='object')o.settings.notified={};
   if(o.settings.remindOn===undefined)o.settings.remindOn=false;
+  if(o.settings.showTodoTab===undefined)o.settings.showTodoTab=true;
+  if(o.settings.locationEnabled===undefined)o.settings.locationEnabled=false;
   if(o.settings.showWeeklyReview===undefined)o.settings.showWeeklyReview=true;
   if(o.settings.diaryRuled===undefined)o.settings.diaryRuled=true;
   if(o.settings.morningBriefing===undefined)o.settings.morningBriefing=false;
@@ -973,8 +975,39 @@ function nearestPlannerMeetPoints(lat,lng,limit){
   return plannerOriginPoints().map(function(st){return {station:st,distance:plannerGeoDistance(here,st)};}).sort(function(a,b){return a.distance-b.distance;}).slice(0,Math.max(1,limit||5));
 }
 function geoDistanceText(km){return km<1?Math.round(km*1000)+'m':km.toFixed(1)+'km';}
+function locationPermissionOn(){return S.settings.locationEnabled===true;}
+function locationPermissionSave(enabled){
+  S.settings.locationEnabled=!!enabled;save();
+  if(!Sync.sb||!Sync.uid)return Promise.resolve({local:true});
+  return Sync.sb.from('planner_location_permissions').upsert({user_id:Sync.uid,enabled:!!enabled,updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(function(r){
+    if(r&&r.error)throw r.error;return r;
+  }).catch(function(e){
+    var m=(e&&(e.message||e.details))||String(e||'');
+    if(/planner_location_permissions|relation|schema cache|does not exist/i.test(m))inAppToast('위치 권한 SQL을 먼저 실행해주세요');
+    return {error:e};
+  });
+}
+function locationPermissionLoad(){
+  if(!Sync.sb||!Sync.uid)return Promise.resolve();
+  return Sync.sb.from('planner_location_permissions').select('enabled').eq('user_id',Sync.uid).maybeSingle().then(function(r){
+    if(r.error)throw r.error;
+    if(r.data){S.settings.locationEnabled=!!r.data.enabled;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+    else return locationPermissionSave(!!S.settings.locationEnabled);
+  }).catch(function(){return null;});
+}
+function requestLocationPermission(enable,done){
+  if(!enable){locationPermissionSave(false).then(function(){if(done)done(false);});return;}
+  if(!navigator.geolocation){inAppToast('이 기기에서는 현재 위치를 사용할 수 없어요');if(done)done(false);return;}
+  navigator.geolocation.getCurrentPosition(function(){
+    locationPermissionSave(true).then(function(){inAppToast('현재 위치 사용을 켰어요');if(done)done(true);});
+  },function(err){
+    S.settings.locationEnabled=false;save();
+    inAppToast(err&&err.code===1?'브라우저에서 위치 권한을 허용해주세요':'현재 위치를 확인하지 못했어요');if(done)done(false);
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+}
 function requestHomeStationCandidates(){
   var msg=$('#home-geo-msg'),box=$('#home-geo-cands');
+  if(!locationPermissionOn()){if(msg)msg.textContent='먼저 아래의 현재 위치 사용을 켜주세요.';return;}
   if(!navigator.geolocation){if(msg)msg.textContent='이 기기에서는 현재 위치를 사용할 수 없어요.';return;}
   if(msg)msg.textContent='정확한 현재 위치 확인 중…';if(box)box.innerHTML='';
   navigator.geolocation.getCurrentPosition(function(pos){
@@ -991,6 +1024,7 @@ function nearestPlannerMeetPoint(lat,lng){
   return nearestPlannerMeetPoints(lat,lng,1)[0]||null;
 }
 function requestNearestStation(done,msgEl){
+  if(!locationPermissionOn()&&!U.guest){if(msgEl)msgEl.textContent='설정 → 내 프로필에서 현재 위치 사용을 먼저 켜주세요.';return;}
   if(!navigator.geolocation){if(msgEl)msgEl.textContent='이 기기에서는 현재 위치를 사용할 수 없어요.';return;}
   if(msgEl)msgEl.textContent='정확한 현재 위치 확인 중…';
   navigator.geolocation.getCurrentPosition(function(pos){
@@ -2666,7 +2700,7 @@ var COLS=['classes','events','todos','routines','exams','allday','trackers','sel
 var MAPS=['memos','logs','letters','focus','fsess','retro','weeklyRetro','hourNotes','routineDone','modeStates'];
 function idsOf(st){var o={};COLS.forEach(function(c){o[c]={};(st[c]||[]).forEach(function(x){o[c][x.id]=1;});});return o;}
 /* 설정(학교·색·배경·프로필 등)은 더 최근에 바꾼 쪽을 따르고, 학교 설정 완료는 한 번 하면 계속 유지해요 */
-var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','originRules','originWeekOverrides','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','letterSkipComposeDate','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','plannerMode','showSchoolLinks','showNextTodo','diaryMinutes','showMeetMaker','liteHome','showLog','showDiary','showMemo','showWeeklyReview','diaryRuled','morningBriefing','morningBriefingTime','recipes','market','smartPlan'];
+var PREF_KEYS=['theme','bg','defColor','school','schoolCampus','profileName','profilePhoto','homeStation','originRules','originWeekOverrides','meetStart','meetEnd','hStart','hEnd','weekend','semStart','semEnd','topN','topShow','calDday','calItem','monthItems','letterOn','letterSkipComposeDate','holiOff','logDisplay','wakeGoal','logOn','remindOn','friendNotify','pinnedFriends','topOrder','schoolConfigured','onboardDone','plannerMode','showSchoolLinks','showNextTodo','showTodoTab','locationEnabled','diaryMinutes','showMeetMaker','liteHome','showLog','showDiary','showMemo','showWeeklyReview','diaryRuled','morningBriefing','morningBriefingTime','recipes','market','smartPlan'];
 function prefHash(st){try{var s=st&&st.settings||{};return JSON.stringify(PREF_KEYS.map(function(k){return s[k]===undefined?null:s[k];}));}catch(e){return '';}}
 var PREF_H='';
 function mergeSettings(ls,rs){
@@ -3042,6 +3076,7 @@ function supaAttach(session){
       lsSet(onboardKey,'1');
     }
     if(Sync.dirty){Sync.dirty=false;scheduleSync();}
+    locationPermissionLoad().then(function(){if(!M.type)render();});
     if(!M.type||M.type==='login'){if(M.type==='login')closeModal();render(true);}
     /* 친구 기능은 시간표 표시를 막지 않게 뒤에서 따로 불러와요 */
     friendLoad().catch(function(){}).then(function(){if(!M.type)render();});
@@ -3169,7 +3204,7 @@ function monthEventMarkerHTML(evs,ads){var e=(evs&&evs[0])||(ads&&ads[0]);if(!e)
 function monthEventChipHTML(e){var cls=eventImportanceClass(e);return '<span class="chip ev '+(cls==='appointment'?'appointment-chip':cls==='important'?'important-chip':'')+'" style="--c:'+(e.color||defCol())+'">'+esc(eventChipLabel(e))+'</span>';}
 
 function appointmentChip(e){return '<button class="adchip" style="--c:'+e.color+'" data-act="edit-event" data-id="'+e.id+'">'+esc(eventChipLabel(e))+'</button>';}
-function actOf(it){return it.kind==='event'?'edit-event':it.kind==='todo'||(it.kind==='focus'&&it.id)?'edit-todo':it.kind==='focus'?'noop':'view-block';}
+function actOf(it){return it.kind==='event'?(it.appointment?'edit-event':'view-event-detail'):it.kind==='todo'||(it.kind==='focus'&&it.id)?'edit-todo':it.kind==='focus'?'noop':'view-block';}
 function layout(items){
   var out=[],cluster=[],cEnd=-1;
   function flush(){
@@ -3223,7 +3258,7 @@ function alldayFor(d){
   var k=dkey(d),w=dow(d);
   return S.allday.filter(function(a){return a.days?(a.days.indexOf(w)>=0&&(!a.from||k>=a.from)&&(!a.to||k<=a.to)):(k>=a.date&&k<=(a.end||a.date));});
 }
-function adChip(a){return '<button class="adchip" style="--c:'+a.color+'" data-act="edit-ad" data-id="'+a.id+'">'+esc(a.title)+'</button>';}
+function adChip(a){return '<button class="adchip" style="--c:'+a.color+'" data-act="view-ad-detail" data-id="'+a.id+'">'+esc(a.title)+'</button>';}
 function trk(id){return S.trackers.find(function(t){return t.id===id;});}
 function logVal(k,id){var o=S.logs[k];return o?o[id]:undefined;}
 function setLog(k,id,v){
@@ -3864,15 +3899,15 @@ function openDDDetail(x){
   var cat=ddCategory(x),rows=[[ddCatLabel(x),x.title||'D-day'],['기준 날짜',fullDateTxt(x.date)],['현재',ddCount(x)]],extra='';
   if(cat==='couple'){
     var today=todayKey(),day=coupleDayNo(x,today);
-    var milestone=[100,200,300].map(function(n){return '<div><span>'+n+'일</span><b>'+esc(fullDateTxt(coupleMilestoneDate(x,n)))+'</b></div>';}).join('');
-    var one='<div><span>1주년</span><b>'+esc(fullDateTxt(coupleAnniversaryDate(x,1)))+'</b></div>';
+    var milestone=[100,200,300,400,500,600,700,800,900,1000].map(function(n){return '<div><span>'+n+'일</span><b>'+esc(fullDateTxt(coupleMilestoneDate(x,n)))+'</b></div>';}).join('');
+    var one=[1,2,3].map(function(y){return '<div><span>'+y+'주년</span><b>'+esc(fullDateTxt(coupleAnniversaryDate(x,y)))+'</b></div>';}).join('');
     var nextN=Math.max(100,Math.ceil(Math.max(day+1,1)/100)*100),next100=coupleMilestoneDate(x,nextN);
     var sd=parseKey(x.date),td=parseKey(today),yr=Math.max(1,td.getFullYear()-sd.getFullYear()),ann=coupleAnniversaryDate(x,yr);if(ann<today){yr++;ann=coupleAnniversaryDate(x,yr);}
     var candidates=[{name:nextN+'일',date:next100},{name:yr+'주년',date:ann}].sort(function(p,q){return p.date<q.date?-1:1;});
     rows.push(['오늘',day>0?day+'일째':'아직 시작 전']);
     extra='<div class="planon-milestones"><div class="planon-detail-title">기념일 날짜</div>'+milestone+one+'</div><div class="planon-next-milestone"><small>다음 기념일</small><b>'+esc(candidates[0].name)+'</b><span>'+esc(fullDateTxt(candidates[0].date))+'</span></div>';
   }else rows.push(['반복',x.yearly?'매년':'반복 없음']);
-  openModal('<h3>'+esc(x.title||'D-day')+'</h3>'+planonDetailRows(rows)+extra+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="view-dd" data-id="'+x.id+'">수정</button></div>');
+  openModal('<h3>'+esc(x.title||'D-day')+'</h3>'+planonDetailRows(rows)+extra+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="edit-dd" data-id="'+x.id+'">수정</button></div>');
 }
 function openExamDetail(e){
   if(!e)return;M={type:'exam-detail',id:e.id};
@@ -4192,6 +4227,7 @@ function topHTML(){
 function navHTML(){
   var scheduleLabel=plannerMode()==='exam'?'공부':(plannerMode()==='other'?'스케줄':'시간표');
   var tabs=[['month','월간'],['week','주간'],['day','일간'],['todo','할 일'],['ttable',scheduleLabel],['friends','친구']];
+  if(S.settings.showTodoTab===false)tabs=tabs.filter(function(t){return t[0]!=='todo';});
   if(window.PLANON_MEONBYEOL&&window.PLANON_MEONBYEOL.on())return window.PLANON_MEONBYEOL.nav(tabs,U.tab,friendPendingCount());
   return tabs.map(function(t){var dot=t[0]==='friends'&&friendPendingCount()>0?'<i class="navdot" aria-label="새 요청"></i>':'';return '<button data-act="tab" data-tab="'+t[0]+'" class="'+(U.tab===t[0]?'on':'')+'">'+t[1]+dot+'</button>';}).join('');
 }
@@ -4358,7 +4394,7 @@ function viewWeek(){
     (un.length?'<section class="card"><div class="card-h"><h3>시간 미정 수업</h3></div><div class="slots">'+
       un.map(function(c){return '<button class="slot c" style="--c:'+c.color+'" data-act="view-block" data-id="'+c.id+'>'+esc(c.name)+'</button>';}).join('')+'</div></section>':'')+
     (unA.length?'<section class="card"><div class="card-h"><h3>시간 미정 약속</h3></div><div class="slots">'+
-      unA.map(function(a){return '<button class="slot c" style="--c:'+a.color+'" data-act="edit-event" data-id="'+a.id+'">'+esc(eventChipLabel(a))+'</button>';}).join('')+'</div></section>':'')+
+      unA.map(function(a){return '<button class="slot c" style="--c:'+a.color+'" data-act="'+(a.kind==='appointment'?'edit-event':'view-event-detail')+'" data-id="'+a.id+'">'+esc(eventChipLabel(a))+'</button>';}).join('')+'</div></section>':'')+
     todoBox('week',dkey(mon),'이번 주 할 일')+reviewHTML(mon);
 }
 
@@ -4924,6 +4960,7 @@ function viewSettings(){
 
     '<details class="settings-group" open><summary><span><b>화면 꾸미기</b><small>색상 · 배경 · 캐릭터는 서로 따로 적용</small></span><i>⌄</i></summary><div class="settings-group-body">'+
       '<div class="setrow"><span>테마</span><div class="seg" style="margin:0">'+[['auto','자동'],['light','라이트'],['dark','다크']].map(function(x){return '<button data-act="set-theme" data-v="'+x[0]+'" class="'+(th===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div></div>'+
+      '<div class="setrow"><span>하단 할 일 버튼<small>끄면 아래 메뉴의 ‘할 일’ 탭만 숨겨져요. 저장된 할 일은 지워지지 않아요.</small></span><button class="tbtn'+(S.settings.showTodoTab===false?'':' on')+'" data-act="toggle-todo-tab">'+(S.settings.showTodoTab===false?'꺼짐':'켜짐')+'</button></div>'+
       '<div class="setrow"><span>배경<small>원하는 배경만 골라요</small></span><div class="bgs">'+[['plain','기본'],['rainbow','기본 색 연동'],['pink','연핑크 + 흰 점'],['white','흰 바탕 + 연핑크 점'],['beige','베이지 + 흰 점'],['dot-mint','민트 바탕 + 아이보리 점'],['dot-mint-rev','아이보리 바탕 + 민트 점'],['dot-sky','하늘 바탕 + 아이보리 점'],['dot-sky-rev','아이보리 바탕 + 하늘 점'],['dot-yellow','연노랑 바탕 + 아이보리 점'],['dot-yellow-rev','아이보리 바탕 + 연노랑 점'],['dot-peach','살구 바탕 + 아이보리 점'],['dot-peach-rev','아이보리 바탕 + 살구 점'],['dot-pink','연핑크 바탕 + 아이보리 점'],['dot-pink-rev','아이보리 바탕 + 연핑크 점'],['dot-lavender','연보라 바탕 + 아이보리 점'],['dot-lavender-rev','아이보리 바탕 + 연보라 점'],['dot-green','연두 바탕 + 아이보리 점'],['dot-green-rev','아이보리 바탕 + 연두 점'],['dot-gray','연회색 바탕 + 아이보리 점'],['dot-gray-rev','아이보리 바탕 + 연회색 점'],['dot-beige','베이지 바탕 + 아이보리 점'],['dot-beige-rev','아이보리 바탕 + 베이지 점']].map(function(x){var linked=x[0]==='rainbow',style=linked?' style="background-color:var(--planner-color)!important;background-image:none!important"':'';return '<button class="bgsw bg-'+x[0]+(bg===x[0]?' on':'')+'"'+style+' data-act="set-bg" data-v="'+x[0]+'" aria-label="'+x[1]+'"></button>';}).join('')+'</div></div>'+
       '<div class="setrow"><span>주간 시간표 배경화면<small>현재 주간 시간표를 이미지로 저장해요</small></span><div class="seg" style="margin:0"><button data-act="wallpaper-phone">폰</button><button data-act="wallpaper-pad">패드</button></div></div>'+
       '<div class="setrow"><span>시간표 시간<small>범위 밖 일정이 있으면 자동으로 늘어나요</small></span><div class="hsel">'+
@@ -5037,6 +5074,7 @@ function profileHTML(){
     '<div class="setrow"><span>친구에게 보일 이름<small>초대코드는 그대로 두고, 친구 화면에는 이 이름과 사진이 보여요.</small></span></div>'+
     '<div class="row"><input class="fld" style="margin:0" id="f-profile-name" maxlength="20" placeholder="이름 또는 별명" value="'+esc(n)+'"><button class="b-save" style="height:44px;padding:0 14px" data-act="save-profile-name">이름 저장</button></div>'+
     '<div id="profile-name-status" class="hint" style="margin-top:-4px">'+(n?'저장됨 ✓':'아직 저장된 이름이 없어요')+'</div>'+
+    '<div class="setrow"><span>현재 위치 사용<small>현재 위치를 가까운 교통 거점으로 바꿀 때만 사용하고 좌표는 저장하지 않아요. 계정별 동의 상태만 서버에 저장해요.</small></span><button class="tbtn'+(locationPermissionOn()?' on':'')+'" data-act="toggle-location-permission">'+(locationPermissionOn()?'켜짐':'꺼짐')+'</button></div>'+
     '<div class="setrow"><span>기본 출발지<small>약속 장소 추천과 시간별 출발지의 기본값으로 사용해요.</small></span></div>'+
     '<input class="fld" id="f-home-station" list="origin-suggestions" autocomplete="off" placeholder="예: 성균관대역, 낙성대역, 학교" value="'+esc(home)+'">'+originDatalist()+
     '<div class="geo-row"><button class="tbtn" data-act="home-current">현재 위치에서 찾기</button><small id="home-geo-msg">자동 저장하지 않고 가까운 역 후보를 보여줘요.</small></div><div class="geo-cands" id="home-geo-cands"></div>'+
@@ -5447,6 +5485,33 @@ function armed(btn){
   return false;
 }
 
+function scheduleWhenText(x,dk){
+  if(!x)return '—';
+  if(Array.isArray(x.days)&&x.days.length){
+    var ds=x.days.slice().sort().map(function(i){return DAYS[Number(i)]+'요일';}).join(' · ');
+    var rg=(x.from?fullDateTxt(x.from):'시작일 없음')+(x.to?' ~ '+fullDateTxt(x.to):' ~ 계속');
+    return ds+' · '+rg;
+  }
+  if(x.from&&x.to)return fullDateTxt(x.from)+' ~ '+fullDateTxt(x.to);
+  var k=x.date||dk||'';return k?fullDateTxt(k):'날짜 미정';
+}
+function openEventDetail(e,dk){
+  if(!e)return;
+  if(e.kind==='appointment'){openAppointment(e);return;}
+  if(e.kind==='schedule'||e.days||e.from){openScheduleDetail(e,'event',dk);return;}
+  M={type:'event-detail',id:e.id};
+  var rows=[['일정',e.title||'일정'],['날짜',fullDateTxt(e.date||dk)],['시간',(e.start||'시간 미정')+(e.end?' ~ '+e.end:'')],['중요 일정',e.important?'표시함':'아님']];
+  if(e.place)rows.push(['장소',e.place]);
+  var pc=cleanPackItems(e.packing).length;if(pc)rows.push(['준비물',cleanPackItems(e.packing).join(' · ')]);
+  openModal('<h3>'+esc(e.title||'일정')+'</h3>'+planonDetailRows(rows)+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="edit-event" data-id="'+esc(e.id)+'">수정</button></div>');
+}
+function openScheduleDetail(x,source,dk){
+  if(!x)return;source=source||'event';M={type:'schedule-detail',id:x.id,source:source};
+  var rows=[['일정',x.title||'일정'],['날짜·반복',scheduleWhenText(x,dk)],['시간',x.start?x.start+(x.end?' ~ '+x.end:''):'하루종일']];
+  var packing=cleanPackItems(x.packing);if(packing.length)rows.push(['준비물',packing.join(' · ')]);
+  var act=source==='allday'?'edit-ad':'edit-event';
+  openModal('<h3>'+esc(x.title||'일정')+'</h3>'+planonDetailRows(rows)+'<div class="acts"><button class="b-ghost" data-act="close">닫기</button><button class="b-save" data-act="'+act+'" data-id="'+esc(x.id)+'">수정</button></div>');
+}
 function openEvent(e,def){
   def=def||{};var ev=e||{title:'',date:def.date||dkey(U.date),start:def.start||'09:00',end:def.end||'10:00',color:defCol(),important:false};
   M={type:'event',id:e?e.id:null,color:ev.color,tpA:null};
@@ -6263,6 +6328,8 @@ function act(a,e){
     case 'open-backup':openBackup();break;
     case 'undo-delete':undoLastDelete();break;
     case 'global-result':openGlobalResult(a);break;
+    case 'view-event-detail':{var ve=S.events.find(function(x){return x.id===id;});if(ve)openEventDetail(ve,a.dataset.date||'');break;}
+    case 'view-ad-detail':{var va=S.allday.find(function(x){return x.id===id;});if(va)openScheduleDetail(va,'allday',a.dataset.date||'');break;}
     case 'edit-event':{var ev=S.events.find(function(x){return x.id===id;});if(ev)(ev.kind==='appointment'?openAppointment:(ev.kind==='schedule'||ev.days||ev.from?openSchedule:openEvent))(ev);break;}
     case 'view-block':{var vb=S.classes.find(function(x){return x.id===id;});if(vb)openBlockDetail(vb,a.dataset.date||'');break;}
     case 'edit-block':{var b=S.classes.find(function(x){return x.id===id;});if(b)openCourse(b.name);break;}
@@ -6414,6 +6481,8 @@ function act(a,e){
     case 'toggle-morning-brief':toggleMorningBriefing();break;
     case 'toggle-lite':S.settings.liteHome=!S.settings.liteHome;save();render();break;
     case 'toggle-home-todo':S.settings.showNextTodo=S.settings.showNextTodo===false;save();render();break;
+    case 'toggle-todo-tab':S.settings.showTodoTab=S.settings.showTodoTab===false;if(S.settings.showTodoTab===false&&U.tab==='todo')U.tab='day';save();render(true);break;
+    case 'toggle-location-permission':requestLocationPermission(!locationPermissionOn(),function(){render();});break;
     case 'toggle-meet-maker':S.settings.showMeetMaker=S.settings.showMeetMaker===false;save();render();break;
     case 'open-mode-switch':openModeSwitch();break;
     case 'switch-mode':{var mv=a.dataset.v;closeModal();switchPlannerMode(mv);break;}
