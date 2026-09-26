@@ -28,13 +28,21 @@ function durTxt(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;re
 function mondayOf(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
 function toMin(t){var p=String(t||'').split(':');return Number(p[0]||0)*60+Number(p[1]||0);}
 function weekGridHTML(){
-  var s=B.state()||{},H0=(window.PLANON_STUDY_DAY&&window.PLANON_STUDY_DAY.boundaryHour)||5,sd=B.studyDayDate(new Date()),mon=mondayOf(sd),today=B.todayKey(),DN=['월','화','수','목','금','토','일'],rows='',weekSum=0;
-  var head='<span></span>';for(var h=0;h<24;h++){var hr=(H0+h)%24;head+='<span class="fm-gh">'+(h%3===0?hr:'')+'</span>';}head+='<span class="fm-gh">합계</span>';
-  for(var i=0;i<7;i++){var d=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i),k=B.dkey(d),cells=[],sess=(s.fsess&&s.fsess[k])||[];for(var c=0;c<24;c++)cells.push(0);
-    sess.forEach(function(x){if(!x||!x.start)return;var a=toMin(x.start),b=x.end?toMin(x.end):a+Number(x.min||0);if(b<a)b+=1440;var oa=a-H0*60;if(oa<0)oa+=1440;var ob=oa+(b-a);for(var q=0;q<24;q++){var ov=Math.min(ob,(q+1)*60)-Math.max(oa,q*60);if(ov>0)cells[q]+=ov;}});
-    var tot=Number(s.focus&&s.focus[k]||0);weekSum+=tot;var td=k===today?' today':'';
-    rows+='<span class="fm-gd'+td+'">'+DN[i]+'</span>'+cells.map(function(v){var l=v<=0?0:v<15?1:v<30?2:v<45?3:4;return '<i class="l'+l+td+'"></i>';}).join('')+'<span class="fm-gt'+td+'">'+(tot?durTxt(tot):'·')+'</span>';}
-  return '<div class="fm-grid-wrap"><div class="fm-grid">'+head+rows+'</div><div class="fm-grid-foot"><span>이번 주 '+durTxt(weekSum)+'</span><span class="fm-legend">적게<i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>많이</span></div></div>';}
+  var s=B.state()||{},sd=B.studyDayDate(new Date()),mon=mondayOf(sd),today=B.todayKey(),DN=['월','화','수','목','금','토','일'],days=[],weekSum=0,max=0;
+  var mb=s.settings&&s.settings.meonbyeol||{},daily=mb.daily&&typeof mb.daily==='object'?mb.daily:{};
+  for(var i=0;i<7;i++){
+    var d=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i),k=B.dkey(d),tot=Number(s.focus&&s.focus[k]||0),h=daily[k]||{};
+    if(mb.day&&mb.day.key===k)h={water:Number(mb.day.water||0),wake:!!mb.day.wake,tuck:!!mb.day.tuck,allDone:!!mb.day.allDone,close:!!mb.day.close};
+    weekSum+=tot;max=Math.max(max,tot);days.push({k:k,d:d,n:DN[i],min:tot,h:h});
+  }
+  max=Math.max(30,max);
+  return '<div class="fm-weekbars">'+days.map(function(x){
+    var pct=Math.max(3,Math.round(x.min/max*100)),badges=[];
+    if(x.h&&Number(x.h.water||0)>0)badges.push('물 '+Number(x.h.water||0)+'/3');
+    if(x.h&&x.h.wake)badges.push('기상 ✓');
+    if(x.h&&x.h.tuck)badges.push('취침 ✓');
+    return '<div class="fm-weekday'+(x.k===today?' today':'')+'"><div class="fm-weekbarbox"><i style="height:'+pct+'%"></i></div><b>'+x.n+'</b><small>'+(x.min?durTxt(x.min):'0분')+'</small>'+(badges.length?'<em>'+badges.join(' · ')+'</em>':'<em class="empty">기록 없음</em>')+'</div>';
+  }).join('')+'</div><div class="fm-weekbar-foot"><b>이번 주 '+durTxt(weekSum)+'</b><span>집중은 막대그래프 · 물/기상/취침 기록도 함께</span></div>';}
 function recordHTML(){
   var s=B.state()||{},k=B.todayKey(),rows=((s.fsess&&s.fsess[k])||[]).slice().reverse(),tot=Number(s.focus&&s.focus[k]||0);
   var name=function(tid){var t=tid&&(s.todos||[]).find(function(x){return x.id===tid;});return t?t.text:'자유 집중';};
