@@ -35,7 +35,7 @@ function apply(){var u=B.ui(),main=document.getElementById('main');if(!u||!main)
   if(u.tab!=='ttable')return;var secs=findSections(main);
   Object.keys(secs).forEach(function(k){var sec=secs[k];if(!sec)return;
     if(p.hide[k]){sec.style.display='none';return;}sec.style.display='';
-    if(k==='dday')coupleFirst(sec);
+    if(k==='dday'){coupleFirst(sec);sec.classList.remove('ps-fold','ps-closed');sec.removeAttribute('data-ps-key');var oldSum=sec.querySelector(':scope > .ps-sum');if(oldSum)oldSum.remove();var oldCaret=sec.querySelector('.card-h > .ps-caret');if(oldCaret)oldCaret.remove();return;}
     if(!p.fold){sec.classList.remove('ps-fold','ps-closed');return;}
     sec.classList.add('ps-fold');sec.dataset.psKey=k;var open=!!OPEN[k];sec.classList.toggle('ps-closed',!open);
     var head=sec.querySelector('.card-h');if(head&&!head.querySelector('.ps-caret')){head.insertAdjacentHTML('afterbegin','<span class="ps-caret" aria-hidden="true"></span>');head.setAttribute('role','button');head.setAttribute('tabindex','0');}
@@ -45,12 +45,12 @@ document.addEventListener('click',function(e){var head=e.target.closest&&e.targe
 /* 설정 화면: 표시 설정 진입 */
 function inject(){var u=B.ui(),main=document.getElementById('main');if(!main||!u||u.tab!=='settings'||u.settingsPage)return;if(main.querySelector('[data-ps-entry]'))return;var sec=document.createElement('section');sec.className='card';sec.setAttribute('data-ps-entry','1');sec.innerHTML='<button class="setrow chatrow" data-ps="open"><span>시간표·홈 표시<small>강의·D-day·시험 일정 접기/숨기기 · 일간 맨 위 시험 목록 · 곧 마감 줄</small></span><span class="chev">›</span></button>';var cards=main.querySelectorAll(':scope > section.card');if(cards.length>2)cards[2].before(sec);else main.appendChild(sec);}
 function sheet(){var p=pref();var sw=function(on,attr){return '<button class="ux-switch '+(on?'on':'')+'" '+attr+' role="switch" aria-checked="'+(on?'true':'false')+'"></button>';};
-  B.openModal('<h3>시간표·홈 표시</h3><p class="hint">끄면 화면에서만 숨겨요. 수업·D-day·시험 데이터는 그대로예요.</p><div class="ux-feature-list"><div class="ux-feature-row"><span class="ux-feature-copy"><b>눌러야 펼쳐지기</b><small>시간표 탭 섹션과 일간 맨 위 시험·D-day 목록을 접어두고, 누르면 열려요</small></span>'+sw(p.fold,'data-ps="fold"')+'</div>'+KEYS.map(function(x){return '<div class="ux-feature-row"><span class="ux-feature-copy"><b>'+esc(x.t)+' 보이기</b><small>'+esc(x.sub)+'</small></span>'+sw(!p.hide[x.k],'data-ps="hide" data-k="'+x.k+'"')+'</div>';}).join('')+'</div><div class="acts"><button class="b-save" data-ps="close">완료</button></div>');}
+  B.openModal('<h3>시간표·홈 표시</h3><p class="hint">끄면 화면에서만 숨겨요. 수업·D-day·시험 데이터는 그대로예요.</p><div class="ux-feature-list"><div class="ux-feature-row"><span class="ux-feature-copy"><b>강의·시험 접어두기</b><small>D-day는 기념일을 바로 볼 수 있게 항상 펼쳐두고, 강의·시험과 일간 맨 위 목록만 접어요</small></span>'+sw(p.fold,'data-ps="fold"')+'</div>'+KEYS.map(function(x){return '<div class="ux-feature-row"><span class="ux-feature-copy"><b>'+esc(x.t)+' 보이기</b><small>'+esc(x.sub)+'</small></span>'+sw(!p.hide[x.k],'data-ps="hide" data-k="'+x.k+'"')+'</div>';}).join('')+'</div><div class="acts"><button class="b-save" data-ps="close">완료</button></div>');}
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ps]');if(!a)return;var v=a.dataset.ps,p=pref();
   if(v==='open'){sheet();return;}if(v==='close'){B.closeModal();B.render();return;}
   if(v==='fold'){p.fold=!p.fold;B.save();sheet();return;}
   if(v==='hide'){var k=a.dataset.k;p.hide[k]=!p.hide[k];B.save();sheet();return;}});
-var main=document.getElementById('main');if(main)new MutationObserver(function(){setTimeout(function(){apply();inject();},15);}).observe(main,{childList:true});
+var main=document.getElementById('main');if(main)new MutationObserver(function(){apply();inject();}).observe(main,{childList:true});
 /* 기존 D-day 커플 마이그레이션: 예전에 '기타'로 저장된 '우리/만난 날/사귄 날…' 시작일 D-day를 커플로 (1회) */
 function coupleMigrate(){var s=S();if(!s||!s.settings)return;var re=/100일|200일|300일|연애|커플|우리|만난|사귄|사귐|애인|남친|여친|남자친구|여자친구|\u2665|\u2764/,n=0;(s.ddays||[]).forEach(function(x){if(!x||!x.title||x.coupleChecked)return;x.coupleChecked=true;n+=0.001;if((!x.category||x.category==='other')&&x.mode==='since'&&re.test(String(x.title))){x.category='couple';n++;}});if(n>0)B.save();n=Math.floor(n);if(n){try{B.render();}catch(e){}}}
 setTimeout(function(){coupleMigrate();apply();inject();},60);setInterval(coupleMigrate,30000);
