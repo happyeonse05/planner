@@ -1965,3 +1965,13 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
   body{background-attachment:scroll!important}
   :root[data-bg] body,:root[data-bg^="dot-"] body{background-attachment:scroll!important}
 }
+
+/* PLANON restore5: keep top actions reachable on narrow iPhones */
+@media(max-width:430px){
+  .top{gap:5px;padding-left:10px;padding-right:10px}
+  .top:not(.navtop){flex-wrap:wrap}
+  .top:not(.navtop) .ttl{flex:1 1 88px;min-width:88px}
+  .top .mode-top{max-width:58px;padding:0 6px;overflow:hidden;text-overflow:ellipsis}
+  .top .icog,.top .gear{display:grid!important;visibility:visible!important;opacity:1!important;touch-action:manipulation}
+  .top [data-market-open]{position:relative;z-index:2}
+}
