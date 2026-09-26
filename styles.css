@@ -1975,3 +1975,11 @@ main{-webkit-transform:translateZ(0);transform:translateZ(0);backface-visibility
   .top .icog,.top .gear{display:grid!important;visibility:visible!important;opacity:1!important;touch-action:manipulation}
   .top [data-market-open]{position:relative;z-index:2}
 }
+
+/* 2026-09-26 mobile bottom nav alignment: keep all tabs evenly inside the bar */
+@media(max-width:560px){
+  #nav.nav{grid-auto-flow:column;align-items:stretch;gap:2px;padding-left:6px;padding-right:6px;overflow:hidden!important}
+  #nav.nav button{min-width:0;width:100%;padding-left:0;padding-right:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #nav.nav .navico{margin-left:auto;margin-right:auto}
+  #nav.nav .navlabel{max-width:100%;white-space:nowrap;text-align:center}
+}
