@@ -4236,6 +4236,7 @@ function topHTML(){
     (arrows?'<span class="topbr" aria-hidden="true"></span><button class="ibtn navg" data-act="prev" aria-label="이전">‹</button><button class="tbtn navg" data-act="today">'+relLabel()+'</button><button class="ibtn navg" data-act="next" aria-label="다음">›</button>'+(U.tab==='day'?'<button class="tbtn navg top-focus-btn" data-act="focus-free" aria-label="집중 타이머">'+ICO_CLOCK+'집중</button>':''):'')+
     (plus?'<button class="ibtn plus navg" data-act="'+plus+'" aria-label="추가">+</button>':'')+
     modeSwitchButtonHTML()+bellBtnHTML().replace('class="ibtn bell"','class="ibtn bell icog"')+searchBtn.replace('class="ibtn"','class="ibtn icog"')+
+    '<button class="ibtn icog" data-market-open aria-label="Planon Shop" title="Planon Shop">'+'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16l-1 11H5L4 9Z"/><path d="M7 9V7a5 5 0 0 1 10 0v2"/></svg></button>'+
     '<button class="ibtn gear icog" data-act="open-settings" aria-label="설정">'+'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>';
 }
 function navHTML(){
@@ -4967,7 +4968,7 @@ function viewTable(){
   var ddl=S.ddays.slice().sort(function(a,b){return ddNext(a)<ddNext(b)?-1:1;});
   var ddHTML='<section class="card"><div class="card-h"><h3>D-day</h3><button class="tbtn" data-act="add-dd">+ 추가</button></div>'+
     (ddl.length?ddl.map(function(x){var nd=parseKey(ddNext(x));
-      return '<div class="setrow"><span style="display:flex;align-items:center;gap:8px"><i class="ddcat-row" style="--c:'+x.color+'">'+ddCatIconHTML(x)+'</i><span>'+esc(x.title)+'<small>'+(nd.getMonth()+1)+'/'+nd.getDate()+(ddCategory(x)==='couple'?' · 다음 기념일':x.mode==='since'?' · 시작일':'')+(x.yearly?' · 매년':'')+(x.pin?' · 위에 표시':'')+'</small></span></span><b class="ddn">'+ddLabel(x)+'</b><button class="tbtn" data-act="edit-dd" data-id="'+x.id+'">수정</button></div>';}).join('')
+      return '<div class="setrow"><span style="display:flex;align-items:center;gap:8px"><i class="ddcat-row" style="--c:'+x.color+'">'+ddCatIconHTML(x)+'</i><span>'+esc(x.title)+'<small>'+(nd.getMonth()+1)+'/'+nd.getDate()+(ddCategory(x)==='couple'?' · 다음 기념일':x.mode==='since'?' · 시작일':'')+(x.yearly?' · 매년':'')+(x.pin?' · 위에 표시':'')+'</small></span></span><b class="ddn">'+ddLabel(x)+'</b>'+(ddCategory(x)==='couple'?'<button class="tbtn" data-act="view-dd" data-id="'+x.id+'">기념일 전체</button>':'')+'<button class="tbtn" data-act="edit-dd" data-id="'+x.id+'">수정</button></div>';}).join('')
       :'<div class="empty">중요한 날은 디데이로 설정할 수 있어요.<br><button class="tbtn" style="margin-top:8px" data-act="add-dd">+ D-day 추가</button></div>')+'</section>';
   var adl=S.allday.slice().sort(function(a,b){return (a.days?0:1)-(b.days?0:1)||((a.date||'')<(b.date||'')?-1:1);});
   var adHTML='<section class="card"><div class="card-h"><h3>일정</h3><button class="tbtn" data-act="add-schedule">+ 추가</button></div>'+
@@ -5119,7 +5120,7 @@ function viewSettings(){
     var m={appearance:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><path d="M8.5 15c2 1.5 5 1.5 7 0"/></svg>',plan:'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M13 14h3"/></svg>',social:'<svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c.5-3 2.3-5 5-5s4.5 2 5 5M11 19c.4-2.4 1.8-4 5-4 2.7 0 4.4 1.5 5 4"/></svg>',life:'<svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg>',notify:'<svg viewBox="0 0 24 24"><path d="M6 17h12l-1.5-2.2V10a4.5 4.5 0 0 0-9 0v4.8z"/><path d="M10 20h4"/></svg>',data:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>'};return '<span class="settings-hub-icon">'+m[kind]+'</span>';
   }
   function hubRow(act,kind,title,sub,meta){return '<button class="settings-hub-card" data-act="'+act+'">'+hubIcon(kind)+'<span class="settings-hub-copy"><b>'+title+'</b><small>'+sub+'</small>'+(meta?'<em>'+meta+'</em>':'')+'</span><span class="chev">›</span></button>';}
-  var main='<section class="card settings-overview"><div class="card-h"><h3>설정</h3><span class="cnt">기능 한눈에</span></div><p class="hint">먼저 플래논의 흐름을 보고, 아래 6개 묶음에서 원하는 기능을 바로 찾을 수 있어요.</p>'+
+  var main='<section class="card settings-overview"><div class="card-h"><h3>설정</h3><span class="cnt">기능 한눈에</span></div><p class="hint">먼저 플래논의 흐름을 보고, 아래 설정에서 원하는 기능을 바로 찾을 수 있어요.</p><button class="settings-shop-restore tbtn" data-market-open>Planon Shop 열기</button>'+
       '<div class="settings-flow"><div class="settings-flow-title"><b>플래논 사용 흐름</b><small>계획 → 실행 → 기록 → 함께</small></div><div class="settings-flow-steps">'+
       '<div class="settings-flow-step"><b>1. 계획하기</b><small>일정 · D-day · 할 일 · 시간표</small></div>'+
       '<div class="settings-flow-step"><b>2. 실행하기</b><small>집중 · 작업시간 · 스마트 재배치</small></div>'+
@@ -5295,7 +5296,7 @@ function friendNotifyToggle(){
     else{S.settings.friendNotify=false;save();friendNote(pm==='denied'?'알림이 막혀 있어요. 브라우저(또는 아이폰 설정 → 알림)에서 이 사이트 알림을 허용해주세요':'알림 허용을 선택하지 않았어요');}
   }).catch(function(){friendNote('알림 권한을 요청하지 못했어요');});
 }
-function registerSW(){try{if(navigator.serviceWorker&&location.protocol==='https:')navigator.serviceWorker.register('sw.js?v=20260926-timetable1',{updateViaCache:'none'}).then(function(r){try{r.update();}catch(e){}}).catch(function(){});}catch(e){}}
+function registerSW(){try{if(navigator.serviceWorker&&location.protocol==='https:')navigator.serviceWorker.register('sw.js?v=20260926-finaltouch1',{updateViaCache:'none'}).then(function(r){try{r.update();}catch(e){}}).catch(function(){});}catch(e){}}
 function friendNotifyNudgeHTML(){
   if(S.settings.friendNotify||!notifySupported()||Notification.permission==='denied'||S.settings.friendNotifyAsked)return '';
   if(!FriendSync.friends.length&&!(FriendSync.invitesOut||[]).length)return '';
@@ -7109,6 +7110,17 @@ function isDeleteAction(n){return /^(del-|chat-del$|chat-room-delete$|memo-photo
   if(top)top.addEventListener('click',directBarClick,true);
   if(nav)nav.addEventListener('click',directBarClick,true);
 })();
+
+/* FINAL iPhone hotfix: D-day detail must open even when a nested/decorative layer stops the normal bubbled click. */
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('[data-act="view-dd"]'):null;
+  if(!t)return;
+  var x=S.ddays.find(function(y){return y.id===t.dataset.id;});
+  if(!x)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  openDDDetail(x);
+},true);
 
 document.addEventListener('click',function(e){
   if(e.target.closest&&e.target.closest('#dp')){dpClick(e);return;}
