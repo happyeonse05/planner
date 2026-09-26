@@ -67,3 +67,15 @@ body.planon-day-close-visible #planon-day-close-fixed{
   backdrop-filter:blur(16px)!important;
   -webkit-backdrop-filter:blur(16px)!important;
 }
+
+/* Final intended behavior: CTA follows the viewport only while the user is near
+   the end of the daily page, and rests at the document bottom. */
+body.planon-day-close-visible #planon-day-close-fixed{
+  position:sticky!important;
+  left:auto!important;right:auto!important;top:auto!important;
+  bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;margin:18px 0 8px!important;padding:8px!important;
+  z-index:90!important;
+  background:color-mix(in srgb,var(--card) 94%,transparent)!important;
+  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+}
