@@ -8,11 +8,11 @@ var P={
   softChecks:700, ribbonNemo:900, weeklyScrapbook:900, retroFrame:900, ddayWidget:800,
   examPack:1500, weeklyPack:1500, midtermTemplate:1500,
   butterBundle:2900, strawberryBundle:2900, mintBundle:2900, seasonalPack:1900,
-  meonbyeolTheme:2900
+  meonbyeolTheme:9900, meonbyeolRandom:9900, meonbyeolPick:15900, meonbyeolEgg:9900, meondolTheme:9900, wearItem:2500, wearSet:9900
 };
 var C={
   theme:'테마', timetable:'시간표 디자인', background:'배경', icons:'아이콘/체크박스',
-  character:'캐릭터', weeklyExport:'주간 플래너 저장', frame:'포토카드/회고 프레임',
+  bokbok:'복복복 · 먼별', character:'캐릭터', weeklyExport:'주간 플래너 저장', frame:'포토카드/회고 프레임',
   widget:'위젯', preset:'플래너 세팅', studyTemplate:'공부 템플릿', bundle:'번들'
 };
 function official(x){return Object.assign({creatorId:'planon-official',creatorName:'Planon',currency:'KRW',forSale:true,marketVersion:2},x);}
@@ -63,7 +63,21 @@ var products=[
   official({id:'check-deco-timetable',category:'timetable',productType:'timetable',name:'체크 다꾸 시간표',description:'시간표 칸에 잔잔한 체크 패턴과 둥근 수업 블록을 적용해요.',price:P.checkTimetable,tags:['시간표','체크'],thumbnail:{colors:['#fffaf0','#eddcb9','#c7a974','#75603e'],pattern:'check'},payload:{timetableStyle:'check'}}),
   official({id:'cozy-ivory-timetable',category:'timetable',productType:'timetable',name:'포근한 아이보리 시간표',description:'아이보리 종이 느낌의 시간표 카드와 부드러운 수업 블록.',price:P.cozyTimetable,tags:['시간표','아이보리'],thumbnail:{colors:['#fffaf1','#f3eadc','#dfcdb2','#8c765a']},payload:{timetableStyle:'cozy'}}),
   official({id:'soft-check-icons',category:'icons',productType:'icons',name:'말랑 체크 아이콘',description:'체크박스와 완료 표시를 둥글고 말랑한 스타일로 바꿔요.',price:P.softChecks,tags:['아이콘','체크'],thumbnail:{colors:['#fff7df','#e5c16f','#6f5b2d','#ffffff']},payload:{iconStyle:'soft'}}),
-  official({id:'meonbyeol-theme',category:'character',productType:'meonbyeol',name:'먼별 테마',description:'먼지 별사탕 먼별이 플래너에 이사 와요. 할 일 먼지를 누르면 빛나는 별사탕으로 변하고, 먼별 탭에서 말 걸기·기상 챌린지·힐링하기·오늘의 꽃·이달의 하늘·미용실(별로 색 교환)을 쓸 수 있어요. 적용 후 언제든 해제 가능.',price:P.meonbyeolTheme,tags:['캐릭터','먼별','테마'],thumbnail:{colors:['#EDE4F6','#FFFDFC','#FFE08A','#8E7BC8']},payload:{meonbyeol:true}}),
+  /* 먼별 권한(entitlement) 본체. 목록에는 숨기고, 아래 두 상품 중 하나만 가져도 보유로 처리돼요.
+     예전에 meonbyeol-theme 를 산 사람은 그대로 보유 → 다시 결제하지 않아요. */
+  /* 먼별 테마: 알에서 태어나요(질문 20개) · 빛깔은 평생 고정 · 다른 빛깔은 새 알로.
+     예전 뽑기/선택형(meonbyeol-random/pick)이나 2,900원 구매자는 그대로 먼별 테마 보유 → 재결제 없음 */
+  official({id:'meonbyeol-theme',category:'bokbok',productType:'meonbyeol',name:'먼별 테마',description:'별사탕 알이 플래너로 와요. 질문 20개에 답하면 나와 닮은 빛깔의 먼별이가 태어나요. 할 일 체크가 별사탕으로 반짝이고, 먼별 탭에서 말 걸기·기상 챌린지·힐링·오늘의 꽃 포카·집중 친구·옷장을 쓸 수 있어요. 적용하면 네모 대신 먼별이만 보여요.',price:P.meonbyeolTheme,tags:['복복복','먼별','테마'],thumbnail:{colors:['#EDE4F6','#FFFDFC','#FFE08A','#8E7BC8']},payload:{meonbyeol:true}}),
+  official({id:'meonbyeol-random',category:'bokbok',productType:'meonbyeol',forSale:false,name:'먼별 테마(이전 뽑기형)',description:'이전 판매 상품. 먼별 테마로 그대로 이어져요.',price:P.meonbyeolRandom,tags:['먼별'],thumbnail:{colors:['#EDE4F6','#FFFDFC','#FFE08A','#8E7BC8']},payload:{meonbyeol:true}}),
+  official({id:'meonbyeol-pick',category:'bokbok',productType:'meonbyeol',forSale:false,name:'먼별 테마(이전 선택형)',description:'이전 판매 상품. 먼별 테마로 그대로 이어져요.',price:P.meonbyeolPick,tags:['먼별'],thumbnail:{colors:['#FCEEF4','#EAF7F1','#F3ECFB','#FFE08A']},payload:{meonbyeol:true}}),
+  official({id:'meonbyeol-egg',category:'bokbok',productType:'meonbyeolEgg',consumable:true,name:'새 먼별 알',description:'먼별이의 빛깔은 바꿀 수 없어요. 다른 빛깔의 먼별을 만나고 싶을 때 새 알을 하나 더 데려와요. 질문 20개에 다시 답하면 새 먼별이가 태어나고, 우리 집 먼별들 중에서 같이 지낼 먼별이를 고를 수 있어요. (먼별 테마가 있어야 해요)',price:P.meonbyeolEgg,tags:['복복복','먼별','알'],thumbnail:{colors:['#FFFDF8','#F7C8D8','#DCCDF2','#FFE9A8']},payload:{egg:true}}),
+  official({id:'meondol-theme',category:'bokbok',productType:'meonbyeol',name:'먼돌 테마',description:'헤드폰 낀 먼돌이가 플래너에 굴러와요. 적용하면 네모 대신 먼돌이만 보이고, 먼돌 탭·집중 친구·꽃 포카·옷장을 먼돌이와 함께 써요. 먼별 테마와는 따로예요(한 번에 하나만 적용).',price:P.meondolTheme,tags:['복복복','먼돌','테마'],thumbnail:{colors:['#E6E0EE','#D8D2E2','#C8B8E8','#A79BB4']},payload:{meondol:true}}),
+  official({id:'mb-wear-nightcap',category:'bokbok',productType:'wardrobe',name:'옷장 · 수면모자',description:'별 달린 수면모자. 먼별·먼돌 둘 다 입을 수 있어요.',price:P.wearItem,tags:['옷장','먼별','먼돌'],thumbnail:{colors:['#8E9AD8','#FFFDF8','#FFE9A8','#6E7AB8']},payload:{gear:'nightcap'}}),
+  official({id:'mb-wear-crown',category:'bokbok',productType:'wardrobe',name:'옷장 · 별 왕관',description:'반짝이는 별 왕관.',price:P.wearItem,tags:['옷장'],thumbnail:{colors:['#FFE08A','#F7B8D2','#C9B2EC','#E0B040']},payload:{gear:'crown'}}),
+  official({id:'mb-wear-bunny',category:'bokbok',productType:'wardrobe',name:'옷장 · 토끼 귀',description:'쫑긋 토끼 귀 머리띠.',price:P.wearItem,tags:['옷장'],thumbnail:{colors:['#FFFDF8','#F7C8D8','#E4D6EC','#B8A0DC']},payload:{gear:'bunny'}}),
+  official({id:'mb-wear-berry',category:'bokbok',productType:'wardrobe',name:'옷장 · 딸기 모자',description:'새콤달콤 딸기 모자.',price:P.wearItem,tags:['옷장'],thumbnail:{colors:['#F28AA0','#8CC48C','#FFF6E0','#DE6B86']},payload:{gear:'berryhat'}}),
+  official({id:'mb-wear-scarf',category:'bokbok',productType:'wardrobe',name:'옷장 · 목도리',description:'포근한 버터색 목도리.',price:P.wearItem,tags:['옷장'],thumbnail:{colors:['#F4C27A','#FFF1C2','#D89A3A','#FFFDF8']},payload:{gear:'scarf'}}),
+  official({id:'mb-wardrobe-set',category:'bokbok',productType:'bundle',name:'먼별·먼돌 옷장 세트',description:'수면모자·별 왕관·토끼 귀·딸기 모자·목도리를 한 번에. 따로 사는 것보다 저렴해요.',price:P.wearSet,tags:['옷장','번들'],thumbnail:{colors:['#8E9AD8','#FFE08A','#F28AA0','#F4C27A']},bundleItems:['mb-wear-nightcap','mb-wear-crown','mb-wear-bunny','mb-wear-berry','mb-wear-scarf']}),
   official({id:'ribbon-nemo',category:'character',productType:'character',name:'리본 네모',description:'네모 캐릭터에 작은 리본 포인트가 생겨요. 표정 기능은 그대로 유지돼요.',price:P.ribbonNemo,tags:['캐릭터','네모'],thumbnail:{colors:['#fae7e8','#c88f9d','#fff7f7','#7b555f']},payload:{characterStyle:'ribbon'}}),
   official({id:'weekly-scrapbook-export',category:'weeklyExport',productType:'weeklyExport',name:'주간 스크랩북 저장 디자인',description:'주간 플래너 이미지 저장 시 크림 종이·진한 포인트 선으로 출력해요.',price:P.weeklyScrapbook,tags:['주간','저장'],thumbnail:{colors:['#fffaf0','#f2dfbd','#8a6a3d','#d6c09a']},payload:{exportStyle:{paper:'#fffaf0',ink:'#3b3026',sub:'#8b7966',line:'#e6d4b8',soft:'#f7ead2'}}}),
   official({id:'retro-review-frame',category:'frame',productType:'frame',name:'회고 포토카드 프레임',description:'일기·주간 회고 카드에 폴라로이드처럼 얇은 프레임을 적용해요.',price:P.retroFrame,tags:['회고','프레임'],thumbnail:{colors:['#fffdf7','#f0dfcb','#c99f7b','#6d5544']},payload:{frameStyle:'polaroid'}}),

@@ -1,0 +1,13 @@
+PLANON character theme system final patch
+
+- default / meonbyeol / meondol remain mutually exclusive character themes
+- color/background theme remains independent
+- todo character decoration can be toggled in Settings > Screen & notifications
+- meonbyeol todo = star-candy check; meondol todo = stone check
+- home state mapping keeps focus/exam/appointment/diary/rest character states
+- story and appointment cards use the STORY OWNER character theme
+- friend list/story/appointment/memory never inherits the viewer's character theme
+- appointment pair can render meonbyeol + meondol / meonbyeol + default / etc.
+- 25-second shop preview; 3-day trials unchanged
+- no new SQL required for this patch (theme is carried through existing profile payload / existing JSON settings)
+- fonts were not changed

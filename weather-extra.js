@@ -307,7 +307,7 @@
         var tt=(els[i].innerText||'').replace(/\s+/g,' ').trim();
         if(/^우산\s*챙기/.test(tt)&&(!best||tt.length<(best.innerText||'').length))best=els[i];
       }
-      if(best)best.textContent=currentHigh?('☂ 지금 비 '+current.p+'%'):('☂ '+first.hour+'시부터 비 '+first.p+'%');
+      if(best)best.textContent=currentHigh?('비 · 지금 '+current.p+'%'):('비 · '+first.hour+'시부터 '+first.p+'%');
     }
   }
   var queued=false;

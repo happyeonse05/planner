@@ -7,3 +7,24 @@
 .sw.market-locked,.bgsw.market-locked{position:relative}
 .sw.market-locked::after,.bgsw.market-locked::after{content:'₩';position:absolute;right:-4px;bottom:-4px;min-width:14px;height:14px;padding:0 2px;border-radius:999px;display:grid;place-items:center;background:var(--ink);color:var(--card);font-size:8px;font-weight:800;line-height:1;box-shadow:0 0 0 2px var(--card)}
 .sw.market-locked:not(.on),.bgsw.market-locked:not(.on){opacity:.72}
+
+/* ===== 복복복 · 먼별 섹션 ===== */
+.market-bokbok{display:flex;gap:12px;align-items:center;margin:0 0 12px;padding:14px;border-radius:22px;background:linear-gradient(135deg,#F7F1FD 0%,#FFF6E4 100%);border:1px solid #EADFF5;font-family:'Gowun Dodum',sans-serif}
+.market-bokbok-art{flex:none;width:92px;height:92px}.market-bokbok-art svg{width:100%;height:100%}
+.market-bokbok-copy{min-width:0;flex:1}.market-bokbok-copy small{font-size:11px;color:#A79BB4}.market-bokbok-copy b{display:block;font-family:'Hi Melody',cursive;font-size:24px;font-weight:400;color:#5E5468;line-height:1.15}
+.market-bokbok-copy p{margin:4px 0 8px;font-size:12px;line-height:1.5;color:#6B5E77}
+.market-bokbok-btns{display:flex;gap:6px;flex-wrap:wrap}.market-bokbok-btns button{background:#fff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:700;color:#6E5A98;box-shadow:0 0 0 1.5px #DCCDF2 inset}
+.market-mb-sheet{font-family:'Gowun Dodum',sans-serif}.market-mb-sheet h3{font-family:'Hi Melody',cursive;font-weight:400;font-size:26px}
+.market-mb-explain{background:#F7F1FD;border-radius:14px;padding:10px 12px;margin:10px 0;font-size:12px;line-height:1.55;color:#6B5E77}.market-mb-explain b{display:block;color:#6E5A98;margin-bottom:2px}
+.market-mb-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.market-mb-compare div{background:#fff;border:1px solid #EADFF5;border-radius:14px;padding:10px;text-align:center}.market-mb-compare b{display:block;font-size:13px}.market-mb-compare small{display:block;font-size:11px;color:#A79BB4;margin:2px 0 4px}.market-mb-compare strong{color:#B0567E}
+.market-mb-foot{font-size:11px;color:#A79BB4;margin:4px 0}
+.market-trial{background:#FFF1C2!important;color:#7B6230!important;font-weight:800}
+.market-trial-state{display:block;width:100%;font-size:12px;color:#8A6A1E;background:#FFF9E6;border-radius:12px;padding:8px 10px;text-align:center}
+.market-bokbok-art.duo{width:110px;display:flex;align-items:flex-end}.market-bokbok-art.duo span{flex:1;line-height:0}.market-bokbok-art.duo span:last-child{margin-left:-14px;margin-bottom:4px}.market-bokbok-art.duo svg{width:100%;height:auto}
+.market-mb-art{width:140px;margin:0 auto 6px}.market-mb-art svg{width:100%;height:auto}
+.market-mb-explain.soft{background:#FFF9EC}
+.market-mb-sheet .market-detail-actions{display:flex;flex-direction:column;gap:8px}
+.market-mb-sheet .market-buy,.market-mb-sheet .market-apply,.market-mb-sheet .market-trial{width:100%;min-height:50px;border-radius:16px;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center}
+.market-mb-sheet .market-buy{background:#FFE9A8!important;color:#5E4A18!important}
+.market-mb-sheet .market-apply{background:#EEE6F8!important;color:#6E5A98!important}
+.market-mb-sheet [data-market-preview]{background:#F7F3FB;color:#8E7BC8;border-radius:14px;min-height:44px}

@@ -1,0 +1,35 @@
+PLANON 먼별 테마 조용한 상호작용 + 기본 이모지 제거 패치
+Date: 2026-09-26
+
+소리 정책
+- 일반 버튼 클릭음, 퀴즈 선택음, 부화 효과음, 팝/성공음, 먼별 자동 말소리,
+  코골이, 차 마시는 소리, 물 마시기, 카드 뒤집기, 뽑기 셔플 효과음은 재생하지 않음.
+- 사용자가 명시적으로 소리 기능을 선택한 경우만 재생:
+  1) 뽀롱옹롱
+  2) 오르골
+- 별 보기는 시각 연출만 유지하고 오르골 자동 재생 제거.
+
+아이콘/이모지 정책
+- 먼별 힐링 메뉴의 song/orgel/tuck/snack/tea/star 아이콘은 기존 커스텀 SVG 그대로 유지.
+- PLANON 실제 실행 파일(.js/.html/.css) 전체에서 Extended_Pictographic 문자 0개 확인.
+- 카메라/경고/날씨/동기화 등에 남아 있던 기본 컬러 이모지는 텍스트 기호로 교체.
+- 꽃 카드 화면은 기존 flowerSVG 기반이므로 기본 이모지 제거로 시각 손실 없음.
+
+글씨체 보존
+- CSS 파일 변경 0개.
+- HTML 파일 변경 0개.
+- 기존 폰트 선언 및 글씨체 관련 스타일은 수정하지 않음.
+
+원본 대비 수정한 기존 파일
+- meonbyeol.js
+- app-core.js
+- smart-ui.js
+- planner-sections.js
+- weather-extra.js
+
+검증
+- 패키지 내 전체 JavaScript node --check 통과.
+- 실행 파일(.js/.html/.css) 기본 pictographic emoji 검사 0개.
+- 뽀롱옹롱 startAmb('song') 유지.
+- 오르골 startAmb('orgel') 유지.
+- 별 보기 자동 오르골 호출 제거 확인.

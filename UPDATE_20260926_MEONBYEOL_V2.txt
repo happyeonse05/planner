@@ -1,0 +1,14 @@
+[먼별 V2 · 2026-09-26]  SQL 필요 없음 (친구 공유는 기존 profile JSON에 먼별 빛깔만 추가)
+
+새 파일
+- focus-mate.js / focus-mate.css : 새 집중 화면(먼별·먼돌·혼자, 별사탕/구름/하트/동글 틀, 문지르기, 나가기+알약), 프리미엄 집중 기록·이번 주 그리드
+- meonbyeol-social.js : 프로필 먼별, 친구 아바타(친구가 켠 경우만), 약속 스토리 둘의 먼별
+- planner-sections.js / .css : 시간표 탭 강의·D-day(커플 먼저)·시험 접기, 일간 맨 위 시험·D-day 목록 접기, 설정 > 시간표·홈 표시
+
+수정 파일
+- market/catalog.js, theme-engine.js, shop.js, shop.css : 하나 뽑기 9,900 / 골라 데려오기 15,900(보유자 차액 6,000), 3일 무료체험(계정당 1회), 재결제 방지, 예전 구매자 보유 유지+무료 뽑기, 리본은 친구에게 안 붙음
+- meonbyeol.js / meonbyeol.css : 문지르기 쓰다듬기, 레몬사탕 하루 3개, 주운 것 주머니(피카츄 꼬치 등), 미용실 별/레몬사탕 교환, 차 6종, 오늘의 꽃 포카(먼별/먼돌 선택, 뒤집기, 앨범), 별사탕 체크, 뽑기/고르기, 체험 종료 안내
+- app-core.js : friendAvatar/profile payload 훅, 주간 이미지 글꼴 Gowun Dodum
+- day-story.js : 스토리 아바타·약속 카드 훅, 기존 pendingCards 미정의 오류 수정
+- styles.css : 인쇄용 글꼴 Gowun Dodum
+- index.html, sw.js : 새 파일 연결, 캐시 버전 20260926-mb2

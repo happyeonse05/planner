@@ -1,0 +1,39 @@
+PLANON CHARACTER THEME FINAL VALIDATION — 2026-09-26
+
+Implemented
+- character theme axis: default / meonbyeol / meondol (one active at a time)
+- color/background theme remains independent from character theme
+- local Nemo positions are replaced by the active character theme
+- remote/friend positions are never replaced by the viewer's theme
+- friend profile/story/appointment/memory uses that friend's shared theme; default fallback remains Nemo
+- appointment pair supports mixed themes (meonbyeol + meondol, meonbyeol + default, etc.)
+- story/closing card frame follows story owner's theme
+- state mapping: focus / exam / appointment / diary / rest
+- todo theme toggle in Settings > Screen & notifications
+- meonbyeol todo check = star-candy look
+- meondol todo check = stone + subtle pulse (not meonbyeol star copy)
+- shop character-theme preview expanded to 25 seconds
+- existing 3-day trials retained; expiry returns to default behavior
+- service-worker cache version bumped so deployment does not keep stale theme assets
+
+Validation
+1. node --check: all root JS + market JS PASS
+2. theme isolation mock tests PASS:
+   - my theme meonbyeol
+   - friend-dol => meondol
+   - friend-byeol => meonbyeol
+   - friend without theme => default
+   - appointment pair friend-dol renders dol asset
+   - appointment pair friend-default returns default fallback
+   - memory-pair remote fallback stays Nemo
+   - story-pair remote fallback stays Nemo
+   - local home uses own character theme
+3. font declarations compared to previous integrated ZIP:
+   - styles.css identical
+   - meonbyeol.css existing font declarations identical
+   - no font-family declarations changed
+4. UI source scan: no Extended_Pictographic characters in JS/HTML/CSS
+5. SQL: all 16 SQL files hash-identical to previous integrated ZIP — no new SQL required
+
+Note
+index.html already referenced apple-touch-icon.png and icon-512.png in the previous build, while those icon files were not packaged in the previous ZIP. This patch leaves those references unchanged so an existing GitHub repository's app icons are not overwritten.
